@@ -1,0 +1,31 @@
+# Private data
+.env
+*.session
+*.session-journal
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+venv/
+.venv/
+
+# Data (generated at runtime)
+data/
+*.db
+*.db-wal
+*.db-shm
+*.jsonl
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Session files
+.telegram_session/
