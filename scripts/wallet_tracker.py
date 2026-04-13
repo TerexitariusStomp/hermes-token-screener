@@ -159,7 +159,7 @@ def get_top_wallets_from_token(chain: str, token: str, limit: int = 20) -> List[
         result = subprocess.run(
             ['node', GMGN_CLI, 'token', 'holders',
              '--chain', gmgn_chain, '--address', token,
-             '--limit', str(limit), '--json'],
+             '--limit', str(limit), '--raw'],
             capture_output=True, text=True, timeout=30, env=env
         )
         if result.returncode == 0 and result.stdout.strip():
@@ -180,7 +180,7 @@ def analyze_wallet(chain: str, address: str) -> Dict[str, Any]:
         env = {**os.environ, 'GMGN_API_KEY': GMGN_API_KEY}
         result = subprocess.run(
             ['node', GMGN_CLI, 'wallet', 'detail',
-             '--chain', gmgn_chain, '--address', address, '--json'],
+             '--chain', gmgn_chain, '--address', address, '--raw'],
             capture_output=True, text=True, timeout=30, env=env
         )
         if result.returncode == 0 and result.stdout.strip():
