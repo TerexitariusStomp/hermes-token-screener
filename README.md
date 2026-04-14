@@ -1,101 +1,115 @@
 # Hermes Token Screener
 
-Multi-source token screening pipeline that aggregates data from 10+ providers to score and rank tokens for buy signals.
+Multi-source token enrichment pipeline + wallet tracker + Telegram contract scraper.
 
 ## Architecture
 
 ```
-Telegram Chats ──► Contract Scraper ──► central_contracts.db
-                                              │
-                                              ▼
-                                        Token Screener
-                                    ┌─────────┼─────────┐
-                                    ▼         ▼         ▼
-                              Dexscreener  GoPlus   CoinGecko
-                              RugCheck     De.Fi    Etherscan
-                              GMGN         Surf     Derived
-                              Social (Telegram DB + CoinGecko)
-                                              │
-                                              ▼
-                                    Scored Token List (top 100)
-                                              │
-                                              ▼
-                                    Wallet Tracker ──► Alert
+Telegram Chats ──► telegram_scraper.py ──► central_contracts.db
+                                                   │
+                                                   ▼
+                                           token_enricher.py
+                                     (12 layers, resilient try/bypass)
+                                                   │
+                                                   ▼
+                                          scored top 100 tokens
+                                                   │
+                                                   ▼
+                                           wallet_tracker.py
+                                     (discovery + scoring + detection)
+                                                   │
+                                                   ▼
+                                     ranked smart money wallets
 ```
 
-## Data Sources
+## Scripts (Active Pipeline)
 
-| Provider | Data | Chain Support |
-|----------|------|---------------|
-| Dexscreener | Volume, txns, price, liquidity, age | All |
-| RugCheck | Rug score, insiders, holder concentration, LP locks | Solana |
-| GMGN | Dev conviction, bot detection, smart wallets, renounced | Sol/BSC/Base |
-| GoPlus | Honeypot, tax, mintable, holders | EVM |
-| De.Fi | Security issues, scammed, holders | ETH/BSC/Solana/Base |
-| CoinGecko | Sentiment, ATH, exchange listings, categories | All |
-| Etherscan | Contract verification, compiler, proxy | EVM |
-| Surf | Fear & Greed, social sentiment, mindshare, trending | Market-wide |
-| Solana RPC | Mint authority, holder concentration | Solana |
-| Telegram DB | Channel count, mention velocity, viral detection | N/A |
+| Script | Cron | Purpose |
+|--------|------|---------|
+| `token_enricher.py` | `10 * * * *` | 12-layer token enrichment + scoring |
+| `wallet_tracker.py` | `15 * * * *` | Wallet discovery, scoring, pattern detection |
+| `telegram_scraper.py` | `*/10 * * * *` | Telegram contract address gathering |
 
-## Setup
+## Token Enrichment (12 Layers)
 
-```bash
-# Install dependencies
-pip install requests python-dotenv telethon
+| Layer | Source | Data |
+|-------|--------|------|
+| 0 | Dexscreener | Volume, txns, FDV, liquidity, price [REQUIRED] |
+| 1 | Surf | Social sentiment, mindshare, trending |
+| 2 | GoPlus v2 | EVM security (honeypot, tax, mint) |
+| 3 | RugCheck | Solana security (rug score, insiders) |
+| 4 | Etherscan | Contract verification |
+| 5 | De.Fi | Security analysis, holder concentration |
+| 6 | Derived | Computed signals (no API) |
+| 7 | CoinGecko | Market data, exchange listings |
+| 8 | GMGN | Dev conviction, smart money, bot detection |
+| 9 | Social | Telegram DB + composite social score |
+| 10 | Zerion | Price, market cap, FDV, supply, verified flag |
+| 11 | CoinStats | Risk score, liquidity score, volatility |
 
-# Copy environment file
-cp .env.example .env
-# Fill in your API keys in .env
+## Token Scoring
 
-# Run the screener
-python scripts/token_screener.py
+Base 0-100 from: social momentum (0-35), freshness (0-15), low FDV (0-15), volume (0-20), txns (0-15), price momentum (0-10).
 
-# Run the contract scraper
-python scripts/telegram_contract_scraper.py
+**Steep decline penalties:**
+- h1 < -60%: score ×0.1 (rug in progress)
+- h6 < -50%: score ×0.2 (crashed)
+- h6 < -30%: score ×0.5 (declining)
+- Death spiral (vol dying + declining): ×0.3
+
+## Wallet Scoring (0-100)
+
+| Factor | Points | Description |
+|--------|--------|-------------|
+| Realized PNL | 0-35 | Profit TAKEN (not paper gains) |
+| Trade Count | 0-20 | Active wallets = established traders |
+| Win Rate | 0-10 | Profitable tokens / total tokens |
+| ROI | 0-10 | Average profit_change per token |
+| Entry Timing | 0-8 | Earlier = better |
+| Wallet Age | 0-5 | Longer = more established |
+| Smart Tag | 0-5 | TOP1, KOL, SMART = better |
+| Insider Bonus | 0-5 | MORE insider flags = BETTER |
+| DeFi/Portfolio | 0-5 | Staked/borrowed = serious player |
+| Social | 0-2 | Linked Twitter = credibility |
+
+**Penalties:**
+- Round trips (profit without selling): -15 each
+- Copy trade: -20
+- Rug history: -100 each (disqualifier)
+
+## Pattern Detection
+
+| Pattern | Description |
+|---------|-------------|
+| SNIPER | Exits quickly, high sell ratio |
+| SWING | Moderate holds, partial exits |
+| HOLDER | Few sells, long holds |
+| DEGEN | >50 trades across >10 tokens |
+| INSIDER | Flagged by heuristics |
+| ACTIVE | >20 trades |
+
+## API Keys (in `~/.hermes/.env`)
+
+```
+DEFI_API_KEY=
+ETHERSCAN_API_KEY=
+COINGECKO_API_KEY=
+GMGN_API_KEY=
+SURF_API_KEY=
+RUGCHECK_API_KEY=
+ZERION_API_KEY=
+COINSTATS_API_KEY=
+HELIUS_API_KEY=
+ALCHEMY_API_KEY=
+QUICKNODE_KEY=
+TG_API_ID=
+TG_API_HASH=
 ```
 
-## Scoring
+## Legacy Scripts (still in repo, used by smart_money_research.py)
 
-Tokens are scored 0-100 based on:
-- **Cross-channel calls + social momentum** (0-35 pts)
-- **Freshness** (0-15 pts)
-- **Low FDV** (0-15 pts)
-- **Volume** (0-20 pts)
-- **Transaction activity + buy ratio** (0-15 pts)
-- **Price momentum** (0-10 pts)
-
-Security penalties (GoPlus, RugCheck, De.Fi, GMGN, Etherscan) can reduce scores to 0 for honeypots, rugs, or critical issues.
-
-## Wallet Tracking
-
-Top wallets from winning tokens are tracked via:
-- **Alchemy/QuickNode webhooks** (EVM chains)
-- **Helius webhooks** (Solana)
-
-When a tracked wallet transfers to a new token, an alert is generated.
-
-## Files
-
-```
-scripts/
-  token_screener.py          # Main scoring pipeline
-  telegram_contract_scraper.py  # Telegram chat scraper
-  address_extractor.py       # EVM/Solana address extraction
-  smart_money_config.py      # Channel configuration
-enrichers/
-  dexscreener_enricher.py    # DEX data
-  rugcheck_enricher.py       # Solana security
-  gmgn_enricher_v2.py        # Dev conviction, bot detection
-  goplus_enricher.py         # EVM security
-  defi_enricher.py           # Contract analysis
-  coingecko_enricher.py      # Market data, sentiment
-  etherscan_enricher.py      # Contract verification
-  surf_enricher.py           # Market context, social
-  derived_security.py        # Computed signals (fallback)
-  social_enricher.py         # Telegram + CoinGecko social
-```
-
-## License
-
-MIT
+- `smart_money_research.py` — older enrichment pipeline
+- `dexscreener_enricher.py`, `goplus_enricher.py`, etc. — individual enrichers (superseded by token_enricher.py)
+- `telegram_ingestor.py` — Telegram session handler
+- `wallet_discovery.py` — older wallet finder
+- `pattern_learner.py`, `central_db_sink.py` — ML pattern matching
