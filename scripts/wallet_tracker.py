@@ -15,41 +15,33 @@ Usage:
   python3 wallet_tracker.py --dry-run          # don't write to DB
 """
 
-import os
-import sys
 import json
 import time
 import sqlite3
 import subprocess
-import logging
 import shutil
+import os
+import sys
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-from dotenv import load_dotenv
 
-load_dotenv(Path.home() / '.hermes' / '.env')
+from hermes_screener.config import settings
+from hermes_screener.logging import get_logger, log_duration
+from hermes_screener.metrics import metrics, start_metrics_server
 
-# ── Config ──────────────────────────────────────────────────────────────────
-DB_PATH = Path.home() / '.hermes' / 'data' / 'central_contracts.db'
-WALLETS_DB = Path.home() / '.hermes' / 'data' / 'wallet_tracker.db'
-TOP_TOKENS_PATH = Path.home() / '.hermes' / 'data' / 'token_screener' / 'top100.json'
-LOG_FILE = Path.home() / '.hermes' / 'logs' / 'wallet_tracker.log'
-
-GMGN_CLI = str(Path.home() / '.hermes' / 'gmgn-cli' / 'dist' / 'index.js')
-GMGN_API_KEY = os.getenv('GMGN_API_KEY', '')
-HOLDERS_PER_TOKEN = 15  # how many holders to fetch per token
+# ── Config (from centralized settings) ───────────────────────────────────────
+DB_PATH = settings.db_path
+WALLETS_DB = settings.wallets_db_path
+TOP_TOKENS_PATH = settings.output_path
+GMGN_CLI = str(settings.gmgn_cli)
+GMGN_API_KEY = settings.gmgn_api_key
+HOLDERS_PER_TOKEN = settings.holders_per_token
 CHAIN_MAP = {'solana': 'sol', 'sol': 'sol', 'base': 'base',
              'ethereum': 'base', 'eth': 'base', 'binance': 'bsc', 'bsc': 'bsc'}
 
-# ── Logging ─────────────────────────────────────────────────────────────────
-LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
-WALLETS_DB.parent.mkdir(parents=True, exist_ok=True)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)]
-)
-log = logging.getLogger('wallet_tracker')
+# ── Logging + Metrics ────────────────────────────────────────────────────────
+log = get_logger("wallet_tracker")
+start_metrics_server()
 
 # ── GMGN CLI (node resolution) ─────────────────────────────────────────────
 _NODE_BIN = None
@@ -699,7 +691,7 @@ def report(conn: sqlite3.Connection, limit: int = 20):
 
 # ── Zerion Wallet Enrichment ────────────────────────────────────────────────
 
-ZERION_KEY = os.getenv('ZERION_API_KEY', '')
+ZERION_KEY = settings.zerion_api_key
 
 class ZerionWalletEnricher:
     def __init__(self):
@@ -929,8 +921,7 @@ def detect_rug_history(conn: sqlite3.Connection) -> int:
     rugged_tokens = set()
     try:
         import json
-        from pathlib import Path
-        top100_path = Path.home() / '.hermes' / 'data' / 'token_screener' / 'top100.json'
+        top100_path = settings.output_path
         if top100_path.exists():
             with open(top100_path) as f:
                 data = json.load(f)

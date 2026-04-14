@@ -14,30 +14,26 @@ Usage:
   python3 db_maintenance.py --dry-run          # don't actually delete
 """
 
-import os
-import sys
 import json
 import time
 import sqlite3
-import logging
+import sys
 from pathlib import Path
 
-DB_PATH = Path.home() / '.hermes' / 'data' / 'central_contracts.db'
-WALLETS_DB = Path.home() / '.hermes' / 'data' / 'wallet_tracker.db'
-TOP_TOKENS_PATH = Path.home() / '.hermes' / 'data' / 'token_screener' / 'top100.json'
-LOG_FILE = Path.home() / '.hermes' / 'logs' / 'db_maintenance.log'
+from hermes_screener.config import settings
+from hermes_screener.logging import get_logger
+from hermes_screener.metrics import metrics, start_metrics_server
+
+DB_PATH = settings.db_path
+WALLETS_DB = settings.wallets_db_path
+TOP_TOKENS_PATH = settings.output_path
 
 MAX_TOKENS = 1000
 MAX_WALLETS = 1000
-MIN_TOKEN_AGE_DAYS = 7  # don't delete tokens younger than this
+MIN_TOKEN_AGE_DAYS = 7
 
-LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)]
-)
-log = logging.getLogger('db_maintenance')
+log = get_logger("db_maintenance")
+start_metrics_server()
 
 
 def prune_contracts(max_tokens: int, dry_run: bool = False):

@@ -25,57 +25,57 @@ Usage:
 Output: ~/.hermes/data/token_screener/top100.json
 """
 
-import os
-import sys
 import json
 import time
 import sqlite3
-import logging
 import subprocess
 import math
 import shutil
+import argparse
+import os
+import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime, timedelta
 
 import requests
-from dotenv import load_dotenv
 
-load_dotenv(Path.home() / '.hermes' / '.env')
+from hermes_screener.config import settings
+from hermes_screener.logging import get_logger, log_duration
+from hermes_screener.metrics import metrics, start_metrics_server
 
-# ── Config ──────────────────────────────────────────────────────────────────
-DB_PATH = Path.home() / '.hermes' / 'data' / 'central_contracts.db'
-OUTPUT_PATH = Path.home() / '.hermes' / 'data' / 'token_screener' / 'top100.json'
-LOG_FILE = Path.home() / '.hermes' / 'logs' / 'token_screener.log'
-
-TOP_N = int(os.getenv('SCREENER_TOP_N', '100'))
-MAX_ENRICH = int(os.getenv('SCREENER_MAX_ENRICH', '300'))
-MIN_CHANNEL_COUNT = int(os.getenv('SCREENER_MIN_CHANNELS', '2'))
+# ── Config (from centralized settings) ───────────────────────────────────────
+DB_PATH = settings.db_path
+OUTPUT_PATH = settings.output_path
+TOP_N = settings.top_n
+MAX_ENRICH = settings.max_enrich
+MIN_CHANNEL_COUNT = settings.min_channels
 
 # Scoring weights
-W_CHANNEL = 25.0
-W_FRESHNESS = 15.0
-W_LOW_FDV = 15.0
-W_VOLUME = 20.0
-W_TXNS = 15.0
-W_MOMENTUM = 10.0
+W_CHANNEL = settings.w_channel
+W_FRESHNESS = settings.w_freshness
+W_LOW_FDV = settings.w_low_fdv
+W_VOLUME = settings.w_volume
+W_TXNS = settings.w_txns
+W_MOMENTUM = settings.w_momentum
 
-SELL_RATIO_THRESHOLD = 0.70
-STAGNANT_VOLUME_RATIO = 0.01
-NO_ACTIVITY_HOURS = 6
+SELL_RATIO_THRESHOLD = settings.sell_ratio_threshold
+STAGNANT_VOLUME_RATIO = settings.stagnant_volume_ratio
+NO_ACTIVITY_HOURS = settings.no_activity_hours
 
-# ── Logging ─────────────────────────────────────────────────────────────────
-LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
-OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE),
-        logging.StreamHandler(sys.stdout)
-    ]
-)
-log = logging.getLogger('token_enricher')
+# API keys (empty string = layer gracefully skipped)
+COINGECKO_API_KEY = settings.coingecko_api_key
+ETHERSCAN_API_KEY = settings.etherscan_api_key
+DEFI_API_KEY = settings.defi_api_key
+RUGCHECK_API_KEY = settings.rugcheck_api_key
+GMGN_API_KEY = settings.gmgn_api_key
+SURF_API_KEY = settings.surf_api_key
+ZERION_API_KEY = settings.zerion_api_key
+COINSTATS_API_KEY = settings.coinstats_api_key
+
+# ── Logging + Metrics ────────────────────────────────────────────────────────
+log = get_logger("token_enricher")
+start_metrics_server()
 
 # ══════════════════════════════════════════════════════════════════════════════
 # ENRICHER BASE — resilient try/bypass pattern
@@ -136,7 +136,7 @@ def _int(v) -> Optional[int]:
 # ══════════════════════════════════════════════════════════════════════════════
 
 DEXSCREENER_BASE = 'https://api.dexscreener.com/latest/dex'
-DEXSCREENER_DELAY = float(os.getenv('DEXSCREENER_RATE_LIMIT_DELAY', '1.0'))
+DEXSCREENER_DELAY = settings.rate_limit_delay
 
 class DexscreenerEnricher:
     def __init__(self):
@@ -491,7 +491,7 @@ class RugCheckEnricher:
 # LAYER 4: Etherscan (contract verification)
 # ══════════════════════════════════════════════════════════════════════════════
 
-ETHERSCAN_KEY = os.getenv('ETHERSCAN_API_KEY', '3VY4WXTCKJWC3PQHDTK38MVR73AMPV5A4S')
+ETHERSCAN_KEY = settings.etherscan_api_key or '3VY4WXTCKJWC3PQHDTK38MVR73AMPV5A4S'
 ETHERSCAN_V2 = 'https://api.etherscan.io/v2/api'
 ETHERSCAN_DELAY = 0.25
 ETHSCAN_CHAIN_IDS = {
@@ -561,7 +561,7 @@ class EtherscanEnricher:
 # ══════════════════════════════════════════════════════════════════════════════
 
 DEFI_ENDPOINT = 'https://public-api.de.fi/graphql'
-DEFI_API_KEY = os.getenv('DEFI_API_KEY', '')
+DEFI_API_KEY = settings.defi_api_key
 DEFI_DELAY = 3.0
 DEFI_CHAIN_IDS = {'ethereum': 1, 'eth': 1, 'binance': 2, 'bsc': 2, 'solana': 12, 'base': 49}
 
@@ -855,8 +855,8 @@ class CoinGeckoEnricher:
 # LAYER 8: GMGN (dev conviction, smart money, bot detection)
 # ══════════════════════════════════════════════════════════════════════════════
 
-GMGN_CLI = str(Path.home() / '.hermes' / 'gmgn-cli' / 'dist' / 'index.js')
-GMGN_API_KEY = os.getenv('GMGN_API_KEY', '')
+GMGN_CLI = str(settings.gmgn_cli)
+GMGN_API_KEY = settings.gmgn_api_key
 GMGN_DELAY = 0.5
 CHAIN_MAP = {
     'solana': 'sol', 'sol': 'sol', 'base': 'base',
@@ -1103,7 +1103,7 @@ class SocialSignalEnricher:
 
 import base64
 
-ZERION_KEY = os.getenv('ZERION_API_KEY', '')
+ZERION_KEY = settings.zerion_api_key
 ZERION_DELAY = 1.0
 
 class ZerionEnricher:
@@ -1255,7 +1255,7 @@ class ZerionEnricher:
 # LAYER 11: CoinStats (risk score + market data via MCP)
 # ══════════════════════════════════════════════════════════════════════════════
 
-COINSTATS_API_KEY = os.getenv('COINSTATS_API_KEY', '')
+COINSTATS_API_KEY = settings.coinstats_api_key
 COINSTATS_MCP_DELAY = 2.0
 
 class CoinStatsEnricher:

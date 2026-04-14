@@ -19,35 +19,32 @@ Usage:
   python3 smart_money_research.py --learn      # force pattern update
 """
 
-import os
-import sys
 import json
 import time
 import sqlite3
 import argparse
-import logging
+import sys
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Any
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-DB_PATH = Path.home() / '.hermes' / 'data' / 'central_contracts.db'
-WALLETS_DB = Path.home() / '.hermes' / 'data' / 'wallet_tracker.db'
-TOP_TOKENS_PATH = Path.home() / '.hermes' / 'data' / 'token_screener' / 'top100.json'
-DATA_DIR = Path.home() / '.hermes' / 'data' / 'smart_money'
+from hermes_screener.config import settings
+from hermes_screener.logging import get_logger, log_duration
+from hermes_screener.metrics import metrics, start_metrics_server
+
+DB_PATH = settings.db_path
+WALLETS_DB = settings.wallets_db_path
+TOP_TOKENS_PATH = settings.output_path
+DATA_DIR = settings.hermes_home / 'data' / 'smart_money'
 INSIGHTS_PATH = DATA_DIR / 'insights.json'
 LEADERBOARD_PATH = DATA_DIR / 'leaderboard.json'
-LOG_FILE = Path.home() / '.hermes' / 'logs' / 'smart_money.log'
 
-LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 DATA_DIR.mkdir(parents=True, exist_ok=True)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler()]
-)
-log = logging.getLogger('smart_money')
+
+log = get_logger("smart_money")
+start_metrics_server()
 
 # ── Pattern Learning ────────────────────────────────────────────────────────
 

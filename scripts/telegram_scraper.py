@@ -12,14 +12,12 @@ Usage:
 Output: central_contracts.db (telegram_contract_calls + telegram_contracts_unique)
 """
 
-import os
-import sys
 import re
 import asyncio
 import time
 import json
 import sqlite3
-import logging
+import sys
 from pathlib import Path
 from typing import List, Tuple, Set
 
@@ -30,33 +28,26 @@ except ImportError:
     print("ERROR: telethon not installed. pip install telethon")
     sys.exit(1)
 
-# ── Config ──────────────────────────────────────────────────────────────────
-SESSION_PATH = Path.home() / '.hermes' / '.telegram_session' / 'hermes_user'
-TG_API_ID = int(os.getenv('TG_API_ID', '39533004'))
-TG_API_HASH = os.getenv('TG_API_HASH', '958e52889177eec2fa15e9e4e4c2cc4c')
+from hermes_screener.config import settings
+from hermes_screener.logging import get_logger, log_duration
+from hermes_screener.metrics import metrics, start_metrics_server
 
-DB_PATH = Path(os.getenv('CENTRAL_DB_SQLITE_PATH',
-             str(Path.home() / '.hermes' / 'data' / 'central_contracts.db')))
-STATE_FILE = Path.home() / '.hermes' / 'data' / 'tg_scraper_state.json'
-LOG_FILE = Path.home() / '.hermes' / 'logs' / 'tg_contract_scraper.log'
+# ── Config (from centralized settings + scraper-specific defaults) ───────────
+SESSION_PATH = settings.session_path
+TG_API_ID = settings.tg_api_id
+TG_API_HASH = settings.tg_api_hash
+DB_PATH = settings.db_path
+STATE_FILE = settings.state_file
 
-MESSAGES_PER_DIALOG = int(os.getenv('SCRAPER_MSGS_PER_DIALOG', '30'))
-MAX_DIALOGS_PER_CYCLE = int(os.getenv('SCRAPER_MAX_DIALOGS', '200'))
-MIN_CYCLE_INTERVAL = int(os.getenv('SCRAPER_MIN_INTERVAL', '60'))
-SESSION_SOURCE = os.getenv('SCRAPER_SESSION_SOURCE', 'tg_contract_scraper')
-INCLUDE_BOTS = os.getenv('SCRAPER_INCLUDE_BOTS', 'false').lower() == 'true'
+MESSAGES_PER_DIALOG = 30
+MAX_DIALOGS_PER_CYCLE = 200
+MIN_CYCLE_INTERVAL = 60
+SESSION_SOURCE = 'tg_contract_scraper'
+INCLUDE_BOTS = False
 
-# ── Logging ─────────────────────────────────────────────────────────────────
-LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE),
-        logging.StreamHandler(sys.stdout)
-    ]
-)
-log = logging.getLogger('tg_scraper')
+# ── Logging + Metrics ────────────────────────────────────────────────────────
+log = get_logger("telegram_scraper")
+start_metrics_server()
 
 # ── Address Extraction (inlined) ────────────────────────────────────────────
 EVM_PATTERN = re.compile(r'0x[a-fA-F0-9]{40}')

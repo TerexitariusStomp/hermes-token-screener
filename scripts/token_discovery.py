@@ -11,27 +11,23 @@ Usage:
   python3 token_discovery.py --chains solana   # only Solana
 """
 
-import os
-import sys
 import json
 import time
 import sqlite3
-import logging
+import sys
 import requests
 from pathlib import Path
 from typing import List, Tuple, Set
 
-DB_PATH = Path.home() / '.hermes' / 'data' / 'central_contracts.db'
-LOG_FILE = Path.home() / '.hermes' / 'logs' / 'token_discovery.log'
+from hermes_screener.config import settings
+from hermes_screener.logging import get_logger, log_duration
+from hermes_screener.metrics import metrics, start_metrics_server
+
+DB_PATH = settings.db_path
 DEFAULT_CHAINS = {'solana', 'ethereum', 'base', 'binance-smart-chain'}
 
-LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler(sys.stdout)]
-)
-log = logging.getLogger('token_discovery')
+log = get_logger("token_discovery")
+start_metrics_server()
 
 
 def get_db():
