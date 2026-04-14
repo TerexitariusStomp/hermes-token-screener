@@ -394,19 +394,66 @@ def compute_round_trips(conn: sqlite3.Connection) -> Dict[str, int]:
 # ── Discovery ───────────────────────────────────────────────────────────────
 
 def get_holders_for_token(chain: str, address: str, limit: int = HOLDERS_PER_TOKEN) -> List[dict]:
-    """Get top holders/traders for a token via GMGN."""
+    """Get top holders/traders for a token via GMGN.
+
+    GMGN CLI max is 100 per call. To reach 1000, makes multiple calls
+    with different sort orders and deduplicates by wallet address.
+    """
     gmgn_chain = CHAIN_MAP.get(chain.lower())
     if not gmgn_chain:
         return []
 
-    data = gmgn_cmd([
-        'token', 'holders', '--chain', gmgn_chain,
-        '--address', address, '--limit', str(limit), '--raw'
-    ])
-    if not data:
-        return []
+    GMGN_MAX = 100  # CLI hard limit
 
-    return data if isinstance(data, list) else data.get('list', [])
+    # Sort strategies to maximize wallet coverage
+    SORT_ORDERS = [
+        ("amount_percentage", "desc"),   # biggest holders
+        ("profit", "desc"),              # most profitable
+        ("unrealized_profit", "desc"),   # best unrealized gains
+        ("buy_volume_cur", "desc"),      # biggest buyers
+        ("sell_volume_cur", "desc"),     # biggest sellers
+        ("profit", "asc"),               # worst performers (rug detectors)
+        ("amount_percentage", "asc"),    # smallest holders (snipers)
+        ("unrealized_profit", "asc"),    # underwater positions
+        ("buy_volume_cur", "asc"),       # smallest buyers
+        ("sell_volume_cur", "asc"),      # smallest sellers
+    ]
+
+    seen_addresses: set = set()
+    all_holders: List[dict] = []
+
+    for order_by, direction in SORT_ORDERS:
+        if len(all_holders) >= limit:
+            break
+
+        batch_limit = min(GMGN_MAX, limit - len(all_holders))
+        data = gmgn_cmd([
+            'token', 'holders', '--chain', gmgn_chain,
+            '--address', address,
+            '--limit', str(batch_limit),
+            '--order-by', order_by,
+            '--direction', direction,
+            '--raw'
+        ])
+
+        if not data:
+            continue
+
+        batch = data if isinstance(data, list) else data.get('list', [])
+        added = 0
+        for h in batch:
+            addr = h.get('address', '')
+            if addr and addr not in seen_addresses:
+                seen_addresses.add(addr)
+                all_holders.append(h)
+                added += 1
+            if len(all_holders) >= limit:
+                break
+
+        if added > 0:
+            log.debug(f"    {order_by}/{direction}: +{added} wallets (total {len(all_holders)})")
+
+    return all_holders[:limit]
 
 
 def enrich_wallets_from_tokens(
@@ -1021,11 +1068,17 @@ def main():
     parser.add_argument('--min-score', type=float, default=30)
     parser.add_argument('--max-tokens', type=int, default=None)
     parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--async-mode', action='store_true', dest='async_mode',
+                        help='Use async parallel enrichment (faster)')
+    parser.add_argument('--sequential', action='store_true',
+                        help='Force sequential enrichment (original)')
     args = parser.parse_args()
 
     log.info("=" * 60)
     log.info("Wallet Tracker starting")
     log.info(f"Min token score: {args.min_score}")
+    log.info(f"Holders per token: {HOLDERS_PER_TOKEN}")
+    log.info(f"Mode: {'async' if args.async_mode else 'sequential'}")
     log.info("=" * 60)
 
     # Load top tokens
@@ -1042,15 +1095,26 @@ def main():
 
     log.info(f"Loaded {len(tokens)} tokens from enricher output")
 
-    # Init DB and enrich
+    # Init DB
     conn = init_wallet_db()
     start = time.time()
 
-    result = enrich_wallets_from_tokens(
-        conn, tokens,
-        min_token_score=args.min_score,
-        dry_run=args.dry_run,
-    )
+    if args.async_mode and not args.sequential:
+        # Async parallel enrichment
+        from hermes_screener.async_wallets import enrich_wallets_async_sync
+        result = enrich_wallets_async_sync(
+            conn, tokens,
+            min_token_score=args.min_score,
+            max_concurrent_tokens=3,
+            dry_run=args.dry_run,
+        )
+    else:
+        # Sequential enrichment (original)
+        result = enrich_wallets_from_tokens(
+            conn, tokens,
+            min_token_score=args.min_score,
+            dry_run=args.dry_run,
+        )
 
     elapsed = time.time() - start
     log.info(f"Done in {elapsed:.1f}s: {json.dumps(result)}")
@@ -1058,64 +1122,52 @@ def main():
     # Run pattern detection
     log.info("Running pattern detection...")
     upgrade_wallet_db(conn)
-    
+
     flagged_copy = detect_copy_traders(conn)
     log.info(f"  Copy-trade flagged: {flagged_copy}")
-    
+
     flagged_insider = detect_insiders(conn)
     log.info(f"  Insider flagged: {flagged_insider}")
-    
+
     detect_rug_history(conn)
     log.info("  Rug history computed")
-    
+
     infer_trading_patterns(conn)
     log.info("  Trading patterns inferred")
-    
+
     # Re-score all wallets with new flags
     log.info("Re-scoring with pattern flags...")
     c = conn.cursor()
     c.execute("SELECT address, realized_pnl, total_profit, avg_roi, win_rate, total_trades, entry_timing_score, smart_money_tag, wallet_tags, insider_flag, copy_trade_flag, rug_history_count, trading_pattern, tokens_profitable, tokens_total, zerion_value, zerion_defi_value, twitter_username, first_seen_at FROM tracked_wallets WHERE wallet_score > 0")
-    
+
     round_trips = compute_round_trips(conn)
-    
+
     rescored = 0
     for row in c.fetchall():
         addr, rpnl, tprof, roi, wr, trades, entry, stag, wtags, ins, copy, rugs, pattern, prof_t, total_t, zval, dval, tw, first_seen = row
-        
-        # Compute wallet age in days
+
         if first_seen:
             age_days = (time.time() - first_seen) / 86400
         else:
             age_days = 0
         rt = round_trips.get(addr, 0)
-        
+
         new_score = score_wallet_v3(
-            realized_pnl=rpnl or 0,
-            total_profit=tprof or 0,
-            avg_roi=roi or 0,
-            win_rate=wr or 0,
-            total_trades=trades or 0,
-            entry_timing_score=entry or 0.5,
-            smart_money_tag=stag or '',
-            wallet_tags=wtags or '',
-            insider_flag=ins or 0,
-            copy_trade_flag=copy or 0,
-            rug_history_count=rugs or 0,
-            trading_pattern=pattern or '',
-            tokens_profitable=prof_t or 0,
-            tokens_total=total_t or 0,
-            zerion_value=zval or 0,
-            defi_value=dval or 0,
-            round_trip_count=rt,
-            wallet_age_days=age_days,
+            realized_pnl=rpnl or 0, total_profit=tprof or 0, avg_roi=roi or 0,
+            win_rate=wr or 0, total_trades=trades or 0, entry_timing_score=entry or 0.5,
+            smart_money_tag=stag or '', wallet_tags=wtags or '',
+            insider_flag=ins or 0, copy_trade_flag=copy or 0,
+            rug_history_count=rugs or 0, trading_pattern=pattern or '',
+            tokens_profitable=prof_t or 0, tokens_total=total_t or 0,
+            zerion_value=zval or 0, defi_value=dval or 0,
+            round_trip_count=rt, wallet_age_days=age_days,
             twitter_username=tw or '',
         )
         conn.execute("UPDATE tracked_wallets SET wallet_score = ? WHERE address = ?", (new_score, addr))
         rescored += 1
     conn.commit()
     log.info(f"  Re-scored {rescored} wallets")
-    
-    # Report
+
     report(conn)
     conn.close()
     return 0
