@@ -1994,6 +1994,10 @@ def main():
     parser = argparse.ArgumentParser(description='Token enrichment pipeline')
     parser.add_argument('--max-tokens', type=int, default=None, help='Max tokens to enrich')
     parser.add_argument('--min-channels', type=int, default=None, help='Min channel count')
+    parser.add_argument('--async-mode', action='store_true', dest='async_mode',
+                        help='Run enrichment layers in parallel (async)')
+    parser.add_argument('--sequential', action='store_true',
+                        help='Force sequential enrichment (original behavior)')
     args = parser.parse_args()
 
     global MAX_ENRICH, MIN_CHANNEL_COUNT
@@ -2003,7 +2007,27 @@ def main():
         MIN_CHANNEL_COUNT = args.min_channels
 
     start = time.time()
-    result = run_enricher()
+
+    if args.async_mode and not args.sequential:
+        # Async parallel enrichment
+        from hermes_screener.async_enrichment import run_async_enrichment_sync
+        candidates = get_candidates()
+        if not candidates:
+            log.warning("No candidates found")
+            return 1
+        enriched, layer_results = run_async_enrichment_sync(candidates, MAX_ENRICH)
+        if enriched:
+            scored = score_and_output(enriched)
+            elapsed = time.time() - start
+            log.info(f"\nAsync completed in {elapsed:.1f}s: {len(enriched)} tokens enriched, "
+                     f"{len(scored)} scored")
+            result = {'status': 'ok', 'tokens': len(enriched), 'scored': len(scored)}
+        else:
+            result = {'status': 'no_enrichment'}
+    else:
+        # Sequential enrichment (original)
+        result = run_enricher()
+
     elapsed = time.time() - start
     log.info(f"\nCompleted in {elapsed:.1f}s: {json.dumps(result, default=str)}")
     return 0 if result.get('status') == 'ok' else 1
