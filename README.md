@@ -1,67 +1,202 @@
 # Hermes Token Screener
 
-Multi-source token enrichment pipeline + wallet tracker + Telegram contract scraper.
+Autonomous smart-money tracking system that discovers, enriches, and ranks tokens and wallets across Telegram call channels and DEX platforms.
 
 ## Architecture
 
 ```
-Telegram Chats ──► telegram_scraper.py ──► central_contracts.db
-                                                   │
-                                                   ▼
-                                           token_enricher.py
-                                     (12 layers, resilient try/bypass)
-                                                   │
-                                                   ▼
-                                          scored top 100 tokens
-                                                   │
-                                                   ▼
-                                           wallet_tracker.py
-                                     (discovery + scoring + detection)
-                                                   │
-                                                   ▼
-                                     ranked smart money wallets
+                              ┌─────────────────────────────────┐
+                              │         DATA SOURCES            │
+                              ├─────────────────────────────────┤
+                              │                                 │
+  Telegram Chats (62)         │   Dexscreener Boosted (30)      │
+  ┌──────────────┐            │   ┌──────────────────────┐      │
+  │ Call Channels │            │   │ Paid Promotions      │      │
+  │ Groups/Devs   │            │   └──────────┬───────────┘      │
+  └──────┬───────┘            │              │                   │
+         │                    │   Dexscreener Profiles (30)      │
+         ▼                    │   ┌──────────────────────┐      │
+  telegram_scraper.py         │   │ Newly Listed Tokens  │      │
+  (every 10 min)              │   └──────────┬───────────┘      │
+         │                    │              │                   │
+         │                    │   token_discovery.py             │
+         │                    │   (every 30 min)                 │
+         │                    └─────────┬───┘                   │
+         │                              │                       │
+         └──────────┬───────────────────┘                       │
+                    ▼                                           │
+         ┌──────────────────────┐                               │
+         │  central_contracts   │◄──────────────────────────────┘
+         │       .db            │
+         │                      │
+         │  telegram_contracts  │
+         │  _unique (505+)      │  Dedup + increment mentions
+         │  telegram_contract   │  per channel per address
+         │  _calls (794+)       │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  token_enricher.py   │  ◄── Runs hourly at :10
+         │                      │
+         │  12 enrichment layers│
+         │  (resilient bypass)  │
+         │                      │
+         │  0 Dexscreener  [R]  │  Volume, txns, FDV, liquidity
+         │  1 Surf             │  Social sentiment, trending
+         │  2 GoPlus v2        │  EVM security
+         │  3 RugCheck         │  Solana security
+         │  4 Etherscan        │  Contract verification
+         │  5 De.Fi            │  Security analysis
+         │  6 Derived          │  Computed signals (no API)
+         │  7 CoinGecko        │  Market data, listings
+         │  8 GMGN             │  Dev conviction, smart money
+         │  9 Social           │  Telegram DB + composite score
+         │ 10 Zerion           │  Price, FDV, supply, verified
+         │ 11 CoinStats MCP    │  Risk score, volatility
+         │                      │
+         │  [R] = Required      │
+         │  All others: bypass  │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  top100.json         │
+         │                      │
+         │  Scored tokens 0-100 │
+         │  with decline guards │
+         │                      │
+         │  Score = social(35)  │
+         │       + freshness(15)│
+         │       + FDV(15)      │
+         │       + volume(20)   │
+         │       + txns(15)     │
+         │       + momentum(10) │
+         │                      │
+         │  - steep decline     │
+         │    penalties (×0.1)  │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  wallet_tracker.py   │  ◄── Runs hourly at :15
+         │                      │
+         │  For each top token: │
+         │  → 15 top holders    │
+         │  → 66 GMGN fields    │
+         │  → Cross-token match │
+         │                      │
+         │  Pattern Detection:  │
+         │  → Copy-trade flags  │
+         │  → Insider flags     │
+         │  → Rug history       │
+         │  → Trading pattern   │
+         │                      │
+         │  Score v3 (0-100):   │
+         │  PNL(35) + Trades(20)│
+         │  + WinRate(10)       │
+         │  + ROI(10) + Age(5)  │
+         │  + Entry(8) + Tag(5) │
+         │  + Insider(5)        │
+         │  + DeFi(5) + Social(2)│
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  wallet_tracker.db   │
+         │                      │
+         │  tracked_wallets     │
+         │  (top 1000 by score) │
+         │                      │
+         │  wallet_token_entries│
+         │  (per-token history) │
+         └──────────┬───────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  smart_money_        │
+         │  research.py         │
+         │                      │
+         │  → Pattern learning  │
+         │  → Leaderboard       │
+         │  → Insights export   │
+         └──────────────────────┘
+                    │
+                    ▼
+         ┌──────────────────────┐
+         │  db_maintenance.py   │  ◄── Daily at 00:00
+         │                      │
+         │  → Prune tokens to   │
+         │    top 1000 by       │
+         │    (channels × calls)│
+         │  → Prune wallets to  │
+         │    top 1000 by score │
+         │  → 7-day min age     │
+         └──────────────────────┘
 ```
 
-## Scripts (Active Pipeline)
+## Scripts
 
-| Script | Cron | Purpose |
-|--------|------|---------|
-| `token_enricher.py` | `10 * * * *` | 12-layer token enrichment + scoring |
-| `wallet_tracker.py` | `15 * * * *` | Wallet discovery, scoring, pattern detection |
-| `telegram_scraper.py` | `*/10 * * * *` | Telegram contract address gathering |
+| Script | Purpose | Cron | Runtime |
+|--------|---------|------|---------|
+| `telegram_scraper.py` | Harvest contract addresses from 62 Telegram chats | `*/10 * * * *` | ~30s |
+| `token_discovery.py` | Pull Dexscreener boosted + new profiles | `*/30 * * * *` | ~2s |
+| `token_enricher.py` | 12-layer enrichment + scoring | `10 * * * *` | ~8 min |
+| `wallet_tracker.py` | Discover + score wallets from top tokens | `15 * * * *` | ~15s |
+| `smart_money_research.py` | Pattern learning + leaderboard | on-demand | ~5s |
+| `db_maintenance.py` | Prune to top 1000 tokens + wallets | `0 0 * * *` | ~1s |
 
 ## Token Enrichment (12 Layers)
 
-| Layer | Source | Data |
-|-------|--------|------|
-| 0 | Dexscreener | Volume, txns, FDV, liquidity, price [REQUIRED] |
-| 1 | Surf | Social sentiment, mindshare, trending |
-| 2 | GoPlus v2 | EVM security (honeypot, tax, mint) |
-| 3 | RugCheck | Solana security (rug score, insiders) |
-| 4 | Etherscan | Contract verification |
-| 5 | De.Fi | Security analysis, holder concentration |
-| 6 | Derived | Computed signals (no API) |
-| 7 | CoinGecko | Market data, exchange listings |
-| 8 | GMGN | Dev conviction, smart money, bot detection |
-| 9 | Social | Telegram DB + composite social score |
-| 10 | Zerion | Price, market cap, FDV, supply, verified flag |
-| 11 | CoinStats | Risk score, liquidity score, volatility |
+| Layer | Source | Data | Required |
+|-------|--------|------|----------|
+| 0 | Dexscreener | Volume, txns, FDV, liquidity, price | Yes |
+| 1 | Surf | Social sentiment, mindshare, trending | No |
+| 2 | GoPlus v2 | EVM security (honeypot, tax, mint) | No |
+| 3 | RugCheck | Solana security (rug score, insiders) | No |
+| 4 | Etherscan | Contract verification | No |
+| 5 | De.Fi | Security analysis, holder concentration | No |
+| 6 | Derived | Computed signals from Dexscreener data | No |
+| 7 | CoinGecko | Market data, exchange listings | No |
+| 8 | GMGN | Dev conviction, smart money, bot detection | No |
+| 9 | Social | Telegram DB + composite social score | No |
+| 10 | Zerion | Price, market cap, FDV, supply, verified | No |
+| 11 | CoinStats | Risk score, liquidity score, volatility | No |
 
-## Token Scoring
+Each enricher is wrapped in try/except. If it fails, its fields are skipped but the pipeline continues. Only Layer 0 (Dexscreener) is required.
 
-Base 0-100 from: social momentum (0-35), freshness (0-15), low FDV (0-15), volume (0-20), txns (0-15), price momentum (0-10).
+## Token Scoring (0-100)
 
-**Steep decline penalties:**
-- h1 < -60%: score ×0.1 (rug in progress)
-- h6 < -50%: score ×0.2 (crashed)
-- h6 < -30%: score ×0.5 (declining)
-- Death spiral (vol dying + declining): ×0.3
+Base score from 6 factors:
+
+| Factor | Points | Description |
+|--------|--------|-------------|
+| Social momentum | 0-35 | Cross-channel calls + Telegram velocity |
+| Freshness | 0-15 | Newer tokens score higher |
+| Low FDV | 0-15 | Lower market cap = more upside |
+| Volume | 0-24 | Absolute + accelerating volume |
+| Transactions | 0-15 | Txn count + buy-heavy ratio |
+| Price momentum | 0-10 | h1/h6/h24 price direction |
+
+Multipliers: verified contract (+20%), dev holding (+25%), LP burned (+15%), smart wallets >20 (+15%), BINANCE listed (+10%), CoinGecko low risk (+5%)
+
+**Steep decline penalties** (price collapse = unlikely to recover):
+
+| Condition | Penalty |
+|-----------|---------|
+| h1 < -60% | score × 0.1 (rug in progress) |
+| h1 < -40% | score × 0.2 |
+| h1 < -25% | score × 0.5 |
+| h6 < -70% | score × 0.1 (dead) |
+| h6 < -50% | score × 0.2 (crashed) |
+| h6 < -30% | score × 0.5 (declining) |
+| Death spiral (vol dying + declining) | score × 0.3 |
 
 ## Wallet Scoring (0-100)
 
 | Factor | Points | Description |
 |--------|--------|-------------|
-| Realized PNL | 0-35 | Profit TAKEN (not paper gains) |
+| Realized PNL | 0-35 | Profit TAKEN, not paper gains |
 | Trade Count | 0-20 | Active wallets = established traders |
 | Win Rate | 0-10 | Profitable tokens / total tokens |
 | ROI | 0-10 | Average profit_change per token |
@@ -69,47 +204,149 @@ Base 0-100 from: social momentum (0-35), freshness (0-15), low FDV (0-15), volum
 | Wallet Age | 0-5 | Longer = more established |
 | Smart Tag | 0-5 | TOP1, KOL, SMART = better |
 | Insider Bonus | 0-5 | MORE insider flags = BETTER |
-| DeFi/Portfolio | 0-5 | Staked/borrowed = serious player |
-| Social | 0-2 | Linked Twitter = credibility |
+| DeFi + Portfolio | 0-5 | Staked/borrowed positions |
+| Social Presence | 0-2 | Linked Twitter = credibility |
 
 **Penalties:**
-- Round trips (profit without selling): -15 each
-- Copy trade: -20
-- Rug history: -100 each (disqualifier)
+
+| Condition | Penalty |
+|-----------|---------|
+| Round trips (profit without selling) | -15 each |
+| Copy trade (always follows others) | -20 |
+| Rug history (rugged anyone) | -100 each |
+
+**Insider flags BOOST the score** — insiders know things, following them = alpha.
 
 ## Pattern Detection
 
 | Pattern | Description |
 |---------|-------------|
-| SNIPER | Exits quickly, high sell ratio |
-| SWING | Moderate holds, partial exits |
-| HOLDER | Few sells, long holds |
+| SNIPER | Exits quickly, high sell ratio (>0.8) |
+| SWING | Moderate holds, partial exits (0.4-0.8) |
+| HOLDER | Few sells, long holds (<0.4) |
 | DEGEN | >50 trades across >10 tokens |
-| INSIDER | Flagged by heuristics |
+| INSIDER | Flagged by heuristics (high ROI + few trades) |
 | ACTIVE | >20 trades |
 
-## API Keys (in `~/.hermes/.env`)
+## Setup
 
-```
-DEFI_API_KEY=
-ETHERSCAN_API_KEY=
-COINGECKO_API_KEY=
-GMGN_API_KEY=
-SURF_API_KEY=
-RUGCHECK_API_KEY=
-ZERION_API_KEY=
-COINSTATS_API_KEY=
-HELIUS_API_KEY=
-ALCHEMY_API_KEY=
-QUICKNODE_KEY=
-TG_API_ID=
-TG_API_HASH=
+### Prerequisites
+
+```bash
+# Node.js (for GMGN CLI + CoinStats MCP)
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
+sudo apt install -y nodejs
+
+# Surf CLI
+curl -sSf https://agent.asksurf.ai/cli/releases/install.sh | bash
+
+# Python dependencies
+pip install telethon requests python-dotenv
 ```
 
-## Legacy Scripts (still in repo, used by smart_money_research.py)
+### API Keys
 
-- `smart_money_research.py` — older enrichment pipeline
-- `dexscreener_enricher.py`, `goplus_enricher.py`, etc. — individual enrichers (superseded by token_enricher.py)
-- `telegram_ingestor.py` — Telegram session handler
-- `wallet_discovery.py` — older wallet finder
-- `pattern_learner.py`, `central_db_sink.py` — ML pattern matching
+Copy `.env.example` to `~/.hermes/.env` and fill in:
+
+```bash
+cp .env.example ~/.hermes/.env
+```
+
+Required keys:
+
+| Key | Service | Free? |
+|-----|---------|-------|
+| `TG_API_ID` / `TG_API_HASH` | Telegram (my.telegram.org) | Yes |
+| `GMGN_API_KEY` | GMGN (gmgn.ai/ai) | Yes |
+| `ZERION_API_KEY` | Zerion (developers.zerion.io) | Yes |
+| `COINSTATS_API_KEY` | CoinStats (coinstats.info/api) | Yes |
+| `ETHERSCAN_API_KEY` | Etherscan (etherscan.io/apis) | Yes |
+| `DEFI_API_KEY` | De.Fi (de.fi) | Yes |
+
+Optional:
+
+| Key | Service |
+|-----|---------|
+| `HELIUS_API_KEY` | Helius (Solana webhooks) |
+| `ALCHEMY_API_KEY` | Alchemy (EVM webhooks) |
+| `TELEGRAM_BOT_TOKEN` | Notifications |
+
+### Run
+
+```bash
+# Test individual scripts
+python3 telegram_scraper.py --dry-run
+python3 token_discovery.py
+python3 token_enricher.py --max-tokens 20
+python3 wallet_tracker.py --min-score 5
+python3 smart_money_research.py --leaderboard
+
+# Or set up cron (recommended)
+```
+
+### Cron Setup
+
+```bash
+crontab -e
+```
+
+Add:
+
+```cron
+# Telegram contract harvesting (every 10 min)
+*/10 * * * * /home/$USER/.hermes/scripts/telegram_scraper.py >> /home/$USER/.hermes/logs/tg_contract_scraper.log 2>&1
+
+# Dexscreener token discovery (every 30 min)
+*/30 * * * * /home/$USER/.hermes/scripts/token_discovery.py >> /home/$USER/.hermes/logs/token_discovery.log 2>&1
+
+# Token enrichment (hourly at :10)
+10 * * * * /home/$USER/.hermes/scripts/token_enricher.py >> /home/$USER/.hermes/logs/token_screener.log 2>&1
+
+# Wallet tracking (hourly at :15)
+15 * * * * /home/$USER/.hermes/scripts/wallet_tracker.py >> /home/$USER/.hermes/logs/wallet_tracker.log 2>&1
+
+# Database maintenance (daily at midnight)
+0 0 * * * /home/$USER/.hermes/scripts/db_maintenance.py >> /home/$USER/.hermes/logs/db_maintenance.log 2>&1
+```
+
+### Database Maintenance
+
+The `db_maintenance.py` script runs daily to keep databases lean:
+
+- **Contracts**: Keeps top 1000 by `(channel_count × mentions)`. Tokens younger than 7 days are never pruned.
+- **Wallets**: Keeps top 1000 by `wallet_score`. Orphaned entries (tokens no longer in DB) are cleaned.
+
+```bash
+# Check current size
+python3 db_maintenance.py --dry-run
+
+# Override limits
+python3 db_maintenance.py --max-tokens 2000 --max-wallets 500
+```
+
+## Data Flow
+
+```
+Every 10 min:  Telegram chats → central_contracts.db (dedup + increment)
+Every 30 min:  Dexscreener   → central_contracts.db (boosted + profiles)
+Hourly :10:    central_contracts.db → 12-layer enrichment → top100.json
+Hourly :15:    top100.json → wallet discovery → wallet_tracker.db
+Daily 00:00:   Prune both DBs to top 1000
+```
+
+## Rate Limits
+
+| API | Delay | Notes |
+|-----|-------|-------|
+| Dexscreener | 1.0s | 300 tokens = 5 min |
+| RugCheck | 0.5s | Free, Solana only |
+| GoPlus v2 | 1.0s | EVM chains only |
+| CoinGecko | 1.5s | Free tier |
+| GMGN CLI | 0.5s | 2 calls per token |
+| Zerion | 1.5s | Basic auth |
+| De.Fi | 3.0s | GraphQL, 20 req/min |
+| Etherscan | 0.25s | V2 API |
+
+## License
+
+MIT
