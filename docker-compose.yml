@@ -1,0 +1,22 @@
+services:
+  dashboard:
+    build: .
+    container_name: hermes-dashboard
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ~/.hermes/data:/root/.hermes/data:ro
+      - ~/.hermes/logs:/root/.hermes/logs:ro
+      - ~/.hermes/.env:/root/.hermes/.env:ro
+    environment:
+      - HERMES_HOME=/root/.hermes
+      - LOG_LEVEL=INFO
+      - LOG_JSON=false
+      - METRICS_ENABLED=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
