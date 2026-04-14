@@ -108,7 +108,7 @@ class Settings(BaseSettings):
     no_activity_hours: int = Field(default=6)
 
     # ── Wallet Tracker ───────────────────────────────────────────────────────
-    holders_per_token: int = Field(default=10)
+    holders_per_token: int = Field(default=1000)
     wallet_min_score: float = Field(default=30.0)
 
     # ── Network ──────────────────────────────────────────────────────────────

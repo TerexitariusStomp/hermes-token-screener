@@ -93,7 +93,7 @@ def test_thresholds():
     assert s.sell_ratio_threshold == 0.70
     assert s.stagnant_volume_ratio == 0.01
     assert s.no_activity_hours == 6
-    assert s.holders_per_token == 10
+    assert s.holders_per_token == 1000
 
 
 def test_telegram_defaults():
