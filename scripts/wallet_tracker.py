@@ -190,56 +190,182 @@ def init_wallet_db() -> sqlite3.Connection:
 
 # ── Wallet Scoring ──────────────────────────────────────────────────────────
 
-def score_wallet(
-    realized_pnl: float,
-    avg_roi: float,
-    win_rate: float,
-    entry_timing: float,
-    total_trades: int,
-) -> float:
-    """
-    Compute wallet quality score (0-100).
+
+# ══════════════════════════════════════════════════════════════════════════════
+# WALLET SCORING v3 — Smart Money Prioritization
+# ══════════════════════════════════════════════════════════════════════════════
+# 
+# Philosophy: The BEST wallets are ones that:
+#   1. Enter tokens EARLY (before call channels catch them)
+#   2. Take PROFIT (not just paper gains)
+#   3. Have HIGH win rate across many tokens
+#   4. Are tagged as smart money by GMGN
+#   5. Have DeFi sophistication (staked/borrowed = serious player)
+#   6. Are INSIDERS (they know things we don't)
+#   7. Exit cleanly (no "round trips" of profit without selling)
+#   8. Never rugged anyone
+#
+# Scoring: 0-100, higher = smarter money to follow
+
+def score_wallet_v3(
+    # Core financial
+    realized_pnl: float,        # total profit taken across all tokens
+    total_profit: float,        # realized + unrealized
+    avg_roi: float,             # avg profit_change multiplier (6.6x = 660%)
+    win_rate: float,            # profitable tokens / total tokens
+    total_trades: int,          # buy + sell across all tokens
     
-    PNL (0-30):       >$100K=30, >$50K=25, >$10K=20, >$1K=10, >$0=5
-    ROI (0-25):       >500%=25, >200%=20, >100%=15, >50%=10, >0=5
-    Win Rate (0-25):  >80%=25, >65%=20, >50%=15, >35%=10
-    Entry (0-10):     <0.1=10, <0.3=7, <0.5=5 (0=at launch=best)
-    Trades (0-10):    >50=10, >20=7, >10=5
-    """
+    # Entry quality
+    entry_timing_score: float,  # 0=at launch=best, 1=late
+    
+    # Social proof
+    smart_money_tag: str,       # TOP1, SMART, DEGEN, etc.
+    wallet_tags: str,           # comma-separated tags
+    
+    # Pattern flags
+    insider_flag: int,          # 1 = insider (good - they know things)
+    copy_trade_flag: int,       # 1 = copy trader (bad - always late)
+    rug_history_count: int,     # count of rugged tokens (terrible)
+    trading_pattern: str,       # SNIPER, SWING, HOLDER, INSIDER, DEGEN
+    
+    # Position quality
+    tokens_profitable: int,     # tokens with positive PnL
+    tokens_total: int,          # total tokens scanned
+    
+    # DeFi sophistication (from Zerion)
+    zerion_value: float,        # current portfolio value
+    defi_value: float,          # staked + borrowed positions
+    
+    # Round trips (profit taken without selling = bad)
+    round_trip_count: int,      # tokens where profit > 0 but sell_count = 0
+) -> float:
+    
     score = 0.0
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 1. REALIZED PNL (0-25) — the most important signal
+    #    Only count PROFIT TAKEN, not paper gains
+    # ─────────────────────────────────────────────────────────────────────
+    if realized_pnl > 500000: score += 25      # whale
+    elif realized_pnl > 100000: score += 22    # serious player
+    elif realized_pnl > 50000: score += 18
+    elif realized_pnl > 10000: score += 14
+    elif realized_pnl > 1000: score += 8
+    elif realized_pnl > 0: score += 4
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 2. AVERAGE ROI (0-20) — how well they trade
+    # ─────────────────────────────────────────────────────────────────────
+    roi_pct = (avg_roi - 1) * 100 if avg_roi and avg_roi > 1 else 0
+    if roi_pct > 1000: score += 20        # >10x average
+    elif roi_pct > 500: score += 17       # >5x
+    elif roi_pct > 200: score += 14       # >3x
+    elif roi_pct > 100: score += 10       # >2x
+    elif roi_pct > 50: score += 6
+    elif roi_pct > 0: score += 3
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 3. WIN RATE (0-15) — consistency matters
+    # ─────────────────────────────────────────────────────────────────────
+    if win_rate and win_rate > 0.80: score += 15
+    elif win_rate and win_rate > 0.65: score += 12
+    elif win_rate and win_rate > 0.50: score += 9
+    elif win_rate and win_rate > 0.35: score += 5
+    elif win_rate and win_rate > 0.20: score += 2
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 4. ENTRY TIMING (0-12) — earlier = better IF profitable
+    # ─────────────────────────────────────────────────────────────────────
+    if entry_timing_score is not None:
+        if entry_timing_score < 0.05: score += 12    # bought at launch
+        elif entry_timing_score < 0.1: score += 10   # very early
+        elif entry_timing_score < 0.2: score += 7
+        elif entry_timing_score < 0.4: score += 4
+        elif entry_timing_score < 0.6: score += 1
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 5. SMART MONEY TAG (0-10) — GMGN's own intelligence
+    # ─────────────────────────────────────────────────────────────────────
+    tag_lower = (smart_money_tag or '').lower()
+    all_tags = set((wallet_tags or '').lower().split(','))
+    
+    if 'top1' in tag_lower or 'top1' in all_tags: score += 10
+    elif 'top2' in tag_lower or 'top3' in tag_lower: score += 8
+    elif 'top5' in tag_lower or 'top10' in all_tags: score += 6
+    elif 'smart' in tag_lower or 'smart' in all_tags: score += 7
+    elif 'kol' in all_tags: score += 8
+    elif 'degen' in tag_lower: score += 3
+    elif any(t.startswith('top') for t in all_tags): score += 4
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 6. INSIDER BONUS (0-8) — MORE insider flags = BETTER
+    #    Insiders know things. Following them = alpha.
+    # ─────────────────────────────────────────────────────────────────────
+    if insider_flag:
+        score += 8
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 7. DEFI SOPHISTICATION (0-5) — staked/borrowed = serious
+    # ─────────────────────────────────────────────────────────────────────
+    if defi_value and defi_value > 100000: score += 5
+    elif defi_value and defi_value > 10000: score += 3
+    elif defi_value and defi_value > 0: score += 1
+    
+    if zerion_value and zerion_value > 500000: score += 3
+    elif zerion_value and zerion_value > 50000: score += 2
+    elif zerion_value and zerion_value > 0: score += 1
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 8. ACTIVITY (0-3) — are they actively trading now?
+    # ─────────────────────────────────────────────────────────────────────
+    if total_trades and total_trades > 100: score += 3
+    elif total_trades and total_trades > 30: score += 2
+    elif total_trades and total_trades > 10: score += 1
+    
+    # ═════════════════════════════════════════════════════════════════════
+    # PENALTIES (subtracted from score)
+    # ═════════════════════════════════════════════════════════════════════
+    
+    # ── ROUND TRIPS (-15 per, max -45) ──
+    # Bought, had paper profit, but didn't sell. That's a missed exit.
+    # More round trips = worse trader (greedy or not paying attention)
+    if round_trip_count:
+        score -= min(45, round_trip_count * 15)
+    
+    # ── COPY TRADE (-20) ──
+    # Always buys after someone else = no alpha, just following
+    if copy_trade_flag:
+        score -= 20
+    
+    # ── RUG HISTORY (-100 per rug, uncapped) ──
+    # If they rugged anyone, they're toxic. Period.
+    if rug_history_count:
+        score -= rug_history_count * 100
+    
+    # ── LOW WIN RATE PENALTY ──
+    # If they've traded 10+ tokens and win rate < 30%, they're bad
+    if tokens_total and tokens_total >= 10 and win_rate and win_rate < 0.30:
+        score -= 10
+    
+    return max(0, min(100, round(score, 1)))
 
-    # PNL
-    if realized_pnl > 100000: score += 30
-    elif realized_pnl > 50000: score += 25
-    elif realized_pnl > 10000: score += 20
-    elif realized_pnl > 1000: score += 10
-    elif realized_pnl > 0: score += 5
 
-    # ROI (avg_roi is a multiplier, e.g. 6.6 = 660%)
-    roi_pct = avg_roi * 100 if avg_roi else 0
-    if roi_pct > 500: score += 25
-    elif roi_pct > 200: score += 20
-    elif roi_pct > 100: score += 15
-    elif roi_pct > 50: score += 10
-    elif roi_pct > 0: score += 5
-
-    # Win rate
-    if win_rate > 0.80: score += 25
-    elif win_rate > 0.65: score += 20
-    elif win_rate > 0.50: score += 15
-    elif win_rate > 0.35: score += 10
-
-    # Entry timing (0-1 normalized, 0=early=best)
-    if entry_timing < 0.1: score += 10
-    elif entry_timing < 0.3: score += 7
-    elif entry_timing < 0.5: score += 5
-
-    # Trade count
-    if total_trades > 50: score += 10
-    elif total_trades > 20: score += 7
-    elif total_trades > 10: score += 5
-
-    return min(100, round(score, 1))
+def compute_round_trips(conn: sqlite3.Connection) -> Dict[str, int]:
+    """
+    Count "round trips" per wallet.
+    A round trip = token where profit > 0 but sell_count = 0.
+    They made money on paper but didn't realize it.
+    """
+    c = conn.cursor()
+    c.execute("""
+        SELECT wallet_address, COUNT(*) as rt_count
+        FROM wallet_token_entries
+        WHERE profit > 0 
+          AND (sell_tx_count IS NULL OR sell_tx_count = 0)
+          AND unrealized_profit > 0
+        GROUP BY wallet_address
+    """)
+    return {row[0]: row[1] for row in c.fetchall()}
 
 
 # ── Discovery ───────────────────────────────────────────────────────────────
@@ -383,7 +509,11 @@ def enrich_wallets_from_tokens(
         source_tokens = ','.join(set(a['token_symbol'] for a in appearances))
 
         # Score
-        wallet_score = score_wallet(
+        # Compute round trips
+        round_trips = compute_round_trips(conn)
+        rt_count = round_trips.get(wallet_addr, 0)
+        
+        wallet_score = score_wallet_v3(
             realized_pnl=total_realized or total_profit,
             avg_roi=avg_roi,
             win_rate=win_rate,
@@ -903,6 +1033,42 @@ def main():
     
     infer_trading_patterns(conn)
     log.info("  Trading patterns inferred")
+    
+    # Re-score all wallets with new flags
+    log.info("Re-scoring with pattern flags...")
+    c = conn.cursor()
+    c.execute("SELECT address, realized_pnl, total_profit, avg_roi, win_rate, total_trades, entry_timing_score, smart_money_tag, wallet_tags, insider_flag, copy_trade_flag, rug_history_count, trading_pattern, tokens_profitable, tokens_total, zerion_value, zerion_defi_value FROM tracked_wallets WHERE wallet_score > 0")
+    
+    round_trips = compute_round_trips(conn)
+    
+    rescored = 0
+    for row in c.fetchall():
+        addr, rpnl, tprof, roi, wr, trades, entry, stag, wtags, ins, copy, rugs, pattern, prof_t, total_t, zval, dval = row
+        rt = round_trips.get(addr, 0)
+        
+        new_score = score_wallet_v3(
+            realized_pnl=rpnl or 0,
+            total_profit=tprof or 0,
+            avg_roi=roi or 0,
+            win_rate=wr or 0,
+            total_trades=trades or 0,
+            entry_timing_score=entry or 0.5,
+            smart_money_tag=stag or '',
+            wallet_tags=wtags or '',
+            insider_flag=ins or 0,
+            copy_trade_flag=copy or 0,
+            rug_history_count=rugs or 0,
+            trading_pattern=pattern or '',
+            tokens_profitable=prof_t or 0,
+            tokens_total=total_t or 0,
+            zerion_value=zval or 0,
+            defi_value=dval or 0,
+            round_trip_count=rt,
+        )
+        conn.execute("UPDATE tracked_wallets SET wallet_score = ? WHERE address = ?", (new_score, addr))
+        rescored += 1
+    conn.commit()
+    log.info(f"  Re-scored {rescored} wallets")
     
     # Report
     report(conn)
