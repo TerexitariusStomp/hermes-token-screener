@@ -1374,34 +1374,6 @@ class CoinStatsEnricher:
 
     # get_wallet_balance removed — CoinStats wallet API unreliable
 
-        data = self._call_mcp('get-wallet-balance', {
-            'address': address,
-            'connectionId': chain,
-        })
-
-        if not data or not isinstance(data, list):
-            return {}
-
-        total_value = 0
-        tokens = []
-        for item in data:
-            amount = _float(item.get('amount', 0)) or 0
-            price = _float(item.get('price', 0)) or 0
-            value = amount * price
-            total_value += value
-            if amount > 0:
-                tokens.append({
-                    'symbol': item.get('symbol', ''),
-                    'amount': amount,
-                    'value': value,
-                })
-
-        return {
-            'cs_wallet_value': round(total_value, 2),
-            'cs_wallet_tokens': len(tokens),
-            'cs_wallet_top': tokens[:3] if tokens else [],
-        }
-
 # ══════════════════════════════════════════════════════════════════════════════
 # SCORING
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1913,6 +1885,16 @@ def run_enricher():
             'social_score': token.get('social_score'),
             'gmgn_smart_wallets': token.get('gmgn_smart_wallets'),
             'gmgn_dev_hold': token.get('gmgn_dev_hold'),
+            # Zerion
+            'zerion_market_cap': token.get('zerion_market_cap'),
+            'zerion_fdv': token.get('zerion_fdv'),
+            'zerion_verified': token.get('zerion_verified'),
+            'zerion_chain_count': token.get('zerion_chain_count'),
+            # CoinStats
+            'cs_risk_score': token.get('cs_risk_score'),
+            'cs_liquidity_score': token.get('cs_liquidity_score'),
+            'cs_volatility_score': token.get('cs_volatility_score'),
+            'cs_rank': token.get('cs_rank'),
             'positives': pos,
             'negatives': neg,
             'dex_url': f"https://dexscreener.com/{token['chain']}/{token['contract_address']}",

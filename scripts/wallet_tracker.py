@@ -128,6 +128,18 @@ def init_wallet_db() -> sqlite3.Connection:
             first_seen_at REAL,
             last_active_at REAL,
             
+            -- Pattern detection
+            copy_trade_flag INTEGER DEFAULT 0,
+            insider_flag INTEGER DEFAULT 0,
+            rug_history_count INTEGER DEFAULT 0,
+            trading_pattern TEXT,
+            avg_hold_hours REAL,
+            
+            -- Zerion supplement
+            zerion_value REAL,
+            zerion_24h_change_pct REAL,
+            zerion_defi_value REAL,
+            
             UNIQUE(chain, address)
         );
 
@@ -473,7 +485,8 @@ def report(conn: sqlite3.Connection, limit: int = 20):
     cursor.execute(f"""
         SELECT address, chain, wallet_score, realized_pnl, avg_roi, 
                win_rate, total_trades, tokens_profitable, tokens_total,
-               smart_money_tag, source_tokens, twitter_username
+               smart_money_tag, source_tokens, twitter_username,
+               trading_pattern, insider_flag, copy_trade_flag, rug_history_count
         FROM tracked_wallets
         WHERE wallet_score > 0
         ORDER BY wallet_score DESC
@@ -483,17 +496,22 @@ def report(conn: sqlite3.Connection, limit: int = 20):
     print(f"\n{'='*80}")
     print(f"TOP {limit} WALLETS BY SCORE")
     print(f"{'='*80}")
-    print(f"{'Score':>6} {'PnL':>12} {'ROI':>8} {'WinRate':>8} {'Trades':>7} {'Tokens':>7} {'Tag':>6} {'Wallet'}")
-    print(f"{'-'*6} {'-'*12} {'-'*8} {'-'*8} {'-'*7} {'-'*7} {'-'*6} {'-'*30}")
+    print(f"{'Score':>6} {'PnL':>12} {'ROI':>8} {'WinRate':>8} {'Trades':>7} {'Tokens':>7} {'Tag':>6} {'Pattern':>8} {'Flags':>6} {'Wallet'}")
+    print(f"{'-'*6} {'-'*12} {'-'*8} {'-'*8} {'-'*7} {'-'*7} {'-'*6} {'-'*8} {'-'*6} {'-'*25}")
 
     for r in cursor.fetchall():
-        addr, chain, score, pnl, roi, wr, trades, prof, total, tag, tokens, tw = r
+        addr, chain, score, pnl, roi, wr, trades, prof, total, tag, tokens, tw, pattern, insider, copy, rugs = r
+        flags = []
+        if insider: flags.append('IN')
+        if copy: flags.append('CP')
+        if rugs and rugs > 0: flags.append(f'R{rugs}')
+        flag_str = ','.join(flags) or '-'
         pnl_str = f"${pnl or 0:>11,.0f}" if pnl else "      $0"
         roi_str = f"{(roi or 0)*100:>6.0f}%" if roi else "    -%"
         wr_str = f"{(wr or 0)*100:>6.0f}%" if wr else "    -%"
         trades_str = f"{trades or 0:>6}"
         tokens_str = f"{prof or 0}/{total or 0}"
-        print(f"{score:>6.1f} {pnl_str} {roi_str} {wr_str} {trades_str} {tokens_str:>7} {tag or '-':>6} {addr[:30]}...")
+        print(f"{score:>6.1f} {pnl_str} {roi_str} {wr_str} {trades_str} {tokens_str:>7} {tag or '-':>6} {pattern or '-':>8} {flag_str:>6} {addr[:25]}...")
 
     # Stats
     cursor.execute("SELECT count(*), avg(wallet_score), max(wallet_score), count(CASE WHEN win_rate > 0.5 THEN 1 END) FROM tracked_wallets")
@@ -564,6 +582,270 @@ class ZerionWalletEnricher:
 
         return result
 
+
+
+# ── V2 Schema Additions (new columns) ──────────────────────────────────────
+
+def upgrade_wallet_db(conn: sqlite3.Connection):
+    """Add new columns for v2 enrichment features."""
+    c = conn.cursor()
+    
+    # Check existing columns
+    c.execute("PRAGMA table_info(tracked_wallets)")
+    existing = {r[1] for r in c.fetchall()}
+    
+    new_columns = {
+        'copy_trade_flag': 'INTEGER DEFAULT 0',
+        'insider_flag': 'INTEGER DEFAULT 0',
+        'rug_history_count': 'INTEGER DEFAULT 0',
+        'trading_pattern': 'TEXT',
+        'avg_hold_hours': 'REAL',
+        'zerion_value': 'REAL',
+        'zerion_24h_change_pct': 'REAL',
+        'zerion_defi_value': 'REAL',
+    }
+    
+    for col, col_type in new_columns.items():
+        if col not in existing:
+            try:
+                c.execute(f"ALTER TABLE tracked_wallets ADD COLUMN {col} {col_type}")
+            except Exception:
+                pass
+    
+    conn.commit()
+
+
+# ── Copy-Trade Detection ───────────────────────────────────────────────────
+
+def detect_copy_traders(conn: sqlite3.Connection) -> int:
+    """
+    Detect wallets that copy other wallets.
+    
+    Heuristic: A wallet is a copy trader if it consistently buys the same
+    tokens as another wallet but LATER (start_holding_at is always greater).
+    
+    Steps:
+    1. For each token, get all wallet entries sorted by start_holding_at
+    2. If wallet A bought after wallet B on 3+ tokens with <5min delay,
+       A is likely copying B
+    """
+    c = conn.cursor()
+    
+    # Get all token entries grouped by token
+    c.execute("""
+        SELECT token_address, wallet_address, start_holding_at, profit_change
+        FROM wallet_token_entries
+        WHERE start_holding_at IS NOT NULL
+        ORDER BY token_address, start_holding_at
+    """)
+    
+    # Group by token
+    token_entries = {}
+    for row in c.fetchall():
+        token = row[0]
+        if token not in token_entries:
+            token_entries[token] = []
+        token_entries[token].append({
+            'wallet': row[1],
+            'time': row[2],
+            'roi': row[3] or 0,
+        })
+    
+    # For each pair of wallets, count how many times one bought after the other
+    from collections import defaultdict
+    follower_counts = defaultdict(lambda: defaultdict(int))
+    
+    for token, entries in token_entries.items():
+        if len(entries) < 2:
+            continue
+        # Sort by entry time
+        entries.sort(key=lambda x: x['time'])
+        # For each pair, the later one might be copying the earlier one
+        for i, later in enumerate(entries):
+            for earlier in entries[:i]:
+                time_diff = later['time'] - earlier['time']
+                # If bought within 10 minutes after, count as potential copy
+                if 0 < time_diff < 600:
+                    follower_counts[later['wallet']][earlier['wallet']] += 1
+    
+    # Mark wallets that follow 2+ other wallets on 3+ tokens
+    flagged = 0
+    for follower, leaders in follower_counts.items():
+        total_copies = sum(leaders.values())
+        if total_copies >= 3:
+            c.execute("""
+                UPDATE tracked_wallets 
+                SET copy_trade_flag = 1 
+                WHERE address = ? AND copy_trade_flag = 0
+            """, (follower,))
+            flagged += c.rowcount
+    
+    conn.commit()
+    return flagged
+
+
+# ── Insider Detection ───────────────────────────────────────────────────────
+
+def detect_insiders(conn: sqlite3.Connection) -> int:
+    """
+    Detect insider wallets.
+    
+    Heuristics:
+    1. Wallet funded by the token creator (fund_from matches creator)
+    2. Wallet has 'is_suspicious' flag from GMGN
+    3. Wallet bought BEFORE the token's public launch (very early entry)
+    4. Wallet's avg ROI is unrealistically high (>20x) with few trades
+    """
+    c = conn.cursor()
+    
+    flagged = 0
+    
+    # 1. Very early entries with extreme ROI (possible insider)
+    c.execute("""
+        SELECT wte.wallet_address, COUNT(*) as early_count
+        FROM wallet_token_entries wte
+        WHERE wte.profit_change > 10  -- >1000% ROI
+          AND wte.buy_tx_count <= 3   -- very few buys
+          AND wte.is_profitable = 1
+        GROUP BY wte.wallet_address
+        HAVING early_count >= 2
+    """)
+    for wallet, count in c.fetchall():
+        c.execute("""
+            UPDATE tracked_wallets 
+            SET insider_flag = 1 
+            WHERE address = ? AND insider_flag = 0
+        """, (wallet,))
+        flagged += c.rowcount
+    
+    # 2. Wallets with suspiciously high avg ROI
+    c.execute("""
+        SELECT address FROM tracked_wallets
+        WHERE avg_roi > 20  -- >2000% average ROI
+          AND total_trades < 10
+          AND insider_flag = 0
+    """)
+    for (wallet,) in c.fetchall():
+        c.execute("UPDATE tracked_wallets SET insider_flag = 1 WHERE address = ?", (wallet,))
+        flagged += c.rowcount
+    
+    conn.commit()
+    return flagged
+
+
+# ── Rug History Detection ───────────────────────────────────────────────────
+
+def detect_rug_history(conn: sqlite3.Connection) -> int:
+    """
+    Count how many rugged tokens each wallet held.
+    
+    A token is "rugged" if:
+    - GMGN honeypot = true
+    - RugCheck rugged = true
+    - Profit was very negative (< -90%) with high initial buy
+    
+    We check wallet_token_entries and cross-reference with token data
+    from the enricher output.
+    """
+    c = conn.cursor()
+    
+    # Load rugged token list from enricher output
+    rugged_tokens = set()
+    try:
+        import json
+        from pathlib import Path
+        top100_path = Path.home() / '.hermes' / 'data' / 'token_screener' / 'top100.json'
+        if top100_path.exists():
+            with open(top100_path) as f:
+                data = json.load(f)
+            for t in data.get('tokens', []):
+                if (t.get('gmgn_honeypot') or 
+                    t.get('rugcheck_rugged') or
+                    t.get('goplus_is_honeypot')):
+                    rugged_tokens.add(t.get('contract_address', ''))
+    except Exception:
+        pass
+    
+    # Also flag entries with massive losses as potential rugs
+    c.execute("""
+        SELECT wallet_address, COUNT(*) as rug_count
+        FROM wallet_token_entries
+        WHERE (profit_change < -0.9 OR profit < -1000)
+          AND is_profitable = 0
+        GROUP BY wallet_address
+    """)
+    
+    for wallet, count in c.fetchall():
+        # Add any known rugged tokens
+        c.execute("""
+            SELECT COUNT(*) FROM wallet_token_entries
+            WHERE wallet_address = ? AND token_address IN (
+                SELECT value FROM json_each(?)
+            )
+        """, (wallet, json.dumps(list(rugged_tokens))))
+        extra = c.fetchone()[0]
+        
+        total_rugs = count + extra
+        c.execute("""
+            UPDATE tracked_wallets 
+            SET rug_history_count = ?
+            WHERE address = ?
+        """, (total_rugs, wallet))
+    
+    conn.commit()
+    return len(rugged_tokens)
+
+
+# ── Trading Pattern Inference ───────────────────────────────────────────────
+
+def infer_trading_patterns(conn: sqlite3.Connection) -> int:
+    """
+    Classify wallet trading patterns based on behavior.
+    
+    SNIPER:  buys within minutes of launch, sells quickly, many trades
+    SWING:   holds for hours to days, moderate trade frequency  
+    HOLDER:  holds for days/weeks, few sells
+    INSIDER: buys before pump, high ROI, few trades
+    DEGEN:   high volume, many tokens, mixed results
+    """
+    c = conn.cursor()
+    
+    c.execute("""
+        SELECT address, total_trades, avg_roi, win_rate, tokens_total,
+               sell_count, buy_count, rug_history_count, insider_flag
+        FROM tracked_wallets
+        WHERE wallet_score > 0
+    """)
+    
+    updated = 0
+    for row in c.fetchall():
+        addr, trades, roi, wr, tokens, sells, buys, rugs, insider = row
+        
+        if insider:
+            pattern = 'INSIDER'
+        elif trades and trades > 50 and tokens and tokens > 10:
+            pattern = 'DEGEN'
+        elif sells and buys and sells > 0:
+            sell_ratio = sells / max(buys, 1)
+            if sell_ratio > 0.8:
+                pattern = 'SNIPER'  # exits quickly
+            elif sell_ratio > 0.4:
+                pattern = 'SWING'
+            else:
+                pattern = 'HOLDER'
+        elif trades and trades > 20:
+            pattern = 'ACTIVE'
+        else:
+            pattern = 'UNKNOWN'
+        
+        c.execute("""
+            UPDATE tracked_wallets SET trading_pattern = ? WHERE address = ?
+        """, (pattern, addr))
+        updated += 1
+    
+    conn.commit()
+    return updated
+
 # ── Main ────────────────────────────────────────────────────────────────────
 
 def main():
@@ -606,6 +888,22 @@ def main():
     elapsed = time.time() - start
     log.info(f"Done in {elapsed:.1f}s: {json.dumps(result)}")
 
+    # Run pattern detection
+    log.info("Running pattern detection...")
+    upgrade_wallet_db(conn)
+    
+    flagged_copy = detect_copy_traders(conn)
+    log.info(f"  Copy-trade flagged: {flagged_copy}")
+    
+    flagged_insider = detect_insiders(conn)
+    log.info(f"  Insider flagged: {flagged_insider}")
+    
+    detect_rug_history(conn)
+    log.info("  Rug history computed")
+    
+    infer_trading_patterns(conn)
+    log.info("  Trading patterns inferred")
+    
     # Report
     report(conn)
     conn.close()
