@@ -1096,6 +1096,312 @@ class SocialSignalEnricher:
 
         return round(min(100, max(0, score)), 1)
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# LAYER 10: Zerion (token market data + wallet portfolio)
+# ══════════════════════════════════════════════════════════════════════════════
+
+import base64
+
+ZERION_KEY = os.getenv('ZERION_API_KEY', '')
+ZERION_DELAY = 1.0
+
+class ZerionEnricher:
+    def __init__(self):
+        self.session = requests.Session()
+        if ZERION_KEY:
+            auth = base64.b64encode((ZERION_KEY + ":").encode()).decode()
+            self.session.headers.update({
+                'Authorization': f'Basic {auth}',
+                'accept': 'application/json',
+            })
+        self.last_request = 0
+        self.cache = {}
+
+    def _rate_limit(self):
+        elapsed = time.time() - self.last_request
+        if elapsed < ZERION_DELAY:
+            time.sleep(ZERION_DELAY - elapsed)
+        self.last_request = time.time()
+
+    def _get(self, endpoint: str, params: dict = None) -> Optional[dict]:
+        self._rate_limit()
+        try:
+            r = self.session.get(f'https://api.zerion.io/v1{endpoint}', params=params or {}, timeout=15)
+            if r.status_code == 200:
+                return r.json()
+            if r.status_code == 429:
+                time.sleep(5)
+                return None
+        except Exception:
+            pass
+        return None
+
+    def enrich_token(self, chain: str, address: str, symbol: str = '') -> Dict[str, Any]:
+        """Get token market data from Zerion."""
+        cache_key = f"{chain}:{address}"
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+
+        if not ZERION_KEY:
+            return {}
+
+        # Search by symbol or address
+        query = symbol if symbol else address
+        data = self._get('/fungibles', {'filter[search_query]': query})
+        if not data:
+            return {}
+
+        # Find the right token matching our chain
+        target_chain = chain.lower()
+        for item in data.get('data', []):
+            attrs = item.get('attributes', {})
+            impls = attrs.get('implementations', [])
+
+            # Check if this token exists on our chain
+            chain_match = any(
+                i.get('chain_id', '').lower() == target_chain
+                for i in impls
+            )
+            # Or match by contract address
+            addr_match = any(
+                i.get('address', '').lower() == address.lower()
+                for i in impls
+            )
+
+            if chain_match or addr_match:
+                md = attrs.get('market_data', {})
+                result = {
+                    'zerion_name': attrs.get('name'),
+                    'zerion_symbol': attrs.get('symbol'),
+                    'zerion_verified': attrs.get('flags', {}).get('verified', False),
+                    'zerion_price': _float(md.get('price')),
+                    'zerion_market_cap': _float(md.get('market_cap')),
+                    'zerion_fdv': _float(md.get('fully_diluted_valuation')),
+                    'zerion_total_supply': _float(md.get('total_supply')),
+                    'zerion_circulating_supply': _float(md.get('circulating_supply')),
+                }
+
+                # Price changes
+                changes = md.get('changes', {})
+                if isinstance(changes, dict):
+                    for period in ['1h', '1d', '1w']:
+                        ch = changes.get(f'percent_{period}')
+                        if ch is not None:
+                            result[f'zerion_change_{period}'] = _float(ch)
+
+                # External links
+                links = attrs.get('external_links', [])
+                if isinstance(links, list):
+                    for link in links:
+                        ltype = link.get('type', '')
+                        if ltype == 'twitter':
+                            result['zerion_twitter'] = link.get('url', '')
+                        elif ltype == 'coingecko':
+                            result['zerion_coingecko_url'] = link.get('url', '')
+
+                # Chain count
+                result['zerion_chain_count'] = len(impls)
+
+                self.cache[cache_key] = result
+                return result
+
+        return {}
+
+    def enrich_batch(self, tokens: List[dict]) -> Tuple[List[dict], int]:
+        count = 0
+        for token in tokens:
+            symbol = token.get('symbol') or token.get('cg_symbol', '')
+            data = self.enrich_token(
+                token.get('chain', ''),
+                token.get('contract_address', ''),
+                symbol,
+            )
+            if data:
+                token.update(data)
+                count += 1
+        return tokens, count
+
+    def get_wallet_portfolio(self, address: str) -> Dict[str, Any]:
+        """Get wallet portfolio value and positions from Zerion."""
+        if not ZERION_KEY:
+            return {}
+
+        data = self._get(f'/wallets/{address}/portfolio')
+        if not data:
+            return {}
+
+        attrs = data.get('data', {}).get('attributes', {})
+        total = attrs.get('total', {})
+        changes = attrs.get('changes', {})
+
+        result = {
+            'zerion_portfolio_value': _float(total.get('positions', 0)),
+            'zerion_24h_change_abs': _float(changes.get('absolute_1d')) if changes else None,
+            'zerion_24h_change_pct': _float(changes.get('percent_1d')) if changes else None,
+        }
+
+        # Distribution
+        dist = attrs.get('positions_distribution_by_type', {})
+        if dist:
+            result['zerion_deposited'] = _float(dist.get('deposited', 0))
+            result['zerion_staked'] = _float(dist.get('staked', 0))
+            result['zerion_borrowed'] = _float(dist.get('borrowed', 0))
+
+        return result
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# LAYER 11: CoinStats (risk score + market data via MCP)
+# ══════════════════════════════════════════════════════════════════════════════
+
+COINSTATS_API_KEY = os.getenv('COINSTATS_API_KEY', '')
+COINSTATS_MCP_DELAY = 2.0
+
+class CoinStatsEnricher:
+    def __init__(self):
+        self.last_call = 0
+        self.cache = {}
+        self._node = None
+
+    def _find_node(self):
+        if self._node:
+            return self._node
+        self._node = shutil.which('node') or '/usr/local/bin/node'
+        return self._node
+
+    def _rate_limit(self):
+        elapsed = time.time() - self.last_call
+        if elapsed < COINSTATS_MCP_DELAY:
+            time.sleep(COINSTATS_MCP_DELAY - elapsed)
+        self.last_call = time.time()
+
+    def _call_mcp(self, tool: str, args: dict) -> Optional[Any]:
+        """Call CoinStats MCP tool via npx subprocess."""
+        if not COINSTATS_API_KEY:
+            return None
+
+        self._rate_limit()
+        try:
+            import tempfile
+            req = json.dumps({
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": tool, "arguments": args}
+            })
+
+            env = {**os.environ, 'COINSTATS_API_KEY': COINSTATS_API_KEY}
+            result = subprocess.run(
+                ['npx', '-y', '@coinstats/coinstats-mcp'],
+                input=req, capture_output=True, text=True, timeout=30, env=env
+            )
+
+            # Parse JSON-RPC response from stdout (skip MCP startup line)
+            for line in result.stdout.strip().split('\n'):
+                line = line.strip()
+                if line.startswith('{'):
+                    try:
+                        resp = json.loads(line)
+                        content = resp.get('result', {}).get('content', [])
+                        if content:
+                            return json.loads(content[0].get('text', '{}'))
+                    except (json.JSONDecodeError, KeyError):
+                        pass
+        except Exception:
+            pass
+        return None
+
+    def enrich_token(self, symbol: str, address: str = '') -> Dict[str, Any]:
+        """Get token risk score and market data from CoinStats."""
+        cache_key = symbol or address
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+
+        if not COINSTATS_API_KEY:
+            return {}
+
+        # Search by symbol
+        data = self._call_mcp('get-coins', {
+            'symbol': symbol,
+            'limit': 1,
+            'includeRiskScore': 'true',
+        })
+
+        if not data or not data.get('result'):
+            return {}
+
+        coin = data['result'][0]
+
+        result = {
+            'cs_id': coin.get('id'),
+            'cs_rank': coin.get('rank'),
+            'cs_price': _float(coin.get('price')),
+            'cs_market_cap': _float(coin.get('marketCap')),
+            'cs_volume': _float(coin.get('volume')),
+            'cs_fdv': _float(coin.get('fullyDilutedValuation')),
+            'cs_available_supply': _float(coin.get('availableSupply')),
+            'cs_total_supply': _float(coin.get('totalSupply')),
+            'cs_price_change_1h': _float(coin.get('priceChange1h')),
+            'cs_price_change_1d': _float(coin.get('priceChange1d')),
+            'cs_price_change_1w': _float(coin.get('priceChange1w')),
+            'cs_risk_score': _float(coin.get('riskScore')),
+            'cs_liquidity_score': _float(coin.get('liquidityScore')),
+            'cs_volatility_score': _float(coin.get('volatilityScore')),
+            'cs_avg_change': _float(coin.get('avgChange')),
+            'cs_twitter_url': coin.get('twitterUrl', ''),
+        }
+
+        # Contract addresses
+        addrs = coin.get('contractAddresses', [])
+        if addrs:
+            result['cs_chain_count'] = len(addrs)
+
+        self.cache[cache_key] = result
+        return result
+
+    def enrich_batch(self, tokens: List[dict]) -> Tuple[List[dict], int]:
+        count = 0
+        for token in tokens:
+            symbol = token.get('symbol') or token.get('cg_symbol', '')
+            if not symbol:
+                continue
+            data = self.enrich_token(symbol, token.get('contract_address', ''))
+            if data:
+                token.update(data)
+                count += 1
+        return tokens, count
+
+    # get_wallet_balance removed — CoinStats wallet API unreliable
+
+        data = self._call_mcp('get-wallet-balance', {
+            'address': address,
+            'connectionId': chain,
+        })
+
+        if not data or not isinstance(data, list):
+            return {}
+
+        total_value = 0
+        tokens = []
+        for item in data:
+            amount = _float(item.get('amount', 0)) or 0
+            price = _float(item.get('price', 0)) or 0
+            value = amount * price
+            total_value += value
+            if amount > 0:
+                tokens.append({
+                    'symbol': item.get('symbol', ''),
+                    'amount': amount,
+                    'value': value,
+                })
+
+        return {
+            'cs_wallet_value': round(total_value, 2),
+            'cs_wallet_tokens': len(tokens),
+            'cs_wallet_top': tokens[:3] if tokens else [],
+        }
+
 # ══════════════════════════════════════════════════════════════════════════════
 # SCORING
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1375,6 +1681,36 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
         score *= 0.4
         negatives.append("no txns in 6h")
 
+
+    # ── Zerion Token Signals ──
+    if token.get('zerion_verified'):
+        score *= 1.05
+        positives.append("Zerion verified")
+    if token.get('zerion_chain_count', 0) > 5:
+        score *= 1.03
+
+    # ── CoinStats Risk Score ──
+    cs_risk = token.get('cs_risk_score')
+    if cs_risk is not None:
+        if cs_risk > 80:
+            score *= 0.5
+            negatives.append(f"CoinStats risk {cs_risk:.0f}")
+        elif cs_risk > 60:
+            score *= 0.7
+            negatives.append(f"CoinStats risk {cs_risk:.0f}")
+        elif cs_risk < 30:
+            score *= 1.05
+            positives.append(f"CoinStats low risk ({cs_risk:.0f})")
+
+    cs_liq = token.get('cs_liquidity_score')
+    if cs_liq is not None and cs_liq < 10:
+        score *= 0.8
+        negatives.append(f"low CoinStats liquidity ({cs_liq:.0f})")
+
+    cs_vol = token.get('cs_volatility_score')
+    if cs_vol is not None and cs_vol > 95:
+        score *= 0.9
+
     return round(score, 2), positives, negatives
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1535,6 +1871,26 @@ def run_enricher():
     except Exception as e:
         status.record('Social', False, 0, len(enriched), str(e), time.time() - start)
 
+
+    # Layer 10: Zerion
+    log.info("Layer 10: Zerion (token + wallet data)...")
+    start = time.time()
+    try:
+        zerion = ZerionEnricher()
+        _, count = zerion.enrich_batch(enriched)
+        status.record('Zerion', True, count, len(enriched), elapsed=time.time() - start)
+    except Exception as e:
+        status.record('Zerion', False, 0, len(enriched), str(e), time.time() - start)
+
+    # Layer 11: CoinStats
+    log.info("Layer 11: CoinStats (risk score)...")
+    start = time.time()
+    try:
+        cs = CoinStatsEnricher()
+        _, count = cs.enrich_batch(enriched)
+        status.record('CoinStats', True, count, len(enriched), elapsed=time.time() - start)
+    except Exception as e:
+        status.record('CoinStats', False, 0, len(enriched), str(e), time.time() - start)
     # ── Score ──
     scored = []
     for token in enriched:

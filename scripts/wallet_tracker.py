@@ -501,6 +501,69 @@ def report(conn: sqlite3.Connection, limit: int = 20):
     print(f"\nTotal: {total} wallets | Avg score: {avg_s:.1f} | Max: {max_s:.1f} | Win rate >50%: {high_wr}")
 
 
+
+
+# ── Zerion Wallet Enrichment ────────────────────────────────────────────────
+
+ZERION_KEY = os.getenv('ZERION_API_KEY', '')
+
+class ZerionWalletEnricher:
+    def __init__(self):
+        self.session = requests.Session()
+        if ZERION_KEY:
+            auth = base64.b64encode((ZERION_KEY + ":").encode()).decode()
+            self.session.headers.update({
+                'Authorization': f'Basic {auth}',
+                'accept': 'application/json',
+            })
+        self.last_request = 0
+
+    def _rate_limit(self):
+        elapsed = time.time() - self.last_request
+        if elapsed < 1.5:
+            time.sleep(1.5 - elapsed)
+        self.last_request = time.time()
+
+    def enrich_wallet(self, address: str) -> Dict[str, Any]:
+        """Get portfolio value and activity from Zerion."""
+        if not ZERION_KEY:
+            return {}
+
+        self._rate_limit()
+        try:
+            r = self.session.get(
+                f'https://api.zerion.io/v1/wallets/{address}/portfolio',
+                timeout=15
+            )
+            if r.status_code == 429:
+                time.sleep(5)
+                return {}
+            if r.status_code != 200:
+                return {}
+            data = r.json()
+        except Exception:
+            return {}
+
+        attrs = data.get('data', {}).get('attributes', {})
+        total = attrs.get('total', {})
+        changes = attrs.get('changes', {})
+
+        result = {
+            'zerion_value': total.get('positions', 0),
+        }
+
+        if changes:
+            result['zerion_24h_change_pct'] = changes.get('percent_1d')
+
+        dist = attrs.get('positions_distribution_by_type', {})
+        if dist:
+            deposited = dist.get('deposited', 0) or 0
+            staked = dist.get('staked', 0) or 0
+            if deposited > 0 or staked > 0:
+                result['zerion_defi_value'] = deposited + staked
+
+        return result
+
 # ── Main ────────────────────────────────────────────────────────────────────
 
 def main():
