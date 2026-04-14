@@ -1479,6 +1479,49 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
     elif pc_h24 is not None and pc_h24 > 0: momentum += 2
     score += momentum
 
+    # ── STEEP DECLINE PENALTIES (price collapse = unlikely to recover) ──
+
+    # Rapid crash in h1 (steep sell-off, rug in progress)
+    if pc_h1 is not None:
+        if pc_h1 < -60:
+            score *= 0.1
+            negatives.append(f"CRASH h1 ({pc_h1:+.0f}%)")
+        elif pc_h1 < -40:
+            score *= 0.2
+            negatives.append(f"steep decline h1 ({pc_h1:+.0f}%)")
+        elif pc_h1 < -25:
+            score *= 0.5
+            negatives.append(f"heavy decline h1 ({pc_h1:+.0f}%)")
+
+    # Sustained decline over h6 (bleeding out)
+    if pc_h6 is not None:
+        if pc_h6 < -70:
+            score *= 0.1
+            negatives.append(f"DEAD h6 ({pc_h6:+.0f}%)")
+        elif pc_h6 < -50:
+            score *= 0.2
+            negatives.append(f"crashed h6 ({pc_h6:+.0f}%)")
+        elif pc_h6 < -30:
+            score *= 0.5
+            negatives.append(f"declining h6 ({pc_h6:+.0f}%)")
+
+    # 24h collapse
+    if pc_h24 is not None:
+        if pc_h24 < -80:
+            score *= 0.1
+            negatives.append(f"DEAD h24 ({pc_h24:+.0f}%)")
+        elif pc_h24 < -50:
+            score *= 0.3
+            negatives.append(f"collapsed h24 ({pc_h24:+.0f}%)")
+
+    # Volume dying + price declining = death spiral
+    vol_h1 = dex.get('volume_h1', 0) or 0
+    vol_h24 = dex.get('volume_h24', 0) or 0
+    if vol_h24 > 0 and vol_h1 < vol_h24 * 0.005:  # h1 < 0.5% of h24
+        if pc_h6 is not None and pc_h6 < -10:
+            score *= 0.3
+            negatives.append("death spiral (vol+dying+declining)")
+
     # ── Multipliers from enrichers ──
 
     # DISQUALIFIERS (score = 0, return early)

@@ -248,103 +248,110 @@ def score_wallet_v3(
     
     score = 0.0
     
-    # ─────────────────────────────────────────────────────────────────────
-    # 1. REALIZED PNL (0-25) — the most important signal
-    #    Only count PROFIT TAKEN, not paper gains
-    # ─────────────────────────────────────────────────────────────────────
-    if realized_pnl > 500000: score += 25      # whale
-    elif realized_pnl > 100000: score += 22    # serious player
-    elif realized_pnl > 50000: score += 18
-    elif realized_pnl > 10000: score += 14
-    elif realized_pnl > 1000: score += 8
-    elif realized_pnl > 0: score += 4
+    # ═════════════════════════════════════════════════════════════════════
+    # PRIMARY SIGNALS (heavily weighted — these matter most)
+    # ═════════════════════════════════════════════════════════════════════
     
     # ─────────────────────────────────────────────────────────────────────
-    # 2. AVERAGE ROI (0-20) — how well they trade
+    # 1. REALIZED PNL (0-35) — the #1 signal. Only money TAKEN counts.
+    #    A wallet with $100K profit is more valuable than one with 1000% ROI
+    #    on $50. Real money proves real skill.
+    # ─────────────────────────────────────────────────────────────────────
+    if realized_pnl > 1000000: score += 35     # >$1M whale
+    elif realized_pnl > 500000: score += 30
+    elif realized_pnl > 100000: score += 25    # serious player
+    elif realized_pnl > 50000: score += 20
+    elif realized_pnl > 10000: score += 14
+    elif realized_pnl > 5000: score += 10
+    elif realized_pnl > 1000: score += 6
+    elif realized_pnl > 0: score += 2
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 2. TRADE COUNT (0-20) — active wallets = established traders.
+    #    A wallet with 2 trades could be a one-shot fluke.
+    #    A wallet with 200 trades has a proven track record.
+    # ─────────────────────────────────────────────────────────────────────
+    if total_trades and total_trades > 500: score += 20
+    elif total_trades and total_trades > 200: score += 17
+    elif total_trades and total_trades > 100: score += 14
+    elif total_trades and total_trades > 50: score += 11
+    elif total_trades and total_trades > 20: score += 7
+    elif total_trades and total_trades > 10: score += 4
+    elif total_trades and total_trades > 5: score += 2
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 3. WIN RATE (0-10) — consistency
+    # ─────────────────────────────────────────────────────────────────────
+    if win_rate and win_rate > 0.80: score += 10
+    elif win_rate and win_rate > 0.65: score += 8
+    elif win_rate and win_rate > 0.50: score += 5
+    elif win_rate and win_rate > 0.35: score += 3
+    
+    # ═════════════════════════════════════════════════════════════════════
+    # SECONDARY SIGNALS (moderate weight)
+    # ═════════════════════════════════════════════════════════════════════
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 4. AVERAGE ROI (0-10) — how well they trade per token
     # ─────────────────────────────────────────────────────────────────────
     roi_pct = (avg_roi - 1) * 100 if avg_roi and avg_roi > 1 else 0
-    if roi_pct > 1000: score += 20        # >10x average
-    elif roi_pct > 500: score += 17       # >5x
-    elif roi_pct > 200: score += 14       # >3x
-    elif roi_pct > 100: score += 10       # >2x
-    elif roi_pct > 50: score += 6
-    elif roi_pct > 0: score += 3
+    if roi_pct > 1000: score += 10
+    elif roi_pct > 500: score += 8
+    elif roi_pct > 200: score += 6
+    elif roi_pct > 100: score += 4
+    elif roi_pct > 50: score += 2
     
     # ─────────────────────────────────────────────────────────────────────
-    # 3. WIN RATE (0-15) — consistency matters
-    # ─────────────────────────────────────────────────────────────────────
-    if win_rate and win_rate > 0.80: score += 15
-    elif win_rate and win_rate > 0.65: score += 12
-    elif win_rate and win_rate > 0.50: score += 9
-    elif win_rate and win_rate > 0.35: score += 5
-    elif win_rate and win_rate > 0.20: score += 2
-    
-    # ─────────────────────────────────────────────────────────────────────
-    # 4. ENTRY TIMING (0-12) — earlier = better IF profitable
+    # 5. ENTRY TIMING (0-8) — earlier = better
     # ─────────────────────────────────────────────────────────────────────
     if entry_timing_score is not None:
-        if entry_timing_score < 0.05: score += 12    # bought at launch
-        elif entry_timing_score < 0.1: score += 10   # very early
-        elif entry_timing_score < 0.2: score += 7
-        elif entry_timing_score < 0.4: score += 4
-        elif entry_timing_score < 0.6: score += 1
+        if entry_timing_score < 0.05: score += 8
+        elif entry_timing_score < 0.1: score += 6
+        elif entry_timing_score < 0.2: score += 4
+        elif entry_timing_score < 0.4: score += 2
     
     # ─────────────────────────────────────────────────────────────────────
-    # 5. SMART MONEY TAG (0-10) — GMGN's own intelligence
+    # 6. WALLET AGE (0-5) — longer = established
+    # ─────────────────────────────────────────────────────────────────────
+    if wallet_age_days:
+        if wallet_age_days > 365: score += 5
+        elif wallet_age_days > 180: score += 4
+        elif wallet_age_days > 90: score += 3
+        elif wallet_age_days > 30: score += 2
+        elif wallet_age_days > 7: score += 1
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 7. SMART MONEY TAG (0-5)
     # ─────────────────────────────────────────────────────────────────────
     tag_lower = (smart_money_tag or '').lower()
     all_tags = set((wallet_tags or '').lower().split(','))
     
-    if 'top1' in tag_lower or 'top1' in all_tags: score += 10
-    elif 'top2' in tag_lower or 'top3' in tag_lower: score += 8
-    elif 'top5' in tag_lower or 'top10' in all_tags: score += 6
-    elif 'smart' in tag_lower or 'smart' in all_tags: score += 7
-    elif 'kol' in all_tags: score += 8
-    elif 'degen' in tag_lower: score += 3
-    elif any(t.startswith('top') for t in all_tags): score += 4
+    if 'top1' in tag_lower or 'top1' in all_tags: score += 5
+    elif 'top2' in tag_lower or 'top3' in tag_lower: score += 4
+    elif 'top5' in tag_lower or 'smart' in tag_lower: score += 3
+    elif 'kol' in all_tags: score += 4
+    elif any(t.startswith('top') for t in all_tags): score += 2
     
     # ─────────────────────────────────────────────────────────────────────
-    # 6. INSIDER BONUS (0-8) — MORE insider flags = BETTER
-    #    Insiders know things. Following them = alpha.
+    # 8. INSIDER BONUS (0-5) — following insiders = alpha
     # ─────────────────────────────────────────────────────────────────────
     if insider_flag:
-        score += 8
+        score += 5
     
     # ─────────────────────────────────────────────────────────────────────
-    # 7. DEFI SOPHISTICATION (0-5) — staked/borrowed = serious
+    # 9. DEFI + PORTFOLIO (0-5)
     # ─────────────────────────────────────────────────────────────────────
-    if defi_value and defi_value > 100000: score += 5
-    elif defi_value and defi_value > 10000: score += 3
+    if defi_value and defi_value > 100000: score += 3
+    elif defi_value and defi_value > 10000: score += 2
     elif defi_value and defi_value > 0: score += 1
-    
-    if zerion_value and zerion_value > 500000: score += 3
-    elif zerion_value and zerion_value > 50000: score += 2
+    if zerion_value and zerion_value > 100000: score += 2
     elif zerion_value and zerion_value > 0: score += 1
     
     # ─────────────────────────────────────────────────────────────────────
-    # 8. ACTIVITY (0-3) — are they actively trading now?
-    # ─────────────────────────────────────────────────────────────────────
-    if total_trades and total_trades > 100: score += 3
-    elif total_trades and total_trades > 30: score += 2
-    elif total_trades and total_trades > 10: score += 1
-    
-    # ─────────────────────────────────────────────────────────────────────
-    # 9. WALLET AGE (0-5) — longer = more established = better
-    #    Throwaway wallets are suspicious. Old wallets have track records.
-    # ─────────────────────────────────────────────────────────────────────
-    if wallet_age_days:
-        if wallet_age_days > 365: score += 5       # >1 year = serious
-        elif wallet_age_days > 180: score += 4     # >6 months
-        elif wallet_age_days > 90: score += 3      # >3 months
-        elif wallet_age_days > 30: score += 2      # >1 month
-        elif wallet_age_days > 7: score += 1       # >1 week
-    
-    # ─────────────────────────────────────────────────────────────────────
-    # 10. SOCIAL PRESENCE (0-3) — linked accounts = more credible
-    #     Anons can be anyone. Linked Twitter/Telegram = reputation risk.
+    # 10. SOCIAL PRESENCE (0-2)
     # ─────────────────────────────────────────────────────────────────────
     if twitter_username:
-        score += 3
+        score += 2
     
     # ═════════════════════════════════════════════════════════════════════
     # PENALTIES (subtracted from score)
@@ -533,16 +540,31 @@ def enrich_wallets_from_tokens(
         source_tokens = ','.join(set(a['token_symbol'] for a in appearances))
 
         # Score
-        # Compute round trips
-        round_trips = compute_round_trips(conn)
-        rt_count = round_trips.get(wallet_addr, 0)
+        # Compute wallet age in days
+        now_ts = time.time()
+        entry_times = [a['start_holding_at'] for a in appearances if a.get('start_holding_at')]
+        age_days = (now_ts - min(entry_times)) / 86400 if entry_times else 0
         
         wallet_score = score_wallet_v3(
             realized_pnl=total_realized or total_profit,
+            total_profit=total_profit,
             avg_roi=avg_roi,
             win_rate=win_rate,
-            entry_timing=avg_entry,
             total_trades=total_trades,
+            entry_timing_score=avg_entry,
+            smart_money_tag=best_tag,
+            wallet_tags=','.join(all_tags),
+            insider_flag=1 if 'insider' in all_tags else 0,
+            copy_trade_flag=0,
+            rug_history_count=0,
+            trading_pattern='',
+            tokens_profitable=profitable,
+            tokens_total=len(appearances),
+            zerion_value=0,
+            defi_value=0,
+            round_trip_count=0,
+            wallet_age_days=age_days,
+            twitter_username=twitter,
         )
 
         if dry_run:
@@ -1070,7 +1092,6 @@ def main():
         addr, rpnl, tprof, roi, wr, trades, entry, stag, wtags, ins, copy, rugs, pattern, prof_t, total_t, zval, dval, tw, first_seen = row
         
         # Compute wallet age in days
-        import time
         if first_seen:
             age_days = (time.time() - first_seen) / 86400
         else:
