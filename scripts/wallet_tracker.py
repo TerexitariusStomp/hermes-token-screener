@@ -238,6 +238,12 @@ def score_wallet_v3(
     
     # Round trips (profit taken without selling = bad)
     round_trip_count: int,      # tokens where profit > 0 but sell_count = 0
+    
+    # Wallet age
+    wallet_age_days: float,     # how long wallet has existed (longer = better)
+    
+    # Social presence
+    twitter_username: str,      # linked Twitter = more credible
 ) -> float:
     
     score = 0.0
@@ -321,6 +327,24 @@ def score_wallet_v3(
     if total_trades and total_trades > 100: score += 3
     elif total_trades and total_trades > 30: score += 2
     elif total_trades and total_trades > 10: score += 1
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 9. WALLET AGE (0-5) — longer = more established = better
+    #    Throwaway wallets are suspicious. Old wallets have track records.
+    # ─────────────────────────────────────────────────────────────────────
+    if wallet_age_days:
+        if wallet_age_days > 365: score += 5       # >1 year = serious
+        elif wallet_age_days > 180: score += 4     # >6 months
+        elif wallet_age_days > 90: score += 3      # >3 months
+        elif wallet_age_days > 30: score += 2      # >1 month
+        elif wallet_age_days > 7: score += 1       # >1 week
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # 10. SOCIAL PRESENCE (0-3) — linked accounts = more credible
+    #     Anons can be anyone. Linked Twitter/Telegram = reputation risk.
+    # ─────────────────────────────────────────────────────────────────────
+    if twitter_username:
+        score += 3
     
     # ═════════════════════════════════════════════════════════════════════
     # PENALTIES (subtracted from score)
@@ -1037,13 +1061,20 @@ def main():
     # Re-score all wallets with new flags
     log.info("Re-scoring with pattern flags...")
     c = conn.cursor()
-    c.execute("SELECT address, realized_pnl, total_profit, avg_roi, win_rate, total_trades, entry_timing_score, smart_money_tag, wallet_tags, insider_flag, copy_trade_flag, rug_history_count, trading_pattern, tokens_profitable, tokens_total, zerion_value, zerion_defi_value FROM tracked_wallets WHERE wallet_score > 0")
+    c.execute("SELECT address, realized_pnl, total_profit, avg_roi, win_rate, total_trades, entry_timing_score, smart_money_tag, wallet_tags, insider_flag, copy_trade_flag, rug_history_count, trading_pattern, tokens_profitable, tokens_total, zerion_value, zerion_defi_value, twitter_username, first_seen_at FROM tracked_wallets WHERE wallet_score > 0")
     
     round_trips = compute_round_trips(conn)
     
     rescored = 0
     for row in c.fetchall():
-        addr, rpnl, tprof, roi, wr, trades, entry, stag, wtags, ins, copy, rugs, pattern, prof_t, total_t, zval, dval = row
+        addr, rpnl, tprof, roi, wr, trades, entry, stag, wtags, ins, copy, rugs, pattern, prof_t, total_t, zval, dval, tw, first_seen = row
+        
+        # Compute wallet age in days
+        import time
+        if first_seen:
+            age_days = (time.time() - first_seen) / 86400
+        else:
+            age_days = 0
         rt = round_trips.get(addr, 0)
         
         new_score = score_wallet_v3(
@@ -1064,6 +1095,8 @@ def main():
             zerion_value=zval or 0,
             defi_value=dval or 0,
             round_trip_count=rt,
+            wallet_age_days=age_days,
+            twitter_username=tw or '',
         )
         conn.execute("UPDATE tracked_wallets SET wallet_score = ? WHERE address = ?", (new_score, addr))
         rescored += 1
