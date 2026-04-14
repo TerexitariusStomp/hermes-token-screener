@@ -2,7 +2,7 @@
 Hermes Token Screener Dashboard — FastAPI with static HTML.
 
 Serves live token/wallet data from SQLite + top100.json.
-Uses inline HTML + HTMX for simplicity (no Jinja2 dependency issues).
+TradingView Lightweight Charts for token price charts.
 """
 
 from __future__ import annotations
@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import httpx
 from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse, JSONResponse
 
@@ -124,6 +125,19 @@ tr:hover td{background:var(--s2)}
 @media(max-width:768px){.stats{gap:.5rem}nav{flex-wrap:wrap}}
 """
 
+CHART_CSS = """
+#chart-container{width:100%;height:500px;background:var(--bg);border:1px solid var(--b);border-radius:8px;position:relative}
+#chart-container .loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--t2)}
+.controls{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.controls button{background:var(--s2);color:var(--t);border:1px solid var(--b);padding:.35rem .75rem;border-radius:4px;cursor:pointer;font-family:inherit;font-size:.8rem}
+.controls button:hover,.controls button.active{background:var(--c);color:#000;border-color:var(--c)}
+.controls select{background:var(--s2);color:var(--t);border:1px solid var(--b);padding:.35rem .5rem;border-radius:4px;font-family:inherit;font-size:.8rem}
+.price-info{display:flex;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.price-info .item{font-size:.82rem}.price-info .item .label{color:var(--t2)}
+.price-info .item .val{font-weight:bold;font-size:1rem}
+.chart-footer{margin-top:.75rem;font-size:.72rem;color:var(--t2)}
+"""
+
 def _nav(active):
     return f"""<nav>
 <div class="logo">HERMES <span>&#9670;</span> SCREENER</div>
@@ -134,12 +148,197 @@ def _nav(active):
   <a href="/health" target="_blank">Health</a>
 </div></nav>"""
 
-def _page(title, active, body):
+def _page(title, active, body, extra_css=""):
     return f"""<!DOCTYPE html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{title} — Hermes</title><style>{CSS}</style></head>
+<title>{title} — Hermes</title><style>{CSS}{extra_css}</style></head>
 <body>{_nav(active)}<div class="wrap">{body}</div>
 <script>setTimeout(()=>location.reload(),30000)</script></body></html>"""
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CHART PAGE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def _chart_html(symbol, chain, address, dex_url, pair_address, current_price, fdv, vol24):
+    """Generate full chart page with TradingView Lightweight Charts."""
+    return f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{symbol} Chart — Hermes</title>
+<style>{CSS}{CHART_CSS}</style>
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+{_nav("tokens")}
+<div class="wrap">
+  <h1>{symbol} <span style="color:var(--t2);font-weight:normal">Chart</span></h1>
+  <div class="sub">
+    <span class="badge {_chain_cls(chain)}">{chain}</span>
+    <a href="/token/{address}">&larr; Token Detail</a>
+    &middot; <a href="{dex_url}" target="_blank">Dexscreener</a>
+  </div>
+
+  <div class="price-info">
+    <div class="item"><span class="label">Price</span><br><span class="val" id="current-price">{f'${float(current_price):.8f}' if current_price else '—'}</span></div>
+    <div class="item"><span class="label">FDV</span><br><span class="val">{_fmt_usd(fdv)}</span></div>
+    <div class="item"><span class="label">Vol 24h</span><br><span class="val">{_fmt_usd(vol24)}</span></div>
+    <div class="item"><span class="label">24h Change</span><br><span class="val" id="day-change">—</span></div>
+  </div>
+
+  <div class="controls">
+    <button onclick="setTimeframe('minute', 5)" id="btn-5m">5m</button>
+    <button onclick="setTimeframe('minute', 15)" id="btn-15m">15m</button>
+    <button onclick="setTimeframe('hour', 1)" class="active" id="btn-1h">1H</button>
+    <button onclick="setTimeframe('hour', 4)" id="btn-4h">4H</button>
+    <button onclick="setTimeframe('day', 1)" id="btn-1d">1D</button>
+    <select id="chart-type" onchange="setChartType(this.value)">
+      <option value="candlestick">Candlestick</option>
+      <option value="line">Line</option>
+      <option value="area">Area</option>
+    </select>
+  </div>
+
+  <div id="chart-container">
+    <div class="loading">Loading chart data...</div>
+  </div>
+  <div class="chart-footer">
+    Data from GeckoTerminal &middot; Auto-refreshes every 60s &middot;
+    <span id="candle-count">0</span> candles loaded
+  </div>
+</div>
+
+<script>
+const CHAIN = {json.dumps(chain)};
+const ADDRESS = {json.dumps(address)};
+const POOL_CACHE = {{}};
+let chart, candleSeries, volumeSeries, currentTf = 'hour', currentAgg = 1;
+let chartType = 'candlestick';
+
+// ── Chart Init ──
+function initChart() {{
+  const container = document.getElementById('chart-container');
+  container.innerHTML = '';
+  chart = LightweightCharts.createChart(container, {{
+    width: container.clientWidth,
+    height: 500,
+    layout: {{ background: {{ type: 'solid', color: '#0a0e17' }}, textColor: '#9ca3af' }},
+    grid: {{ vertLines: {{ color: '#1f2937' }}, horzLines: {{ color: '#1f2937' }} }},
+    crosshair: {{
+      mode: LightweightCharts.CrosshairMode.Normal,
+      vertLine: {{ color: '#06b6d4', width: 1, style: 2 }},
+      horzLine: {{ color: '#06b6d4', width: 1, style: 2 }},
+    }},
+    rightPriceScale: {{ borderColor: '#374151' }},
+    timeScale: {{ borderColor: '#374151', timeVisible: true, secondsVisible: false }},
+  }});
+
+  candleSeries = chart.addCandlestickSeries({{
+    upColor: '#10b981', downColor: '#ef4444',
+    borderUpColor: '#10b981', borderDownColor: '#ef4444',
+    wickUpColor: '#10b981', wickDownColor: '#ef4444',
+  }});
+
+  volumeSeries = chart.addHistogramSeries({{
+    color: '#26a69a',
+    priceFormat: {{ type: 'volume' }},
+    priceScaleId: '',
+  }});
+  volumeSeries.priceScale().applyOptions({{
+    scaleMargins: {{ top: 0.8, bottom: 0 }},
+  }});
+
+  chart.timeScale().fitContent();
+  window.addEventListener('resize', () => chart.applyOptions({{ width: container.clientWidth }}));
+}}
+
+// ── Data Fetch ──
+async function fetchPoolAddress() {{
+  if (POOL_CACHE[ADDRESS]) return POOL_CACHE[ADDRESS];
+  try {{
+    const resp = await fetch(`/api/pool/${{CHAIN}}/${{ADDRESS}}`);
+    const data = await resp.json();
+    POOL_CACHE[ADDRESS] = data.pool_address;
+    return data.pool_address;
+  }} catch {{ return null; }}
+}}
+
+async function fetchOHLCV(tf, agg) {{
+  const pool = await fetchPoolAddress();
+  if (!pool) return [];
+  try {{
+    const resp = await fetch(`/api/chart/${{CHAIN}}/${{pool}}?timeframe=${{tf}}&aggregate=${{agg}}&limit=200`);
+    const data = await resp.json();
+    return data.candles || [];
+  }} catch {{ return []; }}
+}}
+
+// ── Render ──
+async function loadChart(tf, agg) {{
+  currentTf = tf; currentAgg = agg;
+  document.getElementById('chart-container').innerHTML = '<div class="loading">Loading...</div>';
+  initChart();
+
+  const candles = await fetchOHLCV(tf, agg);
+  if (!candles.length) {{
+    document.getElementById('chart-container').innerHTML = '<div class="loading">No chart data available for this pair</div>';
+    return;
+  }}
+
+  const candleData = candles.map(c => ({{ time: c[0], open: c[1], high: c[2], low: c[3], close: c[4] }}));
+  const volumeData = candles.map(c => ({{
+    time: c[0], value: c[5] || 0,
+    color: c[4] >= c[1] ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'
+  }}));
+
+  candleSeries.setData(candleData);
+  volumeSeries.setData(volumeData);
+  chart.timeScale().fitContent();
+
+  // Update 24h change
+  if (candleData.length > 1) {{
+    const first = candleData[0].open;
+    const last = candleData[candleData.length - 1].close;
+    const change = ((last - first) / first * 100).toFixed(2);
+    const el = document.getElementById('day-change');
+    el.textContent = (change > 0 ? '+' : '') + change + '%';
+    el.className = 'val ' + (change > 0 ? 'pos' : 'neg');
+  }}
+  document.getElementById('candle-count').textContent = candleData.length;
+}}
+
+// ── Controls ──
+function setTimeframe(tf, agg) {{
+  document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+  document.getElementById(`btn-${{agg}}${{tf[0]}}`).classList.add('active');
+  loadChart(tf, agg);
+}}
+
+function setChartType(type) {{
+  chartType = type;
+  // Remove existing series and re-add
+  chart.removeSeries(candleSeries);
+  if (type === 'candlestick') {{
+    candleSeries = chart.addCandlestickSeries({{
+      upColor: '#10b981', downColor: '#ef4444',
+      borderUpColor: '#10b981', borderDownColor: '#ef4444',
+      wickUpColor: '#10b981', wickDownColor: '#ef4444',
+    }});
+  }} else if (type === 'line') {{
+    candleSeries = chart.addLineSeries({{ color: '#06b6d4', lineWidth: 2 }});
+  }} else {{
+    candleSeries = chart.addAreaSeries({{
+      lineColor: '#06b6d4', lineWidth: 2,
+      topColor: 'rgba(6,182,212,0.3)', bottomColor: 'rgba(6,182,212,0)',
+    }});
+  }}
+  loadChart(currentTf, currentAgg);
+}}
+
+// ── Init ──
+initChart();
+loadChart('hour', 1);
+</script>
+</body></html>"""
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -158,11 +357,12 @@ async def index():
         p1h = _pct_cls(t.get("price_change_h1"))
         p6h = _pct_cls(t.get("price_change_h6"))
         tags = "".join(f'<span class="tag tag-g">{p}</span>' for p in (t.get("positives") or [])[:2])
+        addr = t.get('contract_address','')
         rows += f"""<tr>
   <td>{i}</td>
-  <td><a href="/token/{t.get('contract_address','')}"><strong>{t.get('symbol','???')}</strong></a></td>
+  <td><a href="/token/{addr}"><strong>{t.get('symbol','???')}</strong></a></td>
   <td><span class="badge {_chain_cls(t.get('chain',''))}">{t.get('chain','')}</span></td>
-  <td class="mono"><a href="{_explorer(t.get('chain',''), t.get('contract_address',''))}" target="_blank">{_trunc(t.get('contract_address',''))}</a></td>
+  <td class="mono"><a href="{_explorer(t.get('chain',''), addr)}" target="_blank">{_trunc(addr)}</a></td>
   <td class="sc {sc_cls}">{score:.1f}</td>
   <td>{t.get('channel_count',0)}</td>
   <td>{_fmt_usd(t.get('fdv'))}</td>
@@ -258,6 +458,7 @@ async def token_detail(address: str):
 <div class="sub">
   <span class="badge {_chain_cls(token.get('chain',''))}">{token.get('chain','')}</span>
   <a href="{_explorer(token.get('chain',''), address)}" target="_blank">{address}</a>
+  &middot; <a href="/token/{address}/chart" style="font-weight:bold;color:var(--y)">&#9654; Live Chart</a>
 </div>
 <div class="grid">
   <div class="card">
@@ -282,10 +483,36 @@ async def token_detail(address: str):
   </div>
   <div class="card">
     <h3>Links</h3>
+    <div class="row"><a href="/token/{address}/chart" style="font-weight:bold;color:var(--y)">&#9654; Live Chart</a></div>
     <div class="row"><a href="{token.get('dex_url','')}" target="_blank">Dexscreener &rarr;</a></div>
     <div class="row"><a href="{_explorer(token.get('chain',''), address)}" target="_blank">Explorer &rarr;</a></div>
   </div>
 </div>""")
+
+
+@app.get("/token/{address}/chart", response_class=HTMLResponse)
+async def token_chart(address: str):
+    """Full-page TradingView chart for a token."""
+    data = _load_top100()
+    token = None
+    for t in data.get("tokens", []):
+        if t.get("contract_address", "").lower() == address.lower():
+            token = t
+            break
+
+    if not token:
+        return _page("Chart", "tokens", f"<h1>Chart</h1><p class='sub'>Token not found</p>")
+
+    return HTMLResponse(_chart_html(
+        symbol=token.get("symbol", "???"),
+        chain=token.get("chain", "solana"),
+        address=address,
+        dex_url=token.get("dex_url", ""),
+        pair_address=token.get("pair_address", ""),
+        current_price=token.get("fdv"),
+        fdv=token.get("fdv"),
+        vol24=token.get("volume_h24"),
+    ))
 
 
 @app.get("/wallet/{address}", response_class=HTMLResponse)
@@ -344,6 +571,10 @@ async def wallet_detail(address: str):
 {'<div style="margin-top:1.5rem"><h2 style="font-size:1rem;margin-bottom:.75rem">Token Positions (' + str(len(pos_list)) + ')</h2><div class="tbl"><table><thead><tr><th>Token</th><th>PnL</th><th>Realized</th><th>Buy</th><th>Sell</th><th>Win</th><th>Seen</th></tr></thead><tbody>' + pos_rows + '</tbody></table></div></div>' if pos_list else ''}""")
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# API ENDPOINTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
 @app.get("/health")
 async def health():
     checks = {}
@@ -376,3 +607,81 @@ async def api_stats():
         if conn: conn.close()
     except: wc = avg = 0
     return {"tokens_scored": len(data.get("tokens",[])), "total_candidates": data.get("total_candidates",0), "wallets_tracked": wc, "avg_wallet_score": round(avg or 0,1), "last_generated": data.get("generated_at_iso","Never")}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CHART API ENDPOINTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Chain ID mapping for GeckoTerminal
+_GT_NETWORKS = {
+    "solana": "solana", "sol": "solana",
+    "ethereum": "eth", "eth": "eth",
+    "base": "base",
+    "binance": "bsc", "bsc": "bsc", "binance-smart-chain": "bsc",
+}
+
+
+@app.get("/api/pool/{chain}/{address}")
+async def api_find_pool(chain: str, address: str):
+    """Find the top liquidity pool for a token on GeckoTerminal."""
+    net = _GT_NETWORKS.get(chain.lower(), "solana")
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(
+                f"https://api.geckoterminal.com/api/v2/networks/{net}/tokens/{address}/pools",
+                params={"sort": "h24_tx_count_desc", "page": "1"},
+            )
+            if resp.status_code != 200:
+                return {"pool_address": None, "error": f"status {resp.status_code}"}
+
+            pools = resp.json().get("data", [])
+            if not pools:
+                return {"pool_address": None, "error": "no pools found"}
+
+            # Return pool address (strip network prefix if present)
+            pool_id = pools[0]["id"]
+            pool_addr = pool_id.split("_")[-1] if "_" in pool_id else pool_id
+
+            return {
+                "pool_address": pool_addr,
+                "pool_name": pools[0].get("attributes", {}).get("name", ""),
+                "dex": pools[0].get("attributes", {}).get("dex", {}).get("name", ""),
+                "reserve_usd": pools[0].get("attributes", {}).get("reserve_in_usd"),
+            }
+    except Exception as e:
+        return {"pool_address": None, "error": str(e)}
+
+
+@app.get("/api/chart/{chain}/{pool_address}")
+async def api_chart_ohlcv(
+    chain: str,
+    pool_address: str,
+    timeframe: str = Query("hour", pattern="^(minute|hour|day)$"),
+    aggregate: int = Query(1, ge=1, le=24),
+    limit: int = Query(200, ge=1, le=1000),
+):
+    """Fetch OHLCV candle data from GeckoTerminal.
+
+    Returns candles as [[timestamp, open, high, low, close, volume], ...]
+    Compatible with TradingView Lightweight Charts.
+    """
+    net = _GT_NETWORKS.get(chain.lower(), "solana")
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.get(
+                f"https://api.geckoterminal.com/api/v2/networks/{net}/pools/{pool_address}/ohlcv/{timeframe}",
+                params={"aggregate": str(aggregate), "limit": str(limit)},
+            )
+            if resp.status_code != 200:
+                return {"candles": [], "count": 0, "timeframe": timeframe, "aggregate": aggregate, "error": f"status {resp.status_code}"}
+
+            candles = resp.json().get("data", {}).get("attributes", {}).get("ohlcv_list", [])
+            return {
+                "candles": candles,
+                "count": len(candles),
+                "timeframe": timeframe,
+                "aggregate": aggregate,
+            }
+    except Exception as e:
+        return {"candles": [], "count": 0, "timeframe": timeframe, "aggregate": aggregate, "error": str(e)}
