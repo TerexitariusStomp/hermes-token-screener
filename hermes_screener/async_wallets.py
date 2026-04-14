@@ -30,18 +30,13 @@ log = get_logger("async_wallets")
 GMGN_CLI = str(settings.gmgn_cli)
 GMGN_MAX = 100
 
-# Sort strategies to maximize wallet coverage
+# Sort strategies to maximize wallet coverage (profitable traders only)
 SORT_ORDERS = [
     ("amount_percentage", "desc"),
     ("profit", "desc"),
     ("unrealized_profit", "desc"),
     ("buy_volume_cur", "desc"),
     ("sell_volume_cur", "desc"),
-    ("profit", "asc"),
-    ("amount_percentage", "asc"),
-    ("unrealized_profit", "asc"),
-    ("buy_volume_cur", "asc"),
-    ("sell_volume_cur", "asc"),
 ]
 
 CHAIN_MAP = {

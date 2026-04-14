@@ -405,18 +405,13 @@ def get_holders_for_token(chain: str, address: str, limit: int = HOLDERS_PER_TOK
 
     GMGN_MAX = 100  # CLI hard limit
 
-    # Sort strategies to maximize wallet coverage
+    # Sort strategies to maximize wallet coverage (profitable traders only)
     SORT_ORDERS = [
         ("amount_percentage", "desc"),   # biggest holders
         ("profit", "desc"),              # most profitable
         ("unrealized_profit", "desc"),   # best unrealized gains
         ("buy_volume_cur", "desc"),      # biggest buyers
         ("sell_volume_cur", "desc"),     # biggest sellers
-        ("profit", "asc"),               # worst performers (rug detectors)
-        ("amount_percentage", "asc"),    # smallest holders (snipers)
-        ("unrealized_profit", "asc"),    # underwater positions
-        ("buy_volume_cur", "asc"),       # smallest buyers
-        ("sell_volume_cur", "asc"),      # smallest sellers
     ]
 
     seen_addresses: set = set()
