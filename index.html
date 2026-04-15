@@ -113,16 +113,8 @@ const TC=[
   {k:'tw_kol',f:t=>(t.tw_kol_score||0).toFixed(2)},
   {k:'social',f:t=>(t.social_score||0).toFixed(1)},
   // L10 Zerion
-  {k:'z_mcap',f:t=>fmtUsd(t.zerion_market_cap)},
-  {k:'z_fdv',f:t=>fmtUsd(t.zerion_fdv)},
-  {k:'z_verified',f:t=>fmtBool(t.zerion_verified)},
-  {k:'z_chains',f:t=>t.zerion_chain_count||0},
-  // L11 CoinStats
-  {k:'cs_risk',f:t=>t.cs_risk_score!=null?t.cs_risk_score:'—'},
-  {k:'cs_liq',f:t=>t.cs_liquidity_score!=null?t.cs_liquidity_score:'—'},
-  {k:'cs_vol',f:t=>t.cs_volatility_score!=null?t.cs_volatility_score:'—'},
-  {k:'cs_rank',f:t=>t.cs_rank!=null?t.cs_rank:'—'},
-  // Signals
+          // L11 CoinStats
+          // Signals
   {k:'positives',f:t=>(t.positives||[]).slice(0,2).map(p=>'<span class="tag tag-g">'+trunc(p,20)+'</span>').join(' ')},
   {k:'negatives',f:t=>(t.negatives||[]).slice(0,2).map(n=>'<span class="tag tag-r">'+trunc(n,20)+'</span>').join(' ')},
 ];
