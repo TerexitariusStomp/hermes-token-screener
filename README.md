@@ -4,7 +4,7 @@ Autonomous smart-money tracking system that discovers, enriches, and ranks token
 
 ## Architecture
 
-<img src="architecture.png" alt="Hermes Token Screener Architecture" width="100%"/>
+<img src="architecture-v2.png" alt="Hermes Token Screener Architecture" width="100%"/>
 
 ## Scripts
 
