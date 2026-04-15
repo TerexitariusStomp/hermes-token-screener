@@ -354,6 +354,75 @@ def find_rotation_candidate(current_symbol: str) -> Optional[dict]:
     return None
 
 
+def evaluate_reentry(position: dict, market: dict, decay: dict) -> Optional[dict]:
+    """
+    After a take-profit exit, evaluate whether to re-enter the token.
+
+    Considers:
+      - Price pullback from exit (better entry?)
+      - Volume still alive (not dead after the pump)
+      - No new decay signals
+      - AI recommendation
+    """
+    exit_price = position.get("_tp_exit_price", 0)
+    exit_time = position.get("_tp_exit_time", 0)
+    current_price = market.get("price_usd", 0)
+
+    if not exit_price or not current_price or exit_price <= 0:
+        return None
+
+    pullback_pct = ((exit_price - current_price) / exit_price) * 100
+    hours_since_exit = (time.time() - exit_time) / 3600 if exit_time else 0
+
+    # Don't re-enter too quickly (let it cool)
+    if hours_since_exit < 0.5:
+        return {"reenter": False, "reason": f"too soon ({hours_since_exit:.1f}h), let it cool"}
+
+    # Don't re-enter if barely pulled back (chasing)
+    if pullback_pct < 10:
+        return {"reenter": False, "reason": f"only {pullback_pct:.0f}% pullback, not a good re-entry price"}
+
+    # Don't re-enter if decaying badly
+    if decay.get("severity", 0) >= 5:
+        return {"reenter": False, "reason": f"decay severity {decay['severity']}/10, token dying"}
+
+    # Volume check: is it still alive?
+    vol_h1 = market.get("volume_h1", 0)
+    if vol_h1 < 500:
+        return {"reenter": False, "reason": f"volume dead (${vol_h1:.0f}/h)"}
+
+    # Ask AI
+    system = ("You are deciding whether to RE-ENTER a token you previously took profit on. "
+              "The token pumped, you sold at the peak, and now it has pulled back. "
+              "Is this a good re-entry point? "
+              'Respond with ONLY JSON: {"reenter": true|false, "confidence": 0-100, "reason": "one sentence"}')
+
+    prompt = (f"Token: {position.get('symbol', '?')}\n"
+              f"You sold at: ${exit_price:.8f} (take profit)\n"
+              f"Current price: ${current_price:.8f}\n"
+              f"Pullback: {pullback_pct:.1f}% from your exit\n"
+              f"Time since exit: {hours_since_exit:.1f}h\n"
+              f"Volume 1h: ${market.get('volume_h1', 0):,.0f}\n"
+              f"Txns 1h: {market.get('txns_h1_buys', 0)} buys, {market.get('txns_h1_sells', 0)} sells\n"
+              f"Price 1h: {market.get('price_change_h1', '?')}%\n"
+              f"Liquidity: ${market.get('liquidity', 0):,.0f}\n"
+              f"Decay severity: {decay.get('severity', 0)}/10\n"
+              f"Should you re-enter at this lower price?")
+
+    response = call_bonsai(system, prompt)
+    if not response:
+        return None
+
+    import re
+    match = re.search(r'\{[^{}]*\}', response, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group())
+        except json.JSONDecodeError:
+            pass
+    return None
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN MONITOR
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -404,7 +473,10 @@ def run_trade_monitor(execute: bool = False, dry_run: bool = True) -> Dict[str, 
             reason = f"STOP LOSS hit ({pnl_pct:.1f}%)"
         elif pnl_pct >= take_profit:
             forced_action = "sell"
-            reason = f"TAKE PROFIT hit ({pnl_pct:.1f}%)"
+            reason = f"TAKE PROFIT hit ({pnl_pct:.1f}%) — will evaluate re-entry"
+            position["_take_profit_exit"] = True
+            position["_tp_exit_price"] = current_price
+            position["_tp_exit_time"] = time.time()
 
         # Ask AI (unless stop loss/take profit forced)
         if forced_action:
@@ -433,10 +505,17 @@ def run_trade_monitor(execute: bool = False, dry_run: bool = True) -> Dict[str, 
                 decisions.append({"symbol": symbol, "action": "sell", "result": sell_result})
 
                 if sell_result["status"] == "executed" or (sell_result["status"] == "dry_run" and forced_action):
-                    position["status"] = "closed"
-                    position["exit_price"] = current_price
-                    position["exit_time"] = time.time()
-                    position["exit_reason"] = decision.get("reason", "")
+                    if position.get("_take_profit_exit"):
+                        position["status"] = "watching"
+                        position["exit_price"] = current_price
+                        position["exit_time"] = time.time()
+                        position["exit_reason"] = decision.get("reason", "")
+                        log.info("take_profit_sold_watching", symbol=symbol, exit_price=current_price)
+                    else:
+                        position["status"] = "closed"
+                        position["exit_price"] = current_price
+                        position["exit_time"] = time.time()
+                        position["exit_reason"] = decision.get("reason", "")
                     sells_executed += 1
 
                     # Try to rotate into new token
@@ -453,6 +532,33 @@ def run_trade_monitor(execute: bool = False, dry_run: bool = True) -> Dict[str, 
             log.info("rotation_suggested", from_token=symbol, to_token=decision.get("rotation_candidate"))
 
         decisions.append(decision)
+
+    # Evaluate watching positions for re-entry
+    for wpos in [p for p in positions if p.get("status") == "watching"]:
+        sym = wpos.get("symbol", "?")
+        addr = wpos.get("address", "")
+        chain = wpos.get("chain", "")
+
+        mkt = fetch_token_market_data(addr, chain)
+        if not mkt:
+            continue
+        if sym not in history:
+            history[sym] = []
+        history[sym].append(mkt)
+        dec = detect_decay(sym, mkt, history[sym])
+
+        reentry = evaluate_reentry(wpos, mkt, dec)
+        if reentry:
+            log.info("reentry_evaluated", symbol=sym, reenter=reentry.get("reenter"),
+                     confidence=reentry.get("confidence", 0))
+            if reentry.get("reenter") and reentry.get("confidence", 0) >= 70:
+                log.info("reentry_recommended", symbol=sym, price=mkt.get("price_usd"))
+                wpos["status"] = "reentry_ready"
+                wpos["reentry_price"] = mkt.get("price_usd")
+                wpos["reentry_confidence"] = reentry.get("confidence")
+                decisions.append({"symbol": sym, "action": "reenter",
+                                  "reason": reentry.get("reason", ""),
+                                  "confidence": reentry.get("confidence", 0)})
 
     # Save updated state
     save_positions(positions)
