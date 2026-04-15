@@ -125,7 +125,13 @@ tr:hover td{background:var(--s2)}
 .row .l{color:var(--t2)}
 .mono{font-family:inherit;font-size:.72rem}
 @media(max-width:768px){.stats{gap:.5rem}nav{flex-wrap:wrap}}
-"""
+.trending{background:linear-gradient(90deg,#0a0e17,#111827);border-bottom:1px solid var(--b);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:.78rem}
+.trending .label{color:var(--y);font-weight:bold;white-space:nowrap}
+.trending .kw{display:inline-block;padding:.2rem .5rem;border-radius:4px;background:#06b6d422;color:var(--c);cursor:default;transition:all .2s}
+.trending .kw:hover{background:#06b6d444}
+.trending .kw .ct{font-size:.65rem;color:var(--t2);margin-left:.3rem}
+.trending .sep{color:var(--b)}
+\"\"\"
 
 CHART_CSS = """
 #chart-container{width:100%;height:500px;background:var(--bg);border:1px solid var(--b);border-radius:8px;position:relative}
@@ -609,6 +615,14 @@ async def api_stats():
         if conn: conn.close()
     except: wc = avg = 0
     return {"tokens_scored": len(data.get("tokens",[])), "total_candidates": data.get("total_candidates",0), "wallets_tracked": wc, "avg_wallet_score": round(avg or 0,1), "last_generated": data.get("generated_at_iso","Never")}
+
+
+@app.get("/api/trending_keywords")
+async def api_trending_keywords():
+    path = settings.output_path.parent / "trending_keywords.json"
+    if not path.exists():
+        return {"keywords": [], "generated_at": "Never"}
+    return json.loads(path.read_text())
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
