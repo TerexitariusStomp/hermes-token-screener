@@ -1075,6 +1075,15 @@ def main():
     detect_rug_history(conn)
     log.info("  Rug history computed")
 
+    # Mobula trader classification enrichment
+    try:
+        from mobula_wallet_enricher import enrich_wallets_in_db
+        log.info("Running Mobula enrichment...")
+        enrich_wallets_in_db(limit=100)
+        log.info("  Mobula enrichment done")
+    except Exception as e:
+        log.info(f"  Mobula skipped: {e}")
+
     # Re-score all wallets with new flags
     log.info("Re-scoring with pattern flags...")
     c = conn.cursor()
