@@ -6,39 +6,31 @@
 :root{--bg:#0a0e17;--s:#111827;--s2:#1f2937;--b:#374151;--t:#e5e7eb;--t2:#9ca3af;--t3:#6b7280;
 --g:#10b981;--r:#ef4444;--y:#f59e0b;--bl:#3b82f6;--p:#8b5cf6;--c:#06b6d4}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'SF Mono','Fira Code',monospace;background:var(--bg);color:var(--t);font-size:14px}
-a{color:var(--c);text-decoration:none}a:hover{text-decoration:underline}
-nav{background:var(--s);border-bottom:1px solid var(--b);padding:.75rem 1.5rem;display:flex;align-items:center;gap:2rem}
-.logo{font-size:1.1rem;font-weight:bold;color:var(--c)}.logo span{color:var(--y)}
-.nav{display:flex;gap:1.5rem}.nav a{color:var(--t2);font-size:.85rem;cursor:pointer}.nav a.active{color:var(--c)}
-.stats{background:var(--s);border-bottom:1px solid var(--b);padding:.5rem 1.5rem;display:flex;gap:2rem;font-size:.8rem;color:var(--t2);flex-wrap:wrap}
+body{font-family:'SF Mono','Fira Code',monospace;background:var(--bg);color:var(--t);font-size:13px}
+a{color:var(--c);text-decoration:none}
+nav{background:var(--s);border-bottom:1px solid var(--b);padding:.6rem 1rem;display:flex;align-items:center;gap:2rem}
+.logo{font-size:1rem;font-weight:bold;color:var(--c)}.logo span{color:var(--y)}
+.nav{display:flex;gap:1.2rem}.nav a{color:var(--t2);font-size:.8rem;cursor:pointer;padding:.2rem 0;border-bottom:2px solid transparent}.nav a.active{color:var(--c);border-color:var(--c)}
+.stats{background:var(--s);border-bottom:1px solid var(--b);padding:.4rem 1rem;display:flex;gap:1.5rem;font-size:.75rem;color:var(--t2);flex-wrap:wrap}
 .stats .v{color:var(--t);font-weight:bold}
-.wrap{max-width:1400px;margin:0 auto;padding:1.5rem}
-h1{font-size:1.3rem;margin-bottom:.25rem}h2{font-size:1rem;margin-bottom:.25rem}
-.sub{color:var(--t2);font-size:.8rem;margin-bottom:1rem}
-.tbl{overflow-x:auto;border:1px solid var(--b);border-radius:8px}
-table{width:100%;border-collapse:collapse;font-size:.8rem}
-th{background:var(--s2);color:var(--t2);text-align:left;padding:.55rem .7rem;font-weight:600;position:sticky;top:0;white-space:nowrap}
-td{padding:.45rem .7rem;border-top:1px solid var(--b);white-space:nowrap}
+.wrap{max-width:100%;padding:1rem}
+h1{font-size:1.1rem;margin-bottom:.25rem}.sub{color:var(--t2);font-size:.75rem;margin-bottom:.75rem}
+.tbl{overflow-x:auto;border:1px solid var(--b);border-radius:6px;max-width:100%}
+table{border-collapse:collapse;font-size:.72rem;white-space:nowrap}
+th{background:var(--s2);color:var(--t2);text-align:left;padding:.4rem .5rem;font-weight:600;position:sticky;top:0;z-index:2;border-right:1px solid var(--b)}
+th:last-child{border-right:none}
+td{padding:.35rem .5rem;border-top:1px solid var(--b);border-right:1px solid rgba(55,65,81,.3)}
+td:last-child{border-right:none}
 tr:hover td{background:var(--s2)}
 .sc{font-weight:bold}.sc-h{color:var(--g)}.sc-m{color:var(--y)}.sc-l{color:var(--t2)}
 .pos{color:var(--g)}.neg{color:var(--r)}
-.badge{display:inline-block;padding:.1rem .4rem;border-radius:4px;font-size:.7rem;font-weight:bold}
+.badge{display:inline-block;padding:.05rem .3rem;border-radius:3px;font-size:.65rem;font-weight:bold}
 .chain-solana{background:#9945ff22;color:#9945ff}.chain-base{background:#0052ff22;color:#0052ff}
-.tag{display:inline-block;padding:.1rem .35rem;border-radius:3px;font-size:.65rem;margin:.1rem}
-.tag-g{background:#10b98133;color:#10b981}.tag-y{background:#f59e0b33;color:#f59e0b}.tag-r{background:#ef444433;color:#ef4444}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:1rem}
-.card{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:1rem}
-.card h3{font-size:.9rem;color:var(--c);margin-bottom:.5rem}
-.card h3 .layer{color:var(--t3);font-size:.7rem;font-weight:normal}
-.row{display:flex;justify-content:space-between;padding:.25rem 0;font-size:.8rem;border-bottom:1px solid rgba(55,65,81,.3)}
-.row:last-child{border-bottom:none}.row .l{color:var(--t2)}.row .v{text-align:right;max-width:55%;overflow:hidden;text-overflow:ellipsis}
-.mono{font-family:inherit;font-size:.72rem}
+.tag{display:inline-block;padding:.05rem .25rem;border-radius:2px;font-size:.6rem;margin:.05rem}
+.tag-g{background:#10b98133;color:#10b981}.tag-r{background:#ef444433;color:#ef4444}.tag-y{background:#f59e0b33;color:#f59e0b}
 .page{display:none}.page.active{display:block}
-.back{color:var(--t2);font-size:.8rem;cursor:pointer;margin-bottom:1rem;display:inline-block}.back:hover{color:var(--c)}
-.sec{color:var(--y);font-size:.75rem;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;margin:1.5rem 0 .75rem;padding-bottom:.25rem;border-bottom:1px solid var(--b)}
-.loading{text-align:center;padding:3rem;color:var(--t3)}
-@media(max-width:768px){.stats{gap:.5rem}nav{flex-wrap:wrap}.grid{grid-template-columns:1fr}}
+.empty{text-align:center;padding:2rem;color:var(--t3)}
+@media(max-width:768px){nav{flex-wrap:wrap}.stats{gap:.5rem}}
 </style>
 </head>
 <body>
@@ -47,314 +39,156 @@ tr:hover td{background:var(--s2)}
 <div class="nav">
   <a id="nav-tokens" class="active" onclick="showPage('tokens')">Tokens</a>
   <a id="nav-wallets" onclick="showPage('wallets')">Smart Money</a>
-  <a id="nav-schema" onclick="showPage('schema')">Data Schema</a>
 </div>
 </nav>
-<div class="stats" id="stats-bar">
-  <span>Loading...</span>
-</div>
+<div class="stats" id="stats-bar"><span>Loading...</span></div>
 
-<!-- TOKENS PAGE -->
 <div class="page active" id="page-tokens"><div class="wrap">
 <h1>Token Leaderboard</h1>
 <div class="sub" id="tokens-sub"></div>
-<div class="tbl"><table>
-<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Score</th><th>FDV</th><th>Vol24h</th><th>1h</th><th>6h</th><th>Age</th><th>&#x1f9e0;</th><th>Signals</th></tr></thead>
-<tbody id="tokens-body"></tbody>
-</table></div>
+<div class="tbl"><table id="tokens-table"></table></div>
 </div></div>
 
-<!-- TOKEN DETAIL PAGE -->
-<div class="page" id="page-token-detail"><div class="wrap">
-<span class="back" onclick="showPage('tokens')">&larr; Back to Tokens</span>
-<div id="token-detail-content"></div>
-</div></div>
-
-<!-- WALLETS PAGE -->
 <div class="page" id="page-wallets"><div class="wrap">
 <h1>Smart Money Wallets</h1>
 <div class="sub" id="wallets-sub"></div>
-<div class="tbl"><table>
-<thead><tr><th>#</th><th>Address</th><th>Chain</th><th>Score</th><th>PnL</th><th>ROI</th><th>Win</th><th>Trades</th><th>Tags</th><th>Active</th></tr></thead>
-<tbody id="wallets-body"></tbody>
-</table></div>
-</div></div>
-
-<!-- WALLET DETAIL PAGE -->
-<div class="page" id="page-wallet-detail"><div class="wrap">
-<span class="back" onclick="showPage('wallets')">&larr; Back to Smart Money</span>
-<div id="wallet-detail-content"></div>
-</div></div>
-
-<!-- SCHEMA PAGE -->
-<div class="page" id="page-schema"><div class="wrap">
-<h1>Data Schema</h1>
-<div class="sub">All enrichment fields available per token (13 layers, 91 fields)</div>
-<div id="schema-content"></div>
+<div class="tbl"><table id="wallets-table"></table></div>
 </div></div>
 
 <script>
-let DATA = null;
-const $ = s => document.querySelector(s);
+let DATA=null;
+const $=s=>document.querySelector(s);
 
-function fmtUsd(v){
-  if(v==null||v===0) return '—';
-  v=parseFloat(v);
-  if(v>=1e9) return '$'+(v/1e9).toFixed(1)+'B';
-  if(v>=1e6) return '$'+(v/1e6).toFixed(1)+'M';
-  if(v>=1e3) return '$'+(v/1e3).toFixed(1)+'K';
-  return '$'+v.toFixed(0);
-}
-function fmtPct(v){
-  if(v==null) return '—';
-  return (v>0?'+':'')+v.toFixed(1)+'%';
-}
-function pctCls(v){ return v==null?'':v>0?'pos':'neg'; }
-function trunc(a,n){ if(!a) return ''; return a.length>n*2?a.slice(0,n)+'...'+a.slice(-n):a; }
-function timeAgo(ts){
-  if(!ts) return '—';
-  const d=Date.now()/1000-parseFloat(ts);
-  if(d<60) return Math.floor(d)+'s';
-  if(d<3600) return Math.floor(d/60)+'m';
-  if(d<86400) return Math.floor(d/3600)+'h';
-  return Math.floor(d/86400)+'d';
-}
-function scCls(s){ return s>=70?'sc-h':s>=40?'sc-m':'sc-l'; }
-function chainCls(c){ return c==='solana'||c==='sol'?'chain-solana':c==='base'?'chain-base':''; }
+function fmtUsd(v){if(v==null||v===0)return '—';v=parseFloat(v);if(v>=1e9)return '$'+(v/1e9).toFixed(1)+'B';if(v>=1e6)return '$'+(v/1e6).toFixed(1)+'M';if(v>=1e3)return '$'+(v/1e3).toFixed(1)+'K';return '$'+v.toFixed(0)}
+function fmtPct(v){if(v==null)return '—';return (v>0?'+':'')+parseFloat(v).toFixed(1)+'%'}
+function fmtBool(v){if(v==null)return '—';return v?'&#10003;':'&#10007;'}
+function pctCls(v){if(v==null)return '';return parseFloat(v)>0?'pos':'neg'}
+function scCls(s){return s>=70?'sc-h':s>=40?'sc-m':'sc-l'}
+function trunc(a,n){if(!a)return '';a=String(a);return a.length>n*2?a.slice(0,n)+'...'+a.slice(-n):a}
+function chainCls(c){return c==='solana'||c==='sol'?'chain-solana':c==='base'?'chain-base':''}
 
 function showPage(n){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   $('#page-'+n).classList.add('active');
   document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
-  const nav=$('#nav-'+(n.startsWith('token')?'tokens':n.startsWith('wallet')?'wallets':n));
-  if(nav) nav.classList.add('active');
+  $('#nav-'+n).classList.add('active');
 }
+
+// TOKEN COLUMNS — every enrichment field
+const TC=[
+  {k:'#',f:(t,i)=>i+1},
+  {k:'symbol',f:t=>'<strong>'+(t.symbol||'?')+'</strong>'},
+  {k:'chain',f:t=>'<span class="badge '+chainCls(t.chain)+'">'+(t.chain||'')+'</span>'},
+  {k:'address',f:t=>'<span style="font-size:.6rem">'+trunc(t.contract_address,8)+'</span>'},
+  {k:'score',f:t=>{const s=t.score||0;return '<span class="sc '+scCls(s)+'">'+s.toFixed(1)+'</span>'}},
+  {k:'name',f:t=>t.name||''},
+  // L0 Dexscreener
+  {k:'fdv',f:t=>fmtUsd(t.fdv)},
+  {k:'vol24',f:t=>fmtUsd(t.volume_h24)},
+  {k:'vol1h',f:t=>fmtUsd(t.volume_h1)},
+  {k:'1h%',f:t=>'<span class="'+pctCls(t.price_change_h1)+'">'+fmtPct(t.price_change_h1)+'</span>'},
+  {k:'6h%',f:t=>'<span class="'+pctCls(t.price_change_h6)+'">'+fmtPct(t.price_change_h6)+'</span>'},
+  {k:'age',f:t=>(t.age_hours||0).toFixed(1)+'h'},
+  {k:'channels',f:t=>t.channel_count||0},
+  {k:'mentions',f:t=>t.mentions||0},
+  // L8 GMGN
+  {k:'smart_w',f:t=>t.gmgn_smart_wallets||0},
+  {k:'smart_ct',f:t=>t.smart_wallet_count||0},
+  {k:'smart_avg',f:t=>(t.smart_wallet_avg_score||0).toFixed(1)},
+  {k:'snipers',f:t=>t.sniper_count||0},
+  {k:'insiders',f:t=>t.insider_count||0},
+  {k:'dev_hold',f:t=>t.gmgn_dev_hold!=null?(t.gmgn_dev_hold?'Yes':'No'):'—'},
+  // L9 Telegram
+  {k:'tg_ch',f:t=>t.tg_channel_count||0},
+  {k:'tg_ment',f:t=>t.tg_mention_count||0},
+  {k:'tg_vel',f:t=>(t.tg_mention_velocity||0).toFixed(1)},
+  {k:'tg_viral',f:t=>(t.tg_viral_score||0).toFixed(2)},
+  {k:'tg_qual',f:t=>(t.tg_channel_quality||0).toFixed(2)},
+  {k:'tg_first',f:t=>(t.tg_first_mention_hours_ago||0).toFixed(1)+'h'},
+  {k:'tg_last',f:t=>(t.tg_last_mention_minutes_ago||0).toFixed(0)+'m'},
+  // L9 Twitter
+  {k:'tw_ment',f:t=>t.tw_mention_count||0},
+  {k:'tw_sent',f:t=>'<span class="'+pctCls(t.tw_sentiment_score)+'">'+(t.tw_sentiment_score||0).toFixed(2)+'</span>'},
+  {k:'tw_trend',f:t=>(t.tw_trending_score||0).toFixed(2)},
+  {k:'tw_kol',f:t=>(t.tw_kol_score||0).toFixed(2)},
+  {k:'social',f:t=>(t.social_score||0).toFixed(1)},
+  // L10 Zerion
+  {k:'z_mcap',f:t=>fmtUsd(t.zerion_market_cap)},
+  {k:'z_fdv',f:t=>fmtUsd(t.zerion_fdv)},
+  {k:'z_verified',f:t=>fmtBool(t.zerion_verified)},
+  {k:'z_chains',f:t=>t.zerion_chain_count||0},
+  // L11 CoinStats
+  {k:'cs_risk',f:t=>t.cs_risk_score!=null?t.cs_risk_score:'—'},
+  {k:'cs_liq',f:t=>t.cs_liquidity_score!=null?t.cs_liquidity_score:'—'},
+  {k:'cs_vol',f:t=>t.cs_volatility_score!=null?t.cs_volatility_score:'—'},
+  {k:'cs_rank',f:t=>t.cs_rank!=null?t.cs_rank:'—'},
+  // Signals
+  {k:'positives',f:t=>(t.positives||[]).slice(0,2).map(p=>'<span class="tag tag-g">'+trunc(p,20)+'</span>').join(' ')},
+  {k:'negatives',f:t=>(t.negatives||[]).slice(0,2).map(n=>'<span class="tag tag-r">'+trunc(n,20)+'</span>').join(' ')},
+];
 
 function renderTokens(){
   const tokens=DATA.tokens;
-  const sub=`Top ${tokens.length} tokens from ${DATA.total_candidates} candidates · ${DATA.generated_at}`;
-  $('#tokens-sub').textContent=sub;
-  let html='';
+  $('#tokens-sub').textContent=`Top ${tokens.length} from ${DATA.total_candidates} candidates · ${DATA.generated_at} · ${TC.length} columns (scroll →)`;
+  let html='<thead><tr>';
+  TC.forEach(c=>{html+='<th>'+c.k+'</th>'});
+  html+='</tr></thead><tbody>';
   tokens.forEach((t,i)=>{
-    const score=t.score||0;
-    const addr=t.contract_address||'';
-    const tags=(t.positives||[]).slice(0,2).map(p=>'<span class="tag tag-g">'+p+'</span>').join('');
-    html+=`<tr onclick="showToken(${i})" style="cursor:pointer">
-      <td>${i+1}</td>
-      <td><strong>${t.symbol||'???'}</strong></td>
-      <td><span class="badge ${chainCls(t.chain)}">${t.chain||''}</span></td>
-      <td class="sc ${scCls(score)}">${score.toFixed(1)}</td>
-      <td>${fmtUsd(t.fdv)}</td>
-      <td>${fmtUsd(t.volume_h24)}</td>
-      <td class="${pctCls(t.price_change_h1)}">${fmtPct(t.price_change_h1)}</td>
-      <td class="${pctCls(t.price_change_h6)}">${fmtPct(t.price_change_h6)}</td>
-      <td>${(t.age_hours||0).toFixed(1)}h</td>
-      <td>${t.gmgn_smart_wallets||0}</td>
-      <td>${tags}</td>
-    </tr>`;
+    html+='<tr>';
+    TC.forEach(c=>{html+='<td>'+c.f(t,i)+'</td>'});
+    html+='</tr>';
   });
-  $('#tokens-body').innerHTML=html;
+  html+='</tbody>';
+  $('#tokens-table').innerHTML=html;
 }
 
-function showToken(idx){
-  const t=DATA.tokens[idx];
-  const addr=t.contract_address||'';
-  let html=`<h1>${t.symbol||'???'} <span style="color:var(--t2);font-weight:normal;font-size:.9rem">(${t.name||''})</span></h1>
-  <div class="sub"><span class="badge ${chainCls(t.chain)}">${t.chain}</span> <span class="mono">${addr}</span></div>`;
-
-  html+=`<div class="sec">Layer 0 — Dexscreener</div><div class="grid">
-    <div class="card"><h3>Market Data</h3>
-      <div class="row"><span class="l">FDV</span><span class="v">${fmtUsd(t.fdv)}</span></div>
-      <div class="row"><span class="l">Vol 24h</span><span class="v">${fmtUsd(t.volume_h24)}</span></div>
-      <div class="row"><span class="l">Vol 1h</span><span class="v">${fmtUsd(t.volume_h1)}</span></div>
-      <div class="row"><span class="l">Age</span><span class="v">${(t.age_hours||0).toFixed(1)}h</span></div>
-      <div class="row"><span class="l">Channels</span><span class="v">${t.channel_count||0}</span></div>
-      <div class="row"><span class="l">Mentions</span><span class="v">${t.mentions||0}</span></div>
-    </div>
-    <div class="card"><h3>Price Action</h3>
-      <div class="row"><span class="l">1h</span><span class="v ${pctCls(t.price_change_h1)}">${fmtPct(t.price_change_h1)}</span></div>
-      <div class="row"><span class="l">6h</span><span class="v ${pctCls(t.price_change_h6)}">${fmtPct(t.price_change_h6)}</span></div>
-    </div>
-  </div>`;
-
-  html+=`<div class="sec">Layer 8 — GMGN Smart Money</div><div class="grid">
-    <div class="card"><h3>Wallet Analysis</h3>
-      <div class="row"><span class="l">Smart Wallets</span><span class="v">${t.gmgn_smart_wallets||0}</span></div>
-      <div class="row"><span class="l">Smart Wallet Count</span><span class="v">${t.smart_wallet_count||0}</span></div>
-      <div class="row"><span class="l">Avg Wallet Score</span><span class="v">${(t.smart_wallet_avg_score||0).toFixed(1)}</span></div>
-      <div class="row"><span class="l">Sniper Count</span><span class="v">${t.sniper_count||0}</span></div>
-      <div class="row"><span class="l">Insider Count</span><span class="v">${t.insider_count||0}</span></div>
-      <div class="row"><span class="l">Dev Hold %</span><span class="v">${t.gmgn_dev_hold!=null?t.gmgn_dev_hold.toFixed(1)+'%':'—'}</span></div>
-    </div>
-  </div>`;
-
-  html+=`<div class="sec">Layer 9 — Social Signals</div><div class="grid">
-    <div class="card"><h3>Telegram</h3>
-      <div class="row"><span class="l">Channels</span><span class="v">${t.tg_channel_count||0}</span></div>
-      <div class="row"><span class="l">Mentions</span><span class="v">${t.tg_mention_count||0}</span></div>
-      <div class="row"><span class="l">Velocity</span><span class="v">${(t.tg_mention_velocity||0).toFixed(1)}/hr</span></div>
-      <div class="row"><span class="l">Viral Score</span><span class="v">${(t.tg_viral_score||0).toFixed(2)}</span></div>
-      <div class="row"><span class="l">Channel Quality</span><span class="v">${(t.tg_channel_quality||0).toFixed(2)}</span></div>
-      <div class="row"><span class="l">First Mention</span><span class="v">${(t.tg_first_mention_hours_ago||0).toFixed(1)}h ago</span></div>
-      <div class="row"><span class="l">Last Mention</span><span class="v">${(t.tg_last_mention_minutes_ago||0).toFixed(0)}m ago</span></div>
-    </div>
-    <div class="card"><h3>Twitter</h3>
-      <div class="row"><span class="l">Mentions</span><span class="v">${t.tw_mention_count||0}</span></div>
-      <div class="row"><span class="l">Sentiment</span><span class="v ${pctCls(t.tw_sentiment_score)}">${(t.tw_sentiment_score||0).toFixed(2)}</span></div>
-      <div class="row"><span class="l">Trending</span><span class="v">${(t.tw_trending_score||0).toFixed(2)}</span></div>
-      <div class="row"><span class="l">KOL Score</span><span class="v">${(t.tw_kol_score||0).toFixed(2)}</span></div>
-    </div>
-    <div class="card"><h3>Combined Social</h3>
-      <div class="row"><span class="l">Social Score</span><span class="v">${(t.social_score||0).toFixed(1)}</span></div>
-    </div>
-  </div>`;
-
-  html+=`<div class="sec">Layer 10 — Zerion</div><div class="grid">
-    <div class="card"><h3>Zerion</h3>
-      <div class="row"><span class="l">Market Cap</span><span class="v">${fmtUsd(t.zerion_market_cap)}</span></div>
-      <div class="row"><span class="l">FDV</span><span class="v">${fmtUsd(t.zerion_fdv)}</span></div>
-      <div class="row"><span class="l">Verified</span><span class="v">${t.zerion_verified?'Yes':'No'}</span></div>
-      <div class="row"><span class="l">Chains</span><span class="v">${t.zerion_chain_count||0}</span></div>
-    </div>
-  </div>`;
-
-  html+=`<div class="sec">Layer 11 — CoinStats</div><div class="grid">
-    <div class="card"><h3>Risk Scores</h3>
-      <div class="row"><span class="l">Risk</span><span class="v">${t.cs_risk_score||'—'}</span></div>
-      <div class="row"><span class="l">Liquidity</span><span class="v">${t.cs_liquidity_score||'—'}</span></div>
-      <div class="row"><span class="l">Volatility</span><span class="v">${t.cs_volatility_score||'—'}</span></div>
-      <div class="row"><span class="l">Rank</span><span class="v">${t.cs_rank||'—'}</span></div>
-    </div>
-  </div>`;
-
-  html+=`<div class="sec">Final Score: ${(t.score||0).toFixed(1)}</div><div class="grid">
-    <div class="card"><h3>Signals</h3>
-      <div class="row"><span class="l">Positives</span><span class="v">${(t.positives||[]).map(p=>'<span class="tag tag-g">'+p+'</span>').join(' ')||'none'}</span></div>
-      <div class="row"><span class="l">Negatives</span><span class="v">${(t.negatives||[]).map(n=>'<span class="tag tag-r">'+n+'</span>').join(' ')||'none'}</span></div>
-    </div>
-  </div>`;
-
-  $('#token-detail-content').innerHTML=html;
-  showPage('token-detail');
-}
+// WALLET COLUMNS
+const WC=[
+  {k:'#',f:(w,i)=>i+1},
+  {k:'address',f:w=>'<span style="font-size:.6rem">'+trunc(w.address,10)+'</span>'},
+  {k:'chain',f:w=>'<span class="badge '+chainCls(w.chain)+'">'+(w.chain||'')+'</span>'},
+  {k:'score',f:w=>{const s=w.wallet_score||0;return '<span class="sc '+scCls(s)+'">'+s.toFixed(0)+'</span>'}},
+  {k:'pnl',f:w=>'<span class="'+pctCls(w.total_profit)+'">'+fmtUsd(w.total_profit)+'</span>'},
+  {k:'real_pnl',f:w=>'<span class="'+pctCls(w.realized_pnl)+'">'+fmtUsd(w.realized_pnl)+'</span>'},
+  {k:'unreal_pnl',f:w=>'<span class="'+pctCls(w.unrealized_pnl)+'">'+fmtUsd(w.unrealized_pnl)+'</span>'},
+  {k:'roi',f:w=>'<span class="'+pctCls(w.avg_roi)+'">'+fmtPct(w.avg_roi)+'</span>'},
+  {k:'win_rate',f:w=>((w.win_rate||0)*100).toFixed(0)+'%'},
+  {k:'trades',f:w=>w.total_trades||0},
+  {k:'buys',f:w=>w.buy_count||0},
+  {k:'sells',f:w=>w.sell_count||0},
+  {k:'won',f:w=>(w.tokens_profitable||0)+'/'+(w.tokens_total||0)},
+  {k:'entry',f:w=>(w.entry_timing_score||0).toFixed(1)},
+  {k:'hold_h',f:w=>(w.avg_hold_hours||0).toFixed(1)},
+  {k:'pattern',f:w=>w.trading_pattern||'—'},
+  {k:'smart_tag',f:w=>w.smart_money_tag||'—'},
+  {k:'tags',f:w=>(w.wallet_tags||'').split(',').filter(t=>t.trim()).map(t=>'<span class="tag '+(t.includes('sniper')||t.includes('insider')?'tag-r':'tag-g')+'">'+t.trim()+'</span>').join(' ')},
+  {k:'insider',f:w=>w.insider_flag?'<span class="tag tag-y">Y</span>':'—'},
+  {k:'copy',f:w=>w.copy_trade_flag?'<span class="tag tag-r">Y</span>':'—'},
+  {k:'rugs',f:w=>w.rug_history_count||0},
+  {k:'src_tok',f:w=>trunc(w.source_tokens||'',12)},
+  {k:'src_ct',f:w=>w.source_token_count||0},
+  {k:'z_value',f:w=>fmtUsd(w.zerion_value)},
+  {k:'z_24h',f:w=>'<span class="'+pctCls(w.zerion_24h_change_pct)+'">'+fmtPct(w.zerion_24h_change_pct)+'</span>'},
+  {k:'z_defi',f:w=>fmtUsd(w.zerion_defi_value)},
+  {k:'dune',f:w=>w.dune_alpha_score||'—'},
+  {k:'twitter',f:w=>w.twitter_username||'—'},
+  {k:'active',f:w=>{const d=Date.now()/1000-parseFloat(w.last_active_at||0);if(d<60)return Math.floor(d)+'s';if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'h';return Math.floor(d/86400)+'d'}},
+  {k:'first_seen',f:w=>{const d=Date.now()/1000-parseFloat(w.first_seen_at||0);if(d<3600)return Math.floor(d/60)+'m';if(d<86400)return Math.floor(d/3600)+'h';return Math.floor(d/86400)+'d'}},
+];
 
 function renderWallets(){
   const wallets=DATA.wallets;
-  $('#wallets-sub').textContent=`${wallets.length} of ${DATA.wallets_total} wallets shown · top by score`;
-  let html='';
+  $('#wallets-sub').textContent=`${wallets.length} of ${DATA.wallets_total} wallets · top by score · ${WC.length} columns (scroll →)`;
+  let html='<thead><tr>';
+  WC.forEach(c=>{html+='<th>'+c.k+'</th>'});
+  html+='</tr></thead><tbody>';
   wallets.forEach((w,i)=>{
-    const score=w.wallet_score||0;
-    const tags=(w.wallet_tags||'').split(',').filter(t=>t.trim()).map(t=>
-      '<span class="tag '+(t.includes('sniper')||t.includes('insider')?'tag-r':t.includes('smart')||t.includes('TOP')?'tag-g':'')+'">'+t.trim()+'</span>'
-    ).join('');
-    if(w.insider_flag) tags+'<span class="tag tag-y">INSIDER</span>';
-    html+=`<tr onclick="showWallet(${i})" style="cursor:pointer">
-      <td>${i+1}</td>
-      <td class="mono">${trunc(w.address,10)}</td>
-      <td><span class="badge ${chainCls(w.chain)}">${w.chain||''}</span></td>
-      <td class="sc ${scCls(score)}">${score.toFixed(0)}</td>
-      <td class="${pctCls(w.total_profit)}">${fmtUsd(w.total_profit)}</td>
-      <td class="${pctCls(w.avg_roi)}">${fmtPct(w.avg_roi)}</td>
-      <td>${((w.win_rate||0)*100).toFixed(0)}%</td>
-      <td>${w.total_trades||0}</td>
-      <td>${tags}${w.insider_flag?'<span class="tag tag-y">INSIDER</span>':''}</td>
-      <td>${timeAgo(w.last_active_at)}</td>
-    </tr>`;
+    html+='<tr>';
+    WC.forEach(c=>{html+='<td>'+c.f(w,i)+'</td>'});
+    html+='</tr>';
   });
-  $('#wallets-body').innerHTML=html;
-}
-
-function showWallet(idx){
-  const w=DATA.wallets[idx];
-  const tags=(w.wallet_tags||'').split(',').filter(t=>t.trim()).map(t=>
-    '<span class="tag '+(t.includes('sniper')||t.includes('insider')?'tag-r':t.includes('smart')||t.includes('TOP')?'tag-g':'')+'">'+t.trim()+'</span>'
-  ).join('');
-  let html=`<h1>Wallet Detail</h1>
-  <div class="sub"><span class="badge ${chainCls(w.chain)}">${w.chain}</span> <span class="mono">${w.address}</span></div>
-  <div class="sec">Performance</div><div class="grid">
-    <div class="card"><h3>Score</h3>
-      <div class="row"><span class="l">Wallet Score</span><span class="v sc ${scCls(w.wallet_score)}">${(w.wallet_score||0).toFixed(0)}</span></div>
-      <div class="row"><span class="l">Total PnL</span><span class="v ${pctCls(w.total_profit)}">${fmtUsd(w.total_profit)}</span></div>
-      <div class="row"><span class="l">Realized PnL</span><span class="v ${pctCls(w.realized_pnl)}">${fmtUsd(w.realized_pnl)}</span></div>
-      <div class="row"><span class="l">Unrealized PnL</span><span class="v ${pctCls(w.unrealized_pnl)}">${fmtUsd(w.unrealized_pnl)}</span></div>
-      <div class="row"><span class="l">Avg ROI</span><span class="v ${pctCls(w.avg_roi)}">${fmtPct(w.avg_roi)}</span></div>
-      <div class="row"><span class="l">Win Rate</span><span class="v">${((w.win_rate||0)*100).toFixed(0)}%</span></div>
-      <div class="row"><span class="l">Entry Timing</span><span class="v">${(w.entry_timing_score||0).toFixed(1)}</span></div>
-    </div>
-    <div class="card"><h3>Activity</h3>
-      <div class="row"><span class="l">Total Trades</span><span class="v">${w.total_trades||0}</span></div>
-      <div class="row"><span class="l">Buys / Sells</span><span class="v">${w.buy_count||0} / ${w.sell_count||0}</span></div>
-      <div class="row"><span class="l">Won / Total</span><span class="v">${w.tokens_profitable||0} / ${w.tokens_total||0}</span></div>
-      <div class="row"><span class="l">Avg Cost</span><span class="v">${fmtUsd(w.avg_cost)}</span></div>
-      <div class="row"><span class="l">Avg Hold</span><span class="v">${(w.avg_hold_hours||0).toFixed(1)}h</span></div>
-      <div class="row"><span class="l">Source Tokens</span><span class="v">${w.source_token_count||0}</span></div>
-      <div class="row"><span class="l">Last Active</span><span class="v">${timeAgo(w.last_active_at)}</span></div>
-      <div class="row"><span class="l">First Seen</span><span class="v">${timeAgo(w.first_seen_at)}</span></div>
-    </div>
-    <div class="card"><h3>Pattern & Risk</h3>
-      <div class="row"><span class="l">Pattern</span><span class="v">${w.trading_pattern||'—'}</span></div>
-      <div class="row"><span class="l">Smart Tag</span><span class="v">${w.smart_money_tag||'—'}</span></div>
-      <div class="row"><span class="l">Tags</span><span class="v">${tags||'—'}</span></div>
-      <div class="row"><span class="l">Insider</span><span class="v">${w.insider_flag?'<span class="tag tag-y">YES</span>':'No'}</span></div>
-      <div class="row"><span class="l">Copy Trade</span><span class="v">${w.copy_trade_flag?'<span class="tag tag-r">YES</span>':'No'}</span></div>
-      <div class="row"><span class="l">Rug History</span><span class="v">${w.rug_history_count||0}</span></div>
-    </div>
-    <div class="card"><h3>Zerion / DeFi</h3>
-      <div class="row"><span class="l">Portfolio Value</span><span class="v">${fmtUsd(w.zerion_value)}</span></div>
-      <div class="row"><span class="l">24h Change</span><span class="v ${pctCls(w.zerion_24h_change_pct)}">${fmtPct(w.zerion_24h_change_pct)}</span></div>
-      <div class="row"><span class="l">DeFi Value</span><span class="v">${fmtUsd(w.zerion_defi_value)}</span></div>
-      <div class="row"><span class="l">Dune Alpha</span><span class="v">${w.dune_alpha_score||'—'}</span></div>
-    </div>
-  </div>`;
-  $('#wallet-detail-content').innerHTML=html;
-  showPage('wallet-detail');
-}
-
-function renderSchema(){
-  const layers=[
-    {name:'Layer 0 — Dexscreener (Required)',fields:[
-      ['contract_address','string'],['chain','string'],['symbol','string'],['name','string'],
-      ['fdv','float (USD)'],['volume_h24','float'],['volume_h1','float'],
-      ['price_change_h1','float (%)'],['price_change_h6','float (%)'],['age_hours','float'],
-      ['channel_count','int'],['mentions','int'],['dex_url','string']
-    ]},
-    {name:'Layer 8 — GMGN Smart Money',fields:[
-      ['gmgn_smart_wallets','int'],['smart_wallet_count','int'],['smart_wallet_avg_score','float'],
-      ['sniper_count','int'],['insider_count','int'],['gmgn_dev_hold','float (%)']
-    ]},
-    {name:'Layer 9 — Social (Telegram + Twitter)',fields:[
-      ['tg_channel_count','int'],['tg_mention_count','int'],['tg_mention_velocity','float/hr'],
-      ['tg_viral_score','float'],['tg_channel_quality','float'],
-      ['tg_first_mention_hours_ago','float'],['tg_last_mention_minutes_ago','float'],
-      ['tw_mention_count','int'],['tw_sentiment_score','float (-1 to 1)'],
-      ['tw_trending_score','float'],['tw_kol_score','float'],['social_score','float']
-    ]},
-    {name:'Layer 10 — Zerion',fields:[
-      ['zerion_market_cap','float'],['zerion_fdv','float'],['zerion_verified','bool'],['zerion_chain_count','int']
-    ]},
-    {name:'Layer 11 — CoinStats',fields:[
-      ['cs_risk_score','int (0-100)'],['cs_liquidity_score','int'],['cs_volatility_score','int'],['cs_rank','int']
-    ]},
-    {name:'Layer 6 — Derived Scoring',fields:[
-      ['score','float (0-100)'],['positives','list[string]'],['negatives','list[string]']
-    ]},
-    {name:'Wallet Fields (36 columns)',fields:[
-      ['wallet_score','float (0-100)'],['total_profit','float'],['realized_pnl','float'],['unrealized_pnl','float'],
-      ['avg_roi','float (%)'],['total_trades','int'],['buy_count','int'],['sell_count','int'],
-      ['win_rate','float (0-1)'],['tokens_profitable','int'],['tokens_total','int'],
-      ['entry_timing_score','float'],['avg_hold_hours','float'],['trading_pattern','string'],
-      ['smart_money_tag','string'],['wallet_tags','string'],['insider_flag','bool'],
-      ['copy_trade_flag','bool'],['rug_history_count','int'],['zerion_value','float'],
-      ['dune_alpha_score','float'],['twitter_username','string']
-    ]}
-  ];
-  let html='';
-  layers.forEach(l=>{
-    html+=`<div class="sec">${l.name}</div><div class="grid"><div class="card"><h3>Fields</h3>`;
-    l.fields.forEach(f=>{ html+=`<div class="row"><span class="l">${f[0]}</span><span class="v">${f[1]}</span></div>`; });
-    html+=`</div></div>`;
-  });
-  $('#schema-content').innerHTML=html;
+  html+='</tbody>';
+  $('#wallets-table').innerHTML=html;
 }
 
 // Init
@@ -362,15 +196,14 @@ fetch('dashboard_data.json').then(r=>r.json()).then(d=>{
   DATA=d;
   $('#stats-bar').innerHTML=`
     <span>Generated: <span class="v">${d.generated_at}</span></span>
-    <span>Top Tokens: <span class="v">${d.tokens.length}</span></span>
+    <span>Tokens: <span class="v">${d.tokens.length}</span></span>
     <span>Candidates: <span class="v">${d.total_candidates.toLocaleString()}</span></span>
     <span>Wallets: <span class="v">${d.wallets_total.toLocaleString()}</span></span>
-    <span>Enrichment: <span class="v">13 layers</span></span>`;
+    <span>Enrichment: <span class="v">13 layers</span></span>
+    <span>Token cols: <span class="v">${TC.length}</span></span>
+    <span>Wallet cols: <span class="v">${WC.length}</span></span>`;
   renderTokens();
   renderWallets();
-  renderSchema();
-}).catch(e=>{
-  $('#stats-bar').innerHTML='<span class="neg">Failed to load dashboard_data.json: '+e.message+'</span>';
-});
+}).catch(e=>{ $('#stats-bar').innerHTML='<span class="neg">Error: '+e.message+'</span>'; });
 </script>
 </body></html>
