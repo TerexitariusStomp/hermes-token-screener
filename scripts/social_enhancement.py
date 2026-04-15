@@ -50,6 +50,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 from hermes_screener.metrics import metrics
+from hermes_screener.keyword_discovery import run_keyword_discovery, save_discovered_tokens
 
 log = get_logger("social_enhancement")
 
@@ -581,6 +582,20 @@ def run_social_enhancement(
                 )
             conn.commit()
             conn.close()
+
+    # ── Keyword Discovery: find new tokens from trending topics ──
+    existing = set(t.get("contract_address", "") for t in tokens)
+    keyword_result = run_keyword_discovery(
+        max_keywords=10,
+        max_tokens_per_keyword=5,
+        hours_back=24,
+        use_llm=False,  # TF-IDF (no local model available)
+        existing_addresses=existing,
+    )
+    if keyword_result.get("tokens_discovered", 0) > 0 and not dry_run:
+        save_discovered_tokens(keyword_result["tokens"])
+        log.info("keyword_tokens_discovered", count=keyword_result["tokens_discovered"],
+                 keywords=[k["keyword"] for k in keyword_result.get("keywords", [])[:5]])
 
     elapsed = time.time() - start
 
