@@ -1866,25 +1866,8 @@ def run_enricher():
         status.record('Social', False, 0, len(enriched), str(e), time.time() - start)
 
 
-    # Layer 10: Zerion
-    log.info("Layer 10: Zerion (token + wallet data)...")
-    start = time.time()
-    try:
-        zerion = ZerionEnricher()
-        _, count = zerion.enrich_batch(enriched)
-        status.record('Zerion', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('Zerion', False, 0, len(enriched), str(e), time.time() - start)
-
-    # Layer 11: CoinStats
-    log.info("Layer 11: CoinStats (risk score)...")
-    start = time.time()
-    try:
-        cs = CoinStatsEnricher()
-        _, count = cs.enrich_batch(enriched)
-        status.record('CoinStats', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('CoinStats', False, 0, len(enriched), str(e), time.time() - start)
+    # Layer 10: Zerion — REMOVED (not tracking Solana meme tokens)
+    # Layer 11: CoinStats — REMOVED (not tracking Solana meme tokens)
     # ── Score ──
     scored = []
     for token in enriched:
@@ -1907,16 +1890,6 @@ def run_enricher():
             'social_score': token.get('social_score'),
             'gmgn_smart_wallets': token.get('gmgn_smart_wallets'),
             'gmgn_dev_hold': token.get('gmgn_dev_hold'),
-            # Zerion
-            'zerion_market_cap': token.get('zerion_market_cap'),
-            'zerion_fdv': token.get('zerion_fdv'),
-            'zerion_verified': token.get('zerion_verified'),
-            'zerion_chain_count': token.get('zerion_chain_count'),
-            # CoinStats
-            'cs_risk_score': token.get('cs_risk_score'),
-            'cs_liquidity_score': token.get('cs_liquidity_score'),
-            'cs_volatility_score': token.get('cs_volatility_score'),
-            'cs_rank': token.get('cs_rank'),
             'positives': pos,
             'negatives': neg,
             'dex_url': f"https://dexscreener.com/{token['chain']}/{token['contract_address']}",

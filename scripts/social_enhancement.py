@@ -158,21 +158,30 @@ def collect_telegram_signals(tokens: List[dict]) -> Dict[str, dict]:
         recent_mentions = [m for m in mentions if (m["observed_at"] or 0) > recent_cutoff]
         velocity = len(recent_mentions) / 48.0 if recent_mentions else 0
 
-        # Viral score: detect exponential growth
-        # Compare last 12h vs previous 12h
-        h1_cutoff = now - (12 * 3600)
-        h2_cutoff = now - (24 * 3600)
-        h1_mentions = sum(1 for m in mentions if (m["observed_at"] or 0) > h1_cutoff)
-        h2_mentions = sum(1 for m in mentions if h2_cutoff < (m["observed_at"] or 0) <= h1_cutoff)
+        # Viral score: fast detection via recent acceleration
+        # Compare last 2h rate vs overall 48h average rate
+        h2_cutoff = now - (2 * 3600)
+        h2_mentions = sum(1 for m in mentions if (m["observed_at"] or 0) > h2_cutoff)
+        h2_rate = h2_mentions / 2.0  # mentions per hour in last 2h
 
-        if h2_mentions > 0:
-            viral_ratio = h1_mentions / h2_mentions
-        elif h1_mentions > 0:
-            viral_ratio = 2.0  # new activity with no prior
+        if velocity > 0 and h2_rate > 0:
+            # Acceleration: how much faster recent is vs overall average
+            acceleration = h2_rate / velocity
+            # 2x = mildly viral, 5x = very viral, 10x+ = explosive
+            viral_score = min(acceleration * 8, 50)
+        elif h2_rate > 0 and velocity == 0:
+            # Brand new activity with no prior history
+            viral_score = min(h2_rate * 10, 40)
         else:
-            viral_ratio = 0
+            viral_score = 0
 
-        viral_score = min(viral_ratio * 15, 50)  # cap at 50
+        # Also boost viral if spreading to new channels fast
+        h2_channels = set(m["channel_id"] for m in mentions if (m["observed_at"] or 0) > h2_cutoff)
+        all_channels = set(m["channel_id"] for m in mentions)
+        if len(all_channels) > 0:
+            channel_spread = len(h2_channels) / len(all_channels)
+            if channel_spread > 0.5:  # recently active in majority of channels
+                viral_score = min(viral_score + 10, 50)
 
         # Channel quality: channels with 2+ mentions (active) vs 1 mention (noise)
         channel_mention_counts = defaultdict(int)
