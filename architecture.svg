@@ -167,7 +167,7 @@
         <text x="680" y="238" fill="white" font-size="10" font-weight="600" text-anchor="middle">top100.json</text>
         <text x="680" y="254" fill="#94a3b8" font-size="8" text-anchor="middle">Scored 0-100</text>
         <text x="680" y="268" fill="#a78bfa" font-size="7" text-anchor="middle">decline guards + penalties</text>
-        <text x="680" y="279" fill="#a78bfa" font-size="7" text-anchor="middle">h1<-60% → score×0.1</text>
+        <text x="680" y="279" fill="#a78bfa" font-size="7" text-anchor="middle">h1 &lt;-60% → score×0.1</text>
 
         <rect x="620" y="325" width="120" height="55" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
         <text x="680" y="343" fill="white" font-size="10" font-weight="600" text-anchor="middle">wallet_tracker</text>
