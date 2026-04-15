@@ -19,6 +19,8 @@ from fastapi import FastAPI, Query
 from fastapi.responses import HTMLResponse, JSONResponse
 
 from hermes_screener.config import settings
+import sys
+sys.path.insert(0, str(settings.hermes_home / 'scripts'))
 
 app = FastAPI(
     title="Hermes Token Screener",
