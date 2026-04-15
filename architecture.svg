@@ -79,7 +79,6 @@
         <line x1="1105" y1="475" x2="1105" y2="505" stroke="#fbbf24" stroke-width="1.2" marker-end="url(#a)"/>
 
         <!-- db_maintenance to historical_wallets -->
-        <line x1="1165" y1="460" x2="1190" y2="555" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#a)"/>
 
         <!-- Dashboard connections -->
         <line x1="315" y1="245" x2="420" y2="610" stroke="#22d3ee" stroke-width="1" marker-end="url(#a)"/>
