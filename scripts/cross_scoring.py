@@ -33,6 +33,11 @@ DB_PATH = settings.db_path
 WALLETS_DB = settings.wallets_db_path
 OUTPUT_PATH = settings.output_path
 
+# Phase output paths
+DATA_DIR = settings.hermes_home / "data"
+PHASE1_OUTPUT = DATA_DIR / "token_screener" / "top100_phase1_initial.json"
+PHASE3_OUTPUT = DATA_DIR / "token_screener" / "top100_phase3_smartmoney.json"
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DATA LOADING
@@ -605,7 +610,7 @@ def run_cross_scoring(
 
 
 def _write_output(tokens: List[dict]) -> None:
-    """Write re-scored tokens to top100.json."""
+    """Write re-scored tokens to phase3 + latest output."""
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
 
     # Clean internal fields before writing
@@ -624,10 +629,15 @@ def _write_output(tokens: List[dict]) -> None:
         "tokens": clean_tokens,
     }
 
+    # Save as Phase 3 (smart money reranked)
+    with open(PHASE3_OUTPUT, "w") as f:
+        json.dump({**output, "phase": "phase3_smartmoney"}, f, indent=2, default=str)
+
+    # Also save as latest
     with open(OUTPUT_PATH, "w") as f:
         json.dump(output, f, indent=2, default=str)
 
-    log.info("output_written", path=str(OUTPUT_PATH), tokens=len(clean_tokens))
+    log.info("output_written", phase3=str(PHASE3_OUTPUT), latest=str(OUTPUT_PATH), tokens=len(clean_tokens))
 
 
 def main():

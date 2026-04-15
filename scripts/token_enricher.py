@@ -1960,6 +1960,11 @@ def run_enricher():
     with open(OUTPUT_PATH, 'w') as f:
         json.dump(output, f, indent=2, default=str)
 
+    # Save as Phase 1 (initial enrichment scores)
+    phase1_path = Path.home() / '.hermes' / 'data' / 'token_screener' / 'top100_phase1_initial.json'
+    with open(phase1_path, 'w') as f:
+        json.dump({**output, 'phase': 'phase1_initial'}, f, indent=2, default=str)
+
     # ── Summary ──
     log.info("")
     log.info("=" * 60)
