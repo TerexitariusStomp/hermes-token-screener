@@ -3,10 +3,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hermes Token Screener</title>
 <style>
-:root{--bg:#0a0e17;--s:#111827;--s2:#1f2937;--b:#374151;--t:#e5e7eb;--t2:#9ca3af;
+:root{--bg:#0a0e17;--s:#111827;--s2:#1f2937;--b:#374151;--t:#e5e7eb;--t2:#9ca3af;--t3:#6b7280;
 --g:#10b981;--r:#ef4444;--y:#f59e0b;--bl:#3b82f6;--p:#8b5cf6;--c:#06b6d4}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'SF Mono','Fira Code',monospace;background:var(--bg);color:var(--t)}
+body{font-family:'SF Mono','Fira Code',monospace;background:var(--bg);color:var(--t);font-size:14px}
 a{color:var(--c);text-decoration:none}a:hover{text-decoration:underline}
 nav{background:var(--s);border-bottom:1px solid var(--b);padding:.75rem 1.5rem;display:flex;align-items:center;gap:2rem}
 .logo{font-size:1.1rem;font-weight:bold;color:var(--c)}.logo span{color:var(--y)}
@@ -14,11 +14,12 @@ nav{background:var(--s);border-bottom:1px solid var(--b);padding:.75rem 1.5rem;d
 .stats{background:var(--s);border-bottom:1px solid var(--b);padding:.5rem 1.5rem;display:flex;gap:2rem;font-size:.8rem;color:var(--t2);flex-wrap:wrap}
 .stats .v{color:var(--t);font-weight:bold}
 .wrap{max-width:1400px;margin:0 auto;padding:1.5rem}
-h1{font-size:1.3rem;margin-bottom:.25rem}.sub{color:var(--t2);font-size:.8rem;margin-bottom:1rem}
+h1{font-size:1.3rem;margin-bottom:.25rem}h2{font-size:1rem;margin-bottom:.25rem}
+.sub{color:var(--t2);font-size:.8rem;margin-bottom:1rem}
 .tbl{overflow-x:auto;border:1px solid var(--b);border-radius:8px}
-table{width:100%;border-collapse:collapse;font-size:.82rem}
-th{background:var(--s2);color:var(--t2);text-align:left;padding:.6rem .75rem;font-weight:600;position:sticky;top:0;white-space:nowrap}
-td{padding:.5rem .75rem;border-top:1px solid var(--b);white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th{background:var(--s2);color:var(--t2);text-align:left;padding:.55rem .7rem;font-weight:600;position:sticky;top:0;white-space:nowrap}
+td{padding:.45rem .7rem;border-top:1px solid var(--b);white-space:nowrap}
 tr:hover td{background:var(--s2)}
 .sc{font-weight:bold}.sc-h{color:var(--g)}.sc-m{color:var(--y)}.sc-l{color:var(--t2)}
 .pos{color:var(--g)}.neg{color:var(--r)}
@@ -29,18 +30,22 @@ tr:hover td{background:var(--s2)}
 .chain-bsc{background:#f3ba2f22;color:#f3ba2f}
 .tag{display:inline-block;padding:.1rem .35rem;border-radius:3px;font-size:.65rem;margin:.1rem}
 .tag-g{background:#10b98133;color:#10b981}.tag-y{background:#f59e0b33;color:#f59e0b}.tag-r{background:#ef444433;color:#ef4444}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin-top:1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:1rem}
 .card{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:1rem}
 .card h3{font-size:.9rem;color:var(--c);margin-bottom:.75rem}
-.row{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.82rem}
+.card h3 .layer{color:var(--t3);font-size:.7rem;font-weight:normal}
+.row{display:flex;justify-content:space-between;padding:.25rem 0;font-size:.8rem;border-bottom:1px solid rgba(55,65,81,.4)}
+.row:last-child{border-bottom:none}
 .row .l{color:var(--t2)}
 .mono{font-family:inherit;font-size:.72rem}
 .page{display:none}.page.active{display:block}
-.trending{background:linear-gradient(90deg,#0a0e17,#111827);border-bottom:1px solid var(--b);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:.78rem}
+.trending{background:linear-gradient(90deg,#0a0e17,#111827);border-bottom:1px solid var(--b);padding:.5rem 1.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:.78rem}
 .trending .label{color:var(--y);font-weight:bold;white-space:nowrap}
 .trending .kw{display:inline-block;padding:.2rem .5rem;border-radius:4px;background:#06b6d422;color:var(--c)}
 .trending .kw .ct{font-size:.65rem;color:var(--t2);margin-left:.3rem}
-@media(max-width:768px){.stats{gap:.5rem}nav{flex-wrap:wrap}}
+.back{color:var(--t2);font-size:.8rem;cursor:pointer;margin-bottom:1rem;display:inline-block}.back:hover{color:var(--c)}
+.sec-title{color:var(--y);font-size:.7rem;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;margin:1rem 0 .5rem}
+@media(max-width:768px){.stats{gap:.5rem}nav{flex-wrap:wrap}.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -48,8 +53,8 @@ tr:hover td{background:var(--s2)}
 <nav>
 <div class="logo">HERMES <span>&#9670;</span> SCREENER</div>
 <div class="nav">
-  <a class="active" onclick="showPage('tokens')">Tokens</a>
-  <a onclick="showPage('wallets')">Smart Money</a>
+  <a id="nav-tokens" onclick="showPage('tokens')">Tokens</a>
+  <a id="nav-wallets" onclick="showPage('wallets')">Smart Money</a>
 </div>
 </nav>
 
@@ -79,22 +84,195 @@ tr:hover td{background:var(--s2)}
 <h1>Token Leaderboard</h1>
 <div class="sub">Top 100 tokens from 2,847 candidates</div>
 <div class="tbl"><table>
-<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>Ch</th><th>FDV</th><th>Vol24h</th><th>Vol1h</th><th>1h</th><th>6h</th><th>Age</th><th>&#x1f9e0;</th><th>Signals</th></tr></thead>
+<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Score</th><th>FDV</th><th>Vol24h</th><th>Liq</th><th>1h</th><th>6h</th><th>Age</th><th>&#x1f9e0;</th><th>Holders</th><th>Signals</th></tr></thead>
 <tbody>
-<tr><td>1</td><td><strong>DEGENAI</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="https://solscan.io/account/7GCihgDB8MUosYCBgPYDKELkM3QXtDiNCqDhKjMhpump" target="_blank">7GCihg...hpump</a></td><td class="sc sc-h">94.2</td><td>12</td><td>$2.1M</td><td>$847K</td><td>$124K</td><td class="pos">+18.3%</td><td class="pos">+42.1%</td><td>3.2h</td><td>47</td><td><span class="tag tag-g">verified</span><span class="tag tag-g">lp_burned</span></td></tr>
-<tr><td>2</td><td><strong>ZEREBRO</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="https://solscan.io/account/8x5VqbHA8D7N9DcY3zendphp4S3UQpTz3f2sMPAwYZwKo" target="_blank">8x5Vqb...wKo</a></td><td class="sc sc-h">91.7</td><td>8</td><td>$5.4M</td><td>$1.2M</td><td>$89K</td><td class="pos">+7.2%</td><td class="pos">+28.5%</td><td>8.1h</td><td>35</td><td><span class="tag tag-g">dev_holding</span><span class="tag tag-g">verified</span></td></tr>
-<tr><td>3</td><td><strong>PONKE</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="https://solscan.io/account/5z3EqYQo9HiCeYwRqzKqxoHwkL6hHnB3KkCZr2eMpump" target="_blank">5z3EqY...pump</a></td><td class="sc sc-h">88.4</td><td>15</td><td>$12.8M</td><td>$2.4M</td><td>$201K</td><td class="neg">-2.1%</td><td class="pos">+15.8%</td><td>72.4h</td><td>28</td><td><span class="tag tag-g">verified</span></td></tr>
-<tr><td>4</td><td><strong>GOAT</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="https://solscan.io/account/CzLSujWBLFsSjncfkh59rUFqvafWcY5tzedWJSuypump" target="_blank">CzLSuj...pump</a></td><td class="sc sc-h">85.1</td><td>6</td><td>$3.7M</td><td>$562K</td><td>$78K</td><td class="pos">+11.4%</td><td class="pos">+33.2%</td><td>2.8h</td><td>22</td><td><span class="tag tag-g">lp_burned</span></td></tr>
-<tr><td>5</td><td><strong>WIF</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="https://solscan.io/account/EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm" target="_blank">EKpQGS...cjm</a></td><td class="sc sc-h">82.9</td><td>22</td><td>$45.2M</td><td>$8.1M</td><td>$340K</td><td class="pos">+3.7%</td><td class="pos">+12.1%</td><td>480h</td><td>15</td><td><span class="tag tag-g">verified</span></td></tr>
-<tr><td>6</td><td><strong>BUZZ</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="#">9xKmPq...mpum</a></td><td class="sc sc-m">78.3</td><td>4</td><td>$890K</td><td>$234K</td><td>$45K</td><td class="pos">+24.8%</td><td class="pos">+67.3%</td><td>1.2h</td><td>18</td><td><span class="tag tag-g">dev_holding</span></td></tr>
-<tr><td>7</td><td><strong>ARC</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="#">HJmR2s...ump</a></td><td class="sc sc-m">74.6</td><td>3</td><td>$1.5M</td><td>$189K</td><td>$32K</td><td class="pos">+8.9%</td><td class="pos">+21.4%</td><td>5.6h</td><td>12</td><td><span class="tag tag-g">lp_burned</span></td></tr>
-<tr><td>8</td><td><strong>MOBY</strong></td><td><span class="badge chain-base">base</span></td><td class="mono"><a href="#">0x7a3B...9f2c</a></td><td class="sc sc-m">71.2</td><td>2</td><td>$420K</td><td>$67K</td><td>$12K</td><td class="pos">+31.2%</td><td class="pos">+89.1%</td><td>0.8h</td><td>9</td><td><span class="tag tag-y">new</span></td></tr>
-<tr><td>9</td><td><strong>GRIFT</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="#">Bx2kQ9...pump</a></td><td class="sc sc-m">67.8</td><td>5</td><td>$2.3M</td><td>$156K</td><td>$28K</td><td class="neg">-5.3%</td><td class="pos">+18.7%</td><td>12.4h</td><td>8</td><td></td></tr>
-<tr><td>10</td><td><strong>MILO</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="#">7rPmN4...pump</a></td><td class="sc sc-m">63.5</td><td>7</td><td>$5.1M</td><td>$412K</td><td>$55K</td><td class="neg">-1.8%</td><td class="pos">+9.2%</td><td>24.1h</td><td>6</td><td></td></tr>
-<tr><td>11</td><td><strong>FLIQ</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="#">2nPbK7...pump</a></td><td class="sc sc-l">58.1</td><td>1</td><td>$180K</td><td>$23K</td><td>$8K</td><td class="pos">+156.4%</td><td class="pos">+156.4%</td><td>0.3h</td><td>4</td><td><span class="tag tag-y">new</span></td></tr>
-<tr><td>12</td><td><strong>NOVA</strong></td><td><span class="badge chain-solana">solana</span></td><td class="mono"><a href="#">Kx8nR3...pump</a></td><td class="sc sc-l">52.7</td><td>2</td><td>$340K</td><td>$45K</td><td>$6K</td><td class="neg">-12.4%</td><td class="neg">-8.1%</td><td>6.2h</td><td>3</td><td></td></tr>
+<tr onclick="showToken('DEGENAI')" style="cursor:pointer"><td>1</td><td><strong>DEGENAI</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">94.2</td><td>$2.1M</td><td>$847K</td><td>$340K</td><td class="pos">+18.3%</td><td class="pos">+42.1%</td><td>3.2h</td><td>47</td><td>2.8K</td><td><span class="tag tag-g">verified</span><span class="tag tag-g">lp_burned</span></td></tr>
+<tr onclick="showToken('ZEREBRO')" style="cursor:pointer"><td>2</td><td><strong>ZEREBRO</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">91.7</td><td>$5.4M</td><td>$1.2M</td><td>$890K</td><td class="pos">+7.2%</td><td class="pos">+28.5%</td><td>8.1h</td><td>35</td><td>4.1K</td><td><span class="tag tag-g">dev_holding</span><span class="tag tag-g">verified</span></td></tr>
+<tr onclick="showToken('PONKE')" style="cursor:pointer"><td>3</td><td><strong>PONKE</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">88.4</td><td>$12.8M</td><td>$2.4M</td><td>$1.8M</td><td class="neg">-2.1%</td><td class="pos">+15.8%</td><td>72.4h</td><td>28</td><td>8.3K</td><td><span class="tag tag-g">verified</span></td></tr>
+<tr onclick="showToken('GOAT')" style="cursor:pointer"><td>4</td><td><strong>GOAT</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">85.1</td><td>$3.7M</td><td>$562K</td><td>$245K</td><td class="pos">+11.4%</td><td class="pos">+33.2%</td><td>2.8h</td><td>22</td><td>1.9K</td><td><span class="tag tag-g">lp_burned</span></td></tr>
+<tr onclick="showToken('WIF')" style="cursor:pointer"><td>5</td><td><strong>WIF</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">82.9</td><td>$45.2M</td><td>$8.1M</td><td>$5.2M</td><td class="pos">+3.7%</td><td class="pos">+12.1%</td><td>480h</td><td>15</td><td>42K</td><td><span class="tag tag-g">verified</span></td></tr>
+<tr onclick="showToken('BUZZ')" style="cursor:pointer"><td>6</td><td><strong>BUZZ</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">78.3</td><td>$890K</td><td>$234K</td><td>$67K</td><td class="pos">+24.8%</td><td class="pos">+67.3%</td><td>1.2h</td><td>18</td><td>890</td><td><span class="tag tag-g">dev_holding</span></td></tr>
+<tr onclick="showToken('ARC')" style="cursor:pointer"><td>7</td><td><strong>ARC</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">74.6</td><td>$1.5M</td><td>$189K</td><td>$120K</td><td class="pos">+8.9%</td><td class="pos">+21.4%</td><td>5.6h</td><td>12</td><td>1.2K</td><td><span class="tag tag-g">lp_burned</span></td></tr>
+<tr onclick="showToken('MOBY')" style="cursor:pointer"><td>8</td><td><strong>MOBY</strong></td><td><span class="badge chain-base">base</span></td><td class="sc sc-m">71.2</td><td>$420K</td><td>$67K</td><td>$34K</td><td class="pos">+31.2%</td><td class="pos">+89.1%</td><td>0.8h</td><td>9</td><td>340</td><td><span class="tag tag-y">new</span></td></tr>
 </tbody>
 </table></div>
+</div>
+</div>
+
+<!-- TOKEN DETAIL PAGE -->
+<div class="page" id="page-token-detail">
+<div class="wrap">
+<span class="back" onclick="showPage('tokens')">&larr; Back to Tokens</span>
+<h1 id="td-symbol">DEGENAI <span style="color:var(--t2);font-weight:normal;font-size:.9rem" id="td-name">(Degen AI)</span></h1>
+<div class="sub">
+  <span class="badge chain-solana" id="td-chain">solana</span>
+  <span class="mono" id="td-addr">7GCihgDB8MUosYCBgPYDKELkM3QXtDiNCqDhKjMhpump</span>
+</div>
+
+<!-- L0: Dexscreener -->
+<div class="sec-title">Layer 0 — Dexscreener (Required)</div>
+<div class="grid">
+  <div class="card"><h3>Market Data <span class="layer">L0</span></h3>
+    <div class="row"><span class="l">FDV</span><span>$2.1M</span></div>
+    <div class="row"><span class="l">Liquidity</span><span>$340K</span></div>
+    <div class="row"><span class="l">Vol 24h</span><span>$847K</span></div>
+    <div class="row"><span class="l">Vol 1h</span><span>$124K</span></div>
+    <div class="row"><span class="l">Txns 24h</span><span>4,218 (62% buy)</span></div>
+    <div class="row"><span class="l">Pair</span><span class="mono">Raydium</span></div>
+  </div>
+  <div class="card"><h3>Price Action</h3>
+    <div class="row"><span class="l">1h</span><span class="pos">+18.3%</span></div>
+    <div class="row"><span class="l">6h</span><span class="pos">+42.1%</span></div>
+    <div class="row"><span class="l">24h</span><span class="pos">+156.7%</span></div>
+    <div class="row"><span class="l">ATH</span><span>$0.000042</span></div>
+    <div class="row"><span class="l">From ATH</span><span class="neg">-23.4%</span></div>
+  </div>
+</div>
+
+<!-- L1-2: Surf + GoPlus -->
+<div class="sec-title">Layer 1-2 — Surf + GoPlus (Security)</div>
+<div class="grid">
+  <div class="card"><h3>Surf Social <span class="layer">L1</span></h3>
+    <div class="row"><span class="l">Sentiment</span><span class="pos">Bullish (0.82)</span></div>
+    <div class="row"><span class="l">Mindshare</span><span>0.34%</span></div>
+    <div class="row"><span class="l">Trending</span><span class="pos">Yes</span></div>
+  </div>
+  <div class="card"><h3>GoPlus Security <span class="layer">L2</span></h3>
+    <div class="row"><span class="l">Honeypot</span><span class="pos">No</span></div>
+    <div class="row"><span class="l">Buy Tax</span><span>0%</span></div>
+    <div class="row"><span class="l">Sell Tax</span><span>0%</span></div>
+    <div class="row"><span class="l">Can Mint</span><span class="pos">No</span></div>
+  </div>
+</div>
+
+<!-- L3: RugCheck -->
+<div class="sec-title">Layer 3 — RugCheck (Solana Security)</div>
+<div class="grid">
+  <div class="card"><h3>RugCheck <span class="layer">L3</span></h3>
+    <div class="row"><span class="l">Rug Score</span><span class="pos">Good (12/100)</span></div>
+    <div class="row"><span class="l">Insider Holders</span><span>3 (4.2%)</span></div>
+    <div class="row"><span class="l">Max Holder %</span><span>8.7%</span></div>
+    <div class="row"><span class="l">Mutable</span><span class="pos">No</span></div>
+    <div class="row"><span class="l">Transfer Fee</span><span class="pos">0%</span></div>
+  </div>
+</div>
+
+<!-- L4-5: Etherscan + De.Fi -->
+<div class="sec-title">Layer 4-5 — Contract Verification + De.Fi</div>
+<div class="grid">
+  <div class="card"><h3>Etherscan <span class="layer">L4</span></h3>
+    <div class="row"><span class="l">Verified</span><span class="pos">Yes</span></div>
+    <div class="row"><span class="l">Source Length</span><span>—</span></div>
+  </div>
+  <div class="card"><h3>De.Fi <span class="layer">L5</span></h3>
+    <div class="row"><span class="l">Security Score</span><span class="pos">A (92/100)</span></div>
+    <div class="row"><span class="l">Holder Concentration</span><span>Low</span></div>
+  </div>
+</div>
+
+<!-- L7: CoinGecko -->
+<div class="sec-title">Layer 7 — CoinGecko</div>
+<div class="grid">
+  <div class="card"><h3>CoinGecko <span class="layer">L7</span></h3>
+    <div class="row"><span class="l">Meme Token</span><span class="pos">Yes</span></div>
+    <div class="row"><span class="l">Binance Listed</span><span>No</span></div>
+    <div class="row"><span class="l">Coinbase Listed</span><span>No</span></div>
+    <div class="row"><span class="l">Major Exchanges</span><span>0</span></div>
+    <div class="row"><span class="l">Categories</span><span>meme, solana-ecosystem</span></div>
+  </div>
+</div>
+
+<!-- L8: GMGN -->
+<div class="sec-title">Layer 8 — GMGN Smart Money</div>
+<div class="grid">
+  <div class="card"><h3>Smart Money <span class="layer">L8</span></h3>
+    <div class="row"><span class="l">Smart Wallets</span><span class="pos">47</span></div>
+    <div class="row"><span class="l">Sniper Wallets</span><span>8</span></div>
+    <div class="row"><span class="l">Whale Wallets</span><span>12</span></div>
+    <div class="row"><span class="l">Renowned Wallets</span><span>5</span></div>
+    <div class="row"><span class="l">Rat Traders</span><span class="neg">2</span></div>
+    <div class="row"><span class="l">Fresh Wallet Rate</span><span>34%</span></div>
+  </div>
+  <div class="card"><h3>Token Security <span class="layer">L8</span></h3>
+    <div class="row"><span class="l">Holders</span><span>2,847</span></div>
+    <div class="row"><span class="l">Burn Ratio</span><span class="pos">42.3%</span></div>
+    <div class="row"><span class="l">Burn Status</span><span class="pos">Burned</span></div>
+    <div class="row"><span class="l">Locked</span><span class="pos">Yes</span></div>
+    <div class="row"><span class="l">Renounced Mint</span><span class="pos">Yes</span></div>
+    <div class="row"><span class="l">Renounced Freeze</span><span class="pos">Yes</span></div>
+  </div>
+  <div class="card"><h3>Dev Analysis <span class="layer">L8</span></h3>
+    <div class="row"><span class="l">Dev Holding</span><span class="pos">8.2%</span></div>
+    <div class="row"><span class="l">Team Hold Rate</span><span>12.4%</span></div>
+    <div class="row"><span class="l">Dev Token Count</span><span>2</span></div>
+    <div class="row"><span class="l">Token Farmer</span><span class="pos">No</span></div>
+    <div class="row"><span class="l">CTO Flag</span><span class="pos">No</span></div>
+    <div class="row"><span class="l">Creator Status</span><span>Normal</span></div>
+  </div>
+  <div class="card"><h3>Market Structure <span class="layer">L8</span></h3>
+    <div class="row"><span class="l">Bundler Wallets</span><span>3</span></div>
+    <div class="row"><span class="l">Top Bundler</span><span class="neg">Yes</span></div>
+    <div class="row"><span class="l">Entrapment</span><span class="pos">No</span></div>
+    <div class="row"><span class="l">Bot Degen Rate</span><span>18%</span></div>
+    <div class="row"><span class="l">Private Vault</span><span>0%</span></div>
+    <div class="row"><span class="l">Supply</span><span>1B tokens</span></div>
+  </div>
+</div>
+
+<!-- L9: Social -->
+<div class="sec-title">Layer 9 — Social Signals</div>
+<div class="grid">
+  <div class="card"><h3>Telegram <span class="layer">L9</span></h3>
+    <div class="row"><span class="l">Mentions</span><span>342</span></div>
+    <div class="row"><span class="l">Mentions/hr</span><span>28.5</span></div>
+    <div class="row"><span class="l">Channels</span><span>12</span></div>
+    <div class="row"><span class="l">Viral Score</span><span class="pos">0.87</span></div>
+  </div>
+  <div class="card"><h3>Twitter <span class="layer">L9</span></h3>
+    <div class="row"><span class="l">Sentiment</span><span class="pos">Bullish (0.74)</span></div>
+    <div class="row"><span class="l">Has Twitter</span><span class="pos">Yes</span></div>
+    <div class="row"><span class="l">Has Website</span><span class="pos">Yes</span></div>
+  </div>
+</div>
+
+<!-- L10-12: Zerion + CoinStats + Mobula -->
+<div class="sec-title">Layer 10-12 — Zerion + CoinStats + Mobula</div>
+<div class="grid">
+  <div class="card"><h3>Zerion <span class="layer">L10</span></h3>
+    <div class="row"><span class="l">Staked</span><span>—</span></div>
+    <div class="row"><span class="l">Borrowed</span><span>—</span></div>
+    <div class="row"><span class="l">DeFi Value</span><span>—</span></div>
+    <div class="row"><span class="l">Chains</span><span>1</span></div>
+    <div class="row"><span class="l">Twitter</span><span class="pos">Linked</span></div>
+  </div>
+  <div class="card"><h3>CoinStats <span class="layer">L11</span></h3>
+    <div class="row"><span class="l">Risk Score</span><span class="pos">Low (23/100)</span></div>
+    <div class="row"><span class="l">Liquidity Score</span><span>Medium</span></div>
+    <div class="row"><span class="l">Volatility</span><span>High</span></div>
+  </div>
+  <div class="card"><h3>Mobula <span class="layer">L12</span></h3>
+    <div class="row"><span class="l">Organic Ratio</span><span class="pos">72%</span></div>
+    <div class="row"><span class="l">Insider Count</span><span>3</span></div>
+    <div class="row"><span class="l">Deployer Tokens</span><span>2</span></div>
+    <div class="row"><span class="l">Deployer Migrations</span><span>1</span></div>
+  </div>
+</div>
+
+<!-- L6: Derived / Score -->
+<div class="sec-title">Final Score Breakdown</div>
+<div class="grid">
+  <div class="card"><h3>Score: 94.2 <span class="layer">L6 Derived</span></h3>
+    <div class="row"><span class="l">Social Momentum</span><span>35/35</span></div>
+    <div class="row"><span class="l">Freshness</span><span>14/15</span></div>
+    <div class="row"><span class="l">Low FDV</span><span>12/15</span></div>
+    <div class="row"><span class="l">Volume</span><span>18/20</span></div>
+    <div class="row"><span class="l">Transactions</span><span>12/15</span></div>
+    <div class="row"><span class="l">Momentum</span><span>8/10</span></div>
+    <div class="row"><span class="l" style="color:var(--g)">Boosters</span><span class="pos">verified(+20%) lp_burned(+15%)</span></div>
+    <div class="row"><span class="l" style="color:var(--r)">Penalties</span><span style="color:var(--t2)">none</span></div>
+  </div>
+</div>
+
 </div>
 </div>
 
@@ -102,31 +280,85 @@ tr:hover td{background:var(--s2)}
 <div class="page" id="page-wallets">
 <div class="wrap">
 <h1>Smart Money Wallets</h1>
-<div class="sub">1,204 wallets tracked</div>
+<div class="sub">1,204 wallets tracked · Top 100 by score</div>
 <div class="tbl"><table>
 <thead><tr><th>#</th><th>Address</th><th>Chain</th><th>Score</th><th>PnL</th><th>ROI</th><th>Win</th><th>Trades</th><th>Tags</th><th>Active</th></tr></thead>
 <tbody>
-<tr><td>1</td><td class="mono"><a href="#">7xKXtg...PoNr</a></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">97</td><td class="pos">$2.4M</td><td class="pos">+847%</td><td>82%</td><td>342</td><td><span class="tag tag-g">smart</span><span class="tag tag-g">TOP1</span><span class="tag tag-y">INSIDER</span></td><td>2m</td></tr>
-<tr><td>2</td><td class="mono"><a href="#">3yNmr2...xKwp</a></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">94</td><td class="pos">$1.8M</td><td class="pos">+623%</td><td>79%</td><td>218</td><td><span class="tag tag-g">smart</span><span class="tag tag-g">KOL</span></td><td>8m</td></tr>
-<tr><td>3</td><td class="mono"><a href="#">9pQLxb...mNr2</a></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">91</td><td class="pos">$890K</td><td class="pos">+412%</td><td>76%</td><td>156</td><td><span class="tag tag-g">smart</span><span class="tag tag-y">INSIDER</span></td><td>15m</td></tr>
-<tr><td>4</td><td class="mono"><a href="#">0xfc4C...0Fa9</a></td><td><span class="badge chain-base">base</span></td><td class="sc sc-h">88</td><td class="pos">$567K</td><td class="pos">+298%</td><td>71%</td><td>89</td><td><span class="tag tag-g">TOP1</span></td><td>1h</td></tr>
-<tr><td>5</td><td class="mono"><a href="#">5rTkn8...qLwp</a></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">85</td><td class="pos">$445K</td><td class="pos">+234%</td><td>74%</td><td>203</td><td><span class="tag tag-g">KOL</span></td><td>3h</td></tr>
-<tr><td>6</td><td class="mono"><a href="#">8mPqR4...nKxs</a></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">79</td><td class="pos">$234K</td><td class="pos">+156%</td><td>68%</td><td>134</td><td><span class="tag tag-g">smart</span></td><td>45m</td></tr>
-<tr><td>7</td><td class="mono"><a href="#">2bXkp9...mLwq</a></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">73</td><td class="pos">$178K</td><td class="pos">+124%</td><td>65%</td><td>97</td><td><span class="tag tag-r">sniper</span></td><td>2h</td></tr>
-<tr><td>8</td><td class="mono"><a href="#">6nPmK2...xRwp</a></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">68</td><td class="pos">$89K</td><td class="pos">+87%</td><td>61%</td><td>56</td><td></td><td>6h</td></tr>
-<tr><td>9</td><td class="mono"><a href="#">4rTnQ8...pLmx</a></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">62</td><td class="neg">-$12K</td><td class="neg">-23%</td><td>44%</td><td>78</td><td><span class="tag tag-r">copy_trade</span></td><td>1d</td></tr>
-<tr><td>10</td><td class="mono"><a href="#">1kPqR7...nMwp</a></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-l">54</td><td class="pos">$34K</td><td class="pos">+45%</td><td>52%</td><td>34</td><td></td><td>3d</td></tr>
+<tr onclick="showWallet('7xKXtg22')" style="cursor:pointer"><td>1</td><td class="mono">7xKXtg...PoNr</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">97</td><td class="pos">$2.4M</td><td class="pos">+847%</td><td>82%</td><td>342</td><td><span class="tag tag-g">smart</span><span class="tag tag-g">TOP1</span><span class="tag tag-y">INSIDER</span></td><td>2m</td></tr>
+<tr onclick="showWallet('3yNmr2xx')" style="cursor:pointer"><td>2</td><td class="mono">3yNmr2...xKwp</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">94</td><td class="pos">$1.8M</td><td class="pos">+623%</td><td>79%</td><td>218</td><td><span class="tag tag-g">smart</span><span class="tag tag-g">KOL</span></td><td>8m</td></tr>
+<tr onclick="showWallet('9pQLxbmm')" style="cursor:pointer"><td>3</td><td class="mono">9pQLxb...mNr2</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">91</td><td class="pos">$890K</td><td class="pos">+412%</td><td>76%</td><td>156</td><td><span class="tag tag-g">smart</span><span class="tag tag-y">INSIDER</span></td><td>15m</td></tr>
+<tr onclick="showWallet('0xfc4C555')" style="cursor:pointer"><td>4</td><td class="mono">0xfc4C...0Fa9</td><td><span class="badge chain-base">base</span></td><td class="sc sc-h">88</td><td class="pos">$567K</td><td class="pos">+298%</td><td>71%</td><td>89</td><td><span class="tag tag-g">TOP1</span></td><td>1h</td></tr>
+<tr onclick="showWallet('5rTkn88q')" style="cursor:pointer"><td>5</td><td class="mono">5rTkn8...qLwp</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">85</td><td class="pos">$445K</td><td class="pos">+234%</td><td>74%</td><td>203</td><td><span class="tag tag-g">KOL</span></td><td>3h</td></tr>
+<tr onclick="showWallet('8mPqR44n')" style="cursor:pointer"><td>6</td><td class="mono">8mPqR4...nKxs</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">79</td><td class="pos">$234K</td><td class="pos">+156%</td><td>68%</td><td>134</td><td><span class="tag tag-g">smart</span></td><td>45m</td></tr>
+<tr onclick="showWallet('2bXkp99m')" style="cursor:pointer"><td>7</td><td class="mono">2bXkp9...mLwq</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">73</td><td class="pos">$178K</td><td class="pos">+124%</td><td>65%</td><td>97</td><td><span class="tag tag-r">sniper</span></td><td>2h</td></tr>
+<tr onclick="showWallet('6nPmK22x')" style="cursor:pointer"><td>8</td><td class="mono">6nPmK2...xRwp</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">68</td><td class="pos">$89K</td><td class="pos">+87%</td><td>61%</td><td>56</td><td></td><td>6h</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+
+<!-- WALLET DETAIL PAGE -->
+<div class="page" id="page-wallet-detail">
+<div class="wrap">
+<span class="back" onclick="showPage('wallets')">&larr; Back to Smart Money</span>
+<h1>Wallet Detail</h1>
+<div class="sub">
+  <span class="badge chain-solana">solana</span>
+  <span class="mono">7xKXtg22MjRUMo2PqLUvFDFJxmMPbPoNr</span>
+</div>
+<div class="sec-title">Performance</div>
+<div class="grid">
+  <div class="card"><h3>Score Breakdown</h3>
+    <div class="row"><span class="l">Final Score</span><span class="sc sc-h">97</span></div>
+    <div class="row"><span class="l">PNL (35pts)</span><span class="pos">$2.4M</span></div>
+    <div class="row"><span class="l">Trades (20pts)</span><span>342</span></div>
+    <div class="row"><span class="l">Win Rate (10pts)</span><span>82%</span></div>
+    <div class="row"><span class="l">Avg ROI (10pts)</span><span class="pos">+847%</span></div>
+    <div class="row"><span class="l">Entry Timing (8pts)</span><span>7.2</span></div>
+    <div class="row"><span class="l">Age (5pts)</span><span>142d</span></div>
+    <div class="row"><span class="l">Insider Bonus</span><span class="pos">+5</span></div>
+  </div>
+  <div class="card"><h3>Activity</h3>
+    <div class="row"><span class="l">Total Trades</span><span>342</span></div>
+    <div class="row"><span class="l">Buys / Sells</span><span>198 / 144</span></div>
+    <div class="row"><span class="l">Won / Total Tokens</span><span>89 / 108</span></div>
+    <div class="row"><span class="l">Chains</span><span>1 (solana)</span></div>
+    <div class="row"><span class="l">Last Active</span><span>2m ago</span></div>
+  </div>
+  <div class="card"><h3>Pattern Detection</h3>
+    <div class="row"><span class="l">Pattern</span><span class="pos">SWING</span></div>
+    <div class="row"><span class="l">Sell Ratio</span><span>0.58</span></div>
+    <div class="row"><span class="l">Copy Trade</span><span class="pos">No</span></div>
+    <div class="row"><span class="l">Rug History</span><span class="pos">0</span></div>
+    <div class="row"><span class="l">Round Trips</span><span>2</span></div>
+  </div>
+</div>
+<div class="sec-title">Token Positions (Top 10)</div>
+<div class="tbl"><table>
+<thead><tr><th>Token</th><th>PnL</th><th>Realized</th><th>Buy Tx</th><th>Sell Tx</th><th>Win</th><th>Seen</th></tr></thead>
+<tbody>
+<tr><td><strong>DEGENAI</strong></td><td class="pos">$342K</td><td>$280K</td><td>12</td><td>8</td><td>&#10003;</td><td>3h</td></tr>
+<tr><td><strong>ZEREBRO</strong></td><td class="pos">$189K</td><td>$150K</td><td>8</td><td>5</td><td>&#10003;</td><td>6h</td></tr>
+<tr><td><strong>WIF</strong></td><td class="pos">$124K</td><td>$124K</td><td>4</td><td>4</td><td>&#10003;</td><td>2d</td></tr>
+<tr><td><strong>GOAT</strong></td><td class="pos">$67K</td><td>$45K</td><td>6</td><td>3</td><td>&#10003;</td><td>8h</td></tr>
+<tr><td><strong>BUZZ</strong></td><td class="pos">$34K</td><td>$0</td><td>3</td><td>0</td><td>&#8212;</td><td>1h</td></tr>
+<tr><td>RUGPULL_X</td><td class="neg">-$12K</td><td>-$12K</td><td>2</td><td>2</td><td>&#10007;</td><td>5d</td></tr>
+<tr><td>MEMECOIN</td><td class="pos">$8K</td><td>$8K</td><td>1</td><td>1</td><td>&#10003;</td><td>1w</td></tr>
 </tbody>
 </table></div>
 </div>
 </div>
 
 <script>
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
-  event.target.classList.add('active');
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
+  var nav=document.getElementById('nav-'+(name.startsWith('token')?'tokens':'wallets'));
+  if(nav)nav.classList.add('active');
 }
+function showToken(symbol){showPage('token-detail')}
+function showWallet(addr){showPage('wallet-detail')}
+document.getElementById('nav-tokens').classList.add('active');
 </script>
 </body></html>
