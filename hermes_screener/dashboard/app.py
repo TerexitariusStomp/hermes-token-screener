@@ -358,6 +358,22 @@ async def index():
     data = _load_top100()
     tokens = data.get("tokens", [])
 
+    # Load trending keywords
+    tk_path = settings.output_path.parent / "trending_keywords.json"
+    trending_html = ""
+    if tk_path.exists():
+        try:
+            tk_data = json.loads(tk_path.read_text())
+            kws = tk_data.get("keywords", [])[:12]
+            if kws:
+                kw_items = "".join(
+                    f'<span class="kw">{kw["keyword"]}<span class="ct">{kw["count"]}</span></span>'
+                    for kw in kws
+                )
+                trending_html = f'<div class="trending"><span class="label">&#128293; TRENDING</span>{kw_items}</div>'
+        except Exception:
+            pass
+
     rows = ""
     for i, t in enumerate(tokens, 1):
         score = t.get("score", 0) or 0
@@ -384,6 +400,7 @@ async def index():
 </tr>"""
 
     return _page("Tokens", "tokens", f"""
+{trending_html}
 <h1>Token Leaderboard</h1>
 <div class="sub">Top {len(tokens)} tokens from {data.get('total_candidates',0)} candidates &middot; {data.get('generated_at_iso','')}</div>
 <div class="tbl"><table>

@@ -212,6 +212,7 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
                     "days_tracked": 0,
                 }
                 _save_lifecycle(addr, lifecycle)
+                generate_lifecycle_chart(addr)
                 new_entries += 1
 
             elif lifecycle.get("status") == "active":
@@ -276,6 +277,8 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
                 lifecycle["snapshot_count"] = len(lifecycle["snapshots"])
 
                 _save_lifecycle(addr, lifecycle)
+                generate_lifecycle_chart(addr)
+                generate_comparison_chart(addr)
                 exited += 1
 
     log.info("lifecycle_processed", new_entries=new_entries, updated=updated, exited=exited)
@@ -288,10 +291,18 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
 
 def generate_lifecycle_chart(address: str) -> Optional[str]:
     """
-    Generate an HTML chart showing the token's lifecycle from entry to exit.
+    Generate a PNG chart image showing the token's lifecycle from entry to exit.
 
-    Returns path to the generated HTML file.
+    Returns path to the generated PNG file.
     """
+    import pandas as pd
+    import matplotlib
+    matplotlib.use('Agg')  # headless
+    import matplotlib.pyplot as plt
+    import matplotlib.dates as mdates
+    from matplotlib.patches import FancyBboxPatch
+    import numpy as np
+
     lifecycle = _load_lifecycle(address)
     if not lifecycle:
         return None
@@ -302,97 +313,225 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
 
     symbol = lifecycle.get("symbol", address[:8])
     status = lifecycle.get("status", "active")
-    entry_price = lifecycle.get("entry_price")
-    exit_price = lifecycle.get("exit_price") or lifecycle.get("current_price")
-    price_change = lifecycle.get("price_change_pct")
 
-    # Combine all candles across snapshots
+    # Combine all hourly candles across snapshots
     all_candles = []
-    seen_timestamps = set()
+    seen_ts = set()
     for snapshot in snapshots:
         for candle in snapshot.get("candles_h1", []):
-            ts = candle[0]
-            if ts not in seen_timestamps:
-                seen_timestamps.add(ts)
+            if candle[0] not in seen_ts:
+                seen_ts.add(candle[0])
                 all_candles.append(candle)
     all_candles.sort(key=lambda c: c[0])
 
-    # Build candle JSON for Lightweight Charts
-    candle_json = json.dumps([{"time": c[0], "open": c[1], "high": c[2], "low": c[3], "close": c[4]} for c in all_candles])
-    volume_json = json.dumps([{"time": c[0], "value": c[5] or 0,
-                               "color": "rgba(16,185,129,0.3)" if c[4] >= c[1] else "rgba(239,68,68,0.3)"}
-                              for c in all_candles])
+    if len(all_candles) < 2:
+        return None
 
-    # Entry/exit markers
+    # Build arrays
+    dates = [datetime.fromtimestamp(c[0]) for c in all_candles]
+    opens = [c[1] for c in all_candles]
+    highs = [c[2] for c in all_candles]
+    lows = [c[3] for c in all_candles]
+    closes = [c[4] for c in all_candles]
+    volumes = [c[5] or 0 for c in all_candles]
+
+    entry_price = lifecycle.get("entry_price")
+    exit_price = lifecycle.get("exit_price") or lifecycle.get("current_price")
+    price_change = lifecycle.get("price_change_pct")
     entry_time = lifecycle.get("entry_time")
     exit_time = lifecycle.get("exit_time")
 
-    html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
-<title>{symbol} Lifecycle — {status.upper()}</title>
-<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
-<style>
-body{{font-family:'SF Mono',monospace;background:#0a0e17;color:#e5e7eb;margin:0;padding:1rem}}
-.header{{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}}
-h1{{font-size:1.3rem;margin:0}}.status{{padding:.2rem .6rem;border-radius:4px;font-size:.8rem;font-weight:bold}}
-.active{{background:#10b98133;color:#10b981}}.exited{{background:#ef444433;color:#ef4444}}
-.metrics{{display:flex;gap:2rem;margin-bottom:1rem;font-size:.85rem}}
-.metric .label{{color:#9ca3af}}.metric .val{{font-weight:bold;font-size:1rem}}
-.pos{{color:#10b981}}.neg{{color:#ef4444}}
-#chart{{width:100%;height:450px;border:1px solid #374151;border-radius:8px}}
-.footer{{margin-top:.5rem;font-size:.72rem;color:#9ca3af}}
-</style></head><body>
-<div class="header">
-  <h1>{symbol} Lifecycle Chart</h1>
-  <span class="status {status}">{status.upper()}</span>
-</div>
-<div class="metrics">
-  <div class="metric"><span class="label">Entry Price</span><br><span class="val">${entry_price:.8f if entry_price else '—'}</span></div>
-  <div class="metric"><span class="label">{'Exit' if status=='exited' else 'Current'} Price</span><br><span class="val">${exit_price:.8f if exit_price else '—'}</span></div>
-  <div class="metric"><span class="label">Change</span><br><span class="val {'pos' if (price_change or 0)>0 else 'neg'}">{('+' if (price_change or 0)>0 else '') + str(price_change) + '%' if price_change is not None else '—'}</span></div>
-  <div class="metric"><span class="label">Entry Score</span><br><span class="val">{lifecycle.get('entry_score', '—')}</span></div>
-  <div class="metric"><span class="label">FDV</span><br><span class="val">${lifecycle.get('entry_fdv', 0):,.0f}</span></div>
-  <div class="metric"><span class="label">Days Tracked</span><br><span class="val">{lifecycle.get('days_tracked', 0)}</span></div>
-  <div class="metric"><span class="label">Snapshots</span><br><span class="val">{lifecycle.get('snapshot_count', 0)}</span></div>
-</div>
-<div id="chart"></div>
-<div class="footer">
-  Entry: {lifecycle.get('entry_time_iso', '—')} | {'Exit: ' + str(lifecycle.get('exit_time_iso', '—')) if status=='exited' else 'Still active'}
-  | Pool: {lifecycle.get('address', '')[:12]}... | {len(all_candles)} candles
-</div>
-<script>
-const chart = LightweightCharts.createChart(document.getElementById('chart'),{{
-  layout:{{background:{{type:'solid',color:'#0a0e17'}},textColor:'#9ca3af'}},
-  grid:{{vertLines:{{color:'#1f2937'}},horzLines:{{color:'#1f2937'}}}},
-  crosshair:{{mode:0,vertLine:{{color:'#06b6d4',width:1,style:2}},horzLine:{{color:'#06b6d4',width:1,style:2}}}},
-  rightPriceScale:{{borderColor:'#374151'}},
-  timeScale:{{borderColor:'#374151',timeVisible:true}}
-}});
-const cs = chart.addCandlestickSeries({{
-  upColor:'#10b981',downColor:'#ef4444',borderUpColor:'#10b981',borderDownColor:'#ef4444',
-  wickUpColor:'#10b981',wickDownColor:'#ef4444'
-}});
-cs.setData({candle_json});
-const vs = chart.addHistogramSeries({{
-  color:'#26a69a',priceFormat:{{type:'volume'}},priceScaleId:''
-}});
-vs.priceScale().applyOptions({{scaleMargins:{{top:0.8,bottom:0}}}});
-vs.setData({volume_json});
+    # Find entry/exit indices in candle data
+    entry_idx = None
+    exit_idx = None
+    if entry_time:
+        for i, d in enumerate(dates):
+            if d.timestamp() >= entry_time:
+                entry_idx = i
+                break
+    if exit_time:
+        for i, d in enumerate(dates):
+            if d.timestamp() >= exit_time:
+                exit_idx = i
+                break
 
-// Entry marker
-{f'cs.createMarker({{time: {int(entry_time)}, position: "belowBar", color: "#06b6d4", shape: "arrowUp", text: "ENTRY"}});' if entry_time else ''}
+    # ── Create figure ──
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 8), gridspec_kw={'height_ratios': [3, 1]})
+    fig.patch.set_facecolor('#0a0e17')
+    ax1.set_facecolor('#0a0e17')
+    ax2.set_facecolor('#0a0e17')
 
-// Exit marker
-{f'cs.createMarker({{time: {int(exit_time)}, position: "aboveBar", color: "#ef4444", shape: "arrowDown", text: "EXIT"}});' if exit_time and status=="exited" else ''}
+    # ── Candlestick chart ──
+    width = 0.6
+    for i in range(len(dates)):
+        color = '#10b981' if closes[i] >= opens[i] else '#ef4444'
 
-chart.timeScale().fitContent();
-</script></body></html>"""
+        # Body
+        body_low = min(opens[i], closes[i])
+        body_high = max(opens[i], closes[i])
+        body_height = max(body_high - body_low, closes[i] * 0.001)  # min height
+        ax1.add_patch(plt.Rectangle((mdates.date2num(dates[i]) - width/2, body_low),
+                                     width, body_height, color=color, linewidth=0))
 
-    output_path = LIFECYCLE_DIR / f"{address}_lifecycle_chart.html"
+        # Wicks
+        ax1.plot([mdates.date2num(dates[i]), mdates.date2num(dates[i])],
+                [lows[i], body_low], color=color, linewidth=0.8)
+        ax1.plot([mdates.date2num(dates[i]), mdates.date2num(dates[i])],
+                [body_high, highs[i]], color=color, linewidth=0.8)
+
+    # ── Entry/exit markers ──
+    if entry_idx is not None:
+        ax1.annotate('ENTRY',
+                    xy=(mdates.date2num(dates[entry_idx]), lows[entry_idx]),
+                    xytext=(mdates.date2num(dates[entry_idx]), lows[entry_idx] * 0.92),
+                    fontsize=10, fontweight='bold', color='#06b6d4',
+                    ha='center',
+                    arrowprops=dict(arrowstyle='->', color='#06b6d4', lw=1.5))
+
+    if exit_idx is not None and status == "exited":
+        ax1.annotate('EXIT',
+                    xy=(mdates.date2num(dates[exit_idx]), highs[exit_idx]),
+                    xytext=(mdates.date2num(dates[exit_idx]), highs[exit_idx] * 1.08),
+                    fontsize=10, fontweight='bold', color='#ef4444',
+                    ha='center',
+                    arrowprops=dict(arrowstyle='->', color='#ef4444', lw=1.5))
+
+    # ── Entry price line ──
+    if entry_price:
+        ax1.axhline(y=entry_price, color='#06b6d4', linestyle='--', linewidth=0.8, alpha=0.5)
+        ax1.text(mdates.date2num(dates[0]), entry_price, f' Entry: ${entry_price:.8f}',
+                fontsize=7, color='#06b6d4', va='bottom')
+
+    # ── Volume bars ──
+    vol_colors = ['#10b98166' if closes[i] >= opens[i] else '#ef444466' for i in range(len(dates))]
+    ax2.bar([mdates.date2num(d) for d in dates], volumes, width=width, color=vol_colors)
+
+    # ── Styling ──
+    change_str = f"{'+' if (price_change or 0) > 0 else ''}{price_change}%" if price_change is not None else "—"
+    status_color = '#10b981' if status == "active" else '#ef4444'
+
+    ax1.set_title(f"{symbol} — {status.upper()} | Entry: ${entry_price:.8f} | "
+                  f"{'Exit' if status=='exited' else 'Now'}: ${exit_price:.8f} | {change_str}",
+                  color='#e5e7eb', fontsize=12, fontweight='bold', pad=10)
+    ax1.set_ylabel('Price', color='#9ca3af', fontsize=9)
+    ax1.tick_params(colors='#9ca3af', labelsize=8)
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %H:%M'))
+    ax1.tick_params(axis='x', rotation=45)
+    for spine in ax1.spines.values():
+        spine.set_color('#374151')
+    ax1.grid(True, alpha=0.1, color='#374151')
+
+    ax2.set_ylabel('Volume', color='#9ca3af', fontsize=9)
+    ax2.tick_params(colors='#9ca3af', labelsize=8)
+    ax2.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %H:%M'))
+    ax2.tick_params(axis='x', rotation=45)
+    for spine in ax2.spines.values():
+        spine.set_color('#374151')
+    ax2.grid(True, alpha=0.1, color='#374151')
+
+    # ── Footer info ──
+    days = lifecycle.get("days_tracked", 0)
+    snaps = lifecycle.get("snapshot_count", 0)
+    fig.text(0.02, 0.01,
+             f"Tracked {days}d | {snaps} snapshots | {len(all_candles)} candles | "
+             f"Entry: {lifecycle.get('entry_time_iso', '?')[:16]}",
+             color='#9ca3af', fontsize=7)
+
+    plt.tight_layout()
+
+    # Save PNG
+    output_path = LIFECYCLE_DIR / f"{address}_lifecycle_chart.png"
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, "w") as f:
-        f.write(html)
+    fig.savefig(str(output_path), dpi=150, facecolor='#0a0e17', bbox_inches='tight')
+    plt.close(fig)
 
     log.info("lifecycle_chart_generated", symbol=symbol, path=str(output_path))
+    return str(output_path)
+
+
+def generate_comparison_chart(address: str) -> Optional[str]:
+    """
+    Generate a side-by-side comparison: entry chart vs exit chart.
+
+    Left panel: chart from entry snapshot
+    Right panel: chart from exit snapshot (or latest if still active)
+    """
+    import pandas as pd
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import matplotlib.dates as mdates
+
+    lifecycle = _load_lifecycle(address)
+    if not lifecycle or len(lifecycle.get("snapshots", [])) < 1:
+        return None
+
+    snapshots = lifecycle["snapshots"]
+    symbol = lifecycle.get("symbol", address[:8])
+    status = lifecycle.get("status", "active")
+
+    # Entry snapshot (first)
+    entry_snap = snapshots[0]
+    entry_candles = entry_snap.get("candles_h1", [])
+
+    # Exit/last snapshot
+    exit_snap = snapshots[-1]
+    exit_candles = exit_snap.get("candles_h1", [])
+
+    if not entry_candles or not exit_candles:
+        return None
+
+    def _plot_candles(ax, candles, title, color_bg='#0a0e17'):
+        ax.set_facecolor(color_bg)
+        dates = [datetime.fromtimestamp(c[0]) for c in candles]
+        width = 0.6
+        for i in range(len(dates)):
+            color = '#10b981' if candles[i][4] >= candles[i][1] else '#ef4444'
+            body_low = min(candles[i][1], candles[i][4])
+            body_high = max(candles[i][1], candles[i][4])
+            body_height = max(body_high - body_low, candles[i][4] * 0.001)
+            ax.add_patch(plt.Rectangle((mdates.date2num(dates[i]) - width/2, body_low),
+                                        width, body_height, color=color, linewidth=0))
+            ax.plot([mdates.date2num(dates[i]), mdates.date2num(dates[i])],
+                   [candles[i][3], body_low], color=color, linewidth=0.7)
+            ax.plot([mdates.date2num(dates[i]), mdates.date2num(dates[i])],
+                   [body_high, candles[i][2]], color=color, linewidth=0.7)
+        ax.set_title(title, color='#e5e7eb', fontsize=11, fontweight='bold')
+        ax.tick_params(colors='#9ca3af', labelsize=7)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+        for spine in ax.spines.values():
+            spine.set_color('#374151')
+        ax.grid(True, alpha=0.1, color='#374151')
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+    fig.patch.set_facecolor('#0a0e17')
+
+    entry_price = lifecycle.get("entry_price")
+    exit_price = lifecycle.get("exit_price") or lifecycle.get("current_price")
+    change = lifecycle.get("price_change_pct")
+    change_str = f"{'+' if (change or 0) > 0 else ''}{change}%" if change is not None else "—"
+
+    _plot_candles(ax1, entry_candles,
+                 f"ENTRY: ${entry_price:.8f}" if entry_price else "Entry Snapshot")
+    _plot_candles(ax2, exit_candles,
+                 f"{'EXIT' if status=='exited' else 'NOW'}: ${exit_price:.8f} ({change_str})"
+                 if exit_price else "Exit Snapshot")
+
+    fig.suptitle(f"{symbol} Lifecycle Comparison — {status.upper()}",
+                color='#e5e7eb', fontsize=14, fontweight='bold')
+    fig.text(0.5, 0.02, f"Tracked {lifecycle.get('days_tracked', 0)} days | "
+             f"Entry: {lifecycle.get('entry_time_iso', '?')[:10]} | "
+             f"{'Exit: ' + str(lifecycle.get('exit_time_iso', '?'))[:10] if status=='exited' else 'Still active'}",
+             ha='center', color='#9ca3af', fontsize=9)
+
+    plt.tight_layout(rect=[0, 0.04, 1, 0.95])
+
+    output_path = LIFECYCLE_DIR / f"{address}_comparison_chart.png"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(str(output_path), dpi=150, facecolor='#0a0e17', bbox_inches='tight')
+    plt.close(fig)
+
+    log.info("comparison_chart_generated", symbol=symbol, path=str(output_path))
     return str(output_path)
 
 
