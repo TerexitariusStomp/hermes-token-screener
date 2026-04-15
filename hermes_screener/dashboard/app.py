@@ -131,7 +131,7 @@ tr:hover td{background:var(--s2)}
 .trending .kw:hover{background:#06b6d444}
 .trending .kw .ct{font-size:.65rem;color:var(--t2);margin-left:.3rem}
 .trending .sep{color:var(--b)}
-\"\"\"
+"""
 
 CHART_CSS = """
 #chart-container{width:100%;height:500px;background:var(--bg);border:1px solid var(--b);border-radius:8px;position:relative}
