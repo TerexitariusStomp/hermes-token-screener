@@ -47,11 +47,11 @@ BONSAI_MODEL = "Bonsai-8B.gguf"
 # TRADING CRITERIA
 # ═══════════════════════════════════════════════════════════════════════════════
 
-MIN_SCORE = 50          # minimum screener score to consider
+MIN_SCORE = 30          # minimum screener score to consider
 MIN_SMART_WALLETS = 1   # minimum smart money wallets holding
 MAX_FDV = 50_000_000    # max FDV (avoid large caps)
-MIN_FDV = 5_000         # min FDV (avoid micro rugs)
-MIN_VOLUME = 1_000      # min 24h volume
+MIN_FDV = 1_000         # min FDV (avoid micro rugs)
+MIN_VOLUME = 500        # min 24h volume
 MAX_POSITION_PCT = 5.0  # max % of portfolio per trade
 
 

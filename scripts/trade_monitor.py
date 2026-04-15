@@ -37,9 +37,9 @@ from hermes_screener.metrics import metrics
 
 log = get_logger("trade_monitor")
 
-POSITIONS_PATH = settings.hermes_home / "data" / "token_screener" / "active_positions.json"
-DECISION_LOG = settings.hermes_home / "data" / "token_screener" / "trade_monitor_log.json"
-MARKET_HISTORY = settings.hermes_home / "data" / "token_screener" / "market_history.json"
+POSITIONS_PATH = Path.home() / '.hermes' / 'data' / 'token_screener' / 'active_positions.json'
+DECISION_LOG = Path.home() / '.hermes' / 'data' / 'token_screener' / 'trade_monitor_log.json'
+MARKET_HISTORY = Path.home() / '.hermes' / 'data' / 'token_screener' / 'market_history.json'
 TOP_TOKENS_PATH = settings.output_path
 
 BONSAI_URL = "http://localhost:8082/v1/chat/completions"
@@ -315,7 +315,7 @@ def execute_sell(position: dict, dry_run: bool = True) -> dict:
     try:
         cmd = [
             sys.executable,
-            str(settings.hermes_home / "scripts" / "trading_bot.py"),
+            str(Path.home() / '.hermes' / 'scripts' / 'trading_bot.py'),
             "--chain", chain,
             "--action", "sell",
             "--token", addr,
