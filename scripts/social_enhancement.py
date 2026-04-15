@@ -153,15 +153,15 @@ def collect_telegram_signals(tokens: List[dict]) -> Dict[str, dict]:
         channels = set(m["channel_id"] for m in mentions)
         channel_count = len(channels)
 
-        # Mention velocity (mentions in last 6h / 6)
-        recent_cutoff = now - (6 * 3600)
+        # Mention velocity (mentions in last 48h / 48 for broader signal)
+        recent_cutoff = now - (48 * 3600)
         recent_mentions = [m for m in mentions if (m["observed_at"] or 0) > recent_cutoff]
-        velocity = len(recent_mentions) / 6.0 if recent_mentions else 0
+        velocity = len(recent_mentions) / 48.0 if recent_mentions else 0
 
         # Viral score: detect exponential growth
-        # Compare last 1h vs previous 1h
-        h1_cutoff = now - 3600
-        h2_cutoff = now - 7200
+        # Compare last 12h vs previous 12h
+        h1_cutoff = now - (12 * 3600)
+        h2_cutoff = now - (24 * 3600)
         h1_mentions = sum(1 for m in mentions if (m["observed_at"] or 0) > h1_cutoff)
         h2_mentions = sum(1 for m in mentions if h2_cutoff < (m["observed_at"] or 0) <= h1_cutoff)
 
