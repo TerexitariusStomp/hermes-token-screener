@@ -44,15 +44,11 @@ BONSAI_URL = "http://localhost:8082/v1/chat/completions"
 BONSAI_MODEL = "Bonsai-8B.gguf"
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# TRADING CRITERIA
+# TRADING CONFIG (AI decides the rest)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-MIN_SCORE = 30          # minimum screener score to consider
-MIN_SMART_WALLETS = 1   # minimum smart money wallets holding
-MAX_FDV = 50_000_000    # max FDV (avoid large caps)
-MIN_FDV = 1_000         # min FDV (avoid micro rugs)
-MIN_VOLUME = 500        # min 24h volume
-MAX_POSITION_PCT = 5.0  # max % of portfolio per trade
+MAX_POSITION_PCT = 5.0  # max % of portfolio per trade (safety cap only)
+MIN_POSITIONS = 1       # always maintain at least this many open positions
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -88,9 +84,24 @@ def analyze_token_with_ai(token: dict) -> Optional[dict]:
 
     Returns: {decision, confidence, position_pct, stop_loss_pct, reason}
     """
-    system = """You are a crypto trading analyst. Analyze token data and decide whether to buy, hold, or sell.
-Consider: score, smart wallet count, FDV, volume, price momentum, social signals, website quality.
-Be conservative. Most tokens fail. Only buy with high confidence (>70).
+    system = """You are a crypto trading AI with FULL DECISION AUTHORITY.
+You decide EVERYTHING: what to buy, position size, FDV limits, volume minimums, stop loss, take profit.
+No hardcoded rules. You use your judgment based on all available data.
+
+Your constraints:
+- Max 5% of portfolio per trade (only safety cap)
+- You must maintain at least 1 open position at all times
+- Honeypots are excluded before you see them (only safety filter)
+
+Consider ALL signals and decide freely:
+- Score, smart wallet count, insider presence
+- FDV and volume (you decide minimums based on market conditions)
+- Price momentum and trend
+- Social signals and website quality
+- Tax rates, liquidity depth
+- Market conditions and risk appetite
+
+Be decisive. When uncertain, choose the best available option rather than holding nothing.
 
 Respond with ONLY a JSON object:
 {"decision": "buy|hold|sell", "confidence": 0-100, "position_pct": 0-5, "stop_loss_pct": 5-30, "take_profit_pct": 50-500, "reason": "one sentence"}"""
@@ -136,38 +147,25 @@ Current market context: BTC trending, Solana active, memecoin season."""
 # TRADE FILTERING
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def filter_tradeable_tokens(tokens: List[dict]) -> List[dict]:
-    """Filter tokens that meet trading criteria."""
-    tradeable = []
+def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
+    """Rank tokens for AI review. No filtering — AI decides what's tradeable."""
+    ranked = []
     for t in tokens:
         score = t.get("score", 0) or 0
         fdv = t.get("fdv", 0) or 0
         vol = t.get("volume_h24", 0) or 0
         smart = t.get("smart_wallet_count", t.get("gmgn_smart_wallets", 0)) or 0
 
-        if score < MIN_SCORE:
-            continue
-        if fdv < MIN_FDV or fdv > MAX_FDV:
-            continue
-        if vol < MIN_VOLUME:
-            continue
-        if smart < MIN_SMART_WALLETS:
-            continue
-
-        # Skip if honeypot
+        # Skip obvious honeypots only (safety)
         if t.get("goplus_is_honeypot"):
             continue
 
-        # Skip if high tax
-        buy_tax = t.get("goplus_buy_tax", 0) or 0
-        sell_tax = t.get("goplus_sell_tax", 0) or 0
-        if buy_tax > 0.10 or sell_tax > 0.10:
-            continue
+        ranked.append(t)
 
-        tradeable.append(t)
-
-    log.info("tokens_filtered", total=len(tokens), tradeable=len(tradeable))
-    return tradeable
+    # Sort by score descending — AI sees best first
+    ranked.sort(key=lambda t: t.get("score", 0) or 0, reverse=True)
+    log.info("tokens_ranked", total=len(tokens), ranked=len(ranked))
+    return ranked[:20]  # top 20 for AI review
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -309,7 +307,7 @@ def run_trading_brain(
     log.info("tokens_loaded", count=len(tokens))
 
     # Filter tradeable
-    tradeable = filter_tradeable_tokens(tokens)
+    tradeable = rank_tokens_for_ai(tokens)
     if not tradeable:
         log.info("no_tradeable_tokens")
         return {"status": "no_tradeable", "tokens_analyzed": len(tokens)}
@@ -347,6 +345,31 @@ def run_trading_brain(
 
             if decision.get("decision") == "buy" and decision.get("confidence", 0) >= 70:
                 buy_signals += 1
+
+    # Ensure minimum positions are maintained
+    current_active = len([p for p in positions if p.get("status") == "active"])
+    if current_active < MIN_POSITIONS and tradeable:
+        needed = MIN_POSITIONS - current_active
+        log.info("enforcing_min_positions", current=current_active, target=MIN_POSITIONS, needed=needed)
+        # Force buy the best available token (highest score)
+        forced_buys = sorted(tradeable, key=lambda t: t.get("score", 0), reverse=True)[:needed]
+        for token in forced_buys:
+            forced_decision = {
+                "decision": "buy",
+                "confidence": 80,
+                "position_pct": 2.0,
+                "stop_loss_pct": 15,
+                "take_profit_pct": 100,
+                "reason": f"MIN_POSITIONS enforced (had {current_active}, need {MIN_POSITIONS})",
+            }
+            forced_decision["symbol"] = token.get("symbol", "?")
+            forced_decision["address"] = token.get("contract_address", "")
+            forced_decision["chain"] = token.get("chain", "")
+            forced_decision["score"] = token.get("score", 0)
+            forced_decision["fdv"] = token.get("fdv", 0)
+            log_decision(forced_decision)
+            decisions.append(forced_decision)
+            buy_signals += 1
 
     # Execute buy orders
     executed = []
