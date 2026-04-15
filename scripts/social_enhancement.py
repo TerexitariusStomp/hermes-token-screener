@@ -51,6 +51,7 @@ from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 from hermes_screener.metrics import metrics
 from hermes_screener.keyword_discovery import run_keyword_discovery, save_discovered_tokens
+from hermes_screener.website_intelligence import run_website_analysis
 
 log = get_logger("social_enhancement")
 
