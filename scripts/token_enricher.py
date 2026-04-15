@@ -1276,38 +1276,18 @@ class CoinStatsEnricher:
             time.sleep(COINSTATS_MCP_DELAY - elapsed)
         self.last_call = time.time()
 
-    def _call_mcp(self, tool: str, args: dict) -> Optional[Any]:
-        """Call CoinStats MCP tool via npx subprocess."""
+    def _call_api(self, endpoint: str, params: dict = None) -> Optional[Any]:
+        """Call CoinStats API directly (bypass MCP due to TLS issues)."""
         if not COINSTATS_API_KEY:
             return None
-
         self._rate_limit()
         try:
-            import tempfile
-            req = json.dumps({
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": "tools/call",
-                "params": {"name": tool, "arguments": args}
-            })
-
-            env = {**os.environ, 'COINSTATS_API_KEY': COINSTATS_API_KEY}
-            result = subprocess.run(
-                ['npx', '-y', '@coinstats/coinstats-mcp'],
-                input=req, capture_output=True, text=True, timeout=30, env=env
-            )
-
-            # Parse JSON-RPC response from stdout (skip MCP startup line)
-            for line in result.stdout.strip().split('\n'):
-                line = line.strip()
-                if line.startswith('{'):
-                    try:
-                        resp = json.loads(line)
-                        content = resp.get('result', {}).get('content', [])
-                        if content:
-                            return json.loads(content[0].get('text', '{}'))
-                    except (json.JSONDecodeError, KeyError):
-                        pass
+            import httpx
+            url = f'https://openapiv1.coinstats.app/{endpoint}'
+            headers = {'X-API-KEY': COINSTATS_API_KEY}
+            r = httpx.get(url, headers=headers, params=params or {}, timeout=10, verify=False)
+            if r.status_code == 200:
+                return r.json()
         except Exception:
             pass
         return None
@@ -1321,11 +1301,10 @@ class CoinStatsEnricher:
         if not COINSTATS_API_KEY:
             return {}
 
-        # Search by symbol
-        data = self._call_mcp('get-coins', {
-            'symbol': symbol,
-            'limit': 1,
-            'includeRiskScore': 'true',
+        # Search by symbol via direct API
+        data = self._call_api('coins', {
+            'search': symbol,
+            'limit': 5,
         })
 
         if not data or not data.get('result'):
