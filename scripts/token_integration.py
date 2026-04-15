@@ -750,13 +750,11 @@ class TokenIntegrationPipeline:
         
         # Insert new data
         for token in tokens:
-            # Combine enrichment_data with lore_data and chaingpt_data
+            # Combine enrichment_data with lore_data
             enrichment_data = token.get('enrichment_data', {})
             lore_data = token.get('lore_data', {})
             if lore_data:
                 enrichment_data['lore_data'] = lore_data
-            if chaingpt_data:
-                enrichment_data['chaingpt_data'] = chaingpt_data
             
             cursor.execute('''
                 INSERT INTO integrated_tokens (

@@ -192,7 +192,6 @@ python3 weekly_call_channel_discovery.py
 - `asyncio` - For async operations
 
 ### API Keys
-- **ChainGPT API Key:** 8f90c164-3d58-43c0-87b9-e56ca4bb9f11
 - **DexScreener API:** No key required (public API)
 
 ### Telegram Session
