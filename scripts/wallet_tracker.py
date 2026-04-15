@@ -218,24 +218,22 @@ def score_wallet_v3(
     insider_flag: int,          # 1 = insider (good - they know things)
     copy_trade_flag: int,       # 1 = copy trader (bad - always late)
     rug_history_count: int,     # count of rugged tokens (terrible)
-    trading_pattern: str,       # SNIPER, SWING, HOLDER, INSIDER, DEGEN
-    
-    # Position quality
-    tokens_profitable: int,     # tokens with positive PnL
-    tokens_total: int,          # total tokens scanned
-    
+    trading_pattern='',  # deprecated - kept for schema compat
+    tokens_profitable: int = 0,     # tokens with positive PnL
+    tokens_total: int = 0,          # total tokens scanned
+
     # DeFi sophistication (from Zerion)
-    zerion_value: float,        # current portfolio value
-    defi_value: float,          # staked + borrowed positions
-    
+    zerion_value: float = 0,        # current portfolio value
+    defi_value: float = 0,          # staked + borrowed positions
+
     # Round trips (profit taken without selling = bad)
-    round_trip_count: int,      # tokens where profit > 0 but sell_count = 0
-    
+    round_trip_count: int = 0,      # tokens where profit > 0 but sell_count = 0
+
     # Wallet age
-    wallet_age_days: float,     # how long wallet has existed (longer = better)
-    
+    wallet_age_days: float = 0,     # how long wallet has existed (longer = better)
+
     # Social presence
-    twitter_username: str,      # linked Twitter = more credible
+    twitter_username: str = '',     # linked Twitter = more credible
 ) -> float:
     
     score = 0.0
@@ -1005,56 +1003,6 @@ def detect_rug_history(conn: sqlite3.Connection) -> int:
     return len(rugged_tokens)
 
 
-# ── Trading Pattern Inference ───────────────────────────────────────────────
-
-def infer_trading_patterns(conn: sqlite3.Connection) -> int:
-    """
-    Classify wallet trading patterns based on behavior.
-    
-    SNIPER:  buys within minutes of launch, sells quickly, many trades
-    SWING:   holds for hours to days, moderate trade frequency  
-    HOLDER:  holds for days/weeks, few sells
-    INSIDER: buys before pump, high ROI, few trades
-    DEGEN:   high volume, many tokens, mixed results
-    """
-    c = conn.cursor()
-    
-    c.execute("""
-        SELECT address, total_trades, avg_roi, win_rate, tokens_total,
-               sell_count, buy_count, rug_history_count, insider_flag
-        FROM tracked_wallets
-        WHERE wallet_score > 0
-    """)
-    
-    updated = 0
-    for row in c.fetchall():
-        addr, trades, roi, wr, tokens, sells, buys, rugs, insider = row
-        
-        if insider:
-            pattern = 'INSIDER'
-        elif trades and trades > 50 and tokens and tokens > 10:
-            pattern = 'DEGEN'
-        elif sells and buys and sells > 0:
-            sell_ratio = sells / max(buys, 1)
-            if sell_ratio > 0.8:
-                pattern = 'SNIPER'  # exits quickly
-            elif sell_ratio > 0.4:
-                pattern = 'SWING'
-            else:
-                pattern = 'HOLDER'
-        elif trades and trades > 20:
-            pattern = 'ACTIVE'
-        else:
-            pattern = 'UNKNOWN'
-        
-        c.execute("""
-            UPDATE tracked_wallets SET trading_pattern = ? WHERE address = ?
-        """, (pattern, addr))
-        updated += 1
-    
-    conn.commit()
-    return updated
-
 # ── Main ────────────────────────────────────────────────────────────────────
 
 def main():
@@ -1126,9 +1074,6 @@ def main():
 
     detect_rug_history(conn)
     log.info("  Rug history computed")
-
-    infer_trading_patterns(conn)
-    log.info("  Trading patterns inferred")
 
     # Re-score all wallets with new flags
     log.info("Re-scoring with pattern flags...")

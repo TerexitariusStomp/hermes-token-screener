@@ -56,16 +56,16 @@ def learn_patterns(conn: sqlite3.Connection) -> Dict[str, Any]:
     c = conn.cursor()
 
     patterns = {}
-    for pattern in ['SNIPER', 'SWING', 'HOLDER', 'INSIDER', 'DEGEN', 'ACTIVE']:
+    for tag in ['insider', 'sniper', 'kol', 'smart', 'whale']:
         c.execute("""
             SELECT count(*), avg(wallet_score), avg(realized_pnl),
                    avg(win_rate), avg(total_trades), avg(avg_roi)
             FROM tracked_wallets
-            WHERE trading_pattern = ?
-        """, (pattern,))
+            WHERE wallet_tags LIKE ?
+        """, (f'%{tag}%',))
         row = c.fetchone()
         if row and row[0] > 0:
-            patterns[pattern] = {
+            patterns[tag] = {
                 'count': row[0],
                 'avg_score': round(row[1] or 0, 1),
                 'avg_pnl': round(row[2] or 0, 2),
@@ -248,7 +248,7 @@ def main():
             if w.get('copy_trade_flag'): flags.append('CP')
             flag_str = ','.join(flags) or '-'
             print(f"  {w['wallet_score']:>5} ${w['realized_pnl'] or 0:>10,.0f} "
-                  f"{w['smart_money_tag'] or '-':>6} {w['trading_pattern'] or '-':>8} "
+                  f"{w['smart_money_tag'] or '-':>6} {(w.get('wallet_tags') or '-')[:12]:>12} "
                   f"{flag_str:>4} {w['address'][:30]}...")
         return
 

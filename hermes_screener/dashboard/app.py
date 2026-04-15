@@ -589,7 +589,6 @@ async def wallet_detail(address: str):
     <div class="row"><span class="l">Trades</span><span>{w.get('total_trades',0)}</span></div>
     <div class="row"><span class="l">Buys / Sells</span><span>{w.get('buy_count',0)} / {w.get('sell_count',0)}</span></div>
     <div class="row"><span class="l">Won</span><span>{w.get('tokens_profitable',0)} / {w.get('tokens_total',0)}</span></div>
-    <div class="row"><span class="l">Pattern</span><span>{w.get('trading_pattern','—')}</span></div>
     <div class="row"><span class="l">Last Active</span><span>{_time_ago(w.get('last_active_at'))}</span></div>
   </div>
 </div>

@@ -39,6 +39,7 @@ log = get_logger("website_intelligence")
 
 # LLM endpoints to try (in order)
 LLM_ENDPOINTS = [
+    {"url": "http://localhost:8082/v1/chat/completions", "type": "openai", "model": "Bonsai-8B.gguf"},
     {"url": "http://localhost:11434/api/generate", "type": "ollama", "model": "llama3.2"},
     {"url": "http://localhost:8080/v1/chat/completions", "type": "openai", "model": "Bonsai-8B.gguf"},
     {"url": "http://localhost:8081/v1/chat/completions", "type": "openai", "model": "IBM-Grok4-UltraFast-Coder-1B.Q4_K_M.gguf"},

@@ -356,7 +356,7 @@ def _compute_wallet_composite_score(
       Win Rate               15  (win_rate, tokens_profitable/tokens_total)
       Trading Activity       10  (total_trades, buy/sell ratio)
       Entry Timing           10  (entry_timing_score)
-      Pattern Quality        10  (trading_pattern, insider_flag, tags)
+      Insider & Tags        10  (insider_flag, GMGN wallet_tags only)
     """
     score = 0.0
 
@@ -446,22 +446,18 @@ def _compute_wallet_composite_score(
     entry_timing = wallet.get("entry_timing_score") or 0
     score += min(entry_timing * 10, 10)
 
-    # ── Pattern Quality (0-10) ──
-    pattern = wallet.get("trading_pattern") or ""
+    # ── Insider & Tags (0-10) ──
     insider = wallet.get("insider_flag")
     tags = wallet.get("wallet_tags") or ""
     rugs = wallet.get("rug_history_count") or 0
     copy_trade = wallet.get("copy_trade_flag")
 
-    if "INSIDER" in pattern:
+    if insider:
         score += 5
-    elif "SNIPER" in pattern:
+    if "sniper" in tags.lower():
         score += 4
-    elif "SWING" in pattern:
+    if "kol" in tags.lower():
         score += 3
-    elif "HOLDER" in pattern:
-        score += 2
-
     if "smart" in tags.lower():
         score += 3
     elif "TOP" in tags:
