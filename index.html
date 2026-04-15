@@ -11,354 +11,295 @@ a{color:var(--c);text-decoration:none}a:hover{text-decoration:underline}
 nav{background:var(--s);border-bottom:1px solid var(--b);padding:.75rem 1.5rem;display:flex;align-items:center;gap:2rem}
 .logo{font-size:1.1rem;font-weight:bold;color:var(--c)}.logo span{color:var(--y)}
 .nav{display:flex;gap:1.5rem}.nav a{color:var(--t2);font-size:.85rem;cursor:pointer}.nav a.active{color:var(--c)}
-.stats{background:var(--s);border-bottom:1px solid var(--b);padding:.5rem 1.5rem;display:flex;gap:2rem;font-size:.8rem;color:var(--t2);flex-wrap:wrap}
-.stats .v{color:var(--t);font-weight:bold}
-.wrap{max-width:1400px;margin:0 auto;padding:1.5rem}
-h1{font-size:1.3rem;margin-bottom:.25rem}h2{font-size:1rem;margin-bottom:.25rem}
-.sub{color:var(--t2);font-size:.8rem;margin-bottom:1rem}
-.tbl{overflow-x:auto;border:1px solid var(--b);border-radius:8px}
-table{width:100%;border-collapse:collapse;font-size:.8rem}
-th{background:var(--s2);color:var(--t2);text-align:left;padding:.55rem .7rem;font-weight:600;position:sticky;top:0;white-space:nowrap}
-td{padding:.45rem .7rem;border-top:1px solid var(--b);white-space:nowrap}
-tr:hover td{background:var(--s2)}
-.sc{font-weight:bold}.sc-h{color:var(--g)}.sc-m{color:var(--y)}.sc-l{color:var(--t2)}
-.pos{color:var(--g)}.neg{color:var(--r)}
-.badge{display:inline-block;padding:.1rem .4rem;border-radius:4px;font-size:.7rem;font-weight:bold}
-.chain-solana,.chain-sol{background:#9945ff22;color:#9945ff}
-.chain-base{background:#0052ff22;color:#0052ff}
-.chain-ethereum{background:#627eea22;color:#627eea}
-.chain-bsc{background:#f3ba2f22;color:#f3ba2f}
+.wrap{max-width:1200px;margin:0 auto;padding:2rem}
+h1{font-size:1.3rem;margin-bottom:.5rem}h2{font-size:1rem;margin-bottom:.25rem;color:var(--c)}
+.sub{color:var(--t2);font-size:.8rem;margin-bottom:1.5rem}
+.page{display:none}.page.active{display:block}
+.card{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:1rem;margin-bottom:1rem}
+.card h3{font-size:.9rem;color:var(--c);margin-bottom:.5rem}
+.card h3 .layer{color:var(--t3);font-size:.7rem;font-weight:normal}
+.row{display:flex;justify-content:space-between;padding:.25rem 0;font-size:.8rem;border-bottom:1px solid rgba(55,65,81,.3)}
+.row:last-child{border-bottom:none}
+.row .l{color:var(--t2)}.row .v{color:var(--t);text-align:right}
 .tag{display:inline-block;padding:.1rem .35rem;border-radius:3px;font-size:.65rem;margin:.1rem}
 .tag-g{background:#10b98133;color:#10b981}.tag-y{background:#f59e0b33;color:#f59e0b}.tag-r{background:#ef444433;color:#ef4444}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:1rem}
-.card{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:1rem}
-.card h3{font-size:.9rem;color:var(--c);margin-bottom:.75rem}
-.card h3 .layer{color:var(--t3);font-size:.7rem;font-weight:normal}
-.row{display:flex;justify-content:space-between;padding:.25rem 0;font-size:.8rem;border-bottom:1px solid rgba(55,65,81,.4)}
-.row:last-child{border-bottom:none}
-.row .l{color:var(--t2)}
-.mono{font-family:inherit;font-size:.72rem}
-.page{display:none}.page.active{display:block}
-.trending{background:linear-gradient(90deg,#0a0e17,#111827);border-bottom:1px solid var(--b);padding:.5rem 1.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:.78rem}
-.trending .label{color:var(--y);font-weight:bold;white-space:nowrap}
-.trending .kw{display:inline-block;padding:.2rem .5rem;border-radius:4px;background:#06b6d422;color:var(--c)}
-.trending .kw .ct{font-size:.65rem;color:var(--t2);margin-left:.3rem}
-.back{color:var(--t2);font-size:.8rem;cursor:pointer;margin-bottom:1rem;display:inline-block}.back:hover{color:var(--c)}
-.sec-title{color:var(--y);font-size:.7rem;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;margin:1rem 0 .5rem}
-@media(max-width:768px){.stats{gap:.5rem}nav{flex-wrap:wrap}.grid{grid-template-columns:1fr}}
+.empty{text-align:center;padding:3rem;color:var(--t3);font-size:.9rem}
+.empty .icon{font-size:2rem;margin-bottom:1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+.sec{color:var(--y);font-size:.75rem;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;margin:1.5rem 0 .75rem;padding-bottom:.25rem;border-bottom:1px solid var(--b)}
+.badge{display:inline-block;padding:.1rem .4rem;border-radius:4px;font-size:.7rem;font-weight:bold}
+@media(max-width:768px){.grid{grid-template-columns:1fr}nav{flex-wrap:wrap}}
 </style>
 </head>
 <body>
-
 <nav>
 <div class="logo">HERMES <span>&#9670;</span> SCREENER</div>
 <div class="nav">
-  <a id="nav-tokens" onclick="showPage('tokens')">Tokens</a>
+  <a id="nav-tokens" class="active" onclick="showPage('tokens')">Tokens</a>
   <a id="nav-wallets" onclick="showPage('wallets')">Smart Money</a>
+  <a id="nav-schema" onclick="showPage('schema')">Data Schema</a>
 </div>
 </nav>
 
-<div class="stats">
-  <span>Generated: <span class="v">2026-04-15T20:30:00Z</span></span>
-  <span>Top Tokens: <span class="v">100</span></span>
-  <span>Candidates: <span class="v">2,847</span></span>
-  <span>Wallets: <span class="v">1,204</span></span>
-  <span>Enrichment: <span class="v">13 layers</span></span>
-</div>
-
-<div class="trending">
-  <span class="label">&#128293; TRENDING</span>
-  <span class="kw">meme<span class="ct">24</span></span>
-  <span class="kw">solana<span class="ct">18</span></span>
-  <span class="kw">ai-agent<span class="ct">15</span></span>
-  <span class="kw">defi<span class="ct">12</span></span>
-  <span class="kw">pumpfun<span class="ct">11</span></span>
-  <span class="kw">rwa<span class="ct">9</span></span>
-  <span class="kw">gaming<span class="ct">8</span></span>
-  <span class="kw">base-l2<span class="ct">7</span></span>
-</div>
-
 <!-- TOKENS PAGE -->
-<div class="page active" id="page-tokens">
-<div class="wrap">
+<div class="page active" id="page-tokens"><div class="wrap">
 <h1>Token Leaderboard</h1>
-<div class="sub">Top 100 tokens from 2,847 candidates</div>
-<div class="tbl"><table>
-<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Score</th><th>FDV</th><th>Vol24h</th><th>Liq</th><th>1h</th><th>6h</th><th>Age</th><th>&#x1f9e0;</th><th>Holders</th><th>Signals</th></tr></thead>
-<tbody>
-<tr onclick="showToken('DEGENAI')" style="cursor:pointer"><td>1</td><td><strong>DEGENAI</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">94.2</td><td>$2.1M</td><td>$847K</td><td>$340K</td><td class="pos">+18.3%</td><td class="pos">+42.1%</td><td>3.2h</td><td>47</td><td>2.8K</td><td><span class="tag tag-g">verified</span><span class="tag tag-g">lp_burned</span></td></tr>
-<tr onclick="showToken('ZEREBRO')" style="cursor:pointer"><td>2</td><td><strong>ZEREBRO</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">91.7</td><td>$5.4M</td><td>$1.2M</td><td>$890K</td><td class="pos">+7.2%</td><td class="pos">+28.5%</td><td>8.1h</td><td>35</td><td>4.1K</td><td><span class="tag tag-g">dev_holding</span><span class="tag tag-g">verified</span></td></tr>
-<tr onclick="showToken('PONKE')" style="cursor:pointer"><td>3</td><td><strong>PONKE</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">88.4</td><td>$12.8M</td><td>$2.4M</td><td>$1.8M</td><td class="neg">-2.1%</td><td class="pos">+15.8%</td><td>72.4h</td><td>28</td><td>8.3K</td><td><span class="tag tag-g">verified</span></td></tr>
-<tr onclick="showToken('GOAT')" style="cursor:pointer"><td>4</td><td><strong>GOAT</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">85.1</td><td>$3.7M</td><td>$562K</td><td>$245K</td><td class="pos">+11.4%</td><td class="pos">+33.2%</td><td>2.8h</td><td>22</td><td>1.9K</td><td><span class="tag tag-g">lp_burned</span></td></tr>
-<tr onclick="showToken('WIF')" style="cursor:pointer"><td>5</td><td><strong>WIF</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">82.9</td><td>$45.2M</td><td>$8.1M</td><td>$5.2M</td><td class="pos">+3.7%</td><td class="pos">+12.1%</td><td>480h</td><td>15</td><td>42K</td><td><span class="tag tag-g">verified</span></td></tr>
-<tr onclick="showToken('BUZZ')" style="cursor:pointer"><td>6</td><td><strong>BUZZ</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">78.3</td><td>$890K</td><td>$234K</td><td>$67K</td><td class="pos">+24.8%</td><td class="pos">+67.3%</td><td>1.2h</td><td>18</td><td>890</td><td><span class="tag tag-g">dev_holding</span></td></tr>
-<tr onclick="showToken('ARC')" style="cursor:pointer"><td>7</td><td><strong>ARC</strong></td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">74.6</td><td>$1.5M</td><td>$189K</td><td>$120K</td><td class="pos">+8.9%</td><td class="pos">+21.4%</td><td>5.6h</td><td>12</td><td>1.2K</td><td><span class="tag tag-g">lp_burned</span></td></tr>
-<tr onclick="showToken('MOBY')" style="cursor:pointer"><td>8</td><td><strong>MOBY</strong></td><td><span class="badge chain-base">base</span></td><td class="sc sc-m">71.2</td><td>$420K</td><td>$67K</td><td>$34K</td><td class="pos">+31.2%</td><td class="pos">+89.1%</td><td>0.8h</td><td>9</td><td>340</td><td><span class="tag tag-y">new</span></td></tr>
-</tbody>
-</table></div>
+<div class="sub">Connect to the FastAPI backend to see live token data</div>
+<div class="empty">
+  <div class="icon">&#9888;&#65039;</div>
+  <p>No live data connected</p>
+  <p style="font-size:.75rem;margin-top:.5rem">Run <code>python -m uvicorn hermes_screener.dashboard.app:app --host 0.0.0.0 --port 8080</code></p>
+  <p style="font-size:.75rem;margin-top:.25rem">Then visit <code>http://localhost:8080</code> for the live dashboard</p>
 </div>
-</div>
-
-<!-- TOKEN DETAIL PAGE -->
-<div class="page" id="page-token-detail">
-<div class="wrap">
-<span class="back" onclick="showPage('tokens')">&larr; Back to Tokens</span>
-<h1 id="td-symbol">DEGENAI <span style="color:var(--t2);font-weight:normal;font-size:.9rem" id="td-name">(Degen AI)</span></h1>
-<div class="sub">
-  <span class="badge chain-solana" id="td-chain">solana</span>
-  <span class="mono" id="td-addr">7GCihgDB8MUosYCBgPYDKELkM3QXtDiNCqDhKjMhpump</span>
-</div>
-
-<!-- L0: Dexscreener -->
-<div class="sec-title">Layer 0 — Dexscreener (Required)</div>
-<div class="grid">
-  <div class="card"><h3>Market Data <span class="layer">L0</span></h3>
-    <div class="row"><span class="l">FDV</span><span>$2.1M</span></div>
-    <div class="row"><span class="l">Liquidity</span><span>$340K</span></div>
-    <div class="row"><span class="l">Vol 24h</span><span>$847K</span></div>
-    <div class="row"><span class="l">Vol 1h</span><span>$124K</span></div>
-    <div class="row"><span class="l">Txns 24h</span><span>4,218 (62% buy)</span></div>
-    <div class="row"><span class="l">Pair</span><span class="mono">Raydium</span></div>
-  </div>
-  <div class="card"><h3>Price Action</h3>
-    <div class="row"><span class="l">1h</span><span class="pos">+18.3%</span></div>
-    <div class="row"><span class="l">6h</span><span class="pos">+42.1%</span></div>
-    <div class="row"><span class="l">24h</span><span class="pos">+156.7%</span></div>
-    <div class="row"><span class="l">ATH</span><span>$0.000042</span></div>
-    <div class="row"><span class="l">From ATH</span><span class="neg">-23.4%</span></div>
-  </div>
-</div>
-
-<!-- L1-2: Surf + GoPlus -->
-<div class="sec-title">Layer 1-2 — Surf + GoPlus (Security)</div>
-<div class="grid">
-  <div class="card"><h3>Surf Social <span class="layer">L1</span></h3>
-    <div class="row"><span class="l">Sentiment</span><span class="pos">Bullish (0.82)</span></div>
-    <div class="row"><span class="l">Mindshare</span><span>0.34%</span></div>
-    <div class="row"><span class="l">Trending</span><span class="pos">Yes</span></div>
-  </div>
-  <div class="card"><h3>GoPlus Security <span class="layer">L2</span></h3>
-    <div class="row"><span class="l">Honeypot</span><span class="pos">No</span></div>
-    <div class="row"><span class="l">Buy Tax</span><span>0%</span></div>
-    <div class="row"><span class="l">Sell Tax</span><span>0%</span></div>
-    <div class="row"><span class="l">Can Mint</span><span class="pos">No</span></div>
-  </div>
-</div>
-
-<!-- L3: RugCheck -->
-<div class="sec-title">Layer 3 — RugCheck (Solana Security)</div>
-<div class="grid">
-  <div class="card"><h3>RugCheck <span class="layer">L3</span></h3>
-    <div class="row"><span class="l">Rug Score</span><span class="pos">Good (12/100)</span></div>
-    <div class="row"><span class="l">Insider Holders</span><span>3 (4.2%)</span></div>
-    <div class="row"><span class="l">Max Holder %</span><span>8.7%</span></div>
-    <div class="row"><span class="l">Mutable</span><span class="pos">No</span></div>
-    <div class="row"><span class="l">Transfer Fee</span><span class="pos">0%</span></div>
-  </div>
-</div>
-
-<!-- L4-5: Etherscan + De.Fi -->
-<div class="sec-title">Layer 4-5 — Contract Verification + De.Fi</div>
-<div class="grid">
-  <div class="card"><h3>Etherscan <span class="layer">L4</span></h3>
-    <div class="row"><span class="l">Verified</span><span class="pos">Yes</span></div>
-    <div class="row"><span class="l">Source Length</span><span>—</span></div>
-  </div>
-  <div class="card"><h3>De.Fi <span class="layer">L5</span></h3>
-    <div class="row"><span class="l">Security Score</span><span class="pos">A (92/100)</span></div>
-    <div class="row"><span class="l">Holder Concentration</span><span>Low</span></div>
-  </div>
-</div>
-
-<!-- L7: CoinGecko -->
-<div class="sec-title">Layer 7 — CoinGecko</div>
-<div class="grid">
-  <div class="card"><h3>CoinGecko <span class="layer">L7</span></h3>
-    <div class="row"><span class="l">Meme Token</span><span class="pos">Yes</span></div>
-    <div class="row"><span class="l">Binance Listed</span><span>No</span></div>
-    <div class="row"><span class="l">Coinbase Listed</span><span>No</span></div>
-    <div class="row"><span class="l">Major Exchanges</span><span>0</span></div>
-    <div class="row"><span class="l">Categories</span><span>meme, solana-ecosystem</span></div>
-  </div>
-</div>
-
-<!-- L8: GMGN -->
-<div class="sec-title">Layer 8 — GMGN Smart Money</div>
-<div class="grid">
-  <div class="card"><h3>Smart Money <span class="layer">L8</span></h3>
-    <div class="row"><span class="l">Smart Wallets</span><span class="pos">47</span></div>
-    <div class="row"><span class="l">Sniper Wallets</span><span>8</span></div>
-    <div class="row"><span class="l">Whale Wallets</span><span>12</span></div>
-    <div class="row"><span class="l">Renowned Wallets</span><span>5</span></div>
-    <div class="row"><span class="l">Rat Traders</span><span class="neg">2</span></div>
-    <div class="row"><span class="l">Fresh Wallet Rate</span><span>34%</span></div>
-  </div>
-  <div class="card"><h3>Token Security <span class="layer">L8</span></h3>
-    <div class="row"><span class="l">Holders</span><span>2,847</span></div>
-    <div class="row"><span class="l">Burn Ratio</span><span class="pos">42.3%</span></div>
-    <div class="row"><span class="l">Burn Status</span><span class="pos">Burned</span></div>
-    <div class="row"><span class="l">Locked</span><span class="pos">Yes</span></div>
-    <div class="row"><span class="l">Renounced Mint</span><span class="pos">Yes</span></div>
-    <div class="row"><span class="l">Renounced Freeze</span><span class="pos">Yes</span></div>
-  </div>
-  <div class="card"><h3>Dev Analysis <span class="layer">L8</span></h3>
-    <div class="row"><span class="l">Dev Holding</span><span class="pos">8.2%</span></div>
-    <div class="row"><span class="l">Team Hold Rate</span><span>12.4%</span></div>
-    <div class="row"><span class="l">Dev Token Count</span><span>2</span></div>
-    <div class="row"><span class="l">Token Farmer</span><span class="pos">No</span></div>
-    <div class="row"><span class="l">CTO Flag</span><span class="pos">No</span></div>
-    <div class="row"><span class="l">Creator Status</span><span>Normal</span></div>
-  </div>
-  <div class="card"><h3>Market Structure <span class="layer">L8</span></h3>
-    <div class="row"><span class="l">Bundler Wallets</span><span>3</span></div>
-    <div class="row"><span class="l">Top Bundler</span><span class="neg">Yes</span></div>
-    <div class="row"><span class="l">Entrapment</span><span class="pos">No</span></div>
-    <div class="row"><span class="l">Bot Degen Rate</span><span>18%</span></div>
-    <div class="row"><span class="l">Private Vault</span><span>0%</span></div>
-    <div class="row"><span class="l">Supply</span><span>1B tokens</span></div>
-  </div>
-</div>
-
-<!-- L9: Social -->
-<div class="sec-title">Layer 9 — Social Signals</div>
-<div class="grid">
-  <div class="card"><h3>Telegram <span class="layer">L9</span></h3>
-    <div class="row"><span class="l">Mentions</span><span>342</span></div>
-    <div class="row"><span class="l">Mentions/hr</span><span>28.5</span></div>
-    <div class="row"><span class="l">Channels</span><span>12</span></div>
-    <div class="row"><span class="l">Viral Score</span><span class="pos">0.87</span></div>
-  </div>
-  <div class="card"><h3>Twitter <span class="layer">L9</span></h3>
-    <div class="row"><span class="l">Sentiment</span><span class="pos">Bullish (0.74)</span></div>
-    <div class="row"><span class="l">Has Twitter</span><span class="pos">Yes</span></div>
-    <div class="row"><span class="l">Has Website</span><span class="pos">Yes</span></div>
-  </div>
-</div>
-
-<!-- L10-12: Zerion + CoinStats + Mobula -->
-<div class="sec-title">Layer 10-12 — Zerion + CoinStats + Mobula</div>
-<div class="grid">
-  <div class="card"><h3>Zerion <span class="layer">L10</span></h3>
-    <div class="row"><span class="l">Staked</span><span>—</span></div>
-    <div class="row"><span class="l">Borrowed</span><span>—</span></div>
-    <div class="row"><span class="l">DeFi Value</span><span>—</span></div>
-    <div class="row"><span class="l">Chains</span><span>1</span></div>
-    <div class="row"><span class="l">Twitter</span><span class="pos">Linked</span></div>
-  </div>
-  <div class="card"><h3>CoinStats <span class="layer">L11</span></h3>
-    <div class="row"><span class="l">Risk Score</span><span class="pos">Low (23/100)</span></div>
-    <div class="row"><span class="l">Liquidity Score</span><span>Medium</span></div>
-    <div class="row"><span class="l">Volatility</span><span>High</span></div>
-  </div>
-  <div class="card"><h3>Mobula <span class="layer">L12</span></h3>
-    <div class="row"><span class="l">Organic Ratio</span><span class="pos">72%</span></div>
-    <div class="row"><span class="l">Insider Count</span><span>3</span></div>
-    <div class="row"><span class="l">Deployer Tokens</span><span>2</span></div>
-    <div class="row"><span class="l">Deployer Migrations</span><span>1</span></div>
-  </div>
-</div>
-
-<!-- L6: Derived / Score -->
-<div class="sec-title">Final Score Breakdown</div>
-<div class="grid">
-  <div class="card"><h3>Score: 94.2 <span class="layer">L6 Derived</span></h3>
-    <div class="row"><span class="l">Social Momentum</span><span>35/35</span></div>
-    <div class="row"><span class="l">Freshness</span><span>14/15</span></div>
-    <div class="row"><span class="l">Low FDV</span><span>12/15</span></div>
-    <div class="row"><span class="l">Volume</span><span>18/20</span></div>
-    <div class="row"><span class="l">Transactions</span><span>12/15</span></div>
-    <div class="row"><span class="l">Momentum</span><span>8/10</span></div>
-    <div class="row"><span class="l" style="color:var(--g)">Boosters</span><span class="pos">verified(+20%) lp_burned(+15%)</span></div>
-    <div class="row"><span class="l" style="color:var(--r)">Penalties</span><span style="color:var(--t2)">none</span></div>
-  </div>
-</div>
-
-</div>
-</div>
+</div></div>
 
 <!-- WALLETS PAGE -->
-<div class="page" id="page-wallets">
-<div class="wrap">
+<div class="page" id="page-wallets"><div class="wrap">
 <h1>Smart Money Wallets</h1>
-<div class="sub">1,204 wallets tracked · Top 100 by score</div>
-<div class="tbl"><table>
-<thead><tr><th>#</th><th>Address</th><th>Chain</th><th>Score</th><th>PnL</th><th>ROI</th><th>Win</th><th>Trades</th><th>Tags</th><th>Active</th></tr></thead>
-<tbody>
-<tr onclick="showWallet('7xKXtg22')" style="cursor:pointer"><td>1</td><td class="mono">7xKXtg...PoNr</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">97</td><td class="pos">$2.4M</td><td class="pos">+847%</td><td>82%</td><td>342</td><td><span class="tag tag-g">smart</span><span class="tag tag-g">TOP1</span><span class="tag tag-y">INSIDER</span></td><td>2m</td></tr>
-<tr onclick="showWallet('3yNmr2xx')" style="cursor:pointer"><td>2</td><td class="mono">3yNmr2...xKwp</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">94</td><td class="pos">$1.8M</td><td class="pos">+623%</td><td>79%</td><td>218</td><td><span class="tag tag-g">smart</span><span class="tag tag-g">KOL</span></td><td>8m</td></tr>
-<tr onclick="showWallet('9pQLxbmm')" style="cursor:pointer"><td>3</td><td class="mono">9pQLxb...mNr2</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">91</td><td class="pos">$890K</td><td class="pos">+412%</td><td>76%</td><td>156</td><td><span class="tag tag-g">smart</span><span class="tag tag-y">INSIDER</span></td><td>15m</td></tr>
-<tr onclick="showWallet('0xfc4C555')" style="cursor:pointer"><td>4</td><td class="mono">0xfc4C...0Fa9</td><td><span class="badge chain-base">base</span></td><td class="sc sc-h">88</td><td class="pos">$567K</td><td class="pos">+298%</td><td>71%</td><td>89</td><td><span class="tag tag-g">TOP1</span></td><td>1h</td></tr>
-<tr onclick="showWallet('5rTkn88q')" style="cursor:pointer"><td>5</td><td class="mono">5rTkn8...qLwp</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-h">85</td><td class="pos">$445K</td><td class="pos">+234%</td><td>74%</td><td>203</td><td><span class="tag tag-g">KOL</span></td><td>3h</td></tr>
-<tr onclick="showWallet('8mPqR44n')" style="cursor:pointer"><td>6</td><td class="mono">8mPqR4...nKxs</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">79</td><td class="pos">$234K</td><td class="pos">+156%</td><td>68%</td><td>134</td><td><span class="tag tag-g">smart</span></td><td>45m</td></tr>
-<tr onclick="showWallet('2bXkp99m')" style="cursor:pointer"><td>7</td><td class="mono">2bXkp9...mLwq</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">73</td><td class="pos">$178K</td><td class="pos">+124%</td><td>65%</td><td>97</td><td><span class="tag tag-r">sniper</span></td><td>2h</td></tr>
-<tr onclick="showWallet('6nPmK22x')" style="cursor:pointer"><td>8</td><td class="mono">6nPmK2...xRwp</td><td><span class="badge chain-solana">solana</span></td><td class="sc sc-m">68</td><td class="pos">$89K</td><td class="pos">+87%</td><td>61%</td><td>56</td><td></td><td>6h</td></tr>
-</tbody>
-</table></div>
+<div class="sub">Connect to the FastAPI backend to see tracked wallets</div>
+<div class="empty">
+  <div class="icon">&#9888;&#65039;</div>
+  <p>No live data connected</p>
+  <p style="font-size:.75rem;margin-top:.5rem">Wallet data is stored in <code>wallet_tracker.db</code></p>
+</div>
+</div></div>
+
+<!-- SCHEMA PAGE -->
+<div class="page" id="page-schema"><div class="wrap">
+<h1>Data Schema</h1>
+<div class="sub">All enrichment fields available per token (13 layers, 91 fields)</div>
+
+<div class="sec">Layer 0 — Dexscreener (Required)</div>
+<div class="grid">
+<div class="card"><h3>Core Market Data <span class="layer">L0</span></h3>
+  <div class="row"><span class="l">contract_address</span><span class="v">string</span></div>
+  <div class="row"><span class="l">chain</span><span class="v">solana / base / eth / bsc</span></div>
+  <div class="row"><span class="l">symbol</span><span class="v">string</span></div>
+  <div class="row"><span class="l">name</span><span class="v">string</span></div>
+  <div class="row"><span class="l">fdv</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">liquidity_usd</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">volume_h24</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">volume_h6</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">volume_h1</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">price_change_h1</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">price_change_h6</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">price_change_h24</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">txns_h24_buys</span><span class="v">int</span></div>
+  <div class="row"><span class="l">txns_h24_sells</span><span class="v">int</span></div>
+  <div class="row"><span class="l">pair_address</span><span class="v">string</span></div>
+  <div class="row"><span class="l">dex_url</span><span class="v">string</span></div>
+  <div class="row"><span class="l">age_hours</span><span class="v">float</span></div>
 </div>
 </div>
 
-<!-- WALLET DETAIL PAGE -->
-<div class="page" id="page-wallet-detail">
-<div class="wrap">
-<span class="back" onclick="showPage('wallets')">&larr; Back to Smart Money</span>
-<h1>Wallet Detail</h1>
-<div class="sub">
-  <span class="badge chain-solana">solana</span>
-  <span class="mono">7xKXtg22MjRUMo2PqLUvFDFJxmMPbPoNr</span>
-</div>
-<div class="sec-title">Performance</div>
+<div class="sec">Layer 1 — Surf (Social Sentiment)</div>
 <div class="grid">
-  <div class="card"><h3>Score Breakdown</h3>
-    <div class="row"><span class="l">Final Score</span><span class="sc sc-h">97</span></div>
-    <div class="row"><span class="l">PNL (35pts)</span><span class="pos">$2.4M</span></div>
-    <div class="row"><span class="l">Trades (20pts)</span><span>342</span></div>
-    <div class="row"><span class="l">Win Rate (10pts)</span><span>82%</span></div>
-    <div class="row"><span class="l">Avg ROI (10pts)</span><span class="pos">+847%</span></div>
-    <div class="row"><span class="l">Entry Timing (8pts)</span><span>7.2</span></div>
-    <div class="row"><span class="l">Age (5pts)</span><span>142d</span></div>
-    <div class="row"><span class="l">Insider Bonus</span><span class="pos">+5</span></div>
-  </div>
-  <div class="card"><h3>Activity</h3>
-    <div class="row"><span class="l">Total Trades</span><span>342</span></div>
-    <div class="row"><span class="l">Buys / Sells</span><span>198 / 144</span></div>
-    <div class="row"><span class="l">Won / Total Tokens</span><span>89 / 108</span></div>
-    <div class="row"><span class="l">Chains</span><span>1 (solana)</span></div>
-    <div class="row"><span class="l">Last Active</span><span>2m ago</span></div>
-  </div>
-  <div class="card"><h3>Pattern Detection</h3>
-    <div class="row"><span class="l">Pattern</span><span class="pos">SWING</span></div>
-    <div class="row"><span class="l">Sell Ratio</span><span>0.58</span></div>
-    <div class="row"><span class="l">Copy Trade</span><span class="pos">No</span></div>
-    <div class="row"><span class="l">Rug History</span><span class="pos">0</span></div>
-    <div class="row"><span class="l">Round Trips</span><span>2</span></div>
-  </div>
-</div>
-<div class="sec-title">Token Positions (Top 10)</div>
-<div class="tbl"><table>
-<thead><tr><th>Token</th><th>PnL</th><th>Realized</th><th>Buy Tx</th><th>Sell Tx</th><th>Win</th><th>Seen</th></tr></thead>
-<tbody>
-<tr><td><strong>DEGENAI</strong></td><td class="pos">$342K</td><td>$280K</td><td>12</td><td>8</td><td>&#10003;</td><td>3h</td></tr>
-<tr><td><strong>ZEREBRO</strong></td><td class="pos">$189K</td><td>$150K</td><td>8</td><td>5</td><td>&#10003;</td><td>6h</td></tr>
-<tr><td><strong>WIF</strong></td><td class="pos">$124K</td><td>$124K</td><td>4</td><td>4</td><td>&#10003;</td><td>2d</td></tr>
-<tr><td><strong>GOAT</strong></td><td class="pos">$67K</td><td>$45K</td><td>6</td><td>3</td><td>&#10003;</td><td>8h</td></tr>
-<tr><td><strong>BUZZ</strong></td><td class="pos">$34K</td><td>$0</td><td>3</td><td>0</td><td>&#8212;</td><td>1h</td></tr>
-<tr><td>RUGPULL_X</td><td class="neg">-$12K</td><td>-$12K</td><td>2</td><td>2</td><td>&#10007;</td><td>5d</td></tr>
-<tr><td>MEMECOIN</td><td class="pos">$8K</td><td>$8K</td><td>1</td><td>1</td><td>&#10003;</td><td>1w</td></tr>
-</tbody>
-</table></div>
+<div class="card"><h3>Surf <span class="layer">L1</span></h3>
+  <div class="row"><span class="l">surf_sentiment</span><span class="v">float (0-1)</span></div>
+  <div class="row"><span class="l">surf_mindshare</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">surf_trending</span><span class="v">bool</span></div>
 </div>
 </div>
+
+<div class="sec">Layer 2 — GoPlus v2 (EVM Security)</div>
+<div class="grid">
+<div class="card"><h3>GoPlus <span class="layer">L2</span></h3>
+  <div class="row"><span class="l">gmgn_honeypot</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">gmgn_buy_tax</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">gmgn_sell_tax</span><span class="v">float (%)</span></div>
+</div>
+</div>
+
+<div class="sec">Layer 3 — RugCheck (Solana Security)</div>
+<div class="grid">
+<div class="card"><h3>RugCheck <span class="layer">L3</span></h3>
+  <div class="row"><span class="l">rugcheck_score</span><span class="v">int (0-100)</span></div>
+  <div class="row"><span class="l">rugcheck_insider_holders</span><span class="v">int</span></div>
+  <div class="row"><span class="l">rugcheck_max_holder_pct</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">rugcheck_mutable</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">rugcheck_has_transfer_fee</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">rugcheck_transfer_fee_pct</span><span class="v">float (%)</span></div>
+</div>
+</div>
+
+<div class="sec">Layer 4 — Etherscan (Contract Verification)</div>
+<div class="grid">
+<div class="card"><h3>Etherscan <span class="layer">L4</span></h3>
+  <div class="row"><span class="l">etherscan_is_verified</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">etherscan_source_length</span><span class="v">int</span></div>
+</div>
+</div>
+
+<div class="sec">Layer 5 — De.Fi (Security Analysis)</div>
+<div class="grid">
+<div class="card"><h3>De.Fi <span class="layer">L5</span></h3>
+  <div class="row"><span class="l">defi_score</span><span class="v">int (0-100)</span></div>
+  <div class="row"><span class="l">defi_holder_concentration</span><span class="v">string</span></div>
+</div>
+</div>
+
+<div class="sec">Layer 6 — Derived (Computed Signals)</div>
+<div class="grid">
+<div class="card"><h3>Scoring <span class="layer">L6</span></h3>
+  <div class="row"><span class="l">score</span><span class="v">float (0-100)</span></div>
+  <div class="row"><span class="l">positives</span><span class="v">list[string]</span></div>
+  <div class="row"><span class="l">negatives</span><span class="v">list[string]</span></div>
+  <div class="row"><span class="l">channel_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">mentions</span><span class="v">int</span></div>
+  <div class="row"><span class="l">first_seen_at</span><span class="v">timestamp</span></div>
+  <div class="row"><span class="l">last_seen_at</span><span class="v">timestamp</span></div>
+</div>
+<div class="card"><h3>Score Breakdown</h3>
+  <div class="row"><span class="l">Social Momentum</span><span class="v">0-35 pts</span></div>
+  <div class="row"><span class="l">Freshness</span><span class="v">0-15 pts</span></div>
+  <div class="row"><span class="l">Low FDV</span><span class="v">0-15 pts</span></div>
+  <div class="row"><span class="l">Volume</span><span class="v">0-20 pts</span></div>
+  <div class="row"><span class="l">Transactions</span><span class="v">0-15 pts</span></div>
+  <div class="row"><span class="l">Momentum</span><span class="v">0-10 pts</span></div>
+</div>
+<div class="card"><h3>Boosters & Penalties</h3>
+  <div class="row"><span class="l"><span class="tag tag-g">+</span> verified</span><span class="v">+20%</span></div>
+  <div class="row"><span class="l"><span class="tag tag-g">+</span> dev_holding</span><span class="v">+25%</span></div>
+  <div class="row"><span class="l"><span class="tag tag-g">+</span> lp_burned</span><span class="v">+15%</span></div>
+  <div class="row"><span class="l"><span class="tag tag-g">+</span> smart_wallets &gt;20</span><span class="v">+15%</span></div>
+  <div class="row"><span class="l"><span class="tag tag-r">-</span> h1 &lt; -60%</span><span class="v">score × 0.1</span></div>
+  <div class="row"><span class="l"><span class="tag tag-r">-</span> h6 &lt; -50%</span><span class="v">score × 0.2</span></div>
+  <div class="row"><span class="l"><span class="tag tag-r">-</span> death spiral</span><span class="v">score × 0.3</span></div>
+</div>
+</div>
+
+<div class="sec">Layer 7 — CoinGecko</div>
+<div class="grid">
+<div class="card"><h3>CoinGecko <span class="layer">L7</span></h3>
+  <div class="row"><span class="l">cg_is_meme</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">cg_listed_on_binance</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">cg_listed_on_coinbase</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">cg_major_exchange_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">cg_categories</span><span class="v">list[string]</span></div>
+</div>
+</div>
+
+<div class="sec">Layer 8 — GMGN (Smart Money + Token Security)</div>
+<div class="grid">
+<div class="card"><h3>Wallet Counts <span class="layer">L8</span></h3>
+  <div class="row"><span class="l">gmgn_smart_wallets</span><span class="v">int</span></div>
+  <div class="row"><span class="l">gmgn_sniper_wallets</span><span class="v">int</span></div>
+  <div class="row"><span class="l">gmgn_whale_wallets</span><span class="v">int</span></div>
+  <div class="row"><span class="l">gmgn_renowned_wallets</span><span class="v">int</span></div>
+  <div class="row"><span class="l">gmgn_rat_traders</span><span class="v">int</span></div>
+  <div class="row"><span class="l">gmgn_fresh_wallet_rate</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">gmgn_holder_count</span><span class="v">int</span></div>
+</div>
+<div class="card"><h3>Token Security <span class="layer">L8</span></h3>
+  <div class="row"><span class="l">gmgn_burn_ratio</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">gmgn_burn_status</span><span class="v">string</span></div>
+  <div class="row"><span class="l">gmgn_is_locked</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">gmgn_renounced_mint</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">gmgn_renounced_freeze</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">gmgn_liquidity</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">gmgn_total_supply</span><span class="v">float</span></div>
+</div>
+<div class="card"><h3>Dev Analysis <span class="layer">L8</span></h3>
+  <div class="row"><span class="l">gmgn_dev_hold</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">gmgn_dev_team_hold_rate</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">gmgn_dev_token_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">gmgn_dev_token_farmer</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">gmgn_creator_status</span><span class="v">string</span></div>
+  <div class="row"><span class="l">gmgn_cto_flag</span><span class="v">bool</span></div>
+</div>
+<div class="card"><h3>Market Structure <span class="layer">L8</span></h3>
+  <div class="row"><span class="l">gmgn_bundler_wallets</span><span class="v">int</span></div>
+  <div class="row"><span class="l">gmgn_top_bundler</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">gmgn_top_rat</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">gmgn_top_entrapment</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">gmgn_bot_degen_rate</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">gmgn_private_vault_rate</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">gmgn_has_twitter</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">gmgn_has_website</span><span class="v">bool</span></div>
+</div>
+</div>
+
+<div class="sec">Layer 9 — Social (Telegram + Twitter)</div>
+<div class="grid">
+<div class="card"><h3>Social Signals <span class="layer">L9</span></h3>
+  <div class="row"><span class="l">social_score</span><span class="v">float</span></div>
+  <div class="row"><span class="l">social_mentions</span><span class="v">int</span></div>
+  <div class="row"><span class="l">social_mentions_per_hour</span><span class="v">float</span></div>
+  <div class="row"><span class="l">social_channel_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">social_token_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">tw_sentiment_score</span><span class="v">float (-1 to 1)</span></div>
+</div>
+</div>
+
+<div class="sec">Layer 10 — Zerion (Portfolio)</div>
+<div class="grid">
+<div class="card"><h3>Zerion <span class="layer">L10</span></h3>
+  <div class="row"><span class="l">zerion_staked</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">zerion_borrowed</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">zerion_deposited</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">zerion_defi_value</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">zerion_chain_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">zerion_twitter</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">zerion_coingecko_url</span><span class="v">string</span></div>
+</div>
+</div>
+
+<div class="sec">Layer 11 — CoinStats (Risk Scores)</div>
+<div class="grid">
+<div class="card"><h3>CoinStats <span class="layer">L11</span></h3>
+  <div class="row"><span class="l">cs_risk_score</span><span class="v">int (0-100)</span></div>
+  <div class="row"><span class="l">cs_liquidity_score</span><span class="v">int (0-100)</span></div>
+  <div class="row"><span class="l">cs_volatility_score</span><span class="v">int (0-100)</span></div>
+</div>
+</div>
+
+<div class="sec">Layer 12 — Mobula (Organic Analysis)</div>
+<div class="grid">
+<div class="card"><h3>Mobula <span class="layer">L12</span></h3>
+  <div class="row"><span class="l">mobula_organic_ratio</span><span class="v">float (0-1)</span></div>
+  <div class="row"><span class="l">insider_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">mobula_deployer_tokens</span><span class="v">int</span></div>
+  <div class="row"><span class="l">mobula_deployer_migrations</span><span class="v">int</span></div>
+</div>
+</div>
+
+<div class="sec">Wallet Fields (tracked_wallets table)</div>
+<div class="grid">
+<div class="card"><h3>Wallet Scoring</h3>
+  <div class="row"><span class="l">wallet_score</span><span class="v">float (0-100)</span></div>
+  <div class="row"><span class="l">total_profit</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">avg_roi</span><span class="v">float (%)</span></div>
+  <div class="row"><span class="l">win_rate</span><span class="v">float (0-1)</span></div>
+  <div class="row"><span class="l">total_trades</span><span class="v">int</span></div>
+  <div class="row"><span class="l">buy_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">sell_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">tokens_profitable</span><span class="v">int</span></div>
+  <div class="row"><span class="l">tokens_total</span><span class="v">int</span></div>
+  <div class="row"><span class="l">entry_timing_score</span><span class="v">float</span></div>
+  <div class="row"><span class="l">wallet_tags</span><span class="v">string (csv)</span></div>
+  <div class="row"><span class="l">insider_flag</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">last_active_at</span><span class="v">timestamp</span></div>
+</div>
+<div class="card"><h3>Wallet Positions (wallet_token_entries)</h3>
+  <div class="row"><span class="l">token_address</span><span class="v">string</span></div>
+  <div class="row"><span class="l">token_symbol</span><span class="v">string</span></div>
+  <div class="row"><span class="l">profit</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">realized_profit</span><span class="v">float (USD)</span></div>
+  <div class="row"><span class="l">buy_tx_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">sell_tx_count</span><span class="v">int</span></div>
+  <div class="row"><span class="l">is_profitable</span><span class="v">bool</span></div>
+  <div class="row"><span class="l">start_holding_at</span><span class="v">timestamp</span></div>
+</div>
+</div>
+
+</div></div>
 
 <script>
-function showPage(name){
+function showPage(n){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('page-'+n).classList.add('active');
   document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
-  var nav=document.getElementById('nav-'+(name.startsWith('token')?'tokens':'wallets'));
-  if(nav)nav.classList.add('active');
+  document.getElementById('nav-'+n).classList.add('active');
 }
-function showToken(symbol){showPage('token-detail')}
-function showWallet(addr){showPage('wallet-detail')}
-document.getElementById('nav-tokens').classList.add('active');
 </script>
 </body></html>
