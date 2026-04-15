@@ -4,6 +4,8 @@ Autonomous smart-money tracking system that discovers, enriches, and ranks token
 
 ## Architecture
 
+[Interactive Architecture Diagram (HTML/SVG)](architecture.html)
+
 ```
                               ┌─────────────────────────────────┐
                               │         DATA SOURCES            │
