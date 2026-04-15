@@ -7,6 +7,15 @@
         </defs>
         <rect width="100%" height="100%" fill="url(#grid)"/>
 
+        <!-- PHASE HEADERS -->
+        <text x="68" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">DISCOVERY</text>
+        <text x="380" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">ENRICHMENT</text>
+        <text x="660" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">SCORING</text>
+        <text x="890" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">INTELLIGENCE</text>
+        <text x="1120" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">ACTION</text>
+        <text x="1105" y="430" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">HISTORICAL</text>
+        <text x="500" y="598" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">DASHBOARD</text>
+
         <!-- ARROWS (all behind boxes, no text labels) -->
 
         <!-- Sources to Discovery -->
