@@ -7,38 +7,18 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'JetBrains Mono', monospace;
-      background: #020617;
-      min-height: 100vh;
-      padding: 2rem;
-      color: white;
-    }
+    body { font-family: 'JetBrains Mono', monospace; background: #020617; min-height: 100vh; padding: 2rem; color: white; }
     .container { max-width: 1400px; margin: 0 auto; }
     .header { margin-bottom: 2rem; }
     .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
-    .pulse-dot {
-      width: 12px; height: 12px;
-      background: #22d3ee; border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
+    .pulse-dot { width: 12px; height: 12px; background: #22d3ee; border-radius: 50%; animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
     .subtitle { color: #94a3b8; font-size: 0.875rem; margin-left: 1.75rem; }
-    .diagram-container {
-      background: rgba(15, 23, 42, 0.5);
-      border-radius: 1rem; border: 1px solid #1e293b;
-      padding: 1.5rem; overflow-x: auto;
-    }
+    .diagram-container { background: rgba(15, 23, 42, 0.5); border-radius: 1rem; border: 1px solid #1e293b; padding: 1.5rem; overflow-x: auto; }
     svg { width: 100%; min-width: 1300px; display: block; }
-    .cards {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1rem; margin-top: 2rem;
-    }
-    .card {
-      background: rgba(15, 23, 42, 0.5);
-      border-radius: 0.75rem; border: 1px solid #1e293b; padding: 1.25rem;
-    }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 2rem; }
+    .card { background: rgba(15, 23, 42, 0.5); border-radius: 0.75rem; border: 1px solid #1e293b; padding: 1.25rem; }
     .card-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
     .card-dot { width: 8px; height: 8px; border-radius: 50%; }
     .card-dot.cyan { background: #22d3ee; }
@@ -59,346 +39,282 @@
         <div class="pulse-dot"></div>
         <h1>Hermes Token Screener v9.0</h1>
       </div>
-      <p class="subtitle">13-layer enrichment pipeline — smart money tracking — AI trading — copy-trade monitor</p>
+      <p class="subtitle">13-layer enrichment — smart money tracking — AI trading — copy-trade discovery loop</p>
     </div>
 
     <div class="diagram-container">
-      <svg viewBox="0 0 1400 980">
+      <svg viewBox="0 0 1400 880">
         <defs>
-          <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
-          </marker>
-          <marker id="arrowrose" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#fb7185"/>
-          </marker>
-          <marker id="arroworange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#fb923c"/>
-          </marker>
-          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
-          </pattern>
+          <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#64748b"/></marker>
+          <marker id="arrrose" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#fb7185"/></marker>
+          <marker id="arrorange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#fb923c"/></marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/></pattern>
         </defs>
-
         <rect width="100%" height="100%" fill="url(#grid)"/>
 
-        <text x="1234" y="48" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">ACTION</text>
+        <!-- PHASE HEADERS -->
+        <text x="70" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">DISCOVERY</text>
+        <text x="380" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">ENRICHMENT</text>
+        <text x="650" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">SCORING</text>
+        <text x="920" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">INTELLIGENCE</text>
+        <text x="1170" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">ACTION</text>
+        <text x="1340" y="28" fill="#475569" font-size="9" font-weight="600" text-anchor="middle">HISTORICAL</text>
 
-        <!-- ================================================================
-             ARROWS
-             ================================================================ -->
+        <!-- ========== ARROWS ========== -->
 
         <!-- Sources → Discovery -->
-        <line x1="138" y1="110" x2="188" y2="125" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow)"/>
-        <line x1="138" y1="180" x2="188" y2="150" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow)"/>
-        <line x1="138" y1="250" x2="188" y2="170" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow)"/>
-        <line x1="138" y1="320" x2="188" y2="185" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow)"/>
-        <line x1="138" y1="390" x2="188" y2="198" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <line x1="130" y1="90" x2="143" y2="95" stroke="#34d399" stroke-width="1.2" marker-end="url(#arr)"/>
+        <line x1="130" y1="150" x2="143" y2="120" stroke="#34d399" stroke-width="1.2" marker-end="url(#arr)"/>
+        <line x1="130" y1="210" x2="143" y2="140" stroke="#34d399" stroke-width="1.2" marker-end="url(#arr)"/>
+        <line x1="130" y1="270" x2="143" y2="155" stroke="#34d399" stroke-width="1.2" marker-end="url(#arr)"/>
+        <line x1="130" y1="330" x2="143" y2="170" stroke="#34d399" stroke-width="1.2" marker-end="url(#arr)"/>
 
         <!-- Discovery → central_contracts -->
-        <line x1="308" y1="135" x2="358" y2="240" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow)"/>
-        <line x1="308" y1="165" x2="358" y2="255" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow)"/>
-        <line x1="308" y1="195" x2="358" y2="265" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="250" y1="100" x2="295" y2="230" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="250" y1="135" x2="295" y2="245" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="250" y1="185" x2="295" y2="255" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arr)"/>
 
         <!-- central_contracts → enricher -->
-        <line x1="488" y1="260" x2="538" y2="260" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrow)"/>
-        <text x="513" y="252" fill="#94a3b8" font-size="7" text-anchor="middle">tokens</text>
+        <line x1="415" y1="250" x2="435" y2="250" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arr)"/>
 
         <!-- enricher → top100 -->
-        <line x1="688" y1="260" x2="738" y2="260" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrow)"/>
-        <text x="713" y="252" fill="#94a3b8" font-size="7" text-anchor="middle">scored</text>
+        <line x1="575" y1="250" x2="620" y2="250" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arr)"/>
 
         <!-- top100 → wallet_tracker -->
-        <line x1="803" y1="290" x2="803" y2="340" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrow)"/>
-        <text x="818" y="318" fill="#94a3b8" font-size="7">top holders</text>
+        <line x1="680" y1="288" x2="680" y2="325" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="695" y="310" fill="#94a3b8" font-size="7">top holders</text>
 
-        <!-- wallet_tracker → wallet_db -->
-        <line x1="803" y1="400" x2="803" y2="440" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <!-- wallet_tracker → smart_money_research -->
+        <line x1="680" y1="385" x2="680" y2="400" stroke="#34d399" stroke-width="1.2" marker-end="url(#arr)"/>
+        <text x="695" y="396" fill="#94a3b8" font-size="6">patterns</text>
 
-        <!-- wallet_db → cross_scoring -->
-        <line x1="868" y1="468" x2="908" y2="468" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <!-- smart_money_research → wallet_tracker.db -->
+        <line x1="680" y1="432" x2="680" y2="450" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arr)"/>
 
-        <!-- top100 → cross_scoring (rerank) -->
-        <line x1="868" y1="260" x2="908" y2="260" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arroworange)"/>
-        <text x="888" y="252" fill="#fb923c" font-size="7" text-anchor="middle">rerank</text>
+        <!-- top100 → cross_scoring (tokens in) -->
+        <line x1="740" y1="250" x2="780" y2="250" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrorange)"/>
+        <text x="760" y="242" fill="#fb923c" font-size="7" text-anchor="middle">rerank</text>
 
-        <!-- Cross-scoring feedback loop (bidirectional arrow) -->
-        <line x1="953" y1="290" x2="953" y2="438" stroke="#fb923c" stroke-width="1.2" stroke-dasharray="6,4" marker-end="url(#arroworange)"/>
-        <line x1="953" y1="438" x2="953" y2="290" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
-        <text x="968" y="340" fill="#fb923c" font-size="7" text-anchor="start">tokens ←</text>
-        <text x="968" y="352" fill="#fb923c" font-size="7" text-anchor="start">wallets ←</text>
-        <text x="968" y="364" fill="#fb923c" font-size="7" text-anchor="start">tokens</text>
-        <text x="968" y="380" fill="#a78bfa" font-size="7" text-anchor="start">70 smart</text>
-        <text x="968" y="392" fill="#a78bfa" font-size="7" text-anchor="start">30 enrich</text>
+        <!-- wallet_tracker.db → cross_scoring (wallets in) -->
+        <line x1="740" y1="470" x2="780" y2="470" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arr)"/>
+
+        <!-- Cross-scoring feedback arrows -->
+        <line x1="830" y1="275" x2="830" y2="445" stroke="#fb923c" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrorange)"/>
+        <line x1="830" y1="445" x2="830" y2="275" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arr)"/>
+        <text x="845" y="320" fill="#fb923c" font-size="7">tokens ←</text>
+        <text x="845" y="333" fill="#fb923c" font-size="7">wallets ←</text>
+        <text x="845" y="346" fill="#fb923c" font-size="7">tokens</text>
+        <text x="845" y="365" fill="#a78bfa" font-size="7">70 smart</text>
+        <text x="845" y="378" fill="#a78bfa" font-size="7">30 enrich</text>
 
         <!-- cross_scoring → social_enhance -->
-        <line x1="1008" y1="360" x2="1058" y2="360" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="880" y1="360" x2="930" y2="360" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr)"/>
 
-        <!-- top100 → copytrade -->
-        <line x1="868" y1="260" x2="958" y2="215" stroke="#34d399" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
+        <!-- top wallets → copytrade_monitor -->
+        <line x1="740" y1="340" x2="930" y2="145" stroke="#34d399" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arr)"/>
+        <text x="820" y="230" fill="#94a3b8" font-size="7" transform="rotate(-40,820,230)">top wallets</text>
 
-        <!-- wallet_db → copytrade -->
-        <line x1="868" y1="468" x2="1024" y2="243" stroke="#34d399" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
+        <!-- copytrade → copytrade_discoveries.db -->
+        <line x1="990" y1="180" x2="990" y2="220" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arr)"/>
 
-        <!-- enricher → trade_monitor -->
-        <line x1="688" y1="240" x2="1153" y2="100" stroke="#fb7185" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#arrowrose)"/>
+        <!-- copytrade_discoveries → enricher (feedback into pipeline) -->
+        <path d="M 930 245 Q 900 245 900 260 Q 900 300 575 300 Q 560 300 560 288" fill="none" stroke="#fb923c" stroke-width="1.2" stroke-dasharray="6,4" marker-end="url(#arrorange)"/>
+        <text x="720" y="315" fill="#fb923c" font-size="7" text-anchor="middle">new tokens → enrich</text>
 
-        <!-- top100 → ai_trading -->
-        <line x1="868" y1="258" x2="1153" y2="158" stroke="#fb7185" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#arrowrose)"/>
+        <!-- new wallets from copytrade → wallet_tracker.db -->
+        <path d="M 1050 245 Q 1080 245 1080 300 Q 1080 470 740 470" fill="none" stroke="#a78bfa" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arr)"/>
+        <text x="1090" y="370" fill="#a78bfa" font-size="7" transform="rotate(75,1090,370)">new wallets</text>
+
+        <!-- top100 → ai_trading_brain -->
+        <line x1="680" y1="222" x2="1155" y2="130" stroke="#fb7185" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrrose)"/>
 
         <!-- ai_trading → trade_monitor -->
-        <line x1="1234" y1="135" x2="1234" y2="127" stroke="#fb7185" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#arrowrose)"/>
+        <line x1="1225" y1="140" x2="1225" y2="120" stroke="#fb7185" stroke-width="1.2" stroke-dasharray="4,4" marker-end="url(#arrrose)"/>
 
-        <!-- top100 → token_lifecycle -->
-        <line x1="748" y1="290" x2="613" y2="490" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
+        <!-- enricher → trade_monitor -->
+        <line x1="575" y1="230" x2="1155" y2="80" stroke="#fb7185" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrrose)"/>
 
-        <!-- Dashboard connections to ALL databases -->
-        <!-- central_contracts → dashboard -->
-        <line x1="423" y1="290" x2="473" y2="645" stroke="#22d3ee" stroke-width="1.2" marker-end="url(#arrow)"/>
-        <!-- top100 → dashboard -->
-        <line x1="748" y1="290" x2="573" y2="645" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
-        <!-- wallet_db → dashboard -->
-        <line x1="748" y1="468" x2="593" y2="665" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
+        <!-- top100 → db_maintenance -->
+        <line x1="620" y1="288" x2="1225" y2="500" stroke="#fbbf24" stroke-width="0.8" stroke-dasharray="3,6" marker-end="url(#arr)"/>
 
-        <!-- enricher → enrichment APIs (references) -->
-        <line x1="613" y1="225" x2="613" y2="120" stroke="#fbbf24" stroke-width="0.8" stroke-dasharray="3,6"/>
+        <!-- db_maintenance → historical_tokens -->
+        <line x1="1285" y1="530" x2="1285" y2="570" stroke="#fbbf24" stroke-width="1.2" marker-end="url(#arr)"/>
+        <text x="1300" y="555" fill="#94a3b8" font-size="7">aged out</text>
 
-        <!-- Cron arrows (subtle) -->
-        <line x1="190" y1="880" x2="243" y2="135" stroke="#64748b" stroke-width="0.5" stroke-dasharray="3,10"/>
-        <line x1="190" y1="880" x2="243" y2="175" stroke="#64748b" stroke-width="0.5" stroke-dasharray="3,10"/>
-        <line x1="190" y1="880" x2="613" y2="260" stroke="#64748b" stroke-width="0.5" stroke-dasharray="3,10"/>
-        <line x1="190" y1="880" x2="803" y2="370" stroke="#64748b" stroke-width="0.5" stroke-dasharray="3,10"/>
-        <line x1="190" y1="880" x2="1158" y2="160" stroke="#64748b" stroke-width="0.5" stroke-dasharray="3,10"/>
-        <line x1="190" y1="880" x2="1158" y2="360" stroke="#64748b" stroke-width="0.5" stroke-dasharray="3,10"/>
-        <line x1="190" y1="880" x2="613" y2="140" stroke="#64748b" stroke-width="0.5" stroke-dasharray="3,10"/>
-        <line x1="190" y1="880" x2="853" y2="140" stroke="#64748b" stroke-width="0.5" stroke-dasharray="3,10"/>
+        <!-- db_maintenance → historical_wallets -->
+        <line x1="1285" y1="560" x2="1370" y2="610" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arr)"/>
 
-        <!-- ================================================================
-             DATA SOURCES (left column)
-             ================================================================ -->
+        <!-- Dashboard connections -->
+        <line x1="355" y1="288" x2="450" y2="700" stroke="#22d3ee" stroke-width="1" marker-end="url(#arr)"/>
+        <line x1="680" y1="288" x2="530" y2="700" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arr)"/>
+        <line x1="680" y1="500" x2="570" y2="720" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arr)"/>
+        <line x1="990" y1="245" x2="610" y2="725" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arr)"/>
 
-        <rect x="20" y="80" width="118" height="55" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
-        <text x="79" y="102" fill="white" font-size="10" font-weight="600" text-anchor="middle">Telegram</text>
-        <text x="79" y="118" fill="#94a3b8" font-size="8" text-anchor="middle">62 call channels</text>
+        <!-- ========== DATA SOURCES ========== -->
+        <rect x="15" y="65" width="115" height="50" rx="6" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="73" y="86" fill="white" font-size="10" font-weight="600" text-anchor="middle">Telegram</text>
+        <text x="73" y="101" fill="#94a3b8" font-size="8" text-anchor="middle">62 call channels</text>
 
-        <rect x="20" y="150" width="118" height="55" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
-        <text x="79" y="172" fill="white" font-size="10" font-weight="600" text-anchor="middle">Dexscreener</text>
-        <text x="79" y="188" fill="#94a3b8" font-size="8" text-anchor="middle">Boosted + Profiles</text>
+        <rect x="15" y="125" width="115" height="50" rx="6" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="73" y="146" fill="white" font-size="10" font-weight="600" text-anchor="middle">Dexscreener</text>
+        <text x="73" y="161" fill="#94a3b8" font-size="8" text-anchor="middle">Boosted + Profiles</text>
 
-        <rect x="20" y="220" width="118" height="55" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
-        <text x="79" y="242" fill="white" font-size="10" font-weight="600" text-anchor="middle">Rick Burp Bot</text>
-        <text x="79" y="258" fill="#94a3b8" font-size="8" text-anchor="middle">Telegram signals</text>
+        <rect x="15" y="185" width="115" height="50" rx="6" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="73" y="206" fill="white" font-size="10" font-weight="600" text-anchor="middle">Rick Burp Bot</text>
+        <text x="73" y="221" fill="#94a3b8" font-size="8" text-anchor="middle">Telegram signals</text>
 
-        <rect x="20" y="290" width="118" height="55" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
-        <text x="79" y="312" fill="white" font-size="10" font-weight="600" text-anchor="middle">PumpPortal</text>
-        <text x="79" y="328" fill="#94a3b8" font-size="8" text-anchor="middle">New launches</text>
+        <rect x="15" y="245" width="115" height="50" rx="6" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="73" y="266" fill="white" font-size="10" font-weight="600" text-anchor="middle">PumpPortal</text>
+        <text x="73" y="281" fill="#94a3b8" font-size="8" text-anchor="middle">New launches</text>
 
-        <rect x="20" y="360" width="118" height="55" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
-        <text x="79" y="382" fill="white" font-size="10" font-weight="600" text-anchor="middle">Twitter / Trends</text>
-        <text x="79" y="398" fill="#94a3b8" font-size="8" text-anchor="middle">Keyword discovery</text>
+        <rect x="15" y="305" width="115" height="50" rx="6" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="73" y="326" fill="white" font-size="10" font-weight="600" text-anchor="middle">Twitter / Trends</text>
+        <text x="73" y="341" fill="#94a3b8" font-size="8" text-anchor="middle">Keyword discovery</text>
 
-        <!-- ================================================================
-             DISCOVERY
-             ================================================================ -->
+        <!-- ========== DISCOVERY ========== -->
+        <rect x="145" y="80" width="105" height="38" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="198" y="98" fill="white" font-size="9" font-weight="600" text-anchor="middle">telegram_scraper</text>
+        <text x="198" y="110" fill="#94a3b8" font-size="7" text-anchor="middle">*/10 min</text>
 
-        <rect x="190" y="105" width="118" height="42" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-        <text x="249" y="124" fill="white" font-size="9" font-weight="600" text-anchor="middle">telegram_scraper</text>
-        <text x="249" y="138" fill="#94a3b8" font-size="7" text-anchor="middle">*/10 min</text>
+        <rect x="145" y="125" width="105" height="38" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="198" y="143" fill="white" font-size="9" font-weight="600" text-anchor="middle">token_discovery</text>
+        <text x="198" y="155" fill="#94a3b8" font-size="7" text-anchor="middle">*/30 min</text>
 
-        <rect x="190" y="155" width="118" height="42" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-        <text x="249" y="174" fill="white" font-size="9" font-weight="600" text-anchor="middle">token_discovery</text>
-        <text x="249" y="188" fill="#94a3b8" font-size="7" text-anchor="middle">*/30 min</text>
+        <rect x="145" y="170" width="105" height="28" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="198" y="189" fill="white" font-size="9" font-weight="600" text-anchor="middle">token_integration</text>
 
-        <rect x="190" y="205" width="118" height="30" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-        <text x="249" y="225" fill="white" font-size="9" font-weight="600" text-anchor="middle">token_integration</text>
+        <!-- ========== ENRICHMENT ========== -->
+        <rect x="275" y="50" width="280" height="95" rx="10" fill="rgba(251,191,36,0.04)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="8,4"/>
+        <text x="285" y="66" fill="#fbbf24" font-size="9" font-weight="600">Enrichment APIs (13 Layers)</text>
+        <rect x="285" y="74" width="130" height="22" rx="4" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="0.8"/>
+        <text x="350" y="89" fill="#94a3b8" font-size="8" text-anchor="middle">GoPlus v2 · RugCheck</text>
+        <rect x="420" y="74" width="125" height="22" rx="4" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="0.8"/>
+        <text x="483" y="89" fill="#94a3b8" font-size="8" text-anchor="middle">Etherscan · De.Fi</text>
+        <rect x="285" y="100" width="130" height="22" rx="4" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="0.8"/>
+        <text x="350" y="115" fill="#94a3b8" font-size="8" text-anchor="middle">CoinGecko · GMGN</text>
+        <rect x="420" y="100" width="125" height="22" rx="4" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="0.8"/>
+        <text x="483" y="115" fill="#94a3b8" font-size="8" text-anchor="middle">Zerion · CoinStats</text>
+        <text x="415" y="138" fill="#94a3b8" font-size="7" text-anchor="middle">+Surf · +Mobula · +Derived</text>
 
-        <!-- ================================================================
-             DATABASES
-             ================================================================ -->
+        <rect x="295" y="220" width="120" height="65" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="355" y="240" fill="white" font-size="10" font-weight="600" text-anchor="middle">central_contracts</text>
+        <text x="355" y="255" fill="#94a3b8" font-size="9" text-anchor="middle">.db</text>
+        <text x="355" y="272" fill="#a78bfa" font-size="7" text-anchor="middle">dedup + merge all sources</text>
 
-        <rect x="360" y="225" width="128" height="72" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
-        <text x="424" y="245" fill="white" font-size="10" font-weight="600" text-anchor="middle">central_contracts</text>
-        <text x="424" y="261" fill="#94a3b8" font-size="9" text-anchor="middle">.db</text>
-        <text x="424" y="278" fill="#a78bfa" font-size="7" text-anchor="middle">dedup + merge sources</text>
-        <text x="424" y="290" fill="#a78bfa" font-size="7" text-anchor="middle">increment mentions</text>
+        <rect x="435" y="220" width="140" height="65" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="505" y="238" fill="white" font-size="10" font-weight="600" text-anchor="middle">token_enricher</text>
+        <text x="505" y="254" fill="#94a3b8" font-size="8" text-anchor="middle">13 layers · :10 hourly</text>
+        <text x="505" y="268" fill="#fbbf24" font-size="7" text-anchor="middle">async ~8min → ~2min</text>
+        <text x="505" y="279" fill="#fbbf24" font-size="7" text-anchor="middle">L0 required · L1-12 bypass</text>
 
-        <rect x="740" y="440" width="128" height="55" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
-        <text x="804" y="458" fill="white" font-size="10" font-weight="600" text-anchor="middle">wallet_tracker</text>
-        <text x="804" y="474" fill="#94a3b8" font-size="9" text-anchor="middle">.db · top 1000</text>
-        <text x="804" y="488" fill="#a78bfa" font-size="7" text-anchor="middle">scored wallets</text>
+        <!-- ========== SCORING ========== -->
+        <rect x="620" y="220" width="120" height="65" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="680" y="238" fill="white" font-size="10" font-weight="600" text-anchor="middle">top100.json</text>
+        <text x="680" y="254" fill="#94a3b8" font-size="8" text-anchor="middle">Scored 0-100</text>
+        <text x="680" y="268" fill="#a78bfa" font-size="7" text-anchor="middle">decline guards + penalties</text>
+        <text x="680" y="279" fill="#a78bfa" font-size="7" text-anchor="middle">h1<-60% → score×0.1</text>
 
-        <!-- ================================================================
-             ENRICHMENT APIs (centered above pipeline)
-             ================================================================ -->
+        <rect x="620" y="325" width="120" height="55" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="680" y="343" fill="white" font-size="10" font-weight="600" text-anchor="middle">wallet_tracker</text>
+        <text x="680" y="359" fill="#94a3b8" font-size="8" text-anchor="middle">500/token · :15 hourly</text>
+        <text x="680" y="373" fill="#34d399" font-size="7" text-anchor="middle">5 sort × 100 (profitable)</text>
 
-        <rect x="460" y="55" width="310" height="105" rx="12" fill="rgba(251, 191, 36, 0.05)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="8,4"/>
-        <text x="470" y="72" fill="#fbbf24" font-size="9" font-weight="600">Enrichment APIs (13 Layers)</text>
+        <!-- smart_money_research (under wallet_tracker) -->
+        <rect x="620" y="400" width="120" height="30" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.2"/>
+        <text x="680" y="420" fill="white" font-size="9" font-weight="600" text-anchor="middle">smart_money_research</text>
 
-        <rect x="470" y="82" width="145" height="24" rx="4" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1"/>
-        <text x="543" y="98" fill="#94a3b8" font-size="8" text-anchor="middle">GoPlus v2 · RugCheck</text>
+        <rect x="620" y="450" width="120" height="52" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="680" y="468" fill="white" font-size="10" font-weight="600" text-anchor="middle">wallet_tracker</text>
+        <text x="680" y="482" fill="#94a3b8" font-size="9" text-anchor="middle">.db · top 1000</text>
+        <text x="680" y="496" fill="#a78bfa" font-size="7" text-anchor="middle">scored wallets</text>
 
-        <rect x="620" y="82" width="140" height="24" rx="4" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1"/>
-        <text x="690" y="98" fill="#94a3b8" font-size="8" text-anchor="middle">Etherscan · De.Fi</text>
+        <rect x="780" y="220" width="100" height="120" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="830" y="240" fill="white" font-size="10" font-weight="600" text-anchor="middle">cross_scoring</text>
+        <text x="830" y="256" fill="#94a3b8" font-size="8" text-anchor="middle">:20 hourly</text>
+        <text x="830" y="276" fill="#fb923c" font-size="7" text-anchor="middle">tokens by wallet</text>
+        <text x="830" y="288" fill="#fb923c" font-size="7" text-anchor="middle">quality</text>
+        <text x="830" y="306" fill="#a78bfa" font-size="7" text-anchor="middle">wallets by token</text>
+        <text x="830" y="318" fill="#a78bfa" font-size="7" text-anchor="middle">portfolio</text>
+        <text x="830" y="336" fill="#94a3b8" font-size="6">feedback loop</text>
 
-        <rect x="470" y="110" width="145" height="24" rx="4" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1"/>
-        <text x="543" y="126" fill="#94a3b8" font-size="8" text-anchor="middle">CoinGecko · GMGN</text>
+        <!-- ========== INTELLIGENCE ========== -->
+        <rect x="930" y="115" width="120" height="62" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="990" y="133" fill="white" font-size="9" font-weight="600" text-anchor="middle">copytrade_monitor</text>
+        <text x="990" y="147" fill="#94a3b8" font-size="7" text-anchor="middle">watches top wallets</text>
+        <text x="990" y="159" fill="#34d399" font-size="7" text-anchor="middle">for new token buys</text>
+        <text x="990" y="171" fill="#94a3b8" font-size="7" text-anchor="middle">Ankr polling</text>
 
-        <rect x="620" y="110" width="140" height="24" rx="4" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1"/>
-        <text x="690" y="126" fill="#94a3b8" font-size="8" text-anchor="middle">Zerion · CoinStats</text>
+        <!-- copytrade_discoveries.db -->
+        <rect x="930" y="220" width="120" height="50" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="990" y="240" fill="white" font-size="9" font-weight="600" text-anchor="middle">copytrade_discoveries</text>
+        <text x="990" y="255" fill="#a78bfa" font-size="7" text-anchor="middle">.db · new tokens found</text>
 
-        <rect x="470" y="138" width="145" height="14" rx="3" fill="rgba(30, 41, 59, 0.3)" stroke="#94a3b8" stroke-width="0.8"/>
-        <text x="543" y="149" fill="#94a3b8" font-size="7" text-anchor="middle">Surf · Mobula · Derived</text>
+        <rect x="930" y="330" width="120" height="62" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+        <text x="990" y="348" fill="white" font-size="10" font-weight="600" text-anchor="middle">social_enhance</text>
+        <text x="990" y="364" fill="#94a3b8" font-size="8" text-anchor="middle">:25 hourly</text>
+        <text x="990" y="378" fill="#34d399" font-size="7" text-anchor="middle">Telegram · Twitter</text>
+        <text x="990" y="388" fill="#22d3ee" font-size="7" text-anchor="middle">Website intelligence</text>
 
-        <!-- ================================================================
-             ENRICHMENT + SCORING
-             ================================================================ -->
+        <!-- ========== ACTION ========== -->
+        <rect x="1120" y="45" width="170" height="130" rx="12" fill="rgba(136,19,55,0.05)" stroke="#fb7185" stroke-width="1" stroke-dasharray="8,4"/>
+        <text x="1130" y="62" fill="#fb7185" font-size="10" font-weight="600">ACTION</text>
 
-        <rect x="540" y="225" width="148" height="72" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
-        <text x="614" y="243" fill="white" font-size="10" font-weight="600" text-anchor="middle">token_enricher</text>
-        <text x="614" y="259" fill="#94a3b8" font-size="8" text-anchor="middle">13 layers · :10 hourly</text>
-        <text x="614" y="275" fill="#fbbf24" font-size="7" text-anchor="middle">async: ~8min → ~2min</text>
-        <text x="614" y="287" fill="#fbbf24" font-size="7" text-anchor="middle">L0 required · L1-12 bypass</text>
+        <rect x="1135" y="72" width="140" height="48" rx="6" fill="rgba(136,19,55,0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="1205" y="90" fill="white" font-size="10" font-weight="600" text-anchor="middle">trade_monitor</text>
+        <text x="1205" y="106" fill="#94a3b8" font-size="8" text-anchor="middle">EVERY MINUTE</text>
+        <text x="1205" y="115" fill="#fb7185" font-size="7" text-anchor="middle">TP 100% · SL 15% · decay</text>
 
-        <rect x="740" y="230" width="128" height="55" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
-        <text x="804" y="248" fill="white" font-size="10" font-weight="600" text-anchor="middle">top100.json</text>
-        <text x="804" y="264" fill="#94a3b8" font-size="8" text-anchor="middle">Scored 0-100</text>
-        <text x="804" y="278" fill="#a78bfa" font-size="7" text-anchor="middle">decline guards</text>
+        <rect x="1135" y="128" width="140" height="42" rx="6" fill="rgba(136,19,55,0.4)" stroke="#fb7185" stroke-width="1.5"/>
+        <text x="1205" y="146" fill="white" font-size="10" font-weight="600" text-anchor="middle">ai_trading_brain</text>
+        <text x="1205" y="162" fill="#94a3b8" font-size="8" text-anchor="middle">buy / hold / sell</text>
+        <text x="1205" y="172" fill="#fb7185" font-size="7" text-anchor="middle">sentiment + market analysis</text>
 
-        <!-- ================================================================
-             WALLET + CROSS-SCORING
-             ================================================================ -->
+        <!-- ========== HISTORICAL + MAINTENANCE ========== -->
+        <rect x="1210" y="495" width="150" height="35" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="1285" y="518" fill="white" font-size="10" font-weight="600" text-anchor="middle">db_maintenance · daily</text>
 
-        <rect x="740" y="340" width="128" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-        <text x="804" y="358" fill="white" font-size="10" font-weight="600" text-anchor="middle">wallet_tracker</text>
-        <text x="804" y="374" fill="#94a3b8" font-size="8" text-anchor="middle">500/token · :15 hourly</text>
-        <text x="804" y="388" fill="#34d399" font-size="7" text-anchor="middle">5 sort × 100 (profitable)</text>
-        <text x="804" y="398" fill="#34d399" font-size="7" text-anchor="middle">--sequential (rate limit)</text>
+        <rect x="1210" y="570" width="150" height="45" rx="6" fill="rgba(76,29,149,0.3)" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="6,4"/>
+        <text x="1285" y="588" fill="#a78bfa" font-size="9" font-weight="600" text-anchor="middle">historical_tokens</text>
+        <text x="1285" y="602" fill="#94a3b8" font-size="7" text-anchor="middle">aged out of top 100</text>
 
-        <rect x="910" y="230" width="98" height="110" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-        <text x="959" y="250" fill="white" font-size="10" font-weight="600" text-anchor="middle">cross_scoring</text>
-        <text x="959" y="266" fill="#94a3b8" font-size="8" text-anchor="middle">:20 hourly</text>
-        <text x="959" y="286" fill="#fb923c" font-size="7" text-anchor="middle">tokens ranked by</text>
-        <text x="959" y="298" fill="#fb923c" font-size="7" text-anchor="middle">wallet quality</text>
-        <text x="959" y="316" fill="#a78bfa" font-size="7" text-anchor="middle">wallets ranked by</text>
-        <text x="959" y="328" fill="#a78bfa" font-size="7" text-anchor="middle">token portfolio</text>
+        <rect x="1210" y="625" width="150" height="45" rx="6" fill="rgba(76,29,149,0.3)" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="6,4"/>
+        <text x="1285" y="643" fill="#a78bfa" font-size="9" font-weight="600" text-anchor="middle">historical_wallets</text>
+        <text x="1285" y="657" fill="#94a3b8" font-size="7" text-anchor="middle">aged out of top 1000</text>
 
-        <!-- ================================================================
-             INTELLIGENCE (right side)
-             ================================================================ -->
+        <!-- ========== DASHBOARD ========== -->
+        <rect x="440" y="695" width="200" height="75" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+        <text x="540" y="715" fill="white" font-size="11" font-weight="600" text-anchor="middle">FastAPI Dashboard</text>
+        <text x="540" y="732" fill="#94a3b8" font-size="8" text-anchor="middle">:8080 · All databases</text>
+        <text x="540" y="748" fill="#22d3ee" font-size="7" text-anchor="middle">central_contracts · top100 · wallets</text>
+        <text x="540" y="760" fill="#22d3ee" font-size="7" text-anchor="middle">copytrade_discoveries · historical</text>
 
-        <!-- copytrade_monitor (far right, below ai_trading) -->
-        <rect x="1080" y="195" width="128" height="48" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-        <text x="1144" y="213" fill="white" font-size="9" font-weight="600" text-anchor="middle">copytrade_monitor</text>
-        <text x="1144" y="227" fill="#94a3b8" font-size="7" text-anchor="middle">smart wallet → new buys</text>
-        <text x="1144" y="237" fill="#34d399" font-size="7" text-anchor="middle">Ankr polling</text>
+        <!-- ========== CRON ========== -->
+        <rect x="15" y="790" width="260" height="70" rx="10" fill="rgba(251,191,36,0.04)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="8,4"/>
+        <text x="25" y="808" fill="#fbbf24" font-size="10" font-weight="600">Cron Orchestration</text>
+        <text x="25" y="824" fill="#94a3b8" font-size="8">*/10 scraper · */30 discovery</text>
+        <text x="25" y="838" fill="#94a3b8" font-size="8">:10 enrich · :15 wallets · :20 cross</text>
+        <text x="25" y="852" fill="#94a3b8" font-size="8">:25 social · 00:00 maintenance</text>
 
-        <!-- social_enhancement (includes website) -->
-        <rect x="1060" y="310" width="128" height="85" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-        <text x="1124" y="328" fill="white" font-size="10" font-weight="600" text-anchor="middle">social_enhance</text>
-        <text x="1124" y="344" fill="#94a3b8" font-size="8" text-anchor="middle">:25 hourly</text>
-        <text x="1124" y="360" fill="#34d399" font-size="7" text-anchor="middle">Telegram signals</text>
-        <text x="1124" y="372" fill="#34d399" font-size="7" text-anchor="middle">Twitter sentiment</text>
-        <text x="1124" y="384" fill="#22d3ee" font-size="7" text-anchor="middle">Website intelligence</text>
-        <text x="1124" y="390" fill="#94a3b8" font-size="6" text-anchor="middle">70 smart + 20 social + 10 site</text>
-
-        <!-- ================================================================
-             TRADING (far right, ABOVE enrichment APIs)
-             ================================================================ -->
-
-        <!-- ================================================================
-             ACTION (furthest right)
-             ================================================================ -->
-
-        <!-- Action boundary -->
-        <rect x="1140" y="48" width="190" height="140" rx="12" fill="rgba(136, 19, 55, 0.06)" stroke="#fb7185" stroke-width="1" stroke-dasharray="8,4"/>
-        <text x="1150" y="65" fill="#fb7185" font-size="10" font-weight="600">ACTION</text>
-
-        <!-- trade_monitor -->
-        <rect x="1155" y="75" width="158" height="52" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
-        <text x="1234" y="93" fill="white" font-size="10" font-weight="600" text-anchor="middle">trade_monitor</text>
-        <text x="1234" y="109" fill="#94a3b8" font-size="8" text-anchor="middle">EVERY MINUTE</text>
-        <text x="1234" y="121" fill="#fb7185" font-size="7" text-anchor="middle">TP 100% · SL 15% · decay detection</text>
-
-        <!-- ai_trading_brain -->
-        <rect x="1155" y="135" width="158" height="48" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
-        <text x="1234" y="153" fill="white" font-size="10" font-weight="600" text-anchor="middle">ai_trading_brain</text>
-        <text x="1234" y="169" fill="#94a3b8" font-size="8" text-anchor="middle">buy / hold / sell decisions</text>
-        <text x="1234" y="179" fill="#fb7185" font-size="7" text-anchor="middle">sentiment + market analysis</text>
-
-        <!-- ================================================================
-             SUPPORT SCRIPTS (bottom-left)
-             ================================================================ -->
-
-        <rect x="540" y="490" width="148" height="32" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
-        <text x="614" y="511" fill="white" font-size="9" font-weight="600" text-anchor="middle">token_lifecycle · PNG charts</text>
-
-        <rect x="360" y="740" width="128" height="32" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
-        <text x="424" y="761" fill="white" font-size="9" font-weight="600" text-anchor="middle">smart_money_research</text>
-
-        <rect x="360" y="780" width="128" height="30" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
-        <text x="424" y="800" fill="white" font-size="9" font-weight="600" text-anchor="middle">db_maintenance · daily</text>
-
-        <!-- ================================================================
-             DASHBOARD (bottom center, wide)
-             ================================================================ -->
-
-        <rect x="460" y="645" width="200" height="85" rx="6" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
-        <text x="560" y="665" fill="white" font-size="11" font-weight="600" text-anchor="middle">FastAPI Dashboard</text>
-        <text x="560" y="682" fill="#94a3b8" font-size="8" text-anchor="middle">:8080 · Docker</text>
-        <text x="560" y="698" fill="#22d3ee" font-size="7" text-anchor="middle">central_contracts.db → tokens</text>
-        <text x="560" y="710" fill="#22d3ee" font-size="7" text-anchor="middle">top100.json → scored tokens</text>
-        <text x="560" y="722" fill="#22d3ee" font-size="7" text-anchor="middle">wallet_tracker.db → wallets</text>
-
-        <!-- ================================================================
-             CRON ORCHESTRATION
-             ================================================================ -->
-
-        <rect x="20" y="810" width="280" height="110" rx="12" fill="rgba(251, 191, 36, 0.05)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="8,4"/>
-        <text x="30" y="828" fill="#fbbf24" font-size="10" font-weight="600">Cron Orchestration</text>
-        <text x="30" y="844" fill="#94a3b8" font-size="8">*/10 scraper · */30 discovery</text>
-        <text x="30" y="858" fill="#94a3b8" font-size="8">:10 enrich · :15 wallets · :20 cross</text>
-        <text x="30" y="872" fill="#94a3b8" font-size="8">:25 social · :30 lifecycle</text>
-        <text x="30" y="886" fill="#94a3b8" font-size="8">00:00 daily maintenance</text>
-        <text x="30" y="904" fill="#fb7185" font-size="8" font-weight="600">* * * * * trade_monitor (60s)</text>
-
-        <!-- Badges -->
-        <rect x="320" y="870" width="100" height="22" rx="4" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
-        <text x="370" y="885" fill="#34d399" font-size="8" font-weight="600" text-anchor="middle">100 tests ✓</text>
-
-        <rect x="320" y="842" width="90" height="22" rx="4" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
-        <text x="365" y="857" fill="#22d3ee" font-size="8" font-weight="600" text-anchor="middle">Docker ✓</text>
-
-        <!-- ================================================================
-             LEGEND
-             ================================================================ -->
-
-        <text x="460" y="828" fill="white" font-size="10" font-weight="600">Legend</text>
-
-        <rect x="460" y="840" width="16" height="10" rx="2" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
-        <text x="482" y="848" fill="#94a3b8" font-size="8">Scripts</text>
-
-        <rect x="560" y="840" width="16" height="10" rx="2" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
-        <text x="582" y="848" fill="#94a3b8" font-size="8">Database</text>
-
-        <rect x="460" y="856" width="16" height="10" rx="2" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
-        <text x="482" y="864" fill="#94a3b8" font-size="8">API</text>
-
-        <rect x="560" y="856" width="16" height="10" rx="2" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1"/>
-        <text x="582" y="864" fill="#94a3b8" font-size="8">AI / Trading</text>
-
-        <rect x="460" y="872" width="16" height="10" rx="2" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
-        <text x="482" y="880" fill="#94a3b8" font-size="8">Dashboard</text>
-
-        <rect x="560" y="872" width="16" height="10" rx="2" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1"/>
-        <text x="582" y="880" fill="#94a3b8" font-size="8">External</text>
-
-        <line x1="660" y1="845" x2="676" y2="845" stroke="#fb923c" stroke-width="1" stroke-dasharray="4,4"/>
-        <text x="682" y="848" fill="#94a3b8" font-size="8">Feedback</text>
-
-        <line x1="660" y1="861" x2="676" y2="861" stroke="#fb7185" stroke-width="1" stroke-dasharray="4,4"/>
-        <text x="682" y="864" fill="#94a3b8" font-size="8">AI Flow</text>
-
-        <line x1="660" y1="877" x2="676" y2="877" stroke="#64748b" stroke-width="0.8" stroke-dasharray="3,6"/>
-        <text x="682" y="880" fill="#94a3b8" font-size="8">Cron</text>
+        <!-- ========== LEGEND ========== -->
+        <text x="320" y="808" fill="white" font-size="10" font-weight="600">Legend</text>
+        <rect x="320" y="818" width="14" height="9" rx="2" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="340" y="826" fill="#94a3b8" font-size="7">Scripts</text>
+        <rect x="390" y="818" width="14" height="9" rx="2" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="410" y="826" fill="#94a3b8" font-size="7">Database</text>
+        <rect x="470" y="818" width="14" height="9" rx="2" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="490" y="826" fill="#94a3b8" font-size="7">API</text>
+        <rect x="320" y="834" width="14" height="9" rx="2" fill="rgba(136,19,55,0.4)" stroke="#fb7185" stroke-width="1"/>
+        <text x="340" y="842" fill="#94a3b8" font-size="7">AI / Trading</text>
+        <rect x="420" y="834" width="14" height="9" rx="2" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="440" y="842" fill="#94a3b8" font-size="7">Dashboard</text>
+        <rect x="510" y="834" width="14" height="9" rx="2" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1"/>
+        <text x="530" y="842" fill="#94a3b8" font-size="7">Source</text>
+        <line x1="580" y1="822" x2="594" y2="822" stroke="#fb923c" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="600" y="825" fill="#94a3b8" font-size="7">Feedback</text>
+        <line x1="580" y1="838" x2="594" y2="838" stroke="#fb7185" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="600" y="841" fill="#94a3b8" font-size="7">AI</text>
+        <rect x="660" y="818" width="14" height="9" rx="2" fill="rgba(76,29,149,0.3)" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="680" y="826" fill="#94a3b8" font-size="7">Historical DB</text>
 
       </svg>
     </div>
@@ -418,7 +334,6 @@
           <li>• Async mode: ~8min → ~2min via httpx + gather()</li>
         </ul>
       </div>
-
       <div class="card">
         <div class="card-header">
           <div class="card-dot rose"></div>
@@ -428,12 +343,11 @@
           <li>• Position lifecycle: active → watching → reentry</li>
           <li>• Decay detection: volume↓30%, txns↓40%, drawdown>25%</li>
           <li>• Forced triggers: TP 100% · SL 15% (bypass AI)</li>
-          <li>• Re-entry: pullback>10%, decay<5, confidence≥70%</li>
           <li>• Social sentiment analysis for trade signals</li>
-          <li>• Rotation: find best alternative from top100 on decay≥5</li>
+          <li>• Re-entry: pullback>10%, decay<5, confidence≥70%</li>
+          <li>• Copy-trade loop: top wallets → new tokens → re-enrich</li>
         </ul>
       </div>
-
       <div class="card">
         <div class="card-header">
           <div class="card-dot violet"></div>
@@ -444,15 +358,13 @@
           <li>• Wallet: PNL(35)+trades(20)+WR(10)+ROI(10)+timing(8)+age(5)</li>
           <li>• Cross-scoring: 70% smart money + 30% enrichment</li>
           <li>• Insider flags BOOST score (alpha signal)</li>
-          <li>• Steep decline: h1<-60% → score×0.1 (rug in progress)</li>
           <li>• Patterns: sniper · swing · holder · degen · insider</li>
+          <li>• Historical: aged-out tokens/wallets archived daily</li>
         </ul>
       </div>
     </div>
 
-    <p class="footer">
-      hermes-token-screener v9.0 • TerexitariusStomp • 100 tests passing • MIT License
-    </p>
+    <p class="footer">hermes-token-screener v9.0 · TerexitariusStomp · MIT License</p>
   </div>
 </body>
 </html>
