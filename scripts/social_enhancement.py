@@ -253,11 +253,12 @@ def collect_twitter_signals(tokens: List[dict]) -> Dict[str, dict]:
 
         # Search for token on Twitter via Surf
         search_term = f"${sym}" if len(sym) <= 8 else sym
-        data = _surf_cmd(["search", "twitter", "--query", search_term, "--limit", "10", "--raw"])
+        data = _surf_cmd(["search-social-posts", "--q", search_term, "--limit", "10"])
 
         if data:
-            tweets = data if isinstance(data, list) else data.get("results", data.get("tweets", []))
-            if isinstance(tweets, list):
+            # Handle Surf search-social-posts response format
+            tweets = data if isinstance(data, list) else data.get("data", data.get("results", data.get("tweets", [])))
+            if isinstance(tweets, list) and tweets:
                 signal["tw_mention_count"] = len(tweets)
 
                 # Sentiment: simple keyword analysis
@@ -282,15 +283,15 @@ def collect_twitter_signals(tokens: List[dict]) -> Dict[str, dict]:
                 if total > 0:
                     signal["tw_sentiment_score"] = round((pos_count / total) * 100, 1)
 
-                # Trending: tweets with high engagement
+                # Trending: tweets with high engagement (Surf uses stats.likes/stats.retweets)
                 engagement_scores = []
                 for tweet in (tweets[:10] if isinstance(tweets, list) else []):
                     if isinstance(tweet, dict):
-                        eng = (
-                            tweet.get("likes", tweet.get("favorite_count", 0)) or 0
-                        ) + (
-                            tweet.get("retweets", tweet.get("retweet_count", 0)) or 0
-                        ) * 2
+                        stats = tweet.get("stats", {})
+                        eng = (stats.get("likes", 0) or 0) + (stats.get("retweets", 0) or 0) * 2
+                        if not stats:
+                            eng = (tweet.get("likes", tweet.get("favorite_count", 0)) or 0) + \
+                                  (tweet.get("retweets", tweet.get("retweet_count", 0)) or 0) * 2
                         engagement_scores.append(eng)
 
                 if engagement_scores:
