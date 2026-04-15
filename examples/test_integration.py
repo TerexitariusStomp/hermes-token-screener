@@ -54,7 +54,6 @@ def test_basic_functionality():
         'enhanced_token_discovery.py',
         'simple_token_discovery.py',
         'weekly_call_channel_discovery.py',
-        'chaingpt_wrapper.py'
     ]
     
     for script in scripts:

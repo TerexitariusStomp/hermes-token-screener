@@ -376,125 +376,8 @@ class TokenIntegrationPipeline:
         
         return lore_data
     
-    async def get_chaingpt_analysis(self, tokens: List[Dict]) -> Dict[str, Dict]:
-        """Get ChainGPT AI analysis for tokens."""
-        chaingpt_data = {}
-        
-        if not tokens:
-            return chaingpt_data
-        
-        try:
-            # Import Telegram client
-            from telethon import TelegramClient
-            
-            # Configuration
-            SESSION_PATH = Path.home() / '.hermes' / '.telegram_session' / 'hermes_user'
-            TG_API_ID = int(os.getenv('TG_API_ID', '39533004'))
-            TG_API_HASH = os.getenv('TG_API_HASH', '958e52889177eec2fa15e9e4e4c2cc4c')
-            
-            # Create client
-            client = TelegramClient(str(SESSION_PATH), TG_API_ID, TG_API_HASH)
-            await client.connect()
-            
-            if not await client.is_user_authorized():
-                log.warning("Not authorized for Telegram. Skipping ChainGPT analysis.")
-                return chaingpt_data
-            
-            # Find the RickBurp channel
-            channel = None
-            async for dialog in client.iter_dialogs():
-                if hasattr(dialog.entity, 'title') and 'rickburp' in dialog.entity.title.lower():
-                    channel = dialog.entity
-                    log.info(f"Found channel: {channel.title}")
-                    break
-            
-            if not channel:
-                log.warning("Could not find RickBurp channel. Skipping ChainGPT analysis.")
-                await client.disconnect()
-                return chaingpt_data
-            
-            # Analyze top tokens with ChainGPT
-            for i, token in enumerate(tokens[:5]):  # Limit to 5 tokens for ChainGPT
-                address = token.get('address', '')
-                name = token.get('name', 'unknown')
-                
-                if not address:
-                    continue
-                
-                log.info(f"  Analyzing {name} with ChainGPT ({address[:20]}...)...")
-                
-                try:
-                    # Get messages before sending command
-                    messages_before = await client.get_messages(channel, limit=1)
-                    last_msg_id_before = messages_before[0].id if messages_before else 0
-                    
-                    # Ask ChainGPT to analyze the token
-                    question = f"What is the risk level of {name} token at address {address}? Is it safe to invest?"
-                    await client.send_message(channel, f"/ai {question}@ChainGPTAI_Bot")
-                    await asyncio.sleep(6)  # Wait for ChainGPT response
-                    
-                    # Get new messages after our command
-                    messages_after = await client.get_messages(channel, limit=10)
-                    
-                    # Find the bot's response
-                    bot_response = None
-                    me = await client.get_me()
-                    for msg in messages_after:
-                        if msg.id > last_msg_id_before and msg.message:
-                            # Check if this is from the bot
-                            if msg.sender_id and msg.sender_id != me.id:
-                                # This is likely the bot's response
-                                bot_response = msg.message
-                                break
-                    
-                    if bot_response:
-                        # Parse ChainGPT response
-                        chaingpt_data[address.lower()] = {
-                            'chaingpt_response': bot_response,
-                            'has_analysis': True,
-                            'analysis_source': 'chaingpt_bot'
-                        }
-                        log.info(f"    Got ChainGPT analysis for {name}")
-                        
-                        # Extract risk keywords
-                        risk_keywords = ['high risk', 'medium risk', 'low risk', 'safe', 'dangerous', 'scam', 'legitimate', 'rug pull', 'honeypot']
-                        found_keywords = []
-                        for keyword in risk_keywords:
-                            if keyword in bot_response.lower():
-                                found_keywords.append(keyword)
-                        
-                        if found_keywords:
-                            chaingpt_data[address.lower()]['risk_keywords'] = found_keywords
-                    else:
-                        chaingpt_data[address.lower()] = {
-                            'chaingpt_response': '',
-                            'has_analysis': False,
-                            'analysis_source': 'chaingpt_bot'
-                        }
-                        log.info(f"    No ChainGPT response for {name}")
-                    
-                    # Small delay between commands
-                    if i < len(tokens) - 1:
-                        await asyncio.sleep(3)
-                
-                except Exception as e:
-                    log.error(f"Error getting ChainGPT analysis for {name}: {e}")
-                    chaingpt_data[address.lower()] = {
-                        'chaingpt_response': f'Error: {str(e)}',
-                        'has_analysis': False,
-                        'analysis_source': 'chaingpt_bot'
-                    }
-            
-            await client.disconnect()
-            log.info(f"Got ChainGPT analysis for {len(chaingpt_data)} tokens")
-            
-        except Exception as e:
-            log.error(f"Error in get_chaingpt_analysis: {e}")
-        
-        return chaingpt_data
-    
     async def enrich_tokens(self, tokens: List[Dict], max_enrich: int = 50) -> List[Dict]:
-        """Enrich tokens using the existing enrichment pipeline, Rick Burp bot lore, and ChainGPT analysis."""
+        """Enrich tokens using the existing enrichment pipeline and Rick Burp bot lore."""
         enriched_tokens = []
         
         # Limit to max_enrich tokens
@@ -511,17 +394,6 @@ class TokenIntegrationPipeline:
             if address in lore_data:
                 token['lore_data'] = lore_data[address]
                 log.info(f"  Added lore data for {token.get('name', 'unknown')}")
-        
-        # Then, get ChainGPT analysis for top tokens
-        log.info("Getting ChainGPT AI analysis for top tokens...")
-        chaingpt_data = await self.get_chaingpt_analysis(tokens_to_enrich[:5])  # Top 5 tokens
-        
-        # Add ChainGPT data to tokens
-        for token in tokens_to_enrich:
-            address = token.get('address', '').lower()
-            if address in chaingpt_data:
-                token['chaingpt_data'] = chaingpt_data[address]
-                log.info(f"  Added ChainGPT analysis for {token.get('name', 'unknown')}")
         
         # Try to use existing token_enricher.py via subprocess
         try:
@@ -630,7 +502,7 @@ class TokenIntegrationPipeline:
         return enriched_tokens
     
     def _basic_enrichment(self, token: Dict) -> Dict:
-        """Basic enrichment using DexScreener API, merged with Rick Burp data, lore, and ChainGPT analysis."""
+        """Basic enrichment using DexScreener API, merged with Rick Burp data and lore."""
         enrichment = {}
         
         address = token.get('address', '')
@@ -651,15 +523,6 @@ class TokenIntegrationPipeline:
                 enrichment['enriched_by'] += ' + lore'
             else:
                 enrichment['enriched_by'] = 'lore + dexscreener'
-        
-        # Include ChainGPT data if available
-        chaingpt_data = token.get('chaingpt_data', {})
-        if chaingpt_data:
-            enrichment['chaingpt_data'] = chaingpt_data
-            if 'enriched_by' in enrichment:
-                enrichment['enriched_by'] += ' + chaingpt'
-            else:
-                enrichment['enriched_by'] = 'chaingpt + dexscreener'
         
         try:
             # Use DexScreener API
@@ -703,7 +566,7 @@ class TokenIntegrationPipeline:
         return enrichment
     
     def prioritize_tokens(self, tokens: List[Dict]) -> List[Dict]:
-        """Prioritize tokens based on Rick Burp data, Telegram data, enrichment, lore, and ChainGPT analysis."""
+        """Prioritize tokens based on Rick Burp data, Telegram data, enrichment, and lore."""
         for token in tokens:
             score = 0
             reasons = []
@@ -782,30 +645,6 @@ class TokenIntegrationPipeline:
                         if '💀' in lore_response or 'risk' in lore_response.lower():
                             score -= 5
                             reasons.append("Risky token (lore)")
-            
-            # ChainGPT analysis scoring (from ChainGPT bot)
-            chaingpt_data = token.get('chaingpt_data', {})
-            if chaingpt_data:
-                if chaingpt_data.get('has_analysis', False):
-                    score += 20  # Bonus for having ChainGPT analysis
-                    reasons.append("Has ChainGPT analysis")
-                    
-                    # Parse ChainGPT response for risk keywords
-                    risk_keywords = chaingpt_data.get('risk_keywords', [])
-                    if risk_keywords:
-                        # Positive keywords
-                        positive_keywords = ['safe', 'legitimate', 'low risk']
-                        for keyword in positive_keywords:
-                            if keyword in risk_keywords:
-                                score += 10
-                                reasons.append(f"ChainGPT: {keyword}")
-                        
-                        # Negative keywords
-                        negative_keywords = ['high risk', 'dangerous', 'scam', 'rug pull', 'honeypot']
-                        for keyword in negative_keywords:
-                            if keyword in risk_keywords:
-                                score -= 15  # Penalty for high risk
-                                reasons.append(f"ChainGPT: {keyword}")
             
             # Telegram data scoring
             telegram_data = token.get('telegram_data', {})
@@ -914,8 +753,6 @@ class TokenIntegrationPipeline:
             # Combine enrichment_data with lore_data and chaingpt_data
             enrichment_data = token.get('enrichment_data', {})
             lore_data = token.get('lore_data', {})
-            chaingpt_data = token.get('chaingpt_data', {})
-            
             if lore_data:
                 enrichment_data['lore_data'] = lore_data
             if chaingpt_data:
@@ -973,7 +810,6 @@ class TokenIntegrationPipeline:
                 'telegram_data': token.get('telegram_data', {}),
                 'enrichment_data': token.get('enrichment_data', {}),
                 'lore_data': token.get('lore_data', {}),
-                'chaingpt_data': token.get('chaingpt_data', {})
             })
         
         # Write to file

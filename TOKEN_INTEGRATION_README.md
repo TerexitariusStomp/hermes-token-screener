@@ -4,7 +4,7 @@ Advanced token integration system that combines data from multiple sources for c
 
 ## Overview
 
-This pipeline integrates tokens from various sources including Rick Burp bot, Telegram scraper, and ChainGPT AI analysis to provide comprehensive token evaluation and prioritization.
+This pipeline integrates tokens from various sources including Rick Burp bot and Telegram scraper to provide comprehensive token evaluation and prioritization.
 
 ## Scripts
 
@@ -13,7 +13,6 @@ This pipeline integrates tokens from various sources including Rick Burp bot, Te
 - Merges tokens from Rick Burp bot and Telegram scraper
 - Enriches with DexScreener API data
 - Gets token lore from Rick Burp bot
-- Gets AI analysis from ChainGPT bot
 - Prioritizes based on comprehensive scoring system
 - Outputs prioritized token list
 
@@ -72,27 +71,6 @@ python3 simple_token_discovery.py
 python3 weekly_call_channel_discovery.py
 ```
 
-### 5. `chaingpt_wrapper.py`
-**ChainGPT bot wrapper for AI analysis:**
-- Uses ChainGPT bot via Telegram
-- Provides token analysis
-- Smart contract auditing
-- Market sentiment analysis
-
-**Usage:**
-```python
-from chaingpt_wrapper import ChainGPTBotWrapper
-
-wrapper = ChainGPTBotWrapper()
-await wrapper.connect()
-
-# Analyze token
-analysis = await wrapper.analyze_token("WETH", "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")
-
-# Audit contract
-audit = await wrapper.audit_contract("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")
-```
-
 ## Data Sources
 
 ### Rick Burp Bot (@rick)
@@ -106,11 +84,6 @@ audit = await wrapper.audit_contract("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
 - **Token mentions** - How many channels mention the token
 - **Channel diversity** - Number of different channels
 - **Contract addresses** - Extracted from messages
-
-### ChainGPT AI (@ChainGPTAI_Bot)
-- **Risk assessment** - AI-powered risk analysis
-- **Smart contract analysis** - Security evaluation
-- **Market sentiment** - Investment sentiment analysis
 
 ### DexScreener API
 - **Market data** - Price, liquidity, volume
@@ -130,11 +103,6 @@ audit = await wrapper.audit_contract("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
 - **Price data available:** +5 points
 - **Listed on DEX:** +5 points
 - **Has token lore:** +15 points
-- **Has ChainGPT analysis:** +20 points
-
-### ChainGPT Risk Keywords
-- **Positive:** 'safe', 'legitimate', 'low risk' (+10 points each)
-- **Negative:** 'high risk', 'dangerous', 'scam', 'rug pull', 'honeypot' (-15 points each)
 
 ### Telegram Data
 - **Mentions > 10:** +25 points
@@ -190,12 +158,11 @@ audit = await wrapper.audit_contract("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
       "symbol": "",
       "source": "both",
       "priority_score": 165,
-      "priority_reason": "High liquidity (Rick): $215,633; High volume (Rick): $2,965,353; Price data available (Rick); Listed on pumpswap (Rick); Has ChainGPT analysis; Telegram mentions: 2; Strong momentum: +341.0%; Active trading: 18397 buys; FDV: $6,570,917; From multiple sources (Rick + Telegram)",
+      "priority_reason": "High liquidity (Rick): $215,633; High volume (Rick): $2,965,353; Price data available (Rick); Listed on pumpswap (Rick); Telegram mentions: 2; Strong momentum: +341.0%; Active trading: 18397 buys; FDV: $6,570,917; From multiple sources (Rick + Telegram)",
       "rick_burp_data": {...},
       "telegram_data": {...},
       "enrichment_data": {...},
       "lore_data": {...},
-      "chaingpt_data": {...}
     }
   ]
 }
@@ -261,7 +228,6 @@ cat top100.json | jq '.top_tokens[:5]'
 2. **Database errors:** Check permissions and schema
 3. **API rate limits:** Limits enrichment to 50 tokens by default
 4. **Telegram connection:** Ensure session is authorized
-5. **ChainGPT rate limiting:** Wait 6 seconds between commands
 
 ### Verification Steps:
 1. Test integration: `python3 token_integration.py`
@@ -277,7 +243,6 @@ cat top100.json | jq '.top_tokens[:5]'
 4. Automated trading based on prioritization
 5. Support for more chains
 6. Advanced risk scoring
-7. ChainGPT API direct integration
 8. Social sentiment analysis
 9. Wallet tracking integration
 10. Smart money analysis
