@@ -127,7 +127,7 @@
         <rect x="390" y="80" width="115" height="20" rx="3" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="0.8"/>
         <text x="448" y="94" fill="#94a3b8" font-size="7" text-anchor="middle">De.Fi · CoinGecko · GMGN</text>
         <rect x="270" y="104" width="115" height="20" rx="3" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="0.8"/>
-        <text x="328" y="118" fill="#94a3b8" font-size="7" text-anchor="middle">Zerion · CoinStats · Surf</text>
+        <text x="328" y="118" fill="#94a3b8" font-size="7" text-anchor="middle">Zerion · Surf</text>
         <rect x="390" y="104" width="115" height="20" rx="3" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="0.8"/>
         <text x="448" y="118" fill="#94a3b8" font-size="7" text-anchor="middle">Mobula · Derived</text>
 

@@ -39,10 +39,14 @@ from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime, timedelta
 
 import requests
+import asyncio
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger, log_duration
 from hermes_screener.metrics import metrics, start_metrics_server
+
+# Import async enrichment
+from hermes_screener.async_enrichment import run_async_enrichment
 
 # ── Config (from centralized settings) ───────────────────────────────────────
 DB_PATH = settings.db_path
@@ -326,6 +330,130 @@ def get_candidates() -> List[dict]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# ENRICHER RESULT TRACKING
+# ══════════════════════════════════════════════════════════════════════════════
+
+class EnricherResult:
+    """Track enrichment pipeline results."""
+    
+    def __init__(self):
+        self.layers = {}
+        self.start_time = time.time()
+    
+    def record(self, layer_name: str, success: bool, enriched: int, total: int, 
+               error: str = None, elapsed: float = 0.0):
+        """Record result for a layer."""
+        self.layers[layer_name] = {
+            'success': success,
+            'enriched': enriched,
+            'total': total,
+            'error': error,
+            'elapsed': elapsed
+        }
+    
+    def summary(self) -> List[str]:
+        """Generate summary lines."""
+        lines = []
+        total_elapsed = time.time() - self.start_time
+        lines.append(f"Total time: {total_elapsed:.1f}s")
+        lines.append(f"Layers: {len(self.layers)}")
+        
+        success_count = sum(1 for l in self.layers.values() if l['success'])
+        lines.append(f"Successful: {success_count}/{len(self.layers)}")
+        
+        for name, result in self.layers.items():
+            status = "✅" if result['success'] else "❌"
+            lines.append(f"  {status} {name}: {result['enriched']}/{result['total']} ({result['elapsed']:.1f}s)")
+            if result['error']:
+                lines.append(f"    Error: {result['error']}")
+        
+        return lines
+
+class SocialSignalEnricher:
+    """Social signal enrichment for tokens using existing Telegram data."""
+    
+    def enrich_batch(self, tokens: List[dict]) -> Tuple[int, int]:
+        """
+        Enrich tokens with social signals from existing data.
+        
+        Returns: (enriched_count, total_count)
+        """
+        enriched_count = 0
+        
+        for token in tokens:
+            try:
+                # Extract social signals from existing data
+                signals = self._extract_social_signals(token)
+                if signals:
+                    token.update(signals)
+                    enriched_count += 1
+            except Exception as e:
+                # Log error but continue with other tokens
+                log.debug(f"Social enrichment failed for {token.get('symbol', '?')}: {e}")
+                continue
+        
+        return enriched_count, len(tokens)
+    
+    def _extract_social_signals(self, token: dict) -> dict:
+        """Extract social signals from token data."""
+        signals = {}
+        
+        # Telegram signals (from existing data)
+        channel_count = token.get('channel_count', 0) or 0
+        mentions = token.get('mentions', 0) or 0
+        
+        if channel_count > 0 or mentions > 0:
+            # Calculate social score based on Telegram activity
+            social_score = min(100, (channel_count * 10) + (mentions * 2))
+            signals['social_score'] = social_score
+            
+            # Calculate mention velocity if we have timing data
+            first_seen = token.get('first_seen_at')
+            last_seen = token.get('last_seen_at')
+            if first_seen and last_seen and mentions > 0:
+                try:
+                    hours_active = (last_seen - first_seen) / 3600
+                    if hours_active > 0:
+                        velocity = mentions / hours_active
+                        signals['mention_velocity'] = round(velocity, 2)
+                except:
+                    pass
+            
+            # Determine social quality
+            if channel_count >= 5 and mentions >= 20:
+                signals['social_quality'] = 'high'
+            elif channel_count >= 3 and mentions >= 10:
+                signals['social_quality'] = 'medium'
+            else:
+                signals['social_quality'] = 'low'
+        
+        # Twitter signals (if available from enrichment)
+        tw_mention_count = token.get('tw_mention_count', 0) or 0
+        tw_sentiment_score = token.get('tw_sentiment_score', 0) or 0
+        
+        if tw_mention_count > 0:
+            signals['twitter_activity'] = tw_mention_count
+            signals['twitter_sentiment'] = tw_sentiment_score
+        
+        # Combined social momentum
+        if signals:
+            # Calculate overall social momentum
+            telegram_score = signals.get('social_score', 0)
+            twitter_score = signals.get('twitter_activity', 0) * 0.5  # Weight Twitter less
+            
+            total_momentum = telegram_score + twitter_score
+            if total_momentum >= 100:
+                signals['social_momentum'] = 'very_high'
+            elif total_momentum >= 50:
+                signals['social_momentum'] = 'high'
+            elif total_momentum >= 20:
+                signals['social_momentum'] = 'medium'
+            else:
+                signals['social_momentum'] = 'low'
+        
+        return signals
+
+# ══════════════════════════════════════════════════════════════════════════════
 # MAIN PIPELINE
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -346,166 +474,53 @@ def run_enricher():
         log.warning("No candidates found")
         return {'status': 'empty', 'candidates': 0}
 
-    enriched = candidates
-
-    # Layer 0: Dexscreener (REQUIRED)
-    log.info("Layer 0: Dexscreener (market data)...")
-    start = time.time()
+    # Use async enrichment for all layers
+    log.info("Starting async enrichment pipeline...")
+    start_time = time.time()
+    
     try:
-        dex = DexscreenerEnricher()
-        enriched, count = dex.enrich_batch(enriched)
-        elapsed = time.time() - start
-        if not enriched:
-            log.error("Dexscreener returned 0 results - cannot continue")
-            return {'status': 'no_enrichment', 'candidates': len(candidates)}
-        status.record('Dexscreener', True, count, len(candidates), elapsed=elapsed)
+        # Run async enrichment
+        enriched, layer_results = asyncio.run(
+            run_async_enrichment(candidates[:MAX_ENRICH], max_enrich=MAX_ENRICH)
+        )
+        
+        # Record results from async enrichment
+        for result in layer_results:
+            status.record(
+                result.name,
+                result.success,
+                result.enriched_count,
+                result.total_count,
+                result.error,
+                result.elapsed
+            )
+        
+        elapsed = time.time() - start_time
+        log.info(f"Async enrichment completed in {elapsed:.1f}s")
+        
     except Exception as e:
-        status.record('Dexscreener', False, 0, len(candidates), str(e), time.time() - start)
-        log.error(f"Dexscreener FAILED - pipeline cannot continue: {e}")
-        return {'status': 'dexscreener_failed', 'error': str(e)}
-
-    # Filter dead tokens BEFORE enriching (save API calls)
-    # FDV < $10K = dead unless just launched (< 2h)
-    before_filter = len(enriched)
-    enriched = [t for t in enriched if (
-        (t.get('dex', {}).get('fdv') or 0) >= 10_000 or
-        ((t.get('dex', {}).get('age_hours') or 999) < 2 and (t.get('dex', {}).get('fdv') or 0) > 0)
-    )]
-    filtered = before_filter - len(enriched)
-    if filtered > 0:
-        log.info(f"Filtered {filtered} dead tokens (FDV < $10K, age > 24h). {len(enriched)} remaining.")
-
+        log.error(f"Async enrichment failed: {e}")
+        return {'status': 'async_failed', 'error': str(e)}
+    
     if not enriched:
-        log.warning("All tokens filtered as dead. Nothing to enrich.")
-        return {'status': 'all_dead', 'candidates': len(candidates)}
+        log.error("Enrichment returned 0 results")
+        return {'status': 'no_enrichment', 'candidates': len(candidates)}
 
-    # ── Optional enrichers (try/bypass) ──
-
-    # Layer 1: Surf — REMOVED (doesn't track Solana meme tokens)
-    # Layer 2: GoPlus
-    log.info("Layer 2: GoPlus (EVM security)...")
-    start = time.time()
-    try:
-        gp = GoPlusEnricher()
-        _, count = gp.enrich_batch(enriched)
-        status.record('GoPlus', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('GoPlus', False, 0, len(enriched), str(e), time.time() - start)
-
-    # Layer 3: RugCheck
-    log.info("Layer 3: RugCheck (Solana security)...")
-    start = time.time()
-    try:
-        rc = RugCheckEnricher()
-        _, count = rc.enrich_batch(enriched)
-        status.record('RugCheck', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('RugCheck', False, 0, len(enriched), str(e), time.time() - start)
-
-    # Layer 4: Etherscan
-    log.info("Layer 4: Etherscan (verification)...")
-    start = time.time()
-    try:
-        es = EtherscanEnricher()
-        _, count = es.enrich_batch(enriched)
-        status.record('Etherscan', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('Etherscan', False, 0, len(enriched), str(e), time.time() - start)
-
-    # Layer 5: De.Fi
-    log.info("Layer 5: De.Fi (security)...")
-    start = time.time()
-    try:
-        di = DefiEnricher()
-        _, count = di.enrich_batch(enriched)
-        status.record('De.Fi', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('De.Fi', False, 0, len(enriched), str(e), time.time() - start)
-
-    # Layer 6: Derived (no API, always works)
-    log.info("Layer 6: Derived (computed signals)...")
-    start = time.time()
-    try:
-        der = DerivedSecurityAnalyzer()
-        _, count = der.analyze_batch(enriched)
-        status.record('Derived', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('Derived', False, 0, len(enriched), str(e), time.time() - start)
-
-    # Layer 7: CoinGecko
-    log.info("Layer 7: CoinGecko (market data)...")
-    start = time.time()
-    try:
-        cg = CoinGeckoEnricher()
-        _, count = cg.enrich_batch(enriched)
-        status.record('CoinGecko', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('CoinGecko', False, 0, len(enriched), str(e), time.time() - start)
-
-    # Layer 8: GMGN
-    log.info("Layer 8: GMGN (smart money)...")
-    start = time.time()
-    try:
-        gm = GMGNEnricher()
-        _, count = gm.enrich_batch(enriched)
-        status.record('GMGN', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('GMGN', False, 0, len(enriched), str(e), time.time() - start)
-
-    # Layer 9: Social (no API, always works)
-    log.info("Layer 9: Social (Telegram DB)...")
-    start = time.time()
-    try:
-        social = SocialSignalEnricher()
-        count = 0
-        for token in enriched:
-            signals = social.enrich_from_enriched(token)
-            token.update(signals)
-            if signals:
-                count += 1
-        status.record('Social', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('Social', False, 0, len(enriched), str(e), time.time() - start)
-
-
-    # Layer 10: Zerion — REMOVED (not tracking Solana meme tokens)
-    # ── Score ──
-    scored = []
+    # Score tokens
+    log.info("Scoring tokens...")
     for token in enriched:
-        s, pos, neg = score_token(token)
-        dex = token.get('dex', {})
-        scored.append({
-            'contract_address': token['contract_address'],
-            'chain': token['chain'],
-            'symbol': dex.get('symbol', '?'),
-            'name': dex.get('name', '?'),
-            'score': s,
-            'channel_count': token.get('channel_count', 0),
-            'mentions': token.get('mentions', 0),
-            'fdv': dex.get('fdv'),
-            'volume_h24': dex.get('volume_h24'),
-            'volume_h1': dex.get('volume_h1'),
-            'age_hours': dex.get('age_hours'),
-            'price_change_h1': dex.get('price_change_h1'),
-            'price_change_h6': dex.get('price_change_h6'),
-            'social_score': token.get('social_score'),
-            'gmgn_smart_wallets': token.get('gmgn_smart_wallets'),
-            'gmgn_dev_hold': token.get('gmgn_dev_hold'),
-            'positives': pos,
-            'negatives': neg,
-            'dex_url': f"https://dexscreener.com/{token['chain']}/{token['contract_address']}",
-            'twitter_url': dex.get('twitter_url', ''),
-            'telegram_url': dex.get('telegram_url', ''),
-            'website_url': dex.get('website_url', ''),
-        })
+        score, positives, negatives = score_token(token)
+        token['score'] = score
+        token['positives'] = positives
+        token['negatives'] = negatives
 
-    scored.sort(key=lambda x: x['score'], reverse=True)
-    top = scored[:TOP_N]
+    # Sort by score
+    enriched.sort(key=lambda t: t.get('score', 0), reverse=True)
+    top = enriched[:TOP_N]
 
-    # ── Write output ──
+    # Save output
     output = {
-        'generated_at': time.time(),
-        'generated_at_iso': time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime()),
+        'generated_at': datetime.utcnow().isoformat(),
         'total_candidates': len(candidates),
         'enriched': len(enriched),
         'top_n': len(top),
@@ -537,18 +552,20 @@ def run_enricher():
         fdv_val = t.get('fdv') or 0
         vol_val = t.get('volume_h24') or 0
         neg = ' | ' + ', '.join(t['negatives'][:2]) if t['negatives'] else ''
-        log.info(f"  #{i} [{t['score']:6.1f}] {t['symbol']:10} {t['chain']}:{t['contract_address'][:20]}... "
-                 f"ch={t['channel_count']} FDV=${fdv_val:,.0f} vol24=${vol_val:,.0f}{neg}")
+        log.info(
+            f"{i:2}. {t.get('symbol', '?'):12} "
+            f"score={t.get('score', 0):6.1f} "
+            f"fdv=${fdv_val:>12,.0f} "
+            f"vol=${vol_val:>12,.0f} "
+            f"age={t.get('age_hours', 0):5.1f}h"
+            f"{neg}"
+        )
 
-    return {
-        'status': 'ok',
-        'total_candidates': len(candidates),
-        'enriched': len(enriched),
-        'top_n': len(top),
-        'output_path': str(OUTPUT_PATH),
-        'pipeline': {k: v['ok'] for k, v in status.layers.items()},
-    }
-
+    log.info("")
+    elapsed_total = time.time() - status.start_time
+    log.info(f"Completed in {elapsed_total:.1f}s: {json.dumps(output, default=str)}")
+    
+    return output
 
 def main():
     import argparse

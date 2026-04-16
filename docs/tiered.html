@@ -24,6 +24,15 @@
 
   <div class="tier-summary" id="tier-summary"></div>
 
+  <div class="filters" id="tier-filters">
+    <label>Chain
+      <select id="filter-chain-tiered">
+        <option value="">All Chains</option>
+      </select>
+    </label>
+    <span class="filter-count" id="tiered-filter-count"></span>
+  </div>
+
   <h2 class="tier-section-title">Tokens in this Tier</h2>
   <div class="tbl" id="token-container">
     <table>
@@ -56,6 +65,7 @@ function pct_cls(v){if(v==null)return"";return v>0?"pos":v<0?"neg":""}
 function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)+"..."+a.slice(-n)}
 function chain_cls(c){c=(c||"").toLowerCase();return["solana","sol","base","ethereum","eth","bsc","bnb","arbitrum","polygon","polygon-pos","avalanche","sui","optimism"].includes(c)?"chain-"+c:""}
 function block_url(addr,chain){chain=(chain||"").toLowerCase();if(chain==="solana"||chain==="sol")return"https://solscan.io/account/"+addr;if(chain==="base")return"https://basescan.org/address/"+addr;if(chain==="bsc"||chain==="bnb")return"https://bscscan.com/address/"+addr;if(chain==="arbitrum")return"https://arbiscan.io/address/"+addr;if(chain==="polygon"||chain==="polygon-pos")return"https://polygonscan.com/address/"+addr;if(chain==="avalanche")return"https://snowtrace.io/address/"+addr;if(chain==="optimism")return"https://optimistic.etherscan.io/address/"+addr;return"https://etherscan.io/address/"+addr}
+function chain_label(c){return{solana:"Solana",sol:"Solana",base:"Base",ethereum:"Ethereum",eth:"Ethereum",bsc:"BNB Chain",bnb:"BNB Chain",arbitrum:"Arbitrum",polygon:"Polygon","polygon-pos":"Polygon",avalanche:"Avalanche",sui:"Sui",optimism:"Optimism"}[(c||"").toLowerCase()]||c||"Unknown"}
 
 let DATA=null;
 let activeTier=null;
@@ -82,21 +92,44 @@ function selectTier(name){
   const tier=DATA.tiers[name];
   if(!tier)return;
 
+  // Populate chain filter for this tier
+  const chainSel=document.getElementById("filter-chain-tiered");
+  const currentChain=chainSel.value;
+  chainSel.innerHTML='<option value="">All Chains</option>';
+  const tierChains=new Set((tier.tokens||[]).map(t=>(t.chain||"").toLowerCase()).filter(Boolean));
+  [...tierChains].sort().forEach(c=>{
+    const opt=document.createElement("option");
+    opt.value=c; opt.textContent=chain_label(c);
+    chainSel.appendChild(opt);
+  });
+  if(tierChains.has(currentChain))chainSel.value=currentChain;
+
+  renderTierContent(name);
+}
+
+function renderTierContent(name){
+  const tier=DATA.tiers[name];
+  if(!tier)return;
+  const chainFilter=document.getElementById("filter-chain-tiered").value.toLowerCase();
+
   // Summary
   const summary=document.getElementById("tier-summary");
   summary.innerHTML=`<span><strong>${tier.token_count}</strong> tokens</span><span class="sep">|</span><span><strong>${tier.wallet_count}</strong> wallets</span><span class="sep">|</span><span>Tier: <strong>${tier.label}</strong></span>`;
 
+  // Filter tokens by chain
+  const allTokens=tier.tokens||[];
+  const filteredTokens=chainFilter?allTokens.filter(t=>(t.chain||"").toLowerCase()===chainFilter):allTokens;
+
   // Tokens table
   const tbody=document.getElementById("token-tbody");
-  const tokens=tier.tokens||[];
   tbody.innerHTML="";
-  if(tokens.length===0){
+  if(filteredTokens.length===0){
     document.getElementById("token-container").style.display="none";
     document.getElementById("token-empty").style.display="";
   }else{
     document.getElementById("token-container").style.display="";
     document.getElementById("token-empty").style.display="none";
-    tokens.slice(0,50).forEach((t,i)=>{
+    filteredTokens.slice(0,50).forEach((t,i)=>{
       const score=t.score||0;
       const sc_cls=score>=70?"sc-h":score>=40?"sc-m":"sc-l";
       const addr=t.contract_address||"";
@@ -104,7 +137,7 @@ function selectTier(name){
       tbody.innerHTML+=`<tr>
         <td>${i+1}</td>
         <td><strong>${t.symbol||"???"}</strong></td>
-        <td><span class="badge ${chain_cls(t.chain||"")}">${t.chain||""}</span></td>
+        <td><span class="badge ${chain_cls(t.chain||"")}">${chain_label(t.chain)}</span></td>
         <td class="mono">${trunc(addr)}</td>
         <td class="sc ${sc_cls}">${score.toFixed(1)}</td>
         <td>${fmt_usd(t.fdv)}</td>
@@ -117,17 +150,18 @@ function selectTier(name){
     });
   }
 
-  // Wallets table
+  // Filter wallets by chain
+  const allWallets=tier.wallets||[];
+  const filteredWallets=chainFilter?allWallets.filter(w=>(w.chain||"").toLowerCase()===chainFilter):allWallets;
   const wtbody=document.getElementById("wallet-tbody");
-  const wallets=tier.wallets||[];
   wtbody.innerHTML="";
-  if(wallets.length===0){
+  if(filteredWallets.length===0){
     document.getElementById("wallet-container").style.display="none";
     document.getElementById("wallet-empty").style.display="";
   }else{
     document.getElementById("wallet-container").style.display="";
     document.getElementById("wallet-empty").style.display="none";
-    wallets.slice(0,50).forEach((w,i)=>{
+    filteredWallets.slice(0,50).forEach((w,i)=>{
       const score=w.wallet_score||0;
       const sc_cls=score>=70?"sc-h":score>=40?"sc-m":"sc-l";
       const profit=w.total_profit;
@@ -139,7 +173,7 @@ function selectTier(name){
       wtbody.innerHTML+=`<tr>
         <td>${i+1}</td>
         <td class="mono"><a href="${block_url(w.address,w.chain)}" target="_blank">${trunc(w.address)}</a></td>
-        <td><span class="badge ${chain_cls(w.chain||"")}">${w.chain||""}</span></td>
+        <td><span class="badge ${chain_cls(w.chain||"")}">${chain_label(w.chain)}</span></td>
         <td class="sc ${sc_cls}">${score.toFixed(0)}</td>
         <td class="${profit_cls}">${fmt_usd(profit)}</td>
         <td>${w.win_rate!=null?(w.win_rate*100).toFixed(1)+"%":"\u2014"}</td>

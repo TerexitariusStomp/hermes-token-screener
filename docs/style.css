@@ -45,3 +45,15 @@ tr:hover td{background:var(--s2)}
 
 .tier-section-title{font-size:1rem;margin:1.25rem 0 .5rem;color:var(--t2)}
 .tier-empty{text-align:center;padding:2rem;color:var(--t2);font-size:.85rem}
+
+/* Filters */
+.filters{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.filters label{font-size:.8rem;color:var(--t2);display:flex;align-items:center;gap:.4rem}
+.filters select{background:var(--s);color:var(--t);border:1px solid var(--b);border-radius:4px;padding:.3rem .5rem;font-family:inherit;font-size:.8rem;cursor:pointer}
+.filters select:focus{outline:none;border-color:var(--c)}
+.filter-count{font-size:.75rem;color:var(--t2);margin-left:auto}
+
+/* Sortable columns */
+th[data-sort]{cursor:pointer;user-select:none}
+th[data-sort]:hover{color:var(--c)}
+.sort-arrow{font-size:.6rem;vertical-align:middle}
