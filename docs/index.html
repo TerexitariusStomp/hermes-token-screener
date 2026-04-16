@@ -18,7 +18,7 @@
 <div class="sub">Top tokens from the Hermes enrichment pipeline</div>
 <div id="loading">Loading data from GitHub Pages...</div>
 <div class="tbl" id="table-container" style="display:none"><table>
-<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>Ch</th><th>FDV</th><th>Vol24h</th><th>1h</th><th>6h</th><th>Age</th><th>🧠</th><th>Signals</th></tr></thead>
+<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>Ch</th><th>FDV</th><th>Vol24h</th><th>Vol1h</th><th>1h</th><th>6h</th><th>Age</th><th>🧠</th><th>Signals</th></tr></thead>
 <tbody id="tbody"></tbody>
 </table></div>
 </div>
@@ -47,6 +47,7 @@ fetch("data/tokens.json").then(r=>r.json()).then(data=>{
   <td>${t.channel_count||0}</td>
   <td>${fmt_usd(t.fdv)}</td>
   <td>${fmt_usd(t.volume_h24)}</td>
+  <td>${fmt_usd(t.volume_h1)}</td>
   <td class="${pct_cls(t.price_change_h1)}">${fmt_pct(t.price_change_h1)}</td>
   <td class="${pct_cls(t.price_change_h6)}">${fmt_pct(t.price_change_h6)}</td>
   <td>${(t.age_hours||0).toFixed(1)}h</td>
