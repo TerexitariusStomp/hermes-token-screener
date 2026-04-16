@@ -115,6 +115,15 @@ def export_wallets():
                 "ORDER BY wallet_score DESC LIMIT 200"
             ).fetchall()
             wallets = [dict(r) for r in rows]
+            # Sort by composite: prioritize high ROI, high win rate, more trades
+            wallets.sort(
+                key=lambda w: (
+                    (max(0.1, w.get("win_rate", 0) or 0))
+                    * (1 + min(w.get("avg_roi", 0) or 0, 10))
+                    * min(w.get("total_trades", 0), 100)
+                ),
+                reverse=True,
+            )
         except Exception as e:
             print(f"ERROR reading wallets: {e}")
             wallets = []
@@ -255,7 +264,7 @@ def export_cross_wallets():
     try:
         top_wallets = conn.execute(
             "SELECT * FROM tracked_wallets "
-            "WHERE wallet_score > 0 AND total_trades > 0 "
+            "WHERE wallet_score > 0 AND total_trades > 1 "
             "ORDER BY wallet_score DESC LIMIT 500"
         ).fetchall()
 
@@ -284,8 +293,17 @@ def export_cross_wallets():
     finally:
         conn.close()
     
-    # Sort
-    wallet_results.sort(key=lambda w: (w["top_token_count"], w["wallet_score"]), reverse=True)
+    # Sort by composite score: top_token_count * win_rate * (1 + avg_roi)
+    # Prioritizes wallets with high ROI, high win rate, and many top tokens
+    def wallet_sort_key(w):
+        tc = w.get("top_token_count", 0)
+        wr = max(0.1, w.get("win_rate", 0) or 0)
+        roi = w.get("avg_roi", 0) or 0
+        # Composite: reward high win rate and ROI
+        composite = tc * wr * (1 + min(roi, 10))  # cap ROI contribution at 10x
+        return (composite, w.get("wallet_score", 0))
+
+    wallet_results.sort(key=wallet_sort_key, reverse=True)
     
     dst = DOCS_DATA / "cross-wallets.json"
     with open(dst, "w") as f:
