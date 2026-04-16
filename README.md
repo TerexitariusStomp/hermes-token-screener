@@ -2,6 +2,10 @@
 
 Autonomous smart-money tracking system that discovers, enriches, and ranks tokens and wallets across Telegram call channels and DEX platforms.
 
+## Data Sources
+
+[Telegram Call Channels](TELEGRAM_CHANNELS.md) — 49 monitored channels
+
 ## Architecture
 
 <img src="architecture-v3.png" alt="Hermes Token Screener Architecture" width="100%"/>
