@@ -152,6 +152,8 @@ def _nav(active):
 <div class="nav">
   <a href="/" class="{'active' if active=='tokens' else ''}">Tokens</a>
   <a href="/wallets" class="{'active' if active=='wallets' else ''}">Smart Money</a>
+  <a href="/cross/tokens" class="{'active' if active=='cross-tokens' else ''}">Tokens×Wallets</a>
+  <a href="/cross/wallets" class="{'active' if active=='cross-wallets' else ''}">Wallets×Tokens</a>
   <a href="/api/top100" target="_blank">API</a>
   <a href="/health" target="_blank">Health</a>
 </div></nav>"""
@@ -717,3 +719,210 @@ async def api_chart_ohlcv(
             }
     except Exception as e:
         return {"candles": [], "count": 0, "timeframe": timeframe, "aggregate": aggregate, "error": str(e)}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CROSS-REFERENCE: TOKENS × WALLETS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def _get_top_wallets(limit: int = 200) -> list[dict]:
+    """Get top wallets by score from wallet DB."""
+    conn = _get_wallet_db()
+    if not conn:
+        return []
+    try:
+        rows = conn.execute(
+            "SELECT address, chain, wallet_score FROM tracked_wallets "
+            "WHERE wallet_score > 0 ORDER BY wallet_score DESC LIMIT ?",
+            (limit,)
+        ).fetchall()
+        return [dict(r) for r in rows]
+    except Exception:
+        return []
+    finally:
+        conn.close()
+
+
+def _get_wallet_token_holdings(wallet_address: str) -> list[str]:
+    """Get token addresses held by a wallet."""
+    conn = _get_wallet_db()
+    if not conn:
+        return []
+    try:
+        rows = conn.execute(
+            "SELECT DISTINCT token_address FROM wallet_token_entries "
+            "WHERE wallet_address = ? AND token_address IS NOT NULL",
+            (wallet_address,)
+        ).fetchall()
+        return [r[0] for r in rows if r[0]]
+    except Exception:
+        return []
+    finally:
+        conn.close()
+
+
+def _cross_reference_tokens_by_wallets() -> list[dict]:
+    """
+    Rank tokens by how many top wallets hold them.
+    
+    Returns tokens sorted by wallet_count DESC, then by token score.
+    """
+    # Load top tokens
+    data = _load_top100()
+    tokens = data.get("tokens", [])
+    if not tokens:
+        return []
+    
+    # Get top wallets
+    top_wallets = _get_top_wallets(200)
+    if not top_wallets:
+        return tokens  # Fallback: return tokens sorted by score
+    
+    # For each top wallet, get their token holdings
+    wallet_holdings = {}  # token_address -> set of wallet addresses
+    for w in top_wallets:
+        addr = w["address"]
+        held_tokens = _get_wallet_token_holdings(addr)
+        for token_addr in held_tokens:
+            if token_addr not in wallet_holdings:
+                wallet_holdings[token_addr] = set()
+            wallet_holdings[token_addr].add(addr)
+    
+    # Annotate tokens with wallet_count
+    for t in tokens:
+        t_addr = t.get("contract_address", "")
+        t["wallet_count"] = len(wallet_holdings.get(t_addr, set()))
+        t["holding_wallets"] = list(wallet_holdings.get(t_addr, set()))[:10]
+    
+    # Sort by wallet_count DESC, then score DESC
+    tokens.sort(key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True)
+    return tokens
+
+
+def _cross_reference_wallets_by_tokens() -> list[dict]:
+    """
+    Rank wallets by how many top tokens they hold.
+    
+    Returns wallets sorted by top_token_count DESC, then by wallet score.
+    """
+    # Load top tokens
+    data = _load_top100()
+    tokens = data.get("tokens", [])
+    top_token_addrs = {t.get("contract_address", "") for t in tokens if t.get("contract_address")}
+    
+    if not top_token_addrs:
+        return []
+    
+    # Get top wallets
+    top_wallets = _get_top_wallets(500)
+    if not top_wallets:
+        return []
+    
+    # For each wallet, count how many top tokens they hold
+    wallet_results = []
+    for w in top_wallets:
+        addr = w["address"]
+        held_tokens = _get_wallet_token_holdings(addr)
+        held_set = set(held_tokens)
+        top_token_overlap = held_set & top_token_addrs
+        
+        # Get symbols for held top tokens
+        held_symbols = []
+        for t in tokens:
+            if t.get("contract_address") in top_token_overlap:
+                held_symbols.append(t.get("symbol", "?"))
+        
+        wallet_results.append({
+            "address": addr,
+            "chain": w.get("chain", ""),
+            "wallet_score": w.get("wallet_score", 0),
+            "top_token_count": len(top_token_overlap),
+            "top_tokens": held_symbols[:10],
+        })
+    
+    # Sort by top_token_count DESC, then wallet_score DESC
+    wallet_results.sort(key=lambda w: (w["top_token_count"], w["wallet_score"]), reverse=True)
+    return wallet_results
+
+
+@app.get("/cross/tokens", response_class=HTMLResponse)
+async def cross_tokens():
+    """Tokens ranked by how many top wallets hold them."""
+    tokens = _cross_reference_tokens_by_wallets()
+    
+    rows = ""
+    for i, t in enumerate(tokens[:100], 1):
+        score = t.get("score", 0) or 0
+        sc_cls = "sc-h" if score >= 70 else "sc-m" if score >= 40 else "sc-l"
+        wc = t.get("wallet_count", 0)
+        wc_cls = "sc-h" if wc >= 10 else "sc-m" if wc >= 5 else "sc-l"
+        addr = t.get("contract_address", "")
+        holding_wallets = t.get("holding_wallets", [])
+        wallet_links = ", ".join(
+            f'<a href="/wallet/{w}">{_trunc(w, 4)}</a>' for w in holding_wallets[:5]
+        )
+        
+        rows += f"""<tr>
+  <td>{i}</td>
+  <td><a href="/token/{addr}"><strong>{t.get('symbol','???')}</strong></a></td>
+  <td><span class="badge {_chain_cls(t.get('chain',''))}">{t.get('chain','')}</span></td>
+  <td class="mono"><a href="{_explorer(t.get('chain',''), addr)}" target="_blank">{_trunc(addr)}</a></td>
+  <td class="sc {sc_cls}">{score:.1f}</td>
+  <td class="sc {wc_cls}">{wc}</td>
+  <td>{_fmt_usd(t.get('fdv'))}</td>
+  <td>{_fmt_usd(t.get('volume_h24'))}</td>
+  <td class="mono" style="font-size:.7rem;max-width:300px;overflow:hidden;text-overflow:ellipsis">{wallet_links}</td>
+</tr>"""
+
+    return _page("Tokens × Wallets", "cross-tokens", f"""
+<h1>Tokens Ranked by Wallet Count</h1>
+<div class="sub">Top tokens sorted by how many smart money wallets hold them &middot; {len(tokens)} tokens analyzed</div>
+<div class="tbl"><table>
+<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>🧬 Wallets</th><th>FDV</th><th>Vol24h</th><th>Top Holders</th></tr></thead>
+<tbody>{rows}</tbody>
+</table></div>""")
+
+
+@app.get("/cross/wallets", response_class=HTMLResponse)
+async def cross_wallets():
+    """Wallets ranked by how many top tokens they hold."""
+    wallets = _cross_reference_wallets_by_tokens()
+    
+    rows = ""
+    for i, w in enumerate(wallets[:100], 1):
+        score = w.get("wallet_score", 0) or 0
+        sc_cls = "sc-h" if score >= 70 else "sc-m" if score >= 40 else "sc-l"
+        tc = w.get("top_token_count", 0)
+        tc_cls = "sc-h" if tc >= 10 else "sc-m" if tc >= 5 else "sc-l"
+        addr = w.get("address", "")
+        top_tokens = w.get("top_tokens", [])
+        token_badges = " ".join(f'<span class="tag tag-g">{t}</span>' for t in top_tokens[:8])
+        
+        rows += f"""<tr>
+  <td>{i}</td>
+  <td class="mono"><a href="/wallet/{addr}">{_trunc(addr)}</a></td>
+  <td><span class="badge {_chain_cls(w.get('chain',''))}">{w.get('chain','')}</span></td>
+  <td class="sc {sc_cls}">{score:.0f}</td>
+  <td class="sc {tc_cls}">{tc}</td>
+  <td>{token_badges}</td>
+</tr>"""
+
+    return _page("Wallets × Tokens", "cross-wallets", f"""
+<h1>Wallets Ranked by Top Token Count</h1>
+<div class="sub">Smart money wallets sorted by how many top-100 tokens they hold &middot; {len(wallets)} wallets analyzed</div>
+<div class="tbl"><table>
+<thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Score</th><th>🧬 Top Tokens</th><th>Held Tokens</th></tr></thead>
+<tbody>{rows}</tbody>
+</table></div>""")
+
+
+@app.get("/api/cross/tokens")
+async def api_cross_tokens():
+    """API: Tokens ranked by wallet count."""
+    return _cross_reference_tokens_by_wallets()
+
+
+@app.get("/api/cross/wallets")
+async def api_cross_wallets():
+    """API: Wallets ranked by top token count."""
+    return _cross_reference_wallets_by_tokens()
