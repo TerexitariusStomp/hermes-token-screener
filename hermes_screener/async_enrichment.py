@@ -494,7 +494,7 @@ async def _enrich_solscan(token: dict, client: httpx.AsyncClient) -> None:
     headers = {
         "Accept": "application/json",
     }
-    
+
     try:
         # Use free tier endpoints (no authentication required)
         # Get token info
@@ -505,9 +505,9 @@ async def _enrich_solscan(token: dict, client: httpx.AsyncClient) -> None:
         )
         if resp.status_code != 200:
             return
-        
+
         data = resp.json()
-        
+
         # Get token holders (free tier)
         resp_holders = await client.get(
             f"https://public-api.solscan.io/token/holders?tokenAddress={addr}&limit=10",
@@ -515,15 +515,17 @@ async def _enrich_solscan(token: dict, client: httpx.AsyncClient) -> None:
             timeout=10.0,
         )
         holders_data = resp_holders.json() if resp_holders.status_code == 200 else {}
-        
+
         # Get token transfers (free tier)
         resp_transfers = await client.get(
             f"https://public-api.solscan.io/token/transfer?tokenAddress={addr}&limit=10",
             headers=headers,
             timeout=10.0,
         )
-        transfers_data = resp_transfers.json() if resp_transfers.status_code == 200 else {}
-        
+        transfers_data = (
+            resp_transfers.json() if resp_transfers.status_code == 200 else {}
+        )
+
         token["solscan"] = {
             "name": data.get("name", ""),
             "symbol": data.get("symbol", ""),
@@ -537,8 +539,8 @@ async def _enrich_solscan(token: dict, client: httpx.AsyncClient) -> None:
             "top_holders": holders_data.get("data", []),
             "recent_transfers": transfers_data.get("data", []),
         }
-        
-    except Exception as e:
+
+    except Exception:
         # Silently fail - don't break the pipeline
         pass
 
@@ -547,13 +549,13 @@ async def _enrich_helius(token: dict, client: httpx.AsyncClient) -> None:
     """Layer 15: Helius token data (Solana only)."""
     if not settings.helius_api_key:
         return
-    
+
     chain = token.get("chain", "").lower()
     if chain not in ("solana", "sol"):
         return
 
     addr = token["contract_address"]
-    
+
     try:
         # Get token metadata
         resp = await client.post(
@@ -562,22 +564,17 @@ async def _enrich_helius(token: dict, client: httpx.AsyncClient) -> None:
                 "jsonrpc": "2.0",
                 "id": 1,
                 "method": "getAsset",
-                "params": {
-                    "id": addr,
-                    "displayOptions": {
-                        "showFungibleTokens": True
-                    }
-                }
+                "params": {"id": addr, "displayOptions": {"showFungibleTokens": True}},
             },
             timeout=10.0,
         )
-        
+
         if resp.status_code != 200:
             return
-        
+
         data = resp.json()
         result = data.get("result", {})
-        
+
         # Get token holders (using getTokenAccounts)
         resp_holders = await client.post(
             f"https://mainnet.helius-rpc.com/?api-key={settings.helius_api_key}",
@@ -585,27 +582,32 @@ async def _enrich_helius(token: dict, client: httpx.AsyncClient) -> None:
                 "jsonrpc": "2.0",
                 "id": 1,
                 "method": "getTokenAccounts",
-                "params": {
-                    "mint": addr,
-                    "limit": 10
-                }
+                "params": {"mint": addr, "limit": 10},
             },
             timeout=10.0,
         )
         holders_data = resp_holders.json() if resp_holders.status_code == 200 else {}
-        
+
         token["helius"] = {
             "name": result.get("content", {}).get("metadata", {}).get("name", ""),
             "symbol": result.get("content", {}).get("metadata", {}).get("symbol", ""),
             "decimals": result.get("token_info", {}).get("decimals", 0),
             "supply": result.get("token_info", {}).get("supply", 0),
-            "price_per_token": result.get("token_info", {}).get("price_info", {}).get("price_per_token", 0),
-            "total_price": result.get("token_info", {}).get("price_info", {}).get("total_price", 0),
-            "currency": result.get("token_info", {}).get("price_info", {}).get("currency", ""),
-            "holder_count": len(holders_data.get("result", {}).get("token_accounts", [])),
+            "price_per_token": result.get("token_info", {})
+            .get("price_info", {})
+            .get("price_per_token", 0),
+            "total_price": result.get("token_info", {})
+            .get("price_info", {})
+            .get("total_price", 0),
+            "currency": result.get("token_info", {})
+            .get("price_info", {})
+            .get("currency", ""),
+            "holder_count": len(
+                holders_data.get("result", {}).get("token_accounts", [])
+            ),
         }
-        
-    except Exception as e:
+
+    except Exception:
         # Silently fail - don't break the pipeline
         pass
 
@@ -617,7 +619,7 @@ async def _enrich_birdeye(token: dict, client: httpx.AsyncClient) -> None:
 
     addr = token["contract_address"]
     chain = token.get("chain", "").lower()
-    
+
     # Map chain to Birdeye chain identifier
     chain_map = {
         "solana": "solana",
@@ -629,14 +631,11 @@ async def _enrich_birdeye(token: dict, client: httpx.AsyncClient) -> None:
         "bsc": "bsc",
         "polygon": "polygon",
     }
-    
+
     birdeye_chain = chain_map.get(chain, "solana")
-    
-    headers = {
-        "X-API-KEY": settings.birdeye_api_key,
-        "accept": "application/json"
-    }
-    
+
+    headers = {"X-API-KEY": settings.birdeye_api_key, "accept": "application/json"}
+
     try:
         # Get token overview
         resp = await client.get(
@@ -644,13 +643,13 @@ async def _enrich_birdeye(token: dict, client: httpx.AsyncClient) -> None:
             headers=headers,
             timeout=10.0,
         )
-        
+
         if resp.status_code != 200:
             return
-        
+
         data = resp.json()
         token_data = data.get("data", {})
-        
+
         # Get token holders (if available)
         resp_holders = await client.get(
             f"https://public-api.birdeye.so/defi/token_holder?address={addr}&chain={birdeye_chain}&limit=10",
@@ -658,7 +657,7 @@ async def _enrich_birdeye(token: dict, client: httpx.AsyncClient) -> None:
             timeout=10.0,
         )
         holders_data = resp_holders.json() if resp_holders.status_code == 200 else {}
-        
+
         # Get token trading data
         resp_trading = await client.get(
             f"https://public-api.birdeye.so/defi/token_trading_data?address={addr}&chain={birdeye_chain}&time_frame=24h",
@@ -666,7 +665,7 @@ async def _enrich_birdeye(token: dict, client: httpx.AsyncClient) -> None:
             timeout=10.0,
         )
         trading_data = resp_trading.json() if resp_trading.status_code == 200 else {}
-        
+
         token["birdeye"] = {
             "name": token_data.get("name", ""),
             "symbol": token_data.get("symbol", ""),
@@ -685,8 +684,8 @@ async def _enrich_birdeye(token: dict, client: httpx.AsyncClient) -> None:
             "top_holders": holders_data.get("data", {}).get("items", []),
             "trading_data": trading_data.get("data", {}),
         }
-        
-    except Exception as e:
+
+    except Exception:
         # Silently fail - don't break the pipeline
         pass
 
@@ -796,16 +795,16 @@ async def run_async_enrichment(
         AsyncDexscreenerEnricher,
         AsyncHttpEnricher,
         LayerResult,
+        _enrich_birdeye,
         _enrich_coingecko,
         _enrich_defi,
         _enrich_derived,
         _enrich_etherscan,
         _enrich_goplus,
-        _enrich_rugcheck,
-        _enrich_zerion,
-        _enrich_solscan,
         _enrich_helius,
-        _enrich_birdeye,
+        _enrich_rugcheck,
+        _enrich_solscan,
+        _enrich_zerion,
         _make_client,
         _run_cli_enricher,
     )
@@ -862,13 +861,13 @@ async def run_async_enrichment(
 
         # Zerion
         zerion_enricher = AsyncHttpEnricher("Zerion", concurrency=2, delay=1.0)
-        
+
         # Solscan
         solscan_enricher = AsyncHttpEnricher("Solscan", concurrency=2, delay=0.5)
-        
+
         # Helius
         helius_enricher = AsyncHttpEnricher("Helius", concurrency=2, delay=0.5)
-        
+
         # Birdeye
         birdeye_enricher = AsyncHttpEnricher("Birdeye", concurrency=2, delay=0.5)
 
