@@ -370,6 +370,21 @@ def run_enricher():
         log.error(f"Dexscreener FAILED - pipeline cannot continue: {e}")
         return {'status': 'dexscreener_failed', 'error': str(e)}
 
+    # Filter dead tokens BEFORE enriching (save API calls)
+    # FDV < $10K = dead unless just launched (< 2h)
+    before_filter = len(enriched)
+    enriched = [t for t in enriched if (
+        (t.get('dex', {}).get('fdv') or 0) >= 10_000 or
+        ((t.get('dex', {}).get('age_hours') or 999) < 2 and (t.get('dex', {}).get('fdv') or 0) > 0)
+    )]
+    filtered = before_filter - len(enriched)
+    if filtered > 0:
+        log.info(f"Filtered {filtered} dead tokens (FDV < $10K, age > 24h). {len(enriched)} remaining.")
+
+    if not enriched:
+        log.warning("All tokens filtered as dead. Nothing to enrich.")
+        return {'status': 'all_dead', 'candidates': len(candidates)}
+
     # ── Optional enrichers (try/bypass) ──
 
     # Layer 1: Surf
