@@ -37,7 +37,7 @@ def _load_top100() -> dict[str, Any]:
     if not path.exists():
         return {"tokens": [], "generated_at_iso": "Never", "total_candidates": 0}
     with open(path) as f:
-        return json.load(f)
+        return json.load(f)  # type: ignore[return-value]
 
 
 def _get_wallet_db():
