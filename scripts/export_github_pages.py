@@ -303,15 +303,17 @@ def export_cross_wallets():
     finally:
         conn.close()
 
-    # Sort by composite score: top_token_count * win_rate * (1 + avg_roi)
-    # Prioritizes wallets with high ROI, high win rate, and many top tokens
+    # Sort by composite score weighted heavily by top_token_count
+    # Wallets holding more top tokens = higher priority
     def wallet_sort_key(w):
         tc = w.get("top_token_count", 0)
         wr = max(0.1, w.get("win_rate", 0) or 0)
         roi = w.get("avg_roi", 0) or 0
-        # Composite: reward high win rate and ROI
-        composite = tc * wr * (1 + min(roi, 10))  # cap ROI contribution at 10x
-        return (composite, w.get("wallet_score", 0))
+        trades = w.get("total_trades", 0)
+        # Heavy weight on token count: tc^2 rewards holding many top tokens
+        # Then multiply by quality signals (win rate, ROI)
+        composite = (tc**1.5) * wr * (1 + min(roi, 5)) * min(trades / 10, 10)
+        return (round(composite, 2), tc, w.get("wallet_score", 0))
 
     wallet_results.sort(key=wallet_sort_key, reverse=True)
 
