@@ -135,6 +135,14 @@ const TC=[
   }},
   {k:'tw_hot',f:t=>(t.tw_trending_score||0).toFixed(1)},
   {k:'social',f:t=>(t.social_score||0).toFixed(1)},
+  {k:'tg',f:t=>{
+    const url=t.telegram_url;
+    return url?'<a href="'+url+'" target="_blank">&#128172; join</a>':'—';
+  }},
+  {k:'web',f:t=>{
+    const url=t.website_url;
+    return url?'<a href="'+url+'" target="_blank">&#127760;</a>':'—';
+  }},
   {k:'bullish',f:t=>(t.positives||[]).slice(0,2).map(p=>'<span class="tag tag-g">'+trunc(p,25)+'</span>').join(' ')||'—'},
   {k:'bearish',f:t=>(t.negatives||[]).slice(0,2).map(n=>'<span class="tag tag-r">'+trunc(n,25)+'</span>').join(' ')||'—'},
 ];
