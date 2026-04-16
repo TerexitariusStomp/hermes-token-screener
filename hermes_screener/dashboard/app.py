@@ -6,12 +6,12 @@ TradingView Lightweight Charts for token price charts.
 """
 
 from __future__ import annotations
-from typing import Any
 
 import json
 import sqlite3
 import sys
 import time
+from typing import Any
 
 import httpx
 from fastapi import FastAPI, Query
