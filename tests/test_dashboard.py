@@ -1,7 +1,8 @@
 """Tests for hermes_screener.dashboard (including chart endpoints)."""
 
-import os
 import json
+import os
+
 import pytest
 
 os.environ.setdefault("HERMES_HOME", "/tmp/test_hermes")
@@ -15,22 +16,24 @@ def client(tmp_path):
     from fastapi.testclient import TestClient
     os.environ["HERMES_HOME"] = str(tmp_path)
     (tmp_path / "data" / "token_screener").mkdir(parents=True)
-    json.dump({
-        "generated_at_iso": "2026-04-14T12:00:00Z",
-        "total_candidates": 50,
-        "enriched": 32,
-        "tokens": [
-            {"contract_address": "TEST123", "chain": "solana", "symbol": "TEST", "name": "Test",
-             "score": 85.5, "channel_count": 5, "mentions": 10, "fdv": 1000000,
-             "volume_h24": 500000, "volume_h1": 25000, "age_hours": 12.5,
-             "price_change_h1": 5.2, "price_change_h6": -2.1,
-             "gmgn_smart_wallets": 3, "positives": ["social HOT"], "negatives": [],
-             "dex_url": "https://dexscreener.com/solana/TEST123",
-             "pair_address": "PairABC123"},
-        ],
-    }, open(tmp_path / "data" / "token_screener" / "top100.json", "w"))
+    with open(tmp_path / "data" / "token_screener" / "top100.json", "w") as f:
+        json.dump({
+            "generated_at_iso": "2026-04-14T12:00:00Z",
+            "total_candidates": 50,
+            "enriched": 32,
+            "tokens": [
+                {"contract_address": "TEST123", "chain": "solana", "symbol": "TEST", "name": "Test",
+                 "score": 85.5, "channel_count": 5, "mentions": 10, "fdv": 1000000,
+                 "volume_h24": 500000, "volume_h1": 25000, "age_hours": 12.5,
+                 "price_change_h1": 5.2, "price_change_h6": -2.1,
+                 "gmgn_smart_wallets": 3, "positives": ["social HOT"], "negatives": [],
+                 "dex_url": "https://dexscreener.com/solana/TEST123",
+                 "pair_address": "PairABC123"},
+            ],
+        }, f)
 
     from importlib import reload
+
     from hermes_screener import config
     reload(config)
     from hermes_screener.dashboard import app

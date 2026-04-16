@@ -21,14 +21,13 @@ from __future__ import annotations
 
 import json
 import math
-import os
 import re
 import sqlite3
 import subprocess
 import time
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import requests
 
@@ -59,18 +58,16 @@ STOP_WORDS = {
     "that", "these", "those", "i", "me", "my", "we", "our", "you", "your",
     "he", "him", "his", "she", "her", "they", "them", "their", "what",
     "which", "who", "whom", "get", "got", "like", "one", "also", "back",
-    "going", "new", "see", "way", "make", "many", "some", "time", "very",
-    "when", "much", "then", "them", "well", "been", "come", "could",
-    # Crypto template noise (from Telegram scraper formatting)
+    "going", "new", "see", "way", "make", "many", "time", "much", "well", "come", # Crypto template noise (from Telegram scraper formatting)
     "token", "contract", "address", "solana", "ethereum", "base", "bsc",
     "chain", "chart", "buy", "sell", "trading", "trade", "dex", "pool",
     "pair", "https", "http", "www", "com", "io", "gg", "xyz",
     "0x", "pump", "raydium", "jupiter", "uniswap", "ca", "mc", "mcap",
     # Telegram template abbreviations (not real topics)
     "vol", "chg", "age", "fdv", "liq", "m5", "h1", "h6", "h24",
-    "mcap", "ath", "txns", "buys", "sells", "price", "total",
+    "ath", "txns", "buys", "sells", "price", "total",
     "score", "risk", "level", "high", "low", "mid", "top", "bot",
-    "new", "hot", "trending", "signal", "alert", "call", "alpha",
+    "hot", "trending", "signal", "alert", "call", "alpha",
 }
 
 # Crypto-relevant term patterns (boosted 2x in scoring)
@@ -93,7 +90,7 @@ CRYPTO_PATTERNS = re.compile(
 )
 
 
-def collect_telegram_texts(hours_back: int = 24) -> List[str]:
+def collect_telegram_texts(hours_back: int = 24) -> list[str]:
     """Collect recent Telegram message texts from the contracts DB."""
     conn = sqlite3.connect(str(DB_PATH), timeout=30)
     c = conn.cursor()
@@ -116,7 +113,7 @@ def collect_telegram_texts(hours_back: int = 24) -> List[str]:
     return texts
 
 
-def collect_twitter_texts(symbols: List[str], max_per_symbol: int = 5) -> List[str]:
+def collect_twitter_texts(symbols: list[str], max_per_symbol: int = 5) -> list[str]:
     """Search Twitter for token symbols and collect tweet texts."""
     texts = []
 
@@ -154,7 +151,7 @@ def collect_twitter_texts(symbols: List[str], max_per_symbol: int = 5) -> List[s
 # KEYWORD EXTRACTION
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def extract_keywords_tfidf(texts: List[str], max_keywords: int = 10) -> List[Tuple[str, float]]:
+def extract_keywords_tfidf(texts: list[str], max_keywords: int = 10) -> list[tuple[str, float]]:
     """
     Extract trending keywords using TF-IDF-like scoring.
 
@@ -214,7 +211,7 @@ def extract_keywords_tfidf(texts: List[str], max_keywords: int = 10) -> List[Tup
     return filtered[:max_keywords]
 
 
-def extract_keywords_llm(texts: List[str], max_keywords: int = 10) -> Optional[List[Tuple[str, float]]]:
+def extract_keywords_llm(texts: list[str], max_keywords: int = 10) -> list[tuple[str, float]] | None:
     """
     Use local LLM to extract trending keywords from collected texts.
     Falls back to None if LLM is unavailable.
@@ -280,7 +277,7 @@ JSON:""",
 # DEXSCREENER KEYWORD SEARCH
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def search_dexscreener_keyword(keyword: str, max_results: int = 10) -> List[dict]:
+def search_dexscreener_keyword(keyword: str, max_results: int = 10) -> list[dict]:
     """Search Dexscreener for tokens matching a keyword."""
     try:
         r = requests.get(
@@ -335,7 +332,7 @@ def run_keyword_discovery(
     hours_back: int = 24,
     use_llm: bool = True,
     existing_addresses: set = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Discover new tokens from trending social keywords.
 
@@ -359,10 +356,10 @@ def run_keyword_discovery(
         conn = sqlite3.connect(str(DB_PATH), timeout=30)
         c = conn.cursor()
         c.execute("SELECT DISTINCT contract_address FROM telegram_contracts_unique LIMIT 50")
-        known_addresses = {row[0] for row in c.fetchall()}
+        {row[0] for row in c.fetchall()}
         conn.close()
     except Exception:
-        known_addresses = set()
+        pass
 
     # Collect Twitter texts for known symbols (from enrichment)
     tw_texts = []
@@ -446,7 +443,7 @@ def run_keyword_discovery(
     return result
 
 
-def save_discovered_tokens(tokens: List[dict]) -> Path:
+def save_discovered_tokens(tokens: list[dict]) -> Path:
     """Save discovered tokens to a file for the enricher to pick up."""
     output_path = settings.hermes_home / "data" / "token_screener" / "keyword_discoveries.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -455,7 +452,8 @@ def save_discovered_tokens(tokens: List[dict]) -> Path:
     existing = []
     if output_path.exists():
         try:
-            existing = json.load(open(output_path)).get("tokens", [])
+            with open(output_path) as f:
+                existing = json.load(f).get("tokens", [])
         except Exception:
             pass
 

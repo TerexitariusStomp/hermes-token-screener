@@ -5,7 +5,6 @@ import os
 import time
 
 import httpx
-import pytest
 
 os.environ.setdefault("HERMES_HOME", "/tmp/test_hermes")
 for key in ["COINGECKO_API_KEY", "ETHERSCAN_API_KEY", "GMGN_API_KEY",
@@ -18,9 +17,6 @@ def test_imports():
     from hermes_screener.async_enrichment import (
         run_async_enrichment,
         run_async_enrichment_sync,
-        AsyncDexscreenerEnricher,
-        AsyncHttpEnricher,
-        LayerResult,
     )
     assert callable(run_async_enrichment)
     assert callable(run_async_enrichment_sync)

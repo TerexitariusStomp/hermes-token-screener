@@ -19,7 +19,7 @@ import json
 import sqlite3
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
@@ -88,7 +88,7 @@ async def _fetch_holders_batch(
     address: str,
     order_by: str,
     direction: str,
-) -> List[dict]:
+) -> list[dict]:
     """Fetch one batch of holders with a specific sort order."""
     data = await _gmgn_cmd_async([
         "token", "holders", "--chain", chain,
@@ -108,7 +108,7 @@ async def _fetch_all_holders_for_token(
     chain: str,
     address: str,
     limit: int = 1000,
-) -> List[dict]:
+) -> list[dict]:
     """Fetch up to `limit` holders for a token using parallel sort-order calls."""
     gmgn_chain = CHAIN_MAP.get(chain.lower())
     if not gmgn_chain:
@@ -142,11 +142,11 @@ async def _fetch_all_holders_for_token(
 
 async def enrich_wallets_async(
     conn: sqlite3.Connection,
-    tokens: List[dict],
+    tokens: list[dict],
     min_token_score: float = 30,
     max_concurrent_tokens: int = 3,
     dry_run: bool = False,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Enrich wallets from top-scoring tokens using async parallel fetching.
 
@@ -157,17 +157,19 @@ async def enrich_wallets_async(
         max_concurrent_tokens: How many tokens to process in parallel
         dry_run: Don't write to DB
     """
-    from hermes_screener.async_wallets import (
-        _find_node, _fetch_all_holders_for_token,
-        SORT_ORDERS, CHAIN_MAP, GMGN_MAX,
-    )
+    import sys
 
-    import sys, os
+    from hermes_screener.async_wallets import (
+        _fetch_all_holders_for_token,
+        _find_node,
+    )
     sys.path.insert(0, str(settings.hermes_home / "scripts"))
     from wallet_tracker import (
-        init_wallet_db, enrich_wallets_from_tokens,
-        detect_copy_traders, detect_insiders, detect_rug_history,
-        infer_trading_patterns, upgrade_wallet_db,
+        detect_copy_traders,
+        detect_insiders,
+        detect_rug_history,
+        infer_trading_patterns,
+        upgrade_wallet_db,
     )
 
     node_bin = await _find_node()
@@ -178,12 +180,12 @@ async def enrich_wallets_async(
     log.info(f"eligible_tokens={len(eligible)}")
 
     now = time.time()
-    wallet_appearances: Dict[str, List[dict]] = {}
+    wallet_appearances: dict[str, list[dict]] = {}
     tokens_scanned = 0
     holders_found = 0
     semaphore = asyncio.Semaphore(max_concurrent_tokens)
 
-    async def process_token(token_info: dict) -> Tuple[int, int]:
+    async def process_token(token_info: dict) -> tuple[int, int]:
         nonlocal tokens_scanned, holders_found
         chain = token_info.get("chain", "")
         addr = token_info.get("contract_address", "")
@@ -196,7 +198,7 @@ async def enrich_wallets_async(
             elapsed = time.time() - start
 
             tokens_scanned += 1
-            log.info(f"scanned", token=sym, score=score, wallets=len(holders), elapsed=round(elapsed, 1))
+            log.info("scanned", token=sym, score=score, wallets=len(holders), elapsed=round(elapsed, 1))
 
             for h in holders:
                 w = h.get("address", "")
@@ -291,8 +293,8 @@ async def enrich_wallets_async(
 
     # Pattern detection (sync, fast)
     log.info("running_pattern_detection")
-    flagged_copy = detect_copy_traders(conn)
-    flagged_insider = detect_insiders(conn)
+    detect_copy_traders(conn)
+    detect_insiders(conn)
     detect_rug_history(conn)
     infer_trading_patterns(conn)
     upgrade_wallet_db(conn)
@@ -313,11 +315,11 @@ async def enrich_wallets_async(
 
 def enrich_wallets_async_sync(
     conn: sqlite3.Connection,
-    tokens: List[dict],
+    tokens: list[dict],
     min_token_score: float = 30,
     max_concurrent_tokens: int = 3,
     dry_run: bool = False,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Synchronous wrapper for enrich_wallets_async()."""
     return asyncio.run(enrich_wallets_async(
         conn, tokens, min_token_score, max_concurrent_tokens, dry_run

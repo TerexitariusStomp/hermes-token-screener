@@ -23,7 +23,6 @@ Usage:
 from __future__ import annotations
 
 import threading
-from typing import Optional
 
 from prometheus_client import (
     CollectorRegistry,
@@ -189,11 +188,11 @@ class Metrics:
 metrics = Metrics()
 
 # Thread-safe server state
-_server_thread: Optional[threading.Thread] = None
+_server_thread: threading.Thread | None = None
 _server_started = False
 
 
-def start_metrics_server(port: Optional[int] = None) -> None:
+def start_metrics_server(port: int | None = None) -> None:
     """Start Prometheus metrics HTTP server (idempotent, thread-safe)."""
     global _server_started, _server_thread
 

@@ -1,7 +1,6 @@
 """Tests for hermes_screener.config."""
 
 import os
-import pytest
 from pathlib import Path
 
 # Prevent loading real .env during tests

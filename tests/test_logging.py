@@ -1,10 +1,6 @@
 """Tests for hermes_screener.logging."""
 
-import json
-import logging
 import os
-import sys
-from io import StringIO
 
 import pytest
 
@@ -36,6 +32,7 @@ def test_get_logger_cached():
 def test_log_duration_records_timing():
     """log_duration context manager completes without error."""
     import time
+
     from hermes_screener.logging import get_logger, log_duration
 
     log = get_logger("duration_test")
@@ -48,9 +45,8 @@ def test_log_duration_logs_error_on_exception():
     from hermes_screener.logging import get_logger, log_duration
 
     log = get_logger("duration_error_test")
-    with pytest.raises(ValueError, match="test error"):
-        with log_duration(log, "failing_operation"):
-            raise ValueError("test error")
+    with pytest.raises(ValueError, match="test error"), log_duration(log, "failing_operation"):
+        raise ValueError("test error")
 
 
 def test_logger_has_standard_methods():

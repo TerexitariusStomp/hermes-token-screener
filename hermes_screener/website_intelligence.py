@@ -20,16 +20,11 @@ from __future__ import annotations
 
 import json
 import re
-import time
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
 import requests
 
-from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
-from hermes_screener.metrics import metrics
 
 log = get_logger("website_intelligence")
 
@@ -46,7 +41,7 @@ LLM_ENDPOINTS = [
 ]
 
 
-def _call_llm(prompt: str, system: str = "", max_tokens: int = 300, timeout: int = 60) -> Optional[str]:
+def _call_llm(prompt: str, system: str = "", max_tokens: int = 300, timeout: int = 60) -> str | None:
     """Call local LLM with fallback chain. Returns response text or None."""
     for endpoint in LLM_ENDPOINTS:
         try:
@@ -95,7 +90,7 @@ def _call_llm(prompt: str, system: str = "", max_tokens: int = 300, timeout: int
 # WEBSITE FETCHING
 # ═══════════════════════════════════════════════════════════════════════════════
 
-async def fetch_website_content(url: str, client: httpx.AsyncClient) -> Optional[dict]:
+async def fetch_website_content(url: str, client: httpx.AsyncClient) -> dict | None:
     """Fetch website and extract clean content for LLM analysis."""
     try:
         resp = await client.get(url, follow_redirects=True, timeout=15)
@@ -154,9 +149,9 @@ async def fetch_website_content(url: str, client: httpx.AsyncClient) -> Optional
 
 def analyze_website_with_llm(
     website_data: dict,
-    trending_keywords: List[dict],
+    trending_keywords: list[dict],
     token_symbol: str,
-) -> Tuple[float, dict]:
+) -> tuple[float, dict]:
     """
     Use local AI to analyze website content and produce a score.
 
@@ -237,8 +232,8 @@ Respond with ONLY a JSON object (no other text):
 
 def _analyze_website_algorithmic(
     website_data: dict,
-    trending_keywords: List[dict],
-) -> Tuple[float, dict]:
+    trending_keywords: list[dict],
+) -> tuple[float, dict]:
     """Algorithmic website scoring when LLM is unavailable."""
     score = 0.0
     details = {"method": "algorithmic"}
@@ -304,9 +299,9 @@ def _analyze_website_algorithmic(
 # ═══════════════════════════════════════════════════════════════════════════════
 
 async def _analyze_all(
-    tokens: List[dict],
-    trending_keywords: List[dict],
-) -> Dict[str, dict]:
+    tokens: list[dict],
+    trending_keywords: list[dict],
+) -> dict[str, dict]:
     """Analyze websites for tokens that have URLs."""
     results = {}
 
@@ -354,9 +349,9 @@ async def _analyze_all(
 
 
 def run_website_analysis(
-    tokens: List[dict],
-    trending_keywords: List[dict],
-) -> Dict[str, dict]:
+    tokens: list[dict],
+    trending_keywords: list[dict],
+) -> dict[str, dict]:
     """Sync wrapper for website analysis."""
     import asyncio
     return asyncio.run(_analyze_all(tokens, trending_keywords))

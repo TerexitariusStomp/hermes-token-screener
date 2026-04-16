@@ -9,17 +9,15 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import sys
 import time
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any
 
 import httpx
 from fastapi import FastAPI, Query
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse
 
 from hermes_screener.config import settings
-import sys
+
 sys.path.insert(0, str(settings.hermes_home / 'scripts'))
 
 app = FastAPI(
@@ -51,36 +49,49 @@ def _get_wallet_db():
 
 
 def _fmt_usd(v):
-    if v is None: return "—"
+    if v is None:
+        return "—"
     v = float(v)
-    if v >= 1e9: return f"${v/1e9:.1f}B"
-    if v >= 1e6: return f"${v/1e6:.1f}M"
-    if v >= 1e3: return f"${v/1e3:.1f}K"
+    if v >= 1e9:
+        return f"${v/1e9:.1f}B"
+    if v >= 1e6:
+        return f"${v/1e6:.1f}M"
+    if v >= 1e3:
+        return f"${v/1e3:.1f}K"
     return f"${v:,.0f}"
 
 def _fmt_pct(v):
-    if v is None: return "—"
+    if v is None:
+        return "—"
     return f"{'+' if v > 0 else ''}{v:.1f}%"
 
 def _pct_cls(v):
-    if v is None: return ""
+    if v is None:
+        return ""
     return "pos" if v > 0 else "neg" if v < 0 else ""
 
 def _time_ago(ts):
-    if not ts: return "—"
+    if not ts:
+        return "—"
     d = time.time() - float(ts)
-    if d < 60: return f"{int(d)}s"
-    if d < 3600: return f"{int(d/60)}m"
-    if d < 86400: return f"{int(d/3600)}h"
+    if d < 60:
+        return f"{int(d)}s"
+    if d < 3600:
+        return f"{int(d/60)}m"
+    if d < 86400:
+        return f"{int(d/3600)}h"
     return f"{int(d/86400)}d"
 
 def _trunc(a, n=8):
-    if not a or len(a) <= n*2: return a or ""
+    if not a or len(a) <= n*2:
+        return a or ""
     return f"{a[:n]}...{a[-n:]}"
 
 def _explorer(chain, addr):
-    if chain in ("solana","sol"): return f"https://solscan.io/account/{addr}"
-    if chain == "base": return f"https://basescan.org/address/{addr}"
+    if chain in ("solana", "sol"):
+        return f"https://solscan.io/account/{addr}"
+    if chain == "base":
+        return f"https://basescan.org/address/{addr}"
     return f"https://etherscan.io/address/{addr}"
 
 def _chain_cls(chain):
@@ -440,8 +451,11 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
         tags_html = ""
         for t in (w.get("wallet_tags") or "").split(","):
             t = t.strip()
-            if t: tags_html += f'<span class="tag {"tag-r" if t in("sniper","insider") else "tag-g" if t=="smart" else ""}">{t}</span>'
-        if w.get("insider_flag"): tags_html += '<span class="tag tag-y">INSIDER</span>'
+            if t:
+                tag_cls = "tag-r" if t in ("sniper", "insider") else "tag-g" if t == "smart" else ""
+                tags_html += f'<span class="tag {tag_cls}">{t}</span>'
+        if w.get("insider_flag"):
+            tags_html += '<span class="tag tag-y">INSIDER</span>'
 
         rows_html += f"""<tr>
   <td>{i}</td>
@@ -528,7 +542,7 @@ async def token_chart(address: str):
             break
 
     if not token:
-        return _page("Chart", "tokens", f"<h1>Chart</h1><p class='sub'>Token not found</p>")
+        return _page("Chart", "tokens", "<h1>Chart</h1><p class='sub'>Token not found</p>")
 
     return HTMLResponse(_chart_html(
         symbol=token.get("symbol", "???"),
@@ -617,7 +631,8 @@ async def api_top100():
 @app.get("/api/wallets")
 async def api_wallets(min_score: float = Query(0), limit: int = Query(50, le=200)):
     conn = _get_wallet_db()
-    if not conn: return []
+    if not conn:
+        return []
     rows = conn.execute("SELECT * FROM tracked_wallets WHERE wallet_score >= ? ORDER BY wallet_score DESC LIMIT ?", (min_score, limit)).fetchall()
     conn.close()
     return [dict(r) for r in rows]
@@ -630,8 +645,10 @@ async def api_stats():
         conn = _get_wallet_db()
         wc = conn.execute("SELECT COUNT(*) FROM tracked_wallets").fetchone()[0] if conn else 0
         avg = conn.execute("SELECT AVG(wallet_score) FROM tracked_wallets").fetchone()[0] if conn else 0
-        if conn: conn.close()
-    except: wc = avg = 0
+        if conn:
+            conn.close()
+    except Exception:
+        wc = avg = 0
     return {"tokens_scored": len(data.get("tokens",[])), "total_candidates": data.get("total_candidates",0), "wallets_tracked": wc, "avg_wallet_score": round(avg or 0,1), "last_generated": data.get("generated_at_iso","Never")}
 
 
@@ -764,7 +781,7 @@ def _get_wallet_token_holdings(wallet_address: str) -> list[str]:
 def _cross_reference_tokens_by_wallets() -> list[dict]:
     """
     Rank tokens by how many top wallets hold them.
-    
+
     Returns tokens sorted by wallet_count DESC, then by token score.
     """
     # Load top tokens
@@ -772,12 +789,12 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
     tokens = data.get("tokens", [])
     if not tokens:
         return []
-    
+
     # Get top wallets
     top_wallets = _get_top_wallets(200)
     if not top_wallets:
         return tokens  # Fallback: return tokens sorted by score
-    
+
     # For each top wallet, get their token holdings
     wallet_holdings = {}  # token_address -> set of wallet addresses
     for w in top_wallets:
@@ -787,13 +804,13 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
             if token_addr not in wallet_holdings:
                 wallet_holdings[token_addr] = set()
             wallet_holdings[token_addr].add(addr)
-    
+
     # Annotate tokens with wallet_count
     for t in tokens:
         t_addr = t.get("contract_address", "")
         t["wallet_count"] = len(wallet_holdings.get(t_addr, set()))
         t["holding_wallets"] = list(wallet_holdings.get(t_addr, set()))[:10]
-    
+
     # Sort by wallet_count DESC, then score DESC
     tokens.sort(key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True)
     return tokens
@@ -802,22 +819,22 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
 def _cross_reference_wallets_by_tokens() -> list[dict]:
     """
     Rank wallets by how many top tokens they hold.
-    
+
     Returns wallets sorted by top_token_count DESC, then by wallet score.
     """
     # Load top tokens
     data = _load_top100()
     tokens = data.get("tokens", [])
     top_token_addrs = {t.get("contract_address", "") for t in tokens if t.get("contract_address")}
-    
+
     if not top_token_addrs:
         return []
-    
+
     # Get top wallets
     top_wallets = _get_top_wallets(500)
     if not top_wallets:
         return []
-    
+
     # For each wallet, count how many top tokens they hold
     wallet_results = []
     for w in top_wallets:
@@ -825,13 +842,13 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
         held_tokens = _get_wallet_token_holdings(addr)
         held_set = set(held_tokens)
         top_token_overlap = held_set & top_token_addrs
-        
+
         # Get symbols for held top tokens
         held_symbols = []
         for t in tokens:
             if t.get("contract_address") in top_token_overlap:
                 held_symbols.append(t.get("symbol", "?"))
-        
+
         wallet_results.append({
             "address": addr,
             "chain": w.get("chain", ""),
@@ -839,7 +856,7 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
             "top_token_count": len(top_token_overlap),
             "top_tokens": held_symbols[:10],
         })
-    
+
     # Sort by top_token_count DESC, then wallet_score DESC
     wallet_results.sort(key=lambda w: (w["top_token_count"], w["wallet_score"]), reverse=True)
     return wallet_results
@@ -849,7 +866,7 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
 async def cross_tokens():
     """Tokens ranked by how many top wallets hold them."""
     tokens = _cross_reference_tokens_by_wallets()
-    
+
     rows = ""
     for i, t in enumerate(tokens[:100], 1):
         score = t.get("score", 0) or 0
@@ -861,7 +878,7 @@ async def cross_tokens():
         wallet_links = ", ".join(
             f'<a href="/wallet/{w}">{_trunc(w, 4)}</a>' for w in holding_wallets[:5]
         )
-        
+
         rows += f"""<tr>
   <td>{i}</td>
   <td><a href="/token/{addr}"><strong>{t.get('symbol','???')}</strong></a></td>
@@ -887,7 +904,7 @@ async def cross_tokens():
 async def cross_wallets():
     """Wallets ranked by how many top tokens they hold."""
     wallets = _cross_reference_wallets_by_tokens()
-    
+
     rows = ""
     for i, w in enumerate(wallets[:100], 1):
         score = w.get("wallet_score", 0) or 0
@@ -897,7 +914,7 @@ async def cross_wallets():
         addr = w.get("address", "")
         top_tokens = w.get("top_tokens", [])
         token_badges = " ".join(f'<span class="tag tag-g">{t}</span>' for t in top_tokens[:8])
-        
+
         rows += f"""<tr>
   <td>{i}</td>
   <td class="mono"><a href="/wallet/{addr}">{_trunc(addr)}</a></td>

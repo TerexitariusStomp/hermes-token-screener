@@ -1,8 +1,7 @@
 """Integration tests: verify scripts import hermes_screener modules correctly."""
 
-import os
 import ast
-import sys
+import os
 from pathlib import Path
 
 import pytest
@@ -39,9 +38,8 @@ def _get_imports(tree: ast.Module) -> list[str]:
         if isinstance(node, ast.Import):
             for alias in node.names:
                 imports.append(alias.name)
-        elif isinstance(node, ast.ImportFrom):
-            if node.module:
-                imports.append(node.module)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            imports.append(node.module)
     return imports
 
 

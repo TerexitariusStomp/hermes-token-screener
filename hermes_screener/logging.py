@@ -20,9 +20,10 @@ from __future__ import annotations
 import logging
 import sys
 import time
+from collections.abc import Iterator
 from contextlib import contextmanager
 from functools import lru_cache
-from typing import Any, Iterator
+from typing import Any
 
 import structlog
 from structlog.types import EventDict

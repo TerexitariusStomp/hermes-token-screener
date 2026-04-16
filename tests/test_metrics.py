@@ -2,8 +2,6 @@
 
 import os
 
-import pytest
-
 os.environ.setdefault("HERMES_HOME", "/tmp/test_hermes")
 
 

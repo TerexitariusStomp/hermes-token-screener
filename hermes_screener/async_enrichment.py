@@ -23,15 +23,14 @@ Or from token_enricher.py:
 from __future__ import annotations
 
 import asyncio
-import json
 import time
-from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from collections.abc import Callable
+from dataclasses import dataclass
 
 import httpx
 
 from hermes_screener.config import settings
-from hermes_screener.logging import get_logger, log_duration
+from hermes_screener.logging import get_logger
 from hermes_screener.metrics import metrics
 
 log = get_logger("async_enrichment")
@@ -43,7 +42,7 @@ log = get_logger("async_enrichment")
 
 def _make_client(
     base_url: str = "",
-    headers: Optional[dict] = None,
+    headers: dict | None = None,
     timeout: float = 15.0,
     max_connections: int = 10,
 ) -> httpx.AsyncClient:
@@ -73,7 +72,7 @@ class LayerResult:
     enriched_count: int
     total_count: int
     elapsed: float
-    error: Optional[str] = None
+    error: str | None = None
 
 
 class AsyncDexscreenerEnricher:
@@ -86,9 +85,9 @@ class AsyncDexscreenerEnricher:
 
     async def enrich_batch(
         self,
-        tokens: List[dict],
+        tokens: list[dict],
         client: httpx.AsyncClient,
-    ) -> Tuple[List[dict], int]:
+    ) -> tuple[list[dict], int]:
         """Enrich a batch of tokens with Dexscreener data."""
         tasks = [
             self._enrich_one(client, token, i, len(tokens))
@@ -179,7 +178,7 @@ class AsyncDexscreenerEnricher:
                 return token
 
     @staticmethod
-    def _age_hours(created_at_ms) -> Optional[float]:
+    def _age_hours(created_at_ms) -> float | None:
         if not created_at_ms:
             return None
         return round((time.time() * 1000 - created_at_ms) / 3600000, 2)
@@ -192,7 +191,7 @@ class AsyncHttpEnricher:
         self,
         name: str,
         base_url: str = "",
-        headers: Optional[dict] = None,
+        headers: dict | None = None,
         concurrency: int = 3,
         delay: float = 0.5,
         timeout: float = 15.0,
@@ -208,9 +207,9 @@ class AsyncHttpEnricher:
     async def enrich_batch(
         self,
         enrich_fn: Callable,
-        tokens: List[dict],
+        tokens: list[dict],
         client: httpx.AsyncClient,
-    ) -> Tuple[int, int]:
+    ) -> tuple[int, int]:
         """
         Run enrich_fn(token, client) on each token with rate limiting.
         enrich_fn should mutate the token dict in-place and return it.
@@ -517,9 +516,9 @@ async def _enrich_derived(enriched: list) -> int:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 async def run_async_enrichment(
-    candidates: List[dict],
+    candidates: list[dict],
     max_enrich: int = 300,
-) -> Tuple[List[dict], List[LayerResult]]:
+) -> tuple[list[dict], list[LayerResult]]:
     """
     Run all enrichment layers asynchronously.
 
@@ -528,27 +527,27 @@ async def run_async_enrichment(
 
     Returns (enriched_tokens, layer_results).
     """
+    # Import sync enrichers for CLI-based layers
+    import sys
+
     from hermes_screener.async_enrichment import (
         AsyncDexscreenerEnricher,
         AsyncHttpEnricher,
+        LayerResult,
+        _enrich_coingecko,
+        _enrich_defi,
+        _enrich_derived,
+        _enrich_etherscan,
         _enrich_goplus,
         _enrich_rugcheck,
-        _enrich_etherscan,
-        _enrich_defi,
-        _enrich_coingecko,
         _enrich_zerion,
-        _enrich_derived,
-        _run_cli_enricher,
-        LayerResult,
         _make_client,
+        _run_cli_enricher,
     )
-
-    # Import sync enrichers for CLI-based layers
-    import sys
     sys.path.insert(0, str(settings.hermes_home / "scripts"))
     # These will be imported lazily to avoid circular imports
 
-    results: List[LayerResult] = []
+    results: list[LayerResult] = []
     total_candidates = len(candidates)
 
     async with _make_client() as client:
@@ -717,8 +716,8 @@ async def run_async_enrichment(
 
 
 def run_async_enrichment_sync(
-    candidates: List[dict],
+    candidates: list[dict],
     max_enrich: int = 300,
-) -> Tuple[List[dict], List[LayerResult]]:
+) -> tuple[list[dict], list[LayerResult]]:
     """Synchronous wrapper for run_async_enrichment()."""
     return asyncio.run(run_async_enrichment(candidates, max_enrich))
