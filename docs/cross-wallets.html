@@ -18,15 +18,18 @@
 <div class="sub">Smart money wallets sorted by how many top-100 tokens they hold</div>
 <div id="loading">Loading cross-reference data...</div>
 <div class="tbl" id="table-container" style="display:none"><table>
-<thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Score</th><th>🧬 Top Tokens</th><th>Held Tokens</th></tr></thead>
+<thead><tr><th>#</th><th>Address</th><th>Chain</th><th>Score</th><th>🧬</th><th>PnL</th><th>ROI</th><th>Win</th><th>Trades</th><th>Tags</th><th>Active</th><th>Top Tokens</th></tr></thead>
 <tbody id="tbody"></tbody>
 </table></div>
 </div>
 <div class="updated" id="updated"></div>
 <script>
 function fmt_usd(v){if(!v)return"—";v=parseFloat(v);if(v>=1e9)return"$"+(v/1e9).toFixed(1)+"B";if(v>=1e6)return"$"+(v/1e6).toFixed(1)+"M";if(v>=1e3)return"$"+(v/1e3).toFixed(1)+"K";return"$"+v.toLocaleString()}
+function fmt_pct(v){if(v==null)return"—";return(v>0?"+":"")+parseFloat(v).toFixed(1)+"%"}
+function pct_cls(v){if(v==null)return"";return v>0?"pos":v<0?"neg":""}
 function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)+"..."+a.slice(-n)}
 function chain_cls(c){return["solana","sol","base","ethereum","bsc"].includes(c)?"chain-"+c:""}
+function time_ago(ts){if(!ts)return"—";const d=Date.now()/1000-parseFloat(ts);if(d<60)return Math.floor(d)+"s";if(d<3600)return Math.floor(d/60)+"m";if(d<86400)return Math.floor(d/3600)+"h";return Math.floor(d/86400)+"d"}
 
 fetch("data/cross-wallets.json").then(r=>r.json()).then(wallets=>{
   const tbody=document.getElementById("tbody");
@@ -36,14 +39,32 @@ fetch("data/cross-wallets.json").then(r=>r.json()).then(wallets=>{
     const tc=w.top_token_count||0;
     const tc_cls=tc>=10?"sc-h":tc>=5?"sc-m":"sc-l";
     const addr=w.address||"";
-    const tokens=(w.top_tokens||[]).slice(0,8).map(t=>`<span class="tag tag-g">${t}</span>`).join(" ");
+    const profit=w.total_profit;
+    const profit_cls=profit>0?"pos":profit<0?"neg":"";
+    const top_tokens=(w.top_tokens||[]).slice(0,6).map(t=>`<span class="tag tag-g">${t}</span>`).join(" ");
+    let tags_html="";
+    (w.wallet_tags||"").split(",").forEach(t=>{
+      t=t.trim();
+      if(t){
+        const cls=t in{"sniper":1,"insider":1}?"tag-r":t==="smart"?"tag-g":"";
+        tags_html+=`<span class="tag ${cls}">${t}</span>`;
+      }
+    });
+    if(w.insider_flag) tags_html+='<span class="tag tag-y">INSIDER</span>';
+
     tbody.innerHTML+=`<tr>
   <td>${i+1}</td>
   <td class="mono"><a href="wallet.html#${addr}">${trunc(addr)}</a></td>
   <td><span class="badge ${chain_cls(w.chain||"")}">${w.chain||""}</span></td>
   <td class="sc ${sc_cls}">${score.toFixed(0)}</td>
   <td class="sc ${tc_cls}">${tc}</td>
-  <td>${tokens}</td>
+  <td class="${profit_cls}">${fmt_usd(profit)}</td>
+  <td class="${pct_cls(w.avg_roi)}">${fmt_pct(w.avg_roi)}</td>
+  <td>${((w.win_rate||0)*100).toFixed(0)}%</td>
+  <td>${w.total_trades||0}</td>
+  <td>${tags_html}</td>
+  <td>${time_ago(w.last_active_at)}</td>
+  <td>${top_tokens}</td>
 </tr>`;
   });
   document.getElementById("loading").style.display="none";

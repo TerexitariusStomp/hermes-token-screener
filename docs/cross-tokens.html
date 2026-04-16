@@ -18,13 +18,15 @@
 <div class="sub">Top tokens sorted by how many smart money wallets hold them</div>
 <div id="loading">Loading cross-reference data...</div>
 <div class="tbl" id="table-container" style="display:none"><table>
-<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>🧬 Wallets</th><th>FDV</th><th>Vol24h</th><th>Top Holders</th></tr></thead>
+<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>🧬</th><th>Ch</th><th>FDV</th><th>Vol24h</th><th>Vol1h</th><th>1h</th><th>6h</th><th>Age</th><th>🧠</th><th>Signals</th><th>Holders</th></tr></thead>
 <tbody id="tbody"></tbody>
 </table></div>
 </div>
 <div class="updated" id="updated"></div>
 <script>
 function fmt_usd(v){if(!v)return"—";v=parseFloat(v);if(v>=1e9)return"$"+(v/1e9).toFixed(1)+"B";if(v>=1e6)return"$"+(v/1e6).toFixed(1)+"M";if(v>=1e3)return"$"+(v/1e3).toFixed(1)+"K";return"$"+v.toLocaleString()}
+function fmt_pct(v){if(v==null)return"—";return(v>0?"+":"")+parseFloat(v).toFixed(1)+"%"}
+function pct_cls(v){if(v==null)return"";return v>0?"pos":v<0?"neg":""}
 function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)+"..."+a.slice(-n)}
 function chain_cls(c){return["solana","sol","base","ethereum","bsc"].includes(c)?"chain-"+c:""}
 
@@ -35,30 +37,34 @@ fetch("data/cross-tokens.json").then(r=>r.json()).then(tokens=>{
     const sc_cls=score>=70?"sc-h":score>=40?"sc-m":"sc-l";
     const wc=t.wallet_count||0;
     const wc_cls=wc>=10?"sc-h":wc>=5?"sc-m":"sc-l";
+    const p1h=pct_cls(t.price_change_h1);
+    const p6h=pct_cls(t.price_change_h6);
+    const tags=(t.positives||[]).slice(0,2).map(p=>`<span class="tag tag-g">${p}</span>`).join("");
     const addr=t.contract_address||"";
-    const holders=(t.holding_wallets||[]).slice(0,5).map(w=>`<span style="font-size:.7rem">${trunc(w,4)}</span>`).join(", ");
+    const holders=(t.holding_wallets||[]).slice(0,3).map(w=>`<span style="font-size:.65rem">${trunc(w,4)}</span>`).join(", ");
     tbody.innerHTML+=`<tr>
   <td>${i+1}</td>
-  <td><a href="${t.dex_url || '#' }" target="_blank"><strong>${t.symbol||"???"}</strong></a></td>
+  <td><a href="${t.dex_url || '#'}" target="_blank"><strong>${t.symbol||"???"}</strong></a></td>
   <td><span class="badge ${chain_cls(t.chain||"")}">${t.chain||""}</span></td>
   <td class="mono">${trunc(addr)}</td>
   <td class="sc ${sc_cls}">${score.toFixed(1)}</td>
   <td class="sc ${wc_cls}">${wc}</td>
+  <td>${t.channel_count||0}</td>
   <td>${fmt_usd(t.fdv)}</td>
   <td>${fmt_usd(t.volume_h24)}</td>
-  <td class="mono" style="font-size:.7rem">${holders}</td>
+  <td>${fmt_usd(t.volume_h1)}</td>
+  <td class="${p1h}">${fmt_pct(t.price_change_h1)}</td>
+  <td class="${p6h}">${fmt_pct(t.price_change_h6)}</td>
+  <td>${(t.age_hours||0).toFixed(1)}h</td>
+  <td>${t.gmgn_smart_wallets||0}</td>
+  <td>${tags}</td>
+  <td class="mono" style="font-size:.65rem;max-width:120px;overflow:hidden;text-overflow:ellipsis">${holders}</td>
 </tr>`;
   });
   document.getElementById("loading").style.display="none";
   document.getElementById("table-container").style.display="";
 }).catch(e=>{
   document.getElementById("loading").textContent="Error: "+e.message;
-  // Fallback: load from tokens.json and compute client-side
-  fetch("data/tokens.json").then(r=>r.json()).then(data=>{
-    document.getElementById("loading").textContent="Using token data (no cross-reference data yet)";
-    document.getElementById("loading").style.display="none";
-    document.getElementById("table-container").style.display="";
-  });
 });
 </script>
 </body></html>
