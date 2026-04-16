@@ -12,12 +12,12 @@ venv/
 .venv/
 
 # Data (generated at runtime)
-data/
-*.db
-*.db-wal
-*.db-shm
+data/*.db
+data/*.db-wal
+data/*.db-shm
 *.jsonl
 *.log
+dashboard_data.json
 
 # Allow docs/data for GitHub Pages
 !docs/data/
