@@ -269,7 +269,7 @@ async def poll_dialog(client, dialog, last_seen: dict, conn, dry_run: bool = Fal
             max_id_seen = msg.id
 
         for orig, normalized, source in extract_addresses(msg.text):
-            chain = 'solana' if not normalized.startswith('0x') else ('bsc' if normalized.lower().endswith('ffff') else 'ethereum')
+            chain = 'solana' if not normalized.startswith('0x') else 'ethereum'
             inserted = insert_extraction(
                 conn,
                 channel_id=str(chat_id),
