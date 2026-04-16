@@ -21,6 +21,38 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from hermes_screener.config import settings
 
+
+# Chain name mapping from Dexscreener URL paths
+CHAIN_MAP = {
+    "solana": "solana",
+    "sol": "solana",
+    "ethereum": "ethereum",
+    "eth": "ethereum",
+    "base": "base",
+    "bsc": "BNB",
+    "binance": "BNB",
+    "arbitrum": "Arbitrum",
+    "polygon": "Polygon",
+    "avalanche": "Avalanche",
+    "sui": "Sui",
+}
+
+
+def normalize_chain(chain: str, dex_url: str = "") -> str:
+    """Normalize chain name, deriving from dex_url if needed."""
+    # Try to extract chain from dex_url (https://dexscreener.com/{chain}/{addr})
+    if dex_url:
+        parts = dex_url.split("/")
+        if len(parts) >= 4 and "dexscreener.com" in dex_url:
+            url_chain = parts[3].lower()
+            if url_chain in CHAIN_MAP:
+                return CHAIN_MAP[url_chain]
+
+    # Fall back to chain field
+    chain_lower = (chain or "").lower()
+    return CHAIN_MAP.get(chain_lower, chain or "unknown")
+
+
 DOCS_DATA = Path(__file__).parent.parent / "docs" / "data"
 
 
@@ -55,8 +87,9 @@ def export_tokens():
     tokens = data.get("tokens") or data.get("top_tokens") or []
     data["tokens"] = tokens
 
-    # Clean up data for JSON serialization (remove sets, etc.)
+    # Normalize chains and clean up data
     for token in tokens:
+        token["chain"] = normalize_chain(token.get("chain", ""), token.get("dex_url", ""))
         for key in list(token.keys()):
             if isinstance(token[key], set):
                 token[key] = list(token[key])
@@ -164,6 +197,7 @@ def export_cross_tokens():
                 t_addr = t.get("contract_address", "")
                 t["wallet_count"] = len(wallet_holdings.get(t_addr, []))
                 t["holding_wallets"] = wallet_holdings.get(t_addr, [])[:10]
+                t["chain"] = normalize_chain(t.get("chain", ""), t.get("dex_url", ""))
         finally:
             conn.close()
     
