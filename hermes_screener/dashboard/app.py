@@ -969,19 +969,15 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
             if t.get("contract_address") in top_token_overlap:
                 held_symbols.append(t.get("symbol", "?"))
 
-        wallet_results.append(
-            {
-                "address": addr,
-                "chain": w.get("chain", ""),
-                "wallet_score": w.get("wallet_score", 0),
-                "top_token_count": len(top_token_overlap),
-                "top_tokens": held_symbols[:10],
-            }
-        )
+        # Include ALL wallet fields for display
+        result = dict(w)
+        result["top_token_count"] = len(top_token_overlap)
+        result["top_tokens"] = held_symbols[:10]
+        wallet_results.append(result)
 
     # Sort by top_token_count DESC, then wallet_score DESC
     wallet_results.sort(
-        key=lambda w: (w["top_token_count"], w["wallet_score"]), reverse=True
+        key=lambda w: (w.get("top_token_count", 0), w.get("wallet_score", 0)), reverse=True
     )
     return wallet_results
 
@@ -1053,10 +1049,24 @@ async def cross_wallets():
         tc = w.get("top_token_count", 0)
         tc_cls = "sc-h" if tc >= 10 else "sc-m" if tc >= 5 else "sc-l"
         addr = w.get("address", "")
+        profit = w.get("total_profit")
+        profit_cls = "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
         top_tokens = w.get("top_tokens", [])
         token_badges = " ".join(
-            f'<span class="tag tag-g">{t}</span>' for t in top_tokens[:8]
+            f'<span class="tag tag-g">{t}</span>' for t in top_tokens[:6]
         )
+        tags_html = ""
+        for t in (w.get("wallet_tags") or "").split(","):
+            t = t.strip()
+            if t:
+                tag_cls = (
+                    "tag-r"
+                    if t in ("sniper", "insider")
+                    else "tag-g" if t == "smart" else ""
+                )
+                tags_html += f'<span class="tag {tag_cls}">{t}</span>'
+        if w.get("insider_flag"):
+            tags_html += '<span class="tag tag-y">INSIDER</span>'
 
         rows += f"""<tr>
   <td>{i}</td>
@@ -1064,6 +1074,12 @@ async def cross_wallets():
   <td><span class="badge {_chain_cls(w.get('chain',''))}">{w.get('chain','')}</span></td>
   <td class="sc {sc_cls}">{score:.0f}</td>
   <td class="sc {tc_cls}">{tc}</td>
+  <td class="{profit_cls}">{_fmt_usd(profit)}</td>
+  <td class="{_pct_cls(w.get('avg_roi'))}">{_fmt_pct(w.get('avg_roi'))}</td>
+  <td>{(w.get('win_rate', 0) or 0) * 100:.0f}%</td>
+  <td>{w.get('total_trades', 0)}</td>
+  <td>{tags_html}</td>
+  <td>{_time_ago(w.get('last_active_at'))}</td>
   <td>{token_badges}</td>
 </tr>"""
 
@@ -1074,7 +1090,7 @@ async def cross_wallets():
 <h1>Wallets Ranked by Top Token Count</h1>
 <div class="sub">Smart money wallets sorted by how many top-100 tokens they hold &middot; {len(wallets)} wallets analyzed</div>
 <div class="tbl"><table>
-<thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Score</th><th>🧬 Top Tokens</th><th>Held Tokens</th></tr></thead>
+<thead><tr><th>#</th><th>Address</th><th>Chain</th><th>Score</th><th>🧬</th><th>PnL</th><th>ROI</th><th>Win</th><th>Trades</th><th>Tags</th><th>Active</th><th>Top Tokens</th></tr></thead>
 <tbody>{rows}</tbody>
 </table></div>""",
     )
