@@ -32,7 +32,6 @@ Autonomous smart-money tracking system that discovers, enriches, and ranks token
 | 8 | GMGN | Dev conviction, smart money, bot detection | No |
 | 9 | Social | Telegram DB + composite social score | No |
 | 10 | Zerion | Price, market cap, FDV, supply, verified | No |
-| 11 | CoinStats | Risk score, liquidity score, volatility | No |
 
 Each enricher is wrapped in try/except. If it fails, its fields are skipped but the pipeline continues. Only Layer 0 (Dexscreener) is required.
 
@@ -104,7 +103,7 @@ Multipliers: verified contract (+20%), dev holding (+25%), LP burned (+15%), sma
 ### Prerequisites
 
 ```bash
-# Node.js (for GMGN CLI + CoinStats MCP)
+# Node.js (for GMGN CLI)
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
 sudo apt install -y nodejs
 
@@ -130,7 +129,6 @@ Required keys:
 | `TG_API_ID` / `TG_API_HASH` | Telegram (my.telegram.org) | Yes |
 | `GMGN_API_KEY` | GMGN (gmgn.ai/ai) | Yes |
 | `ZERION_API_KEY` | Zerion (developers.zerion.io) | Yes |
-| `COINSTATS_API_KEY` | CoinStats (coinstats.info/api) | Yes |
 | `ETHERSCAN_API_KEY` | Etherscan (etherscan.io/apis) | Yes |
 | `DEFI_API_KEY` | De.Fi (de.fi) | Yes |
 

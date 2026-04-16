@@ -7,9 +7,9 @@ using asyncio + httpx (~1-2 min depending on API latency).
 Architecture:
   Layer 0 (Dexscreener): REQUIRED — runs first, blocking (enriches raw candidates with market data)
   Layers 1-11: OPTIONAL — all run in parallel via asyncio.gather()
-    - HTTP enrichers (Surf, GoPlus, RugCheck, Etherscan, De.Fi, CoinGecko, Zerion, CoinStats):
+    - HTTP enrichers (Surf, GoPlus, RugCheck, Etherscan, De.Fi, CoinGecko, Zerion):
       use httpx.AsyncClient with per-enricher semaphores for rate limiting
-    - CLI enrichers (Surf CLI, GMGN, CoinStats MCP): use asyncio.to_thread()
+    - CLI enrichers (Surf CLI, GMGN MCP): use asyncio.to_thread()
     - Derived (no API): runs directly (pure computation)
 
 Usage:
@@ -625,7 +625,7 @@ async def run_async_enrichment(
             except Exception as e:
                 return LayerResult("Derived", False, 0, len(enriched), time.time() - start, str(e))
 
-        # Surf, GMGN, CoinStats — CLI-based, run in threads
+        # Surf, GMGN — CLI-based, run in threads
         async def run_surf():
             try:
                 from token_enricher import SurfEnricher
@@ -640,12 +640,6 @@ async def run_async_enrichment(
             except ImportError:
                 return LayerResult("GMGN", False, 0, len(enriched), 0, "import failed")
 
-        async def run_coinstats():
-            try:
-                from token_enricher import CoinStatsEnricher
-                return await _run_cli_enricher("CoinStats", lambda t: CoinStatsEnricher().enrich_batch(t), enriched)
-            except ImportError:
-                return LayerResult("CoinStats", False, 0, len(enriched), 0, "import failed")
 
         async def run_social():
             try:
@@ -666,7 +660,6 @@ async def run_async_enrichment(
             run_derived(),
             run_surf(),
             run_gmgn(),
-            run_coinstats(),
             run_social(),
             return_exceptions=True,
         )
