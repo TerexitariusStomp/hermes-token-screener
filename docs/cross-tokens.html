@@ -39,7 +39,7 @@ fetch("data/cross-tokens.json").then(r=>r.json()).then(tokens=>{
     const holders=(t.holding_wallets||[]).slice(0,5).map(w=>`<span style="font-size:.7rem">${trunc(w,4)}</span>`).join(", ");
     tbody.innerHTML+=`<tr>
   <td>${i+1}</td>
-  <td><a href="token.html#${addr}"><strong>${t.symbol||"???"}</strong></a></td>
+  <td><a href="${t.dex_url || '#' }" target="_blank"><strong>${t.symbol||"???"}</strong></a></td>
   <td><span class="badge ${chain_cls(t.chain||"")}">${t.chain||""}</span></td>
   <td class="mono">${trunc(addr)}</td>
   <td class="sc ${sc_cls}">${score.toFixed(1)}</td>

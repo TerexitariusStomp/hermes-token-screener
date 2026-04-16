@@ -40,7 +40,7 @@ fetch("data/tokens.json").then(r=>r.json()).then(data=>{
     const tags=(t.positivs||t.positives||[]).slice(0,2).map(p=>`<span class="tag tag-g">${p}</span>`).join("");
     tbody.innerHTML+=`<tr>
   <td>${i+1}</td>
-  <td><a href="token.html#${addr}"><strong>${t.symbol||"???"}</strong></a></td>
+  <td><a href="${t.dex_url || '#' }" target="_blank"><strong>${t.symbol||"???"}</strong></a></td>
   <td><span class="badge ${chain_cls(t.chain||"")}">${t.chain||""}</span></td>
   <td class="mono">${trunc(addr)}</td>
   <td class="sc ${sc_cls}">${score.toFixed(1)}</td>

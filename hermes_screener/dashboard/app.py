@@ -418,7 +418,7 @@ async def index():
         addr = t.get("contract_address", "")
         rows += f"""<tr>
   <td>{i}</td>
-  <td><a href="/token/{addr}"><strong>{t.get('symbol','???')}</strong></a></td>
+  <td><a href="{t.get('dex_url', '/token/' + addr)}" target="_blank"><strong>{t.get('symbol','???')}</strong></a></td>
   <td><span class="badge {_chain_cls(t.get('chain',''))}">{t.get('chain','')}</span></td>
   <td class="mono"><a href="{_explorer(t.get('chain',''), addr)}" target="_blank">{_trunc(addr)}</a></td>
   <td class="sc {sc_cls}">{score:.1f}</td>
@@ -1008,7 +1008,7 @@ async def cross_tokens():
 
         rows += f"""<tr>
   <td>{i}</td>
-  <td><a href="/token/{addr}"><strong>{t.get('symbol','???')}</strong></a></td>
+  <td><a href="{t.get('dex_url', '/token/' + addr)}" target="_blank"><strong>{t.get('symbol','???')}</strong></a></td>
   <td><span class="badge {_chain_cls(t.get('chain',''))}">{t.get('chain','')}</span></td>
   <td class="mono"><a href="{_explorer(t.get('chain',''), addr)}" target="_blank">{_trunc(addr)}</a></td>
   <td class="sc {sc_cls}">{score:.1f}</td>
