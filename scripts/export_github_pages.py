@@ -21,7 +21,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from hermes_screener.config import settings
 
-
 # Chain name mapping from Dexscreener URL paths
 CHAIN_MAP = {
     "solana": "solana",
@@ -81,7 +80,11 @@ def export_tokens():
 
     if not data:
         print("No enriched token data found, creating empty data")
-        data = {"tokens": [], "generated_at_iso": "No data available", "total_candidates": 0}
+        data = {
+            "tokens": [],
+            "generated_at_iso": "No data available",
+            "total_candidates": 0,
+        }
 
     # Handle both "tokens" and "top_tokens" key names
     tokens = data.get("tokens") or data.get("top_tokens") or []
@@ -89,11 +92,13 @@ def export_tokens():
 
     # Normalize chains and clean up data
     for token in tokens:
-        token["chain"] = normalize_chain(token.get("chain", ""), token.get("dex_url", ""))
+        token["chain"] = normalize_chain(
+            token.get("chain", ""), token.get("dex_url", "")
+        )
         for key in list(token.keys()):
             if isinstance(token[key], set):
                 token[key] = list(token[key])
-    
+
     dst = DOCS_DATA / "tokens.json"
     with open(dst, "w") as f:
         json.dump(data, f, indent=2, default=str)
@@ -129,13 +134,14 @@ def export_wallets():
             wallets = []
         finally:
             conn.close()
-        
+
         from datetime import datetime, timezone
+
         data = {
             "wallets": wallets,
             "generated_at_iso": datetime.now(timezone.utc).isoformat(),
         }
-    
+
     dst = DOCS_DATA / "wallets.json"
     with open(dst, "w") as f:
         json.dump(data, f, indent=2, default=str)
@@ -185,14 +191,14 @@ def export_cross_tokens():
                 "ORDER BY wallet_score DESC LIMIT 200"
             ).fetchall()
             wallet_addrs = [r[0] for r in top_wallets]
-            
+
             # Get holdings for each wallet
             wallet_holdings = {}  # token_addr -> set of wallet_addrs
             for w_addr in wallet_addrs:
                 rows = conn.execute(
                     "SELECT DISTINCT token_address FROM wallet_token_entries "
                     "WHERE wallet_address = ? AND token_address IS NOT NULL",
-                    (w_addr,)
+                    (w_addr,),
                 ).fetchall()
                 for r in rows:
                     t_addr = r[0]
@@ -200,7 +206,7 @@ def export_cross_tokens():
                         if t_addr not in wallet_holdings:
                             wallet_holdings[t_addr] = []
                         wallet_holdings[t_addr].append(w_addr)
-            
+
             # Annotate tokens
             for t in tokens:
                 t_addr = t.get("contract_address", "")
@@ -209,16 +215,18 @@ def export_cross_tokens():
                 t["chain"] = normalize_chain(t.get("chain", ""), t.get("dex_url", ""))
         finally:
             conn.close()
-    
+
     # Sort by wallet_count, then score
-    tokens.sort(key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True)
-    
+    tokens.sort(
+        key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True
+    )
+
     # Convert sets to lists
     for t in tokens:
         for key in list(t.keys()):
             if isinstance(t[key], set):
                 t[key] = list(t[key])
-    
+
     dst = DOCS_DATA / "cross-tokens.json"
     with open(dst, "w") as f:
         json.dump(tokens, f, indent=2, default=str)
@@ -251,14 +259,16 @@ def export_cross_wallets():
         print("No enriched token data, skipping cross-wallets")
         return
 
-    top_token_addrs = {t.get("contract_address", "") for t in tokens if t.get("contract_address")}
+    top_token_addrs = {
+        t.get("contract_address", "") for t in tokens if t.get("contract_address")
+    }
 
     # Get wallets
     db_path = settings.wallets_db_path
     if not db_path.exists():
         print("No wallet DB, skipping cross-wallets")
         return
-    
+
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
     try:
@@ -292,7 +302,7 @@ def export_cross_wallets():
             wallet_results.append(result)
     finally:
         conn.close()
-    
+
     # Sort by composite score: top_token_count * win_rate * (1 + avg_roi)
     # Prioritizes wallets with high ROI, high win rate, and many top tokens
     def wallet_sort_key(w):
@@ -304,7 +314,7 @@ def export_cross_wallets():
         return (composite, w.get("wallet_score", 0))
 
     wallet_results.sort(key=wallet_sort_key, reverse=True)
-    
+
     dst = DOCS_DATA / "cross-wallets.json"
     with open(dst, "w") as f:
         json.dump(wallet_results, f, indent=2, default=str)
