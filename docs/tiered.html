@@ -54,7 +54,8 @@ function fmt_usd(v){if(!v)return"\u2014";v=parseFloat(v);if(v>=1e9)return"$"+(v/
 function fmt_pct(v){if(v==null)return"\u2014";return(v>0?"+":"")+parseFloat(v).toFixed(1)+"%"}
 function pct_cls(v){if(v==null)return"";return v>0?"pos":v<0?"neg":""}
 function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)+"..."+a.slice(-n)}
-function chain_cls(c){return["solana","sol","base","ethereum","bsc"].includes(c)?"chain-"+c:""}
+function chain_cls(c){c=(c||"").toLowerCase();return["solana","sol","base","ethereum","eth","bsc","bnb","arbitrum","polygon","polygon-pos","avalanche","sui","optimism"].includes(c)?"chain-"+c:""}
+function block_url(addr,chain){chain=(chain||"").toLowerCase();if(chain==="solana"||chain==="sol")return"https://solscan.io/account/"+addr;if(chain==="base")return"https://basescan.org/address/"+addr;if(chain==="bsc"||chain==="bnb")return"https://bscscan.com/address/"+addr;if(chain==="arbitrum")return"https://arbiscan.io/address/"+addr;if(chain==="polygon"||chain==="polygon-pos")return"https://polygonscan.com/address/"+addr;if(chain==="avalanche")return"https://snowtrace.io/address/"+addr;if(chain==="optimism")return"https://optimistic.etherscan.io/address/"+addr;return"https://etherscan.io/address/"+addr}
 
 let DATA=null;
 let activeTier=null;
@@ -137,7 +138,7 @@ function selectTier(name){
       }).join("");
       wtbody.innerHTML+=`<tr>
         <td>${i+1}</td>
-        <td class="mono"><a href="https://blockscan.com/address/${w.address}" target="_blank">${trunc(w.address)}</a></td>
+        <td class="mono"><a href="${block_url(w.address,w.chain)}" target="_blank">${trunc(w.address)}</a></td>
         <td><span class="badge ${chain_cls(w.chain||"")}">${w.chain||""}</span></td>
         <td class="sc ${sc_cls}">${score.toFixed(0)}</td>
         <td class="${profit_cls}">${fmt_usd(profit)}</td>

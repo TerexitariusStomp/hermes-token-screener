@@ -1,5 +1,5 @@
 {
-  "generated_at_iso": "2026-04-16T17:37:15.008070+00:00",
+  "generated_at_iso": "2026-04-16T18:30:04.559664+00:00",
   "tier_order": [
     "micro",
     "tiny",
@@ -60,8 +60,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.0,
-          "tg_first_mention_hours_ago": 60.8,
-          "tg_last_mention_minutes_ago": 3609.8,
+          "tg_first_mention_hours_ago": 61.8,
+          "tg_last_mention_minutes_ago": 3669.8,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -112,8 +112,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 1.0,
-          "tg_first_mention_hours_ago": 80.5,
-          "tg_last_mention_minutes_ago": 3711.2,
+          "tg_first_mention_hours_ago": 81.5,
+          "tg_last_mention_minutes_ago": 3771.1,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -158,8 +158,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 62.7,
-          "tg_last_mention_minutes_ago": 3544.5,
+          "tg_first_mention_hours_ago": 63.7,
+          "tg_last_mention_minutes_ago": 3604.5,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -205,8 +205,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.0,
-          "tg_first_mention_hours_ago": 132.6,
-          "tg_last_mention_minutes_ago": 4233.6,
+          "tg_first_mention_hours_ago": 133.6,
+          "tg_last_mention_minutes_ago": 4293.6,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -1675,8 +1675,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 1.0,
-          "tg_first_mention_hours_ago": 69.3,
-          "tg_last_mention_minutes_ago": 3711.2,
+          "tg_first_mention_hours_ago": 70.3,
+          "tg_last_mention_minutes_ago": 3771.1,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -1722,8 +1722,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 205.9,
-          "tg_last_mention_minutes_ago": 12335.2,
+          "tg_first_mention_hours_ago": 206.9,
+          "tg_last_mention_minutes_ago": 12395.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -1774,8 +1774,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.33,
-          "tg_first_mention_hours_ago": 335.4,
-          "tg_last_mention_minutes_ago": 10728.0,
+          "tg_first_mention_hours_ago": 336.4,
+          "tg_last_mention_minutes_ago": 10788.0,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -1820,8 +1820,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.0,
-          "tg_first_mention_hours_ago": 73.4,
-          "tg_last_mention_minutes_ago": 4397.0,
+          "tg_first_mention_hours_ago": 74.4,
+          "tg_last_mention_minutes_ago": 4457.0,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -3278,8 +3278,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 79.1,
-          "tg_last_mention_minutes_ago": 3711.2,
+          "tg_first_mention_hours_ago": 80.1,
+          "tg_last_mention_minutes_ago": 3771.1,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -3290,7 +3290,7 @@
           "chain": "solana",
           "symbol": "Skibidi",
           "name": "Skibidi Toilet",
-          "score": 5.86,
+          "score": 15.59,
           "channel_count": 2,
           "mentions": 1,
           "fdv": 149383,
@@ -3299,13 +3299,14 @@
           "age_hours": 124.22,
           "price_change_h1": 29.64,
           "price_change_h6": 62.17,
-          "social_score": 5.0,
+          "social_score": 37.44,
           "gmgn_smart_wallets": 12,
           "gmgn_dev_hold": true,
           "positives": [
             "5 smart wallets (avg 31)",
             "burned",
-            "CTO"
+            "CTO",
+            "VIRAL TG (30)"
           ],
           "negatives": [],
           "dex_url": "https://dexscreener.com/solana/FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump",
@@ -3314,17 +3315,18 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
-            "tg_velocity_pts": 0.0,
-            "tg_viral_pts": 0.0,
-            "tg_quality_pts": 5.0
+            "tg_velocity_pts": 21.1,
+            "tg_viral_pts": 10.0,
+            "tg_quality_pts": 3.3,
+            "cross_platform_bonus": 3
           },
-          "tg_channel_count": 2,
-          "tg_mention_count": 3,
-          "tg_mention_velocity": 0,
-          "tg_viral_score": 0,
-          "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 58.8,
-          "tg_last_mention_minutes_ago": 2086.9,
+          "tg_channel_count": 3,
+          "tg_mention_count": 4,
+          "tg_mention_velocity": 0.17,
+          "tg_viral_score": 30.0,
+          "tg_channel_quality": 0.33,
+          "tg_first_mention_hours_ago": 59.8,
+          "tg_last_mention_minutes_ago": 16.9,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -3368,8 +3370,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.0,
-          "tg_first_mention_hours_ago": 849.0,
-          "tg_last_mention_minutes_ago": 2086.9,
+          "tg_first_mention_hours_ago": 850.0,
+          "tg_last_mention_minutes_ago": 2146.9,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -3389,6 +3391,76 @@
           "tokens_held": 1,
           "token_addresses": [
             "Hc2CZzfiuBuSjTg6mpUByHVryy5e4yu8L7L4vtppump"
+          ]
+        },
+        {
+          "address": "FUuQKV53fUcZ8PexyQ9jTMcBw9JLNoQqhfUzpDPs8n5X",
+          "chain": "solana",
+          "wallet_score": 44.0,
+          "total_profit": 2938.4312153669225,
+          "win_rate": 1.0,
+          "avg_roi": 0.8120810495954046,
+          "trade_count": 131,
+          "wallet_tags": "fresh_wallet,TOP20",
+          "tokens_held": 1,
+          "token_addresses": [
+            "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump"
+          ]
+        },
+        {
+          "address": "65iEyANVsggRd18ZnpffJejWAUCELhvU9Z9x6xu7o3Fp",
+          "chain": "solana",
+          "wallet_score": 43.0,
+          "total_profit": 272.20034047071,
+          "win_rate": 1.0,
+          "avg_roi": 0.044631687322675626,
+          "trade_count": 232,
+          "wallet_tags": "TOP6",
+          "tokens_held": 1,
+          "token_addresses": [
+            "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump"
+          ]
+        },
+        {
+          "address": "HZRWo7XAWRdM1nZ3CAYjczCuRJyoCNvE4Z9kpHfRH2Ft",
+          "chain": "solana",
+          "wallet_score": 40.0,
+          "total_profit": 228.0061108167961,
+          "win_rate": 1.0,
+          "avg_roi": 0.04681900526382227,
+          "trade_count": 184,
+          "wallet_tags": "TOP24",
+          "tokens_held": 1,
+          "token_addresses": [
+            "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump"
+          ]
+        },
+        {
+          "address": "6ceDLU8Z9buFWm9S6qjaKBGidwM43cC15JYEc6B26ZTd",
+          "chain": "solana",
+          "wallet_score": 40.0,
+          "total_profit": 43.270388212414574,
+          "win_rate": 1.0,
+          "avg_roi": 0.08673698913494847,
+          "trade_count": 53,
+          "wallet_tags": "TOP104",
+          "tokens_held": 1,
+          "token_addresses": [
+            "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump"
+          ]
+        },
+        {
+          "address": "5z6kUfp4rvDNp3YosjH6QogkkVyVZkDTKzb42DhqknbV",
+          "chain": "solana",
+          "wallet_score": 40.0,
+          "total_profit": 427.048266051635,
+          "win_rate": 1.0,
+          "avg_roi": 0.11758937516480833,
+          "trade_count": 76,
+          "wallet_tags": "TOP14",
+          "tokens_held": 1,
+          "token_addresses": [
+            "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump"
           ]
         },
         {
@@ -3420,20 +3492,6 @@
           ]
         },
         {
-          "address": "FUuQKV53fUcZ8PexyQ9jTMcBw9JLNoQqhfUzpDPs8n5X",
-          "chain": "solana",
-          "wallet_score": 34.0,
-          "total_profit": 2938.4312153669225,
-          "win_rate": 1.0,
-          "avg_roi": 0.8120810495954046,
-          "trade_count": 131,
-          "wallet_tags": "fresh_wallet,TOP20",
-          "tokens_held": 1,
-          "token_addresses": [
-            "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump"
-          ]
-        },
-        {
           "address": "6AmQ2Kp5NzQPznt2HDLwWMQtmUXUvDuv6KKcx193tDd6",
           "chain": "solana",
           "wallet_score": 33.0,
@@ -3445,20 +3503,6 @@
           "tokens_held": 1,
           "token_addresses": [
             "Hc2CZzfiuBuSjTg6mpUByHVryy5e4yu8L7L4vtppump"
-          ]
-        },
-        {
-          "address": "65iEyANVsggRd18ZnpffJejWAUCELhvU9Z9x6xu7o3Fp",
-          "chain": "solana",
-          "wallet_score": 33.0,
-          "total_profit": 272.20034047071,
-          "win_rate": 1.0,
-          "avg_roi": 0.044631687322675626,
-          "trade_count": 232,
-          "wallet_tags": "TOP6",
-          "tokens_held": 1,
-          "token_addresses": [
-            "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump"
           ]
         },
         {
@@ -3487,48 +3531,6 @@
           "tokens_held": 1,
           "token_addresses": [
             "Hc2CZzfiuBuSjTg6mpUByHVryy5e4yu8L7L4vtppump"
-          ]
-        },
-        {
-          "address": "HZRWo7XAWRdM1nZ3CAYjczCuRJyoCNvE4Z9kpHfRH2Ft",
-          "chain": "solana",
-          "wallet_score": 30.0,
-          "total_profit": 228.0061108167961,
-          "win_rate": 1.0,
-          "avg_roi": 0.04681900526382227,
-          "trade_count": 184,
-          "wallet_tags": "TOP24",
-          "tokens_held": 1,
-          "token_addresses": [
-            "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump"
-          ]
-        },
-        {
-          "address": "6ceDLU8Z9buFWm9S6qjaKBGidwM43cC15JYEc6B26ZTd",
-          "chain": "solana",
-          "wallet_score": 30.0,
-          "total_profit": 43.270388212414574,
-          "win_rate": 1.0,
-          "avg_roi": 0.08673698913494847,
-          "trade_count": 53,
-          "wallet_tags": "TOP104",
-          "tokens_held": 1,
-          "token_addresses": [
-            "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump"
-          ]
-        },
-        {
-          "address": "5z6kUfp4rvDNp3YosjH6QogkkVyVZkDTKzb42DhqknbV",
-          "chain": "solana",
-          "wallet_score": 30.0,
-          "total_profit": 427.048266051635,
-          "win_rate": 1.0,
-          "avg_roi": 0.11758937516480833,
-          "trade_count": 76,
-          "wallet_tags": "TOP14",
-          "tokens_held": 1,
-          "token_addresses": [
-            "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump"
           ]
         },
         {
@@ -4828,8 +4830,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 1.0,
-          "tg_first_mention_hours_ago": 92.7,
-          "tg_last_mention_minutes_ago": 3784.6,
+          "tg_first_mention_hours_ago": 93.7,
+          "tg_last_mention_minutes_ago": 3844.6,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -4863,7 +4865,7 @@
           "positives": [
             "41 smart wallets (avg 37)",
             "CTO",
-            "VIRAL TG (30)"
+            "VIRAL TG (45)"
           ],
           "negatives": [
             "down h24 (-24%)",
@@ -4881,12 +4883,12 @@
             "cross_platform_bonus": 3
           },
           "tg_channel_count": 2,
-          "tg_mention_count": 3,
-          "tg_mention_velocity": 0.17,
-          "tg_viral_score": 30.0,
+          "tg_mention_count": 6,
+          "tg_mention_velocity": 0.67,
+          "tg_viral_score": 45.0,
           "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 142.7,
-          "tg_last_mention_minutes_ago": 18.2,
+          "tg_first_mention_hours_ago": 143.7,
+          "tg_last_mention_minutes_ago": 16.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -6332,7 +6334,7 @@
             "27 smart wallets (avg 37), 3 insiders",
             "burned",
             "CoinGecko listed",
-            "VIRAL TG (30)"
+            "VIRAL TG (45)"
           ],
           "negatives": [
             "token farmer"
@@ -6349,12 +6351,12 @@
             "cross_platform_bonus": 3
           },
           "tg_channel_count": 6,
-          "tg_mention_count": 9,
-          "tg_mention_velocity": 0.17,
-          "tg_viral_score": 30.0,
+          "tg_mention_count": 12,
+          "tg_mention_velocity": 0.67,
+          "tg_viral_score": 45.0,
           "tg_channel_quality": 0.33,
-          "tg_first_mention_hours_ago": 63.9,
-          "tg_last_mention_minutes_ago": 18.2,
+          "tg_first_mention_hours_ago": 64.9,
+          "tg_last_mention_minutes_ago": 16.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -7795,7 +7797,7 @@
             "89 smart wallets (avg 40), 3 insiders",
             "burned",
             "CTO",
-            "VIRAL TG (30)"
+            "VIRAL TG (45)"
           ],
           "negatives": [
             "token farmer"
@@ -7812,12 +7814,12 @@
             "cross_platform_bonus": 3
           },
           "tg_channel_count": 3,
-          "tg_mention_count": 5,
-          "tg_mention_velocity": 0.17,
-          "tg_viral_score": 30.0,
+          "tg_mention_count": 8,
+          "tg_mention_velocity": 0.67,
+          "tg_viral_score": 45.0,
           "tg_channel_quality": 0.33,
-          "tg_first_mention_hours_ago": 74.7,
-          "tg_last_mention_minutes_ago": 18.2,
+          "tg_first_mention_hours_ago": 75.7,
+          "tg_last_mention_minutes_ago": 16.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -7846,7 +7848,7 @@
             "burned",
             "CTO",
             "CoinGecko listed",
-            "VIRAL TG (30)"
+            "VIRAL TG (45)"
           ],
           "negatives": [
             "down h24 (-24%)",
@@ -7864,12 +7866,12 @@
             "cross_platform_bonus": 3
           },
           "tg_channel_count": 5,
-          "tg_mention_count": 8,
-          "tg_mention_velocity": 0.17,
-          "tg_viral_score": 30.0,
+          "tg_mention_count": 11,
+          "tg_mention_velocity": 0.67,
+          "tg_viral_score": 45.0,
           "tg_channel_quality": 0.6,
-          "tg_first_mention_hours_ago": 91.0,
-          "tg_last_mention_minutes_ago": 18.2,
+          "tg_first_mention_hours_ago": 92.0,
+          "tg_last_mention_minutes_ago": 16.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -7919,8 +7921,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.75,
-          "tg_first_mention_hours_ago": 359.2,
-          "tg_last_mention_minutes_ago": 2086.9,
+          "tg_first_mention_hours_ago": 360.2,
+          "tg_last_mention_minutes_ago": 2146.9,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -7960,8 +7962,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 58.9,
-          "tg_last_mention_minutes_ago": 3530.2,
+          "tg_first_mention_hours_ago": 59.9,
+          "tg_last_mention_minutes_ago": 3590.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -9439,8 +9441,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.25,
-          "tg_first_mention_hours_ago": 116.2,
-          "tg_last_mention_minutes_ago": 2246.3,
+          "tg_first_mention_hours_ago": 117.2,
+          "tg_last_mention_minutes_ago": 2306.3,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -10891,8 +10893,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 73.3,
-          "tg_last_mention_minutes_ago": 4303.6,
+          "tg_first_mention_hours_ago": 74.3,
+          "tg_last_mention_minutes_ago": 4363.5,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,

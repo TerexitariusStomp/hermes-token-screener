@@ -27,7 +27,7 @@
 <script>
 function fmt_usd(v){if(!v)return"—";v=parseFloat(v);if(v>=1e9)return"$"+(v/1e9).toFixed(1)+"B";if(v>=1e6)return"$"+(v/1e6).toFixed(1)+"M";if(v>=1e3)return"$"+(v/1e3).toFixed(1)+"K";return"$"+v.toLocaleString()}
 function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)+"..."+a.slice(-n)}
-function chain_cls(c){return["solana","sol","base","ethereum","bsc"].includes(c)?"chain-"+c:""}
+function chain_cls(c){c=(c||"").toLowerCase();return["solana","sol","base","ethereum","eth","bsc","bnb","arbitrum","polygon","polygon-pos","avalanche","sui","optimism"].includes(c)?"chain-"+c:""}
 
 fetch("data/wallets.json").then(r=>r.json()).then(data=>{
   const wallets=data.wallets||[];

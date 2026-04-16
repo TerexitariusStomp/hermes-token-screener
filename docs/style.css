@@ -20,8 +20,13 @@ tr:hover td{background:var(--s2)}
 .badge{display:inline-block;padding:.1rem .4rem;border-radius:4px;font-size:.7rem;font-weight:bold}
 .chain-solana,.chain-sol{background:#9945ff22;color:#9945ff}
 .chain-base{background:#0052ff22;color:#0052ff}
-.chain-ethereum{background:#627eea22;color:#627eea}
-.chain-bsc{background:#f3ba2f22;color:#f3ba2f}
+.chain-ethereum,.chain-eth{background:#627eea22;color:#627eea}
+.chain-bsc,.chain-bnb{background:#f3ba2f22;color:#f3ba2f}
+.chain-arbitrum{background:#28a0f022;color:#28a0f0}
+.chain-polygon,.chain-polygon-pos{background:#8247e522;color:#8247e5}
+.chain-avalanche{background:#e8414222;color:#e84142}
+.chain-sui{background:#4da2ff22;color:#4da2ff}
+.chain-optimism{background:#ff042022;color:#ff0420}
 .tag{display:inline-block;padding:.1rem .35rem;border-radius:3px;font-size:.65rem;margin:.1rem}
 .tag-g{background:#10b98133;color:#10b981}.tag-y{background:#f59e0b33;color:#f59e0b}.tag-r{background:#ef444433;color:#ef4444}
 .mono{font-family:inherit}
