@@ -52,6 +52,32 @@ def normalize_chain(chain: str, dex_url: str = "") -> str:
     return CHAIN_MAP.get(chain_lower, chain or "unknown")
 
 
+MCAP_TIERS = [
+    (0, 50_000, "< $50K"),
+    (50_000, 250_000, "$50K - $250K"),
+    (250_000, 1_000_000, "$250K - $1M"),
+    (1_000_000, 10_000_000, "$1M - $10M"),
+    (10_000_000, 100_000_000, "$10M - $100M"),
+    (100_000_000, float("inf"), "$100M+"),
+]
+
+
+def mcap_tier_label(fdv: float) -> str:
+    """Return market cap tier label for a given FDV."""
+    for low, high, label in MCAP_TIERS:
+        if low <= (fdv or 0) < high:
+            return label
+    return "< $50K"
+
+
+def mcap_tier_key(fdv: float) -> int:
+    """Return sort key for market cap tier."""
+    for i, (low, high, _) in enumerate(MCAP_TIERS):
+        if low <= (fdv or 0) < high:
+            return i
+    return 0
+
+
 DOCS_DATA = Path(__file__).parent.parent / "docs" / "data"
 
 
@@ -213,6 +239,8 @@ def export_cross_tokens():
                 t["wallet_count"] = len(wallet_holdings.get(t_addr, []))
                 t["holding_wallets"] = wallet_holdings.get(t_addr, [])[:10]
                 t["chain"] = normalize_chain(t.get("chain", ""), t.get("dex_url", ""))
+                fdv = t.get("fdv") or t.get("market_cap") or 0
+                t["mcap_tier"] = mcap_tier_label(fdv)
         finally:
             conn.close()
 
@@ -262,6 +290,14 @@ def export_cross_wallets():
     top_token_addrs = {
         t.get("contract_address", "") for t in tokens if t.get("contract_address")
     }
+    # Build token FDV lookup for wallet tier classification
+    token_fdv = {}
+    for t in tokens:
+        addr = t.get("contract_address", "")
+        if addr:
+            fdv = t.get("fdv") or t.get("market_cap") or 0
+            token_chain = normalize_chain(t.get("chain", ""), t.get("dex_url", ""))
+            token_fdv[addr] = {"fdv": fdv, "chain": token_chain}
 
     # Get wallets
     db_path = settings.wallets_db_path
@@ -289,16 +325,31 @@ def export_cross_wallets():
             held_set = {r[0] for r in rows if r[0]}
             overlap = held_set & top_token_addrs
 
-            # Get symbols
+            # Get symbols and FDVs of held tokens
             held_symbols = []
+            held_fdvs = []
+            held_chains = set()
             for t in tokens:
                 if t.get("contract_address") in overlap:
                     held_symbols.append(t.get("symbol", "?"))
+                    fdv = t.get("fdv") or t.get("market_cap") or 0
+                    held_fdvs.append(fdv)
+                    t_chain = normalize_chain(t.get("chain", ""), t.get("dex_url", ""))
+                    if t_chain != "unknown":
+                        held_chains.add(t_chain)
+
+            # Average FDV -> market cap tier
+            avg_fdv = sum(held_fdvs) / len(held_fdvs) if held_fdvs else 0
 
             # Include ALL wallet fields
             result = dict(w)
             result["top_token_count"] = len(overlap)
             result["top_tokens"] = held_symbols[:10]
+            result["avg_fdv"] = round(avg_fdv)
+            result["mcap_tier"] = mcap_tier_label(avg_fdv)
+            # Use token chain if wallet chain is unknown
+            if not result.get("chain") and held_chains:
+                result["chain"] = sorted(held_chains)[0]
             wallet_results.append(result)
     finally:
         conn.close()

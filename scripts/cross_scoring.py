@@ -27,6 +27,9 @@ from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 from hermes_screener.metrics import metrics
 
+# Import enhanced scoring
+from enhanced_cross_scoring import compute_enhanced_token_score
+
 log = get_logger("cross_scoring")
 
 DB_PATH = settings.db_path
@@ -302,7 +305,7 @@ def rescore_tokens(
         insider_count = sum(1 for w in tw if w.get("insider_flag"))
         sniper_count = sum(1 for w in tw if "sniper" in (w.get("wallet_tags") or "").lower())
 
-        new_score = _compute_token_composite_score(
+        new_score = compute_enhanced_token_score(
             token=token,
             smart_wallet_count=smart_count,
             smart_wallet_score_sum=smart_score_sum,
@@ -560,7 +563,7 @@ def run_cross_scoring(
 
         # Phase 2: Re-score tokens
         tokens = rescore_tokens(tokens, wallets, wallet_token_map)
-        log.info("tokens_rescored", top5=[(t["symbol"], t["score"]) for t in tokens[:5]])
+        log.info("tokens_rescored", top5=[(t.get("symbol", "?"), t.get("score", 0)) for t in tokens[:5]])
 
         # Phase 3: Re-score wallets
         wallets = rescore_wallets(wallets, tokens, wallet_token_map)
@@ -580,8 +583,8 @@ def run_cross_scoring(
         "elapsed": round(elapsed, 1),
         "top_tokens": [
             {
-                "symbol": t["symbol"],
-                "score": t["score"],
+                "symbol": t.get("symbol", "?"),
+                "score": t.get("score", 0),
                 "original": t.get("_original_score", 0),
                 "smart_wallets": t.get("smart_wallet_count", 0),
                 "insiders": t.get("insider_count", 0),
