@@ -152,6 +152,10 @@ class AsyncDexscreenerEnricher:
                     "name": best.get("baseToken", {}).get("name"),
                     "pair_address": best.get("pairAddress"),
                 }
+                # Correct chain from Dexscreener (fixes mislabeled BSC/Base tokens)
+                ds_chain = best.get("chainId", "")
+                if ds_chain and ds_chain != token.get("chain", ""):
+                    token["chain"] = ds_chain
                 return {**token, "dex": dex_data}
             except Exception as e:
                 metrics.api_calls.labels(provider="dexscreener", status="error").inc()
