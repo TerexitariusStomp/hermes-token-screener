@@ -85,7 +85,6 @@ class Settings(BaseSettings):
     helius_api_key: str = Field(default="")
     quicknode_key: str = Field(default="")
     zerion_api_key: str = Field(default="")
-    coinstats_api_key: str = Field(default="")
     telegram_bot_token: str = Field(default="")
     telegram_chat_id: str = Field(default="")
 

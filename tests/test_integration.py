@@ -10,7 +10,7 @@ import pytest
 os.environ.setdefault("HERMES_HOME", "/tmp/test_hermes")
 # Clear env keys that leak into settings
 for key in ["COINGECKO_API_KEY", "ETHERSCAN_API_KEY", "GMGN_API_KEY",
-            "SURF_API_KEY", "DEFI_API_KEY", "ZERION_API_KEY", "COINSTATS_API_KEY",
+            "SURF_API_KEY", "DEFI_API_KEY", "ZERION_API_KEY",
             "LOG_LEVEL"]:
     os.environ.pop(key, None)
 
