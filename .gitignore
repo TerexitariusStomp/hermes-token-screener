@@ -19,6 +19,9 @@ data/
 *.jsonl
 *.log
 
+# Allow docs/data for GitHub Pages
+!docs/data/
+
 # IDE
 .vscode/
 .idea/

@@ -2,6 +2,27 @@
 
 Autonomous smart-money tracking system that discovers, enriches, and ranks tokens and wallets across Telegram call channels and DEX platforms.
 
+## Live Dashboard
+
+**https://terexitariusstomp.github.io/hermes-token-screener/**
+
+The dashboard shows:
+- **Tokens** — Top tokens ranked by enrichment score
+- **Smart Money** — Top wallets ranked by trading performance
+- **Tokens×Wallets** — Tokens ranked by how many smart wallets hold them
+- **Wallets×Tokens** — Wallets ranked by how many top tokens they hold
+
+### Updating the Site
+
+Run the export script on your server to generate fresh data, then push:
+
+```bash
+python3 scripts/export_github_pages.py
+git add docs/data/
+git commit -m "update site data"
+git push
+```
+
 ## Data Sources
 
 [Telegram Call Channels](TELEGRAM_CHANNELS.md) — 49 monitored channels

@@ -1,0 +1,28 @@
+:root{--bg:#0a0e17;--s:#111827;--s2:#1f2937;--b:#374151;--t:#e5e7eb;--t2:#9ca3af;
+--g:#10b981;--r:#ef4444;--y:#f59e0b;--bl:#3b82f6;--p:#8b5cf6;--c:#06b6d4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'SF Mono','Fira Code',monospace;background:var(--bg);color:var(--t)}
+a{color:var(--c);text-decoration:none}a:hover{text-decoration:underline}
+nav{background:var(--s);border-bottom:1px solid var(--b);padding:.75rem 1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap}
+.logo{font-size:1.1rem;font-weight:bold;color:var(--c)}.logo span{color:var(--y)}
+.nav{display:flex;gap:1.5rem;flex-wrap:wrap}.nav a{color:var(--t2);font-size:.85rem}.nav a.active{color:var(--c)}
+.stats{background:var(--s);border-bottom:1px solid var(--b);padding:.5rem 1.5rem;display:flex;gap:2rem;font-size:.8rem;color:var(--t2);flex-wrap:wrap}
+.stats .v{color:var(--t);font-weight:bold}
+.wrap{max-width:1400px;margin:0 auto;padding:1.5rem}
+h1{font-size:1.3rem;margin-bottom:.25rem}.sub{color:var(--t2);font-size:.8rem;margin-bottom:1rem}
+.tbl{overflow-x:auto;border:1px solid var(--b);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:var(--s2);color:var(--t2);text-align:left;padding:.6rem .75rem;font-weight:600;position:sticky;top:0;white-space:nowrap}
+td{padding:.5rem .75rem;border-top:1px solid var(--b);white-space:nowrap}
+tr:hover td{background:var(--s2)}
+.sc{font-weight:bold}.sc-h{color:var(--g)}.sc-m{color:var(--y)}.sc-l{color:var(--t2)}
+.pos{color:var(--g)}.neg{color:var(--r)}
+.badge{display:inline-block;padding:.1rem .4rem;border-radius:4px;font-size:.7rem;font-weight:bold}
+.chain-solana,.chain-sol{background:#9945ff22;color:#9945ff}
+.chain-base{background:#0052ff22;color:#0052ff}
+.chain-ethereum{background:#627eea22;color:#627eea}
+.chain-bsc{background:#f3ba2f22;color:#f3ba2f}
+.tag{display:inline-block;padding:.1rem .35rem;border-radius:3px;font-size:.65rem;margin:.1rem}
+.tag-g{background:#10b98133;color:#10b981}.tag-y{background:#f59e0b33;color:#f59e0b}.tag-r{background:#ef444433;color:#ef4444}
+.mono{font-family:inherit}
+.updated{text-align:center;padding:2rem;color:var(--t2);font-size:.75rem}

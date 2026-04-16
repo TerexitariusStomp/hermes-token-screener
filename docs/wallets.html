@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart Money — Hermes Screener</title>
+<link rel="stylesheet" href="style.css">
+</head><body>
+<nav>
+<div class="logo">HERMES <span>&#9670;</span> SCREENER</div>
+<div class="nav">
+  <a href="index.html">Tokens</a>
+  <a href="wallets.html" class="active">Smart Money</a>
+  <a href="cross-tokens.html">Tokens×Wallets</a>
+  <a href="cross-wallets.html">Wallets×Tokens</a>
+  <a href="https://github.com/TerexitariusStomp/hermes-token-screener">GitHub</a>
+</div></nav>
+<div class="wrap">
+<h1>Smart Money Wallets</h1>
+<div class="sub">Top wallets ranked by trading performance score</div>
+<div id="loading">Loading data...</div>
+<div class="tbl" id="table-container" style="display:none"><table>
+<thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Score</th><th>Profit</th><th>Win Rate</th><th>ROI</th><th>Trades</th><th>Tags</th></tr></thead>
+<tbody id="tbody"></tbody>
+</table></div>
+</div>
+<div class="updated" id="updated"></div>
+<script>
+function fmt_usd(v){if(!v)return"—";v=parseFloat(v);if(v>=1e9)return"$"+(v/1e9).toFixed(1)+"B";if(v>=1e6)return"$"+(v/1e6).toFixed(1)+"M";if(v>=1e3)return"$"+(v/1e3).toFixed(1)+"K";return"$"+v.toLocaleString()}
+function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)+"..."+a.slice(-n)}
+function chain_cls(c){return["solana","sol","base","ethereum","bsc"].includes(c)?"chain-"+c:""}
+
+fetch("data/wallets.json").then(r=>r.json()).then(data=>{
+  const wallets=data.wallets||[];
+  const tbody=document.getElementById("tbody");
+  wallets.forEach((w,i)=>{
+    const score=w.wallet_score||0;
+    const sc_cls=score>=70?"sc-h":score>=40?"sc-m":"sc-l";
+    const profit=w.total_profit;
+    const profit_cls=profit>0?"pos":profit<0?"neg":"";
+    const tags=(w.wallet_tags||"").split(",").filter(t=>t.trim()).map(t=>{
+      const cls=t.trim()in{"sniper":1,"insider":1}?"tag-r":t.trim()==="smart"?"tag-g":"";
+      return`<span class="tag ${cls}">${t.trim()}</span>`;
+    }).join("");
+    tbody.innerHTML+=`<tr>
+  <td>${i+1}</td>
+  <td class="mono"><a href="wallet.html#${w.address}">${trunc(w.address)}</a></td>
+  <td><span class="badge ${chain_cls(w.chain||"")}">${w.chain||""}</span></td>
+  <td class="sc ${sc_cls}">${score.toFixed(0)}</td>
+  <td class="${profit_cls}">${fmt_usd(profit)}</td>
+  <td>${w.win_rate!=null?(w.win_rate*100).toFixed(1)+"%":"—"}</td>
+  <td>${w.avg_roi!=null?w.avg_roi.toFixed(1)+"%":"—"}</td>
+  <td>${w.trade_count||0}</td>
+  <td>${tags}</td>
+</tr>`;
+  });
+  document.getElementById("loading").style.display="none";
+  document.getElementById("table-container").style.display="";
+  document.getElementById("updated").textContent="Last updated: "+new Date().toISOString().slice(0,16);
+}).catch(e=>{
+  document.getElementById("loading").textContent="Error: "+e.message;
+});
+</script>
+</body></html>
