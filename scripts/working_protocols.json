@@ -1,0 +1,3631 @@
+{
+  "dex_contracts": {
+    "ethereum": {
+      "Uniswap V3 QuoterV2": {
+        "addr": "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+        "type": "v3_quoter"
+      },
+      "Uniswap V2 Router02": {
+        "addr": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+        "type": "v2_router"
+      },
+      "PancakeSwap Router": {
+        "addr": "0xEfF92A263d31888d860bD50809A8D171709b7b1c",
+        "type": "v2_router"
+      },
+      "Curve 3pool": {
+        "addr": "0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7",
+        "type": "curve"
+      },
+      "ParaSwap": {
+        "addr": "0x6a000f20005980200259b80c5102003040001068",
+        "type": "aggregator"
+      },
+      "0x Exchange": {
+        "addr": "0xDef1C0ded9bec7F1a1670819833240f027b25EfF",
+        "type": "aggregator"
+      },
+      "CoW Settlement": {
+        "addr": "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
+        "type": "cow"
+      },
+      "Stargate Router": {
+        "addr": "0x8731d54E9D02c286767d56ac03e8037C07e01e98",
+        "type": "bridge"
+      }
+    },
+    "base": {
+      "Uniswap V3 QuoterV2": {
+        "addr": "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a",
+        "type": "v3_quoter"
+      },
+      "Uniswap V2 Router02": {
+        "addr": "0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24",
+        "type": "v2_router"
+      },
+      "SushiSwap RouteProcessor4": {
+        "addr": "0x0389879e0156033202C44BF784ac18fC02edeE4f",
+        "type": "sushi_rp"
+      },
+      "KyberSwap Router": {
+        "addr": "0x6131B5fae19EA4f9D964eAc0408E4408b66337b5",
+        "type": "aggregator"
+      },
+      "Odos Router": {
+        "addr": "0x19cEeAd7105607Cd444F5ad10dd51356436095a1",
+        "type": "aggregator"
+      },
+      "1inch V6": {
+        "addr": "0x1111111254EEB25477B68fb85Ed929f73A960582",
+        "type": "aggregator"
+      },
+      "ParaSwap": {
+        "addr": "0x6a000f20005980200259b80c5102003040001068",
+        "type": "aggregator"
+      },
+      "CoW Settlement": {
+        "addr": "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
+        "type": "cow"
+      },
+      "Uniswap V3": {
+        "addr": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+        "type": "contract"
+      },
+      "Uniswap V2": {
+        "addr": "0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24",
+        "type": "v2"
+      },
+      "SushiSwap V3": {
+        "addr": "0x0389879e0156033202C44BF784ac18fC02edeE4f",
+        "type": "sushi_rp"
+      },
+      "PancakeSwap V3": {
+        "addr": "0x13f4EA83D0bd40E75C8222255bc855a974568Dd4",
+        "type": "v3"
+      },
+      "Aerodrome": {
+        "addr": "0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43",
+        "type": "v2"
+      },
+      "Balancer V3": {
+        "addr": "0xbA1333333333a1BA1108E8412f11850A5C319bA9",
+        "type": "vault"
+      },
+      "BaseSwap V2": {
+        "addr": "0x327Df1E6de05895d2ab08513aaDD9313Fe505d86",
+        "type": "v2"
+      },
+      "Uniswap V4": {
+        "addr": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+        "type": "contract"
+      },
+      "OTSea": {
+        "addr": "0x5da151b95657e788076d04d56234bd93e409cb09",
+        "type": "contract"
+      },
+      "Stabull Finance": {
+        "addr": "0x6a43795941113c2f58eb487001f4f8ee74b6938a",
+        "type": "contract"
+      }
+    },
+    "arbitrum": {
+      "Uniswap V3 QuoterV2": {
+        "addr": "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+        "type": "v3_quoter"
+      },
+      "SushiSwap Router": {
+        "addr": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
+        "type": "v2_router"
+      }
+    },
+    "optimism": {
+      "Uniswap V3 QuoterV2": {
+        "addr": "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+        "type": "v3_quoter"
+      }
+    },
+    "bsc": {
+      "PancakeSwap Router": {
+        "addr": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+        "type": "v2_router"
+      },
+      "SushiSwap Router": {
+        "addr": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
+        "type": "v2_router"
+      }
+    },
+    "avalanche": {
+      "TraderJoe Router": {
+        "addr": "0x60aE616a2155Ee3d9A68541Ba4544862310933d4",
+        "type": "v2_router"
+      },
+      "Pangolin Router": {
+        "addr": "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106",
+        "type": "v2_router"
+      }
+    },
+    "gnosis": {
+      "SushiSwap Router": {
+        "addr": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
+        "type": "v2_router"
+      },
+      "HoneySwap Router": {
+        "addr": "0x1C232F01118CB8B424793ae03F870aa7D0ac7f77",
+        "type": "v2_router"
+      }
+    },
+    "celo": {
+      "Ubeswap Router": {
+        "addr": "0xE3D8bd6Aed4F159bc8000a9cD47CffDb95F96121",
+        "type": "v2_router"
+      }
+    }
+  },
+  "lending_contracts": {
+    "ethereum": {
+      "Aave V3": {
+        "addr": "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
+        "fn": "getReservesList"
+      },
+      "Compound V3": {
+        "addr": "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
+        "fn": "getUtilization"
+      },
+      "Morpho Blue": {
+        "addr": "0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb",
+        "fn": "owner"
+      },
+      "SparkLend": {
+        "addr": "0xC13e21B648A5Ee794902342038FF3aDAB66BE987",
+        "fn": "getReservesList"
+      },
+      "Convex": {
+        "addr": "0xF403C135812408BFbE8713b5A23a04b3D48AAE31",
+        "fn": "poolLength"
+      },
+      "EigenLayer": {
+        "addr": "0x858646372CC42E1A627fcE94aa7A7033e7CF075A",
+        "fn": "strategyWhitelister"
+      }
+    },
+    "base": {
+      "Aave V3": {
+        "addr": "0xA238Dd80C259a72e81d7e4664a9801593F98d1c5",
+        "fn": "getReservesList"
+      },
+      "Compound V3": {
+        "addr": "0x9c4ec768c28520B50860ea7a15bd7213a9fF58bf",
+        "fn": "getUtilization"
+      },
+      "Moonwell": {
+        "addr": "0xfBb21d0380beE3312B33c4353c8936a0F13EF26C",
+        "fn": "getAllMarkets"
+      },
+      "Morpho Blue": {
+        "addr": "0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb",
+        "fn": "owner"
+      },
+      "Unitus": {
+        "addr": "0x3b6564b5da73a41d3a66e6558a98fd0e9e1e77ad",
+        "fn": "owner"
+      }
+    },
+    "arbitrum": {
+      "Aave V3": {
+        "addr": "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+        "fn": "getReservesList"
+      },
+      "Compound V3": {
+        "addr": "0xA5EDBDD9646f8dFF606d7448e414884C7d905dCA",
+        "fn": "getUtilization"
+      },
+      "GMX Vault": {
+        "addr": "0x489ee077994B6658eAfA855C308275EAd8097C4A",
+        "fn": "gov"
+      }
+    },
+    "bsc": {
+      "Venus": {
+        "addr": "0xfD36E2c2a6789Db23113685031d7F16329158384",
+        "fn": "getAllMarkets"
+      }
+    }
+  },
+  "api_protocols": {
+    "KyberSwap": {
+      "chains": [
+        "ethereum",
+        "base",
+        "arbitrum",
+        "optimism",
+        "polygon",
+        "bsc",
+        "avalanche"
+      ],
+      "url": "https://aggregator-api.kyberswap.com/{chain}/api/v1/routes"
+    },
+    "Odos": {
+      "chains": [
+        "ethereum",
+        "base",
+        "arbitrum",
+        "optimism",
+        "polygon",
+        "bsc",
+        "avalanche"
+      ],
+      "url": "https://api.odos.xyz/sor/quote/v2"
+    },
+    "ParaSwap": {
+      "chains": [
+        "ethereum",
+        "base",
+        "arbitrum",
+        "optimism",
+        "polygon",
+        "bsc",
+        "avalanche"
+      ],
+      "url": "https://api.paraswap.io/prices"
+    },
+    "CoW Protocol": {
+      "chains": [
+        "ethereum",
+        "base",
+        "arbitrum",
+        "gnosis"
+      ],
+      "url": "https://api.cow.fi/{chain}/api/v1/quote"
+    },
+    "OpenOcean": {
+      "chains": [
+        "ethereum",
+        "base",
+        "arbitrum",
+        "optimism",
+        "polygon",
+        "bsc",
+        "avalanche",
+        "solana"
+      ],
+      "url": "https://open-api.openocean.finance/v3/{chainId}/quote"
+    },
+    "LiFi": {
+      "chains": [
+        "multi"
+      ],
+      "url": "https://li.quest/v1/quote"
+    },
+    "THORChain": {
+      "chains": [
+        "multi"
+      ],
+      "url": "https://thornode.ninerealms.com/thorchain/quote/swap"
+    },
+    "Across": {
+      "chains": [
+        "ethereum",
+        "base",
+        "arbitrum",
+        "optimism",
+        "polygon"
+      ],
+      "url": "https://app.across.to/api"
+    },
+    "Jupiter": {
+      "chains": [
+        "solana"
+      ],
+      "url": "https://api.jup.ag/swap/v1"
+    },
+    "Raydium": {
+      "chains": [
+        "solana"
+      ],
+      "url": "https://transaction-v1.raydium.io/compute/swap-base-in"
+    }
+  },
+  "solana_programs": {
+    "Jupiter V6": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+    "Raydium CLMM": "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK",
+    "Raydium CPMM": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+    "Orca Whirlpool": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
+    "Meteora DLMM": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
+    "Pump.fun": "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+    "Openbook V2": "opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb"
+  },
+  "rwa_contracts": {
+    "base": {
+      "Centrifuge Protocol": {
+        "addr": "0xcccccccccc33d538dbc2ee4feab0a7a1ff4e8a94"
+      }
+    }
+  },
+  "bridge_contracts": {
+    "base": {
+      "Stargate V2": {
+        "addr": "0xaf5191b0de278c7286d6c7cc6ab6bb8a73ba2cd6"
+      },
+      "SoDEX Bridge": {
+        "addr": "0x624e2e7fdc8903165f64891672267ab0fcb98831"
+      },
+      "Stargate V1": {
+        "addr": "0xaf5191b0de278c7286d6c7cc6ab6bb8a73ba2cd6"
+      },
+      "Interport Finance": {
+        "addr": "0x2b1d36f5b61addaf7da7ebbd11b35fd8cfb0de31"
+      },
+      "Hop Protocol": {
+        "addr": "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc"
+      }
+    }
+  },
+  "other_contracts": {
+    "base": {
+      "River Omni-CDP": {
+        "addr": "0xdA7AD9dea9397cffdDAE2F8a052B82f1484252B3",
+        "cat": "CeDeFi"
+      },
+      "ZEROBASE CeDeFi": {
+        "addr": "0xfab99fcf605fd8f4593edb70a43ba56542777777",
+        "cat": "Basis Trading"
+      },
+      "cSigma Finance": {
+        "addr": "0x53162EC0aDae49f21515bB8ca91534Dd3872c8Db",
+        "cat": "RWA Lending"
+      },
+      "Arcadia V2": {
+        "addr": "0xaaa843fb2916c0b57454270418e121c626402aaa",
+        "cat": "Liquidity Manager"
+      },
+      "SoSoValue Basis": {
+        "addr": "0x624e2e7fdc8903165f64891672267ab0fcb98831",
+        "cat": "Basis Trading"
+      },
+      "Almanak": {
+        "addr": "0xdefa1d21c5f1cbeac00eeb54b44c7d86467cc3a3",
+        "cat": "Onchain Capital Allocator"
+      },
+      "TiTi Protocol": {
+        "addr": "0x3bdffA70f4b4E6985eED50453c7C0D4A15dcEc52",
+        "cat": "Algo-Stables"
+      },
+      "SharesGram": {
+        "addr": "0xbe74a95d159e8e323b8c1a70f825efc85fed27c4",
+        "cat": "SoFi"
+      },
+      "Phi": {
+        "addr": "0xfb3ad5550ca5730a6f91350032c4da1efdfde3e8",
+        "cat": "Launchpad"
+      }
+    }
+  },
+  "yield_contracts": {
+    "base": {
+      "YO Protocol": {
+        "addr": "0x1925450f5e5fb974b0aae1f3408cf5286fbd1a72",
+        "fn": "owner"
+      },
+      "Peapods Finance": {
+        "addr": "0x02f92800f57bcd74066f5709f1daa1a4302df875",
+        "fn": "owner"
+      },
+      "Yel Finance": {
+        "addr": "0x949185d3be66775ea648f4a306740ea9eff9c567",
+        "fn": "owner"
+      }
+    }
+  },
+  "derivatives_contracts": {
+    "base": {
+      "SynFutures V3": {
+        "addr": "0x6e15a54b5ecac17e58dadeddbe8506a7560252f9",
+        "fn": "owner"
+      },
+      "FXDX": {
+        "addr": "0x30b593f8c3ab37615359b4e0e6df2e06d55bb55d",
+        "fn": "owner"
+      },
+      "RabbitX": {
+        "addr": "0x3ba925fdeae6b46d0bb4d424d829982cb2f7309e",
+        "fn": "owner"
+      }
+    }
+  },
+  "cedefi_contracts": {
+    "base": {
+      "River Omni-CDP": {
+        "addr": "0xda7ad9dea9397cffddae2f8a052b82f1484252b3"
+      }
+    }
+  },
+  "basis_contracts": {
+    "base": {
+      "ZEROBASE CeDeFi": {
+        "addr": "0xfab99fcf605fd8f4593edb70a43ba56542777777",
+        "fn": "owner"
+      }
+    }
+  },
+  "rwa_lending_contracts": {
+    "base": {
+      "cSigma Finance": {
+        "addr": "0x53162ec0adae49f21515bb8ca91534dd3872c8db",
+        "fn": "owner"
+      }
+    }
+  },
+  "liq_manager_contracts": {
+    "base": {
+      "Arcadia V2": {
+        "addr": "0xaaa843fb2916c0b57454270418e121c626402aaa",
+        "fn": "owner"
+      }
+    }
+  },
+  "allocator_contracts": {
+    "base": {
+      "Almanak": {
+        "addr": "0xdefa1d21c5f1cbeac00eeb54b44c7d86467cc3a3",
+        "fn": "owner"
+      }
+    }
+  },
+  "stable_contracts": {
+    "base": {
+      "TiTi Protocol": {
+        "addr": "0x3bdffa70f4b4e6985eed50453c7c0d4a15dcec52",
+        "fn": "owner"
+      }
+    }
+  },
+  "sofi_contracts": {
+    "base": {
+      "SharesGram": {
+        "addr": "0xbe74a95d159e8e323b8c1a70f825efc85fed27c4",
+        "fn": "owner"
+      }
+    }
+  },
+  "launchpad_contracts": {
+    "base": {
+      "Phi": {
+        "addr": "0xfb3ad5550ca5730a6f91350032c4da1efdfde3e8"
+      }
+    }
+  },
+  "lending_api": {
+    "base": {
+      "Morpho V1": {
+        "tvl": 7577567251,
+        "api": true,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Venus Core Pool": {
+        "tvl": 1205689800,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Fluid Lending": {
+        "tvl": 811296333,
+        "api": true,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Euler V2": {
+        "tvl": 521358163,
+        "api": true,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Moonwell Lending": {
+        "tvl": 48021312,
+        "api": true,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Native Credit Pool": {
+        "tvl": 46712727,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Seamless V2": {
+        "tvl": 38428359,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "TermMax": {
+        "tvl": 38192619,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "40 Acres": {
+        "tvl": 27478107,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Revert Lend": {
+        "tvl": 11197505,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Folks Finance xChain": {
+        "tvl": 10736967,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "ZeroLend Lending": {
+        "tvl": 4513139,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Avalon Finance": {
+        "tvl": 2914195,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Extra Finance Xlend": {
+        "tvl": 2910011,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Silo V1": {
+        "tvl": 2068090,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Ionic Protocol": {
+        "tvl": 2042238,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Teller": {
+        "tvl": 2003853,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "OmniBTC": {
+        "tvl": 1980367,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Radiant V2": {
+        "tvl": 1697844,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Sumer.money": {
+        "tvl": 1676657,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Seamless V1": {
+        "tvl": 1117927,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "MortgageFi": {
+        "tvl": 994943,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Impermax V2": {
+        "tvl": 755975,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Ajna V2": {
+        "tvl": 598432,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Tarot": {
+        "tvl": 586046,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Vendor V2": {
+        "tvl": 585578,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Prime Protocol": {
+        "tvl": 394760,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Timeswap V2": {
+        "tvl": 330371,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "PrimeFi": {
+        "tvl": 275342,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Rheo": {
+        "tvl": 258013,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "SYNO Finance": {
+        "tvl": 202284,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Granary Finance": {
+        "tvl": 166965,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Sonne Finance": {
+        "tvl": 155840,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "CREAM Lending": {
+        "tvl": 149624,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "YLDR": {
+        "tvl": 148826,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "TermFinance Lend": {
+        "tvl": 132449,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "ZebraDAO": {
+        "tvl": 123547,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Impermax V3": {
+        "tvl": 98182,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Aloe": {
+        "tvl": 75258,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "MultichainZ": {
+        "tvl": 67844,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Yusan": {
+        "tvl": 60793,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Astaria V2": {
+        "tvl": 39941,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "MYSO V2": {
+        "tvl": 31131,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "PWN": {
+        "tvl": 29360,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Fringe V2": {
+        "tvl": 12479,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Polter Finance": {
+        "tvl": 11282,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Ripe Protocol": {
+        "tvl": 7026,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "SMARDEX P2P Lending": {
+        "tvl": 5841,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Pike V2": {
+        "tvl": 5501,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Blend Finance": {
+        "tvl": 4988,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Grace": {
+        "tvl": 4208,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "VMEX Finance": {
+        "tvl": 2196,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Pike V1": {
+        "tvl": 1686,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Votre": {
+        "tvl": 1424,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      },
+      "Mooncake Finance": {
+        "tvl": 1156,
+        "api": false,
+        "contract": true,
+        "category": "Lending"
+      }
+    }
+  },
+  "restaking_api": {
+    "base": {
+      "ether.fi Stake": {
+        "tvl": 5440635842,
+        "api": true,
+        "contract": true,
+        "category": "Liquid Restaking"
+      },
+      "Kelp": {
+        "tvl": 1597357748,
+        "api": true,
+        "contract": true,
+        "category": "Liquid Restaking"
+      },
+      "Renzo": {
+        "tvl": 408462832,
+        "api": false,
+        "contract": true,
+        "category": "Liquid Restaking"
+      },
+      "Zero-G Finance": {
+        "tvl": 2498,
+        "api": false,
+        "contract": true,
+        "category": "Liquid Restaking"
+      }
+    }
+  },
+  "allocator_api": {
+    "base": {
+      "Grove Finance": {
+        "tvl": 3292869304,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Spark Liquidity Layer": {
+        "tvl": 1993982865,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Veda": {
+        "tvl": 1179959235,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Upshift": {
+        "tvl": 332948914,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Lagoon": {
+        "tvl": 143182487,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Aera V3": {
+        "tvl": 105339728,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Lombard Vaults": {
+        "tvl": 54557309,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Aera V2": {
+        "tvl": 38426954,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Moonwell Vaults": {
+        "tvl": 30408677,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "D2 Finance": {
+        "tvl": 19560253,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Spectra MetaVaults": {
+        "tvl": 13105225,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Seamless Vaults": {
+        "tvl": 6001032,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Extra Finance Vaults": {
+        "tvl": 4475959,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Spectra MetaVaults Outside V2": {
+        "tvl": 2829766,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Mitosis": {
+        "tvl": 1762856,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Shift Protocol": {
+        "tvl": 1747435,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "MaxShot": {
+        "tvl": 848474,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Sherpa": {
+        "tvl": 503945,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Snowbl Capital": {
+        "tvl": 400381,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "RAGE Protocol": {
+        "tvl": 300761,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Superfund": {
+        "tvl": 113363,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Kvants": {
+        "tvl": 82366,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "TradingStrategy": {
+        "tvl": 62899,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Rigoblock": {
+        "tvl": 38015,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      },
+      "Brink": {
+        "tvl": 20143,
+        "api": false,
+        "contract": true,
+        "category": "Onchain Capital Allocator"
+      }
+    }
+  },
+  "dex_api": {
+    "base": {
+      "Curve DEX": {
+        "tvl": 1842619707,
+        "api": true,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "PancakeSwap AMM": {
+        "tvl": 1721140090,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Quickswap Dex": {
+        "tvl": 501509537,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "PancakeSwap AMM V3": {
+        "tvl": 326199167,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Aerodrome Slipstream": {
+        "tvl": 219030432,
+        "api": true,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Aerodrome V1": {
+        "tvl": 130155623,
+        "api": true,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "PancakeSwap Infinity": {
+        "tvl": 68735718,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "SushiSwap": {
+        "tvl": 45277787,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Balancer V2": {
+        "tvl": 41059045,
+        "api": true,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "DODO AMM": {
+        "tvl": 13136207,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Loopring": {
+        "tvl": 11428042,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Swaap Maker V2": {
+        "tvl": 11251356,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Hydrex Integral": {
+        "tvl": 9131472,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Quickswap V4": {
+        "tvl": 5941938,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "WOOFi Swap": {
+        "tvl": 5336142,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Wombat Exchange": {
+        "tvl": 4147150,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Dexalot DEX": {
+        "tvl": 3188804,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Balanced Exchange": {
+        "tvl": 3135970,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Hydrex Omni": {
+        "tvl": 2862100,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "9mm V3": {
+        "tvl": 2760926,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Hanji Protocol": {
+        "tvl": 2512728,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Bridgers": {
+        "tvl": 2028140,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "iZiSwap": {
+        "tvl": 1966626,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Alien Base V3": {
+        "tvl": 1934156,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Gyroscope Protocol": {
+        "tvl": 1808656,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "WAGMI": {
+        "tvl": 1598648,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Maverick V2": {
+        "tvl": 1388770,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "DeltaSwap": {
+        "tvl": 1271006,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Maverick V1": {
+        "tvl": 1243184,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Balancer CoW AMM": {
+        "tvl": 1200369,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Clipper": {
+        "tvl": 878863,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "PICWE": {
+        "tvl": 638718,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Alien Base V2": {
+        "tvl": 601272,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Treble V2": {
+        "tvl": 588405,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "RocketSwap Base": {
+        "tvl": 545116,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Nabla Finance": {
+        "tvl": 480949,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Clober Liquidity Vault": {
+        "tvl": 469624,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Biswap V3": {
+        "tvl": 448813,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Solidly V3": {
+        "tvl": 380382,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Renegade": {
+        "tvl": 337312,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "SMARDEX AMM": {
+        "tvl": 313503,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Scale": {
+        "tvl": 302641,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Bunni V2": {
+        "tvl": 295956,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Alphix": {
+        "tvl": 262514,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "BrownFi": {
+        "tvl": 255117,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Skate AMM": {
+        "tvl": 249766,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Bass Exchange": {
+        "tvl": 245251,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Diamondswap": {
+        "tvl": 244532,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Thirdfy": {
+        "tvl": 239169,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Treble Spot": {
+        "tvl": 234282,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Kinetix AMM V3": {
+        "tvl": 231760,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "BunnySwap": {
+        "tvl": 191654,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "VoltSwap V2": {
+        "tvl": 184546,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Rubicon": {
+        "tvl": 171980,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "LeetSwap": {
+        "tvl": 171931,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "IXS": {
+        "tvl": 147124,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "SharkSwap DEX": {
+        "tvl": 140038,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "KIM Exchange V3": {
+        "tvl": 138309,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "KyberSwap Elastic": {
+        "tvl": 127352,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Kokonut Swap": {
+        "tvl": 105672,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "SwapBased AMM": {
+        "tvl": 104221,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Virtus Protocol CL": {
+        "tvl": 94103,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "KIM Exchange V2": {
+        "tvl": 90812,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Infusion": {
+        "tvl": 86273,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "2THICK": {
+        "tvl": 74615,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "HorizonDEX": {
+        "tvl": 70902,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "E3": {
+        "tvl": 70066,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "BaseX": {
+        "tvl": 69885,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Gridex": {
+        "tvl": 68365,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "IcecreamSwap V2": {
+        "tvl": 66420,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "SwapBased Concentrated Liquidity": {
+        "tvl": 64592,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Sobal": {
+        "tvl": 57721,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "9mm V2": {
+        "tvl": 57704,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Raindex": {
+        "tvl": 51534,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Andromeada": {
+        "tvl": 46955,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Poolside": {
+        "tvl": 43698,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "DackieSwap V3": {
+        "tvl": 41307,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "KEWL EXCHANGE": {
+        "tvl": 35793,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Velocimeter V2": {
+        "tvl": 35607,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Clober V2": {
+        "tvl": 32169,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Omni Exchange V3": {
+        "tvl": 30518,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "DackieSwap V2": {
+        "tvl": 27871,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Deli Swap": {
+        "tvl": 25820,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "DerpDEX": {
+        "tvl": 24797,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Throne V3": {
+        "tvl": 24758,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Thick": {
+        "tvl": 24337,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Lunarbase": {
+        "tvl": 20994,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Alien Base Area51": {
+        "tvl": 19805,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "MARSWAP": {
+        "tvl": 18575,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "FeeFree": {
+        "tvl": 17440,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Apex DeFi": {
+        "tvl": 15459,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Synthswap V2": {
+        "tvl": 14485,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "SquadSwap V2": {
+        "tvl": 13376,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "FWX DEX": {
+        "tvl": 12600,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Goblins AMM": {
+        "tvl": 11945,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Burve Protocol": {
+        "tvl": 10684,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Wind Swap": {
+        "tvl": 9903,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Soswap": {
+        "tvl": 8800,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "StableBase": {
+        "tvl": 6129,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Omni Exchange V2": {
+        "tvl": 5380,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Synthswap V3": {
+        "tvl": 5302,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Graphene by Velocimeter": {
+        "tvl": 5254,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "CitadelSwap": {
+        "tvl": 4676,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "OasisSwap": {
+        "tvl": 4134,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Swapline V1": {
+        "tvl": 3332,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Archly V1": {
+        "tvl": 3303,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Satori Spots": {
+        "tvl": 2955,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Akronswap": {
+        "tvl": 2815,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Baso Finance": {
+        "tvl": 2132,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Archly V2": {
+        "tvl": 2082,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Alien Base StableSwap": {
+        "tvl": 1914,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "BaseX Finance": {
+        "tvl": 1807,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Henjin DEX": {
+        "tvl": 1724,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "CLAMM": {
+        "tvl": 1616,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "SquadSwap V3": {
+        "tvl": 1106,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      },
+      "Energon DEX": {
+        "tvl": 1054,
+        "api": false,
+        "contract": true,
+        "category": "Dexs"
+      }
+    }
+  },
+  "yield_api": {
+    "base": {
+      "Spark Savings": {
+        "tvl": 1768409144,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Pendle": {
+        "tvl": 1763939640,
+        "api": true,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Multipli.fi": {
+        "tvl": 366793860,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Stake DAO": {
+        "tvl": 178139886,
+        "api": true,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Aura": {
+        "tvl": 98001166,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "AUTOfinance": {
+        "tvl": 57263470,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Spectra V2": {
+        "tvl": 46502377,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Zoo Finance": {
+        "tvl": 35879634,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Royco V1": {
+        "tvl": 20044700,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "TermFinance Vaults": {
+        "tvl": 18023139,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Equilibria": {
+        "tvl": 12797393,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Penpie": {
+        "tvl": 12344436,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "ZyFAI": {
+        "tvl": 9184219,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "HyperWave": {
+        "tvl": 6804043,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "WOOFi Earn": {
+        "tvl": 6262122,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Harmonix Finance": {
+        "tvl": 4869627,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Sprinter": {
+        "tvl": 2722509,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Zircuit Finance": {
+        "tvl": 1568768,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Tetu Earn": {
+        "tvl": 768775,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "VaultCraft": {
+        "tvl": 555730,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Singularity Finance": {
+        "tvl": 524215,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "MONSTRO": {
+        "tvl": 409253,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Snuggle": {
+        "tvl": 399442,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Napier": {
+        "tvl": 293438,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Surf Liquid": {
+        "tvl": 269326,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Velvet V3": {
+        "tvl": 262043,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "GammaSwap Yield Tokens": {
+        "tvl": 166895,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Lucidly Finance": {
+        "tvl": 125075,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "SparkleX": {
+        "tvl": 117570,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Hyperdrive": {
+        "tvl": 68966,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Yield Millionaire": {
+        "tvl": 62217,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Thesauros": {
+        "tvl": 52767,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "dexVAULTS": {
+        "tvl": 15780,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "toupee.tech": {
+        "tvl": 10489,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Baklava Space": {
+        "tvl": 6422,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "DexFinance ETF": {
+        "tvl": 5488,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      },
+      "Definitive Yield Vaults": {
+        "tvl": 1570,
+        "api": false,
+        "contract": true,
+        "category": "Yield"
+      }
+    }
+  },
+  "rwa_api": {
+    "base": {
+      "Anemoy Capital": {
+        "tvl": 1422205401,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Spiko": {
+        "tvl": 1190453758,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Midas RWA": {
+        "tvl": 210879096,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "GAIB": {
+        "tvl": 201923899,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "OpenEden USDO": {
+        "tvl": 44757821,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Tangible RWA": {
+        "tvl": 42526020,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Brickken": {
+        "tvl": 41087926,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "T RIZE": {
+        "tvl": 23000000,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Dinari": {
+        "tvl": 10832336,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Anzen V2": {
+        "tvl": 10535314,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "VNX": {
+        "tvl": 7961569,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "BackedFi": {
+        "tvl": 7953717,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Etherfuse": {
+        "tvl": 4472073,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Mountain Protocol": {
+        "tvl": 1403709,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "RealtyX": {
+        "tvl": 1021687,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Toucan Protocol": {
+        "tvl": 621839,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "KlimaDAO": {
+        "tvl": 405827,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Boson Protocol": {
+        "tvl": 229935,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Verified Network": {
+        "tvl": 126707,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "LiveArt": {
+        "tvl": 93888,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      },
+      "Sweep": {
+        "tvl": 8159,
+        "api": false,
+        "contract": true,
+        "category": "RWA"
+      }
+    }
+  },
+  "bridge_api": {
+    "base": {
+      "Optimism Bridge": {
+        "tvl": 533597671,
+        "api": false,
+        "contract": true,
+        "category": "Canonical Bridge"
+      },
+      "SolvBTC": {
+        "tvl": 474257233,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Connext": {
+        "tvl": 224456611,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Axelar": {
+        "tvl": 139709882,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Hyperlane": {
+        "tvl": 108151565,
+        "api": true,
+        "contract": true,
+        "category": "Cross Chain Bridge"
+      },
+      "APX Bridge": {
+        "tvl": 74194444,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Ring Few": {
+        "tvl": 51005735,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "PumpBTC": {
+        "tvl": 44199804,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Wan Bridge": {
+        "tvl": 28393653,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Allbridge Core": {
+        "tvl": 18760750,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Synapse": {
+        "tvl": 15348651,
+        "api": true,
+        "contract": true,
+        "category": "Cross Chain Bridge"
+      },
+      "Reya Bridge": {
+        "tvl": 9615131,
+        "api": false,
+        "contract": true,
+        "category": "Canonical Bridge"
+      },
+      "Symbiosis": {
+        "tvl": 9548551,
+        "api": true,
+        "contract": true,
+        "category": "Cross Chain Bridge"
+      },
+      "Dexalot Portfolio": {
+        "tvl": 6775070,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "CORE Bridge": {
+        "tvl": 4043222,
+        "api": false,
+        "contract": true,
+        "category": "Canonical Bridge"
+      },
+      "Hashport": {
+        "tvl": 2631473,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "1sec": {
+        "tvl": 1579171,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Meson": {
+        "tvl": 1427746,
+        "api": true,
+        "contract": true,
+        "category": "Cross Chain Bridge"
+      },
+      "Butter Network": {
+        "tvl": 1292078,
+        "api": true,
+        "contract": true,
+        "category": "Cross Chain Bridge"
+      },
+      "Keeta Bridge": {
+        "tvl": 1087473,
+        "api": false,
+        "contract": true,
+        "category": "Canonical Bridge"
+      },
+      "NerveBridge": {
+        "tvl": 670342,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "BabyDoge Bridge": {
+        "tvl": 652004,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Degen Bridge": {
+        "tvl": 485056,
+        "api": false,
+        "contract": true,
+        "category": "Canonical Bridge"
+      },
+      "ShimmerBridge": {
+        "tvl": 222476,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Mayan Bridge": {
+        "tvl": 151435,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "CrossCurve": {
+        "tvl": 135420,
+        "api": true,
+        "contract": true,
+        "category": "Cross Chain Bridge"
+      },
+      "Polynomial Bridge": {
+        "tvl": 54683,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Gasp": {
+        "tvl": 30518,
+        "api": true,
+        "contract": true,
+        "category": "Cross Chain Bridge"
+      },
+      "Ulysses": {
+        "tvl": 30097,
+        "api": true,
+        "contract": true,
+        "category": "Bridge"
+      },
+      "Catalyst": {
+        "tvl": 15986,
+        "api": true,
+        "contract": true,
+        "category": "Cross Chain Bridge"
+      },
+      "Messina Bridge": {
+        "tvl": 7734,
+        "api": true,
+        "contract": true,
+        "category": "Cross Chain Bridge"
+      },
+      "Everclear": {
+        "tvl": 1145,
+        "api": true,
+        "contract": true,
+        "category": "Cross Chain Bridge"
+      }
+    }
+  },
+  "yield_agg_api": {
+    "base": {
+      "CIAN Yield Layer": {
+        "tvl": 411792687,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Yearn Finance": {
+        "tvl": 199979348,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Beefy": {
+        "tvl": 143019114,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Vesper": {
+        "tvl": 45972889,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Fusion by IPOR": {
+        "tvl": 41366666,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Lazy Summer Protocol": {
+        "tvl": 38459197,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Superform": {
+        "tvl": 38174879,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "vfat.io": {
+        "tvl": 37427613,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "YieldFi": {
+        "tvl": 17080656,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Odyssey Finance": {
+        "tvl": 13384017,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Harvest Finance": {
+        "tvl": 12401791,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "DexFi Aggregator": {
+        "tvl": 2429072,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "YieldSeeker": {
+        "tvl": 745130,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "MoneyFi": {
+        "tvl": 582041,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Yelay V3": {
+        "tvl": 496925,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "StratEx": {
+        "tvl": 394226,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Clovis": {
+        "tvl": 265026,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Autopilot": {
+        "tvl": 238075,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "BIM Yield": {
+        "tvl": 191769,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Mellow Yield": {
+        "tvl": 103942,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Cybro": {
+        "tvl": 75493,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "maxAPY": {
+        "tvl": 59951,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Autoearn Finance": {
+        "tvl": 42407,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Stabil Finance": {
+        "tvl": 39604,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      },
+      "Matrix Farm": {
+        "tvl": 6176,
+        "api": true,
+        "contract": true,
+        "category": "Yield Aggregator"
+      }
+    }
+  },
+  "basis_api": {
+    "base": {
+      "BounceBit CeDeFi Yield": {
+        "tvl": 355621384,
+        "api": true,
+        "contract": true,
+        "category": "Basis Trading"
+      },
+      "BitFi Basis": {
+        "tvl": 262190730,
+        "api": true,
+        "contract": true,
+        "category": "Basis Trading"
+      },
+      "Theo Straddle Vaults": {
+        "tvl": 5407421,
+        "api": true,
+        "contract": true,
+        "category": "Basis Trading"
+      },
+      "Umoja yBTC": {
+        "tvl": 68395,
+        "api": true,
+        "contract": true,
+        "category": "Basis Trading"
+      }
+    }
+  },
+  "cdp_mgr_api": {
+    "base": {
+      "Defi Saver": {
+        "tvl": 303790634,
+        "api": true,
+        "contract": true,
+        "category": "CDP Manager"
+      },
+      "Summer.fi Pro": {
+        "tvl": 22290135,
+        "api": true,
+        "contract": true,
+        "category": "CDP Manager"
+      }
+    }
+  },
+  "farm_api": {
+    "base": {
+      "AFI Protocol": {
+        "tvl": 226057806,
+        "api": false,
+        "contract": true,
+        "category": "Farm"
+      },
+      "Cytonic Airdrop Campaign": {
+        "tvl": 269192,
+        "api": false,
+        "contract": true,
+        "category": "Farm"
+      },
+      "CookieBase Farm": {
+        "tvl": 62752,
+        "api": false,
+        "contract": true,
+        "category": "Farm"
+      },
+      "GullNetwork Service": {
+        "tvl": 7019,
+        "api": false,
+        "contract": true,
+        "category": "Farm"
+      },
+      "Detto Finance": {
+        "tvl": 5669,
+        "api": false,
+        "contract": true,
+        "category": "Farm"
+      }
+    }
+  },
+  "cdp_api": {
+    "base": {
+      "Reservoir Protocol": {
+        "tvl": 223238212,
+        "api": true,
+        "contract": true,
+        "category": "CDP"
+      },
+      "Overnight Finance": {
+        "tvl": 17873324,
+        "api": false,
+        "contract": true,
+        "category": "CDP"
+      },
+      "BTCFi CDP": {
+        "tvl": 11493689,
+        "api": false,
+        "contract": true,
+        "category": "CDP"
+      },
+      "Parallel Protocol V3": {
+        "tvl": 3980138,
+        "api": false,
+        "contract": true,
+        "category": "CDP"
+      },
+      "QiDao": {
+        "tvl": 3491411,
+        "api": false,
+        "contract": true,
+        "category": "CDP"
+      },
+      "Vaultedge": {
+        "tvl": 324532,
+        "api": false,
+        "contract": true,
+        "category": "CDP"
+      },
+      "Preon Finance": {
+        "tvl": 240369,
+        "api": false,
+        "contract": true,
+        "category": "CDP"
+      },
+      "Meridian Finance": {
+        "tvl": 41842,
+        "api": false,
+        "contract": true,
+        "category": "CDP"
+      },
+      "Button Wrappers": {
+        "tvl": 37616,
+        "api": false,
+        "contract": true,
+        "category": "CDP"
+      },
+      "defi.money": {
+        "tvl": 7021,
+        "api": false,
+        "contract": true,
+        "category": "CDP"
+      }
+    }
+  },
+  "locker_api": {
+    "base": {
+      "UNCX Network V2": {
+        "tvl": 137333130,
+        "api": false,
+        "contract": true,
+        "category": "Token Locker"
+      },
+      "Team Finance": {
+        "tvl": 54388088,
+        "api": false,
+        "contract": true,
+        "category": "Token Locker"
+      },
+      "GoPlus Locker V3": {
+        "tvl": 33333579,
+        "api": false,
+        "contract": true,
+        "category": "Token Locker"
+      },
+      "UNCX Network V3": {
+        "tvl": 25910229,
+        "api": false,
+        "contract": true,
+        "category": "Token Locker"
+      },
+      "FlokiFi Locker": {
+        "tvl": 11223852,
+        "api": false,
+        "contract": true,
+        "category": "Token Locker"
+      },
+      "Bitbond Lockers": {
+        "tvl": 10890972,
+        "api": false,
+        "contract": true,
+        "category": "Token Locker"
+      },
+      "GoPlus Locker V2": {
+        "tvl": 563910,
+        "api": false,
+        "contract": true,
+        "category": "Token Locker"
+      }
+    }
+  },
+  "derivatives_api": {
+    "base": {
+      "Derive V2": {
+        "tvl": 118667866,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Avantis": {
+        "tvl": 62851824,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Synthetix V3": {
+        "tvl": 39648234,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Apex Omni": {
+        "tvl": 36798296,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Aevo Perps": {
+        "tvl": 21781876,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Gains Network": {
+        "tvl": 18926784,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Contango V2": {
+        "tvl": 15848577,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Wasabi Perps": {
+        "tvl": 12630221,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Toros": {
+        "tvl": 10414362,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "IntentX": {
+        "tvl": 5673214,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "SYMMIO": {
+        "tvl": 4421414,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "ELFi Protocol": {
+        "tvl": 3819660,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "KiloEx": {
+        "tvl": 3522175,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Vest Markets": {
+        "tvl": 2838283,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "IPOR Derivatives": {
+        "tvl": 1620570,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Satori Perp": {
+        "tvl": 1262003,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "RollX": {
+        "tvl": 540622,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "BMX Classic Perps": {
+        "tvl": 518528,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Vela Exchange": {
+        "tvl": 367441,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "BMX Freestyle": {
+        "tvl": 150843,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "InfinityPools": {
+        "tvl": 142036,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Javsphere": {
+        "tvl": 90782,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Mummy Finance": {
+        "tvl": 62000,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Bullbit PERP DEX": {
+        "tvl": 56569,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "UniDex Perp": {
+        "tvl": 33609,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "100XSOON": {
+        "tvl": 33274,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Onchain Trade": {
+        "tvl": 32300,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "KRAV": {
+        "tvl": 26121,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "JOJO": {
+        "tvl": 25163,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Primex Finance": {
+        "tvl": 24565,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Cap Finance V4": {
+        "tvl": 22150,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Xena Finance": {
+        "tvl": 19267,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "SwapBased Perp": {
+        "tvl": 17371,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Defx": {
+        "tvl": 15698,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "prePO": {
+        "tvl": 11997,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Alkimiya": {
+        "tvl": 9587,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "LogX V2": {
+        "tvl": 8497,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "D8X": {
+        "tvl": 7241,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Surf Protocol": {
+        "tvl": 5998,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Nether.Fi": {
+        "tvl": 5874,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "DIP Exchange": {
+        "tvl": 4413,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "FWX Derivatives": {
+        "tvl": 2442,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Limitless": {
+        "tvl": 2286,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "YFX V4": {
+        "tvl": 2232,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      },
+      "Voodoo Trade Base": {
+        "tvl": 1658,
+        "api": true,
+        "contract": true,
+        "category": "Derivatives"
+      }
+    }
+  },
+  "index_api": {
+    "base": {
+      "Reserve Protocol": {
+        "tvl": 115442066,
+        "api": false,
+        "contract": true,
+        "category": "Indexes"
+      },
+      "dHEDGE Vaults": {
+        "tvl": 21789445,
+        "api": false,
+        "contract": true,
+        "category": "Indexes"
+      },
+      "Index Coop": {
+        "tvl": 15074458,
+        "api": false,
+        "contract": true,
+        "category": "Indexes"
+      },
+      "INDX": {
+        "tvl": 5280,
+        "api": false,
+        "contract": true,
+        "category": "Indexes"
+      }
+    }
+  },
+  "liq_mgr_api": {
+    "base": {
+      "Arrakis Modular": {
+        "tvl": 80475032,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Steer Protocol": {
+        "tvl": 27553300,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "ICHI": {
+        "tvl": 15695909,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "ACryptoS": {
+        "tvl": 10566558,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "TheDeep": {
+        "tvl": 9840037,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Aegis Markets": {
+        "tvl": 5450701,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Gamma": {
+        "tvl": 4354179,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Charm Finance V2": {
+        "tvl": 2117661,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Krystal": {
+        "tvl": 1078847,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "DefiEdge": {
+        "tvl": 878329,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Levva": {
+        "tvl": 604938,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Stability": {
+        "tvl": 395611,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "EZManager": {
+        "tvl": 364727,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Dyson": {
+        "tvl": 274272,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Tempest Finance": {
+        "tvl": 214788,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Skate Fi": {
+        "tvl": 152768,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "Clip Finance": {
+        "tvl": 90713,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      },
+      "A51 Finance V3": {
+        "tvl": 4943,
+        "api": true,
+        "contract": true,
+        "category": "Liquidity Manager"
+      }
+    }
+  },
+  "staking_api": {
+    "base": {
+      "Origin Ether": {
+        "tvl": 52699319,
+        "api": false,
+        "contract": true,
+        "category": "Liquid Staking"
+      },
+      "GLIF": {
+        "tvl": 33921344,
+        "api": false,
+        "contract": true,
+        "category": "Liquid Staking"
+      },
+      "iAero Protocol": {
+        "tvl": 1623611,
+        "api": false,
+        "contract": true,
+        "category": "Liquid Staking"
+      },
+      "BakerFi": {
+        "tvl": 87832,
+        "api": false,
+        "contract": true,
+        "category": "Liquid Staking"
+      }
+    }
+  },
+  "leveraged_api": {
+    "base": {
+      "Extra Finance Leverage Farming": {
+        "tvl": 28256366,
+        "api": false,
+        "contract": true,
+        "category": "Leveraged Farming"
+      },
+      "Yieldoor": {
+        "tvl": 109877,
+        "api": false,
+        "contract": true,
+        "category": "Leveraged Farming"
+      },
+      "DegenPrime": {
+        "tvl": 55378,
+        "api": false,
+        "contract": true,
+        "category": "Leveraged Farming"
+      },
+      "Marginal": {
+        "tvl": 1546,
+        "api": false,
+        "contract": true,
+        "category": "Leveraged Farming"
+      }
+    }
+  },
+  "synthetics_api": {
+    "base": {
+      "Metronome Synth": {
+        "tvl": 27014202,
+        "api": false,
+        "contract": true,
+        "category": "Synthetics"
+      }
+    }
+  },
+  "launchpad_api": {
+    "base": {
+      "DxSale": {
+        "tvl": 26291931,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "Aerodrome Ignition": {
+        "tvl": 25957331,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "Bio Protocol": {
+        "tvl": 5141040,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "flaunch": {
+        "tvl": 2234082,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "Mint Club V2": {
+        "tvl": 746936,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "g8keep": {
+        "tvl": 148593,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "Printr": {
+        "tvl": 94585,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "Bitbond Sales": {
+        "tvl": 61253,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "ChainGPT": {
+        "tvl": 38318,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "PowaDAP": {
+        "tvl": 32164,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "CreateMyToken": {
+        "tvl": 29481,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      },
+      "Ape.Store": {
+        "tvl": 23584,
+        "api": true,
+        "contract": true,
+        "category": "Launchpad"
+      }
+    }
+  },
+  "anchor_btc_api": {
+    "base": {
+      "SatLayer": {
+        "tvl": 18998750,
+        "api": false,
+        "contract": true,
+        "category": "Anchor BTC"
+      }
+    }
+  },
+  "ai_api": {
+    "base": {
+      "Giza": {
+        "tvl": 16069300,
+        "api": true,
+        "contract": false,
+        "category": "AI Agents"
+      },
+      "Infinite Trading Protocol": {
+        "tvl": 241954,
+        "api": true,
+        "contract": false,
+        "category": "AI Agents"
+      }
+    }
+  },
+  "rwa_lend_api": {
+    "base": {
+      "Kasu": {
+        "tvl": 9912824,
+        "api": false,
+        "contract": false,
+        "category": "RWA Lending"
+      },
+      "Credit Coop": {
+        "tvl": 4505257,
+        "api": false,
+        "contract": false,
+        "category": "RWA Lending"
+      },
+      "8lends": {
+        "tvl": 298096,
+        "api": false,
+        "contract": false,
+        "category": "RWA Lending"
+      }
+    }
+  },
+  "options_api": {
+    "base": {
+      "Deri V4": {
+        "tvl": 7782353,
+        "api": true,
+        "contract": true,
+        "category": "Options"
+      },
+      "Hypersurface": {
+        "tvl": 2095528,
+        "api": true,
+        "contract": true,
+        "category": "Options"
+      },
+      "Jasper Vault": {
+        "tvl": 1337595,
+        "api": true,
+        "contract": true,
+        "category": "Options"
+      },
+      "GammaSwap Open Interest": {
+        "tvl": 1293359,
+        "api": true,
+        "contract": true,
+        "category": "Options"
+      },
+      "BaseVol": {
+        "tvl": 281694,
+        "api": true,
+        "contract": true,
+        "category": "Options"
+      },
+      "Stryke CLAMM": {
+        "tvl": 175358,
+        "api": true,
+        "contract": true,
+        "category": "Options"
+      },
+      "Fufuture V2": {
+        "tvl": 123833,
+        "api": true,
+        "contract": true,
+        "category": "Options"
+      },
+      "CallPut": {
+        "tvl": 30382,
+        "api": true,
+        "contract": true,
+        "category": "Options"
+      },
+      "Panoptic V1": {
+        "tvl": 5755,
+        "api": true,
+        "contract": true,
+        "category": "Options"
+      },
+      "Panoptic V1.1": {
+        "tvl": 2372,
+        "api": true,
+        "contract": true,
+        "category": "Options"
+      }
+    }
+  },
+  "payment_api": {
+    "base": {
+      "Superfluid": {
+        "tvl": 6433115,
+        "api": true,
+        "contract": true,
+        "category": "Payments"
+      },
+      "Sablier Lockup": {
+        "tvl": 5586860,
+        "api": true,
+        "contract": true,
+        "category": "Payments"
+      },
+      "LlamaPay": {
+        "tvl": 1234955,
+        "api": true,
+        "contract": true,
+        "category": "Payments"
+      },
+      "Sablier Flow": {
+        "tvl": 855846,
+        "api": true,
+        "contract": true,
+        "category": "Payments"
+      },
+      "Peer": {
+        "tvl": 136418,
+        "api": true,
+        "contract": true,
+        "category": "Payments"
+      },
+      "Hedgey": {
+        "tvl": 8794,
+        "api": true,
+        "contract": true,
+        "category": "Payments"
+      },
+      "UniVoucher": {
+        "tvl": 4757,
+        "api": true,
+        "contract": true,
+        "category": "Payments"
+      }
+    }
+  },
+  "lottery_api": {
+    "base": {
+      "PoolTogether V5": {
+        "tvl": 4518078,
+        "api": false,
+        "contract": true,
+        "category": "Yield Lottery"
+      },
+      "Ample": {
+        "tvl": 3643804,
+        "api": false,
+        "contract": true,
+        "category": "Yield Lottery"
+      },
+      "Shinjo": {
+        "tvl": 15891,
+        "api": false,
+        "contract": true,
+        "category": "Yield Lottery"
+      },
+      "Run Money": {
+        "tvl": 2969,
+        "api": false,
+        "contract": true,
+        "category": "Yield Lottery"
+      }
+    }
+  },
+  "prediction_api": {
+    "base": {
+      "Football.Fun": {
+        "tvl": 3577343,
+        "api": true,
+        "contract": true,
+        "category": "Prediction Market"
+      },
+      "Trueo": {
+        "tvl": 1816783,
+        "api": true,
+        "contract": true,
+        "category": "Prediction Market"
+      },
+      "Overtime": {
+        "tvl": 1724550,
+        "api": true,
+        "contract": true,
+        "category": "Prediction Market"
+      },
+      "Azuro": {
+        "tvl": 1013390,
+        "api": true,
+        "contract": true,
+        "category": "Prediction Market"
+      },
+      "Limitless Exchange": {
+        "tvl": 592591,
+        "api": true,
+        "contract": true,
+        "category": "Prediction Market"
+      },
+      "O.LAB": {
+        "tvl": 37593,
+        "api": true,
+        "contract": true,
+        "category": "Prediction Market"
+      },
+      "PredMart": {
+        "tvl": 6317,
+        "api": true,
+        "contract": true,
+        "category": "Prediction Market"
+      },
+      "PredX Ai": {
+        "tvl": 3992,
+        "api": true,
+        "contract": true,
+        "category": "Prediction Market"
+      },
+      "Precog Market": {
+        "tvl": 3833,
+        "api": true,
+        "contract": true,
+        "category": "Prediction Market"
+      }
+    }
+  },
+  "sofi_api": {
+    "base": {
+      "friend.tech V1": {
+        "tvl": 2203533,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "Ethos Network": {
+        "tvl": 1959756,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "Ethos Markets": {
+        "tvl": 326129,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "time.fun": {
+        "tvl": 43074,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "Chainchat": {
+        "tvl": 19655,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "scoop": {
+        "tvl": 18081,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "Words.art": {
+        "tvl": 13531,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "SongTech": {
+        "tvl": 12377,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "T2T2": {
+        "tvl": 11240,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "TagDotTech": {
+        "tvl": 6060,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "Frensly": {
+        "tvl": 5679,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "Simps": {
+        "tvl": 5617,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "AlfaFrens": {
+        "tvl": 4685,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "Ducky City SOFI": {
+        "tvl": 4335,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "Mellow": {
+        "tvl": 3483,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "Drawtech": {
+        "tvl": 1964,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      },
+      "Anon Social": {
+        "tvl": 1128,
+        "api": true,
+        "contract": true,
+        "category": "SoFi"
+      }
+    }
+  },
+  "privacy_api": {
+    "base": {
+      "Hinkal": {
+        "tvl": 1090862,
+        "api": false,
+        "contract": true,
+        "category": "Privacy"
+      },
+      "Veil Cash": {
+        "tvl": 24222,
+        "api": false,
+        "contract": true,
+        "category": "Privacy"
+      },
+      "Tonic Cash": {
+        "tvl": 1000,
+        "api": false,
+        "contract": true,
+        "category": "Privacy"
+      }
+    }
+  },
+  "other_api": {
+    "base": {
+      "Whales Market": {
+        "tvl": 908127,
+        "api": true,
+        "contract": false,
+        "category": "OTC Marketplace"
+      },
+      "Rezerve Money": {
+        "tvl": 805567,
+        "api": false,
+        "contract": true,
+        "category": "Reserve Currency"
+      },
+      "Balmy": {
+        "tvl": 215616,
+        "api": true,
+        "contract": true,
+        "category": "DCA Tools"
+      },
+      "Flat Money V1": {
+        "tvl": 117082,
+        "api": false,
+        "contract": true,
+        "category": "Partially Algorithmic Stablecoin"
+      },
+      "Gardens": {
+        "tvl": 92344,
+        "api": false,
+        "contract": true,
+        "category": "Governance Incentives"
+      },
+      "Fren Pets": {
+        "tvl": 33637,
+        "api": true,
+        "contract": true,
+        "category": "Gaming"
+      },
+      "HaloFi": {
+        "tvl": 23014,
+        "api": false,
+        "contract": false,
+        "category": "Services"
+      },
+      "FerdyFlip": {
+        "tvl": 14536,
+        "api": false,
+        "contract": true,
+        "category": "Luck Games"
+      },
+      "Aerostrategy": {
+        "tvl": 11313,
+        "api": false,
+        "contract": true,
+        "category": "ve-Incentive Automator"
+      },
+      "Super DCA": {
+        "tvl": 1739,
+        "api": true,
+        "contract": true,
+        "category": "DCA Tools"
+      }
+    }
+  },
+  "nft_api": {
+    "base": {
+      "Sudoswap V2": {
+        "tvl": 318747,
+        "api": true,
+        "contract": true,
+        "category": "NFT Marketplace"
+      },
+      "Magic Eden": {
+        "tvl": 131688,
+        "api": true,
+        "contract": true,
+        "category": "NFT Marketplace"
+      }
+    }
+  },
+  "uncollat_api": {
+    "base": {
+      "Clearpool Lending": {
+        "tvl": 285255,
+        "api": true,
+        "contract": true,
+        "category": "Uncollateralized Lending"
+      },
+      "Union Protocol": {
+        "tvl": 267189,
+        "api": true,
+        "contract": true,
+        "category": "Uncollateralized Lending"
+      }
+    }
+  }
+}

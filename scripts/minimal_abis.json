@@ -1,0 +1,362 @@
+{
+  "paraswap_v6": [
+    {
+      "type": "function",
+      "name": "swapExactAmountIn",
+      "stateMutability": "payable",
+      "inputs": [
+        {
+          "name": "executor",
+          "type": "address"
+        },
+        {
+          "name": "swapData",
+          "type": "tuple",
+          "components": [
+            {
+              "name": "srcToken",
+              "type": "address"
+            },
+            {
+              "name": "destToken",
+              "type": "address"
+            },
+            {
+              "name": "srcAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "destAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "expectedAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "callees",
+              "type": "bytes"
+            },
+            {
+              "name": "exchangeData",
+              "type": "bytes"
+            },
+            {
+              "name": "startIndexes",
+              "type": "uint256[]"
+            },
+            {
+              "name": "values",
+              "type": "uint256[]"
+            },
+            {
+              "name": "beneficiary",
+              "type": "address"
+            },
+            {
+              "name": "partner",
+              "type": "address"
+            },
+            {
+              "name": "feePercent",
+              "type": "uint256"
+            },
+            {
+              "name": "permit",
+              "type": "bytes"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "partnerAndFee",
+          "type": "uint256"
+        },
+        {
+          "name": "permit",
+          "type": "bytes"
+        },
+        {
+          "name": "executorData",
+          "type": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "receivedAmount",
+          "type": "uint256"
+        }
+      ]
+    }
+  ],
+  "oneinch_v6": [
+    {
+      "type": "function",
+      "name": "unoswap",
+      "stateMutability": "payable",
+      "inputs": [
+        {
+          "name": "srcToken",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "name": "minReturn",
+          "type": "uint256"
+        },
+        {
+          "name": "pools",
+          "type": "uint256[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "returnAmount",
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "unoswapTo",
+      "stateMutability": "payable",
+      "inputs": [
+        {
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "name": "srcToken",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "name": "minReturn",
+          "type": "uint256"
+        },
+        {
+          "name": "pools",
+          "type": "uint256[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "returnAmount",
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "swap",
+      "stateMutability": "payable",
+      "inputs": [
+        {
+          "name": "executor",
+          "type": "address"
+        },
+        {
+          "name": "desc",
+          "type": "tuple",
+          "components": [
+            {
+              "name": "srcToken",
+              "type": "address"
+            },
+            {
+              "name": "dstToken",
+              "type": "address"
+            },
+            {
+              "name": "srcReceiver",
+              "type": "address"
+            },
+            {
+              "name": "dstReceiver",
+              "type": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "name": "minReturnAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "flags",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "permit",
+          "type": "bytes"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "returnAmount",
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "uniswapV3Swap",
+      "stateMutability": "payable",
+      "inputs": [
+        {
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "name": "minReturn",
+          "type": "uint256"
+        },
+        {
+          "name": "pools",
+          "type": "uint256[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "returnAmount",
+          "type": "uint256"
+        }
+      ]
+    }
+  ],
+  "oneinch_v5": [
+    {
+      "type": "function",
+      "name": "unoswap",
+      "stateMutability": "payable",
+      "inputs": [
+        {
+          "name": "token",
+          "type": "uint256"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "name": "minReturn",
+          "type": "uint256"
+        },
+        {
+          "name": "dex",
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "returnAmount",
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "unoswapTo",
+      "stateMutability": "payable",
+      "inputs": [
+        {
+          "name": "to",
+          "type": "uint256"
+        },
+        {
+          "name": "token",
+          "type": "uint256"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "name": "minReturn",
+          "type": "uint256"
+        },
+        {
+          "name": "dex",
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "returnAmount",
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "swap",
+      "stateMutability": "payable",
+      "inputs": [
+        {
+          "name": "executor",
+          "type": "address"
+        },
+        {
+          "name": "desc",
+          "type": "tuple",
+          "components": [
+            {
+              "name": "srcToken",
+              "type": "address"
+            },
+            {
+              "name": "dstToken",
+              "type": "address"
+            },
+            {
+              "name": "srcReceiver",
+              "type": "address"
+            },
+            {
+              "name": "dstReceiver",
+              "type": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "name": "minReturnAmount",
+              "type": "uint256"
+            },
+            {
+              "name": "flags",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "returnAmount",
+          "type": "uint256"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,437 @@
+{
+  "Uniswap V3": {
+    "chain": "eth",
+    "contracts": {
+      "SwapRouter02": {
+        "address": "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
+        "status": "MISSING"
+      },
+      "QuoterV2": {
+        "address": "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+        "status": "OK"
+      },
+      "UniversalRouter": {
+        "address": "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
+        "status": "MISSING"
+      },
+      "Factory": {
+        "address": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Uniswap V2": {
+    "chain": "eth",
+    "contracts": {
+      "Router02": {
+        "address": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+        "status": "MISSING"
+      },
+      "Factory": {
+        "address": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+        "status": "OK"
+      }
+    }
+  },
+  "Curve DEX": {
+    "chain": "eth",
+    "contracts": {
+      "Registry": {
+        "address": "0x90E00ACe148ca3b23Ac1bC8C240C2a7Dd9c2d7f5",
+        "status": "OK"
+      },
+      "CryptoSwapRouter": {
+        "address": "0x99a58482BD75cbab83b27EC03CA68fF489b5788f",
+        "status": "MISSING"
+      },
+      "TricryptoPool": {
+        "address": "0xD51a44d3FaE010294C616388b506AcdA1bfAAE46",
+        "status": "OK"
+      },
+      "StableSwapPool": {
+        "address": "0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7",
+        "status": "OK"
+      }
+    }
+  },
+  "Balancer V2": {
+    "chain": "eth",
+    "contracts": {
+      "Vault": {
+        "address": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+        "status": "OK"
+      },
+      "BatchRouter": {
+        "address": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "status": "MISSING"
+      }
+    }
+  },
+  "SushiSwap V2": {
+    "chain": "eth",
+    "contracts": {
+      "Router02": {
+        "address": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F",
+        "status": "OK"
+      }
+    }
+  },
+  "PancakeSwap V3": {
+    "chain": "eth",
+    "contracts": {
+      "SmartRouter": {
+        "address": "0x13f4EA83D0bd40E75C8222255bc855a974568Dd4",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Aave V3": {
+    "chain": "eth",
+    "contracts": {
+      "Pool": {
+        "address": "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
+        "status": "MISSING"
+      },
+      "PoolAddressesProvider": {
+        "address": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",
+        "status": "MISSING"
+      },
+      "aWETH": {
+        "address": "0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8",
+        "status": "OK"
+      }
+    }
+  },
+  "Compound V3": {
+    "chain": "eth",
+    "contracts": {
+      "cUSDCv3": {
+        "address": "0xc3d688B66703497DAA19211EEdff47f25384cdc3",
+        "status": "OK"
+      },
+      "cWETHv3": {
+        "address": "0xA17581A9E3356d9A858b789D68B4d866e593aE94",
+        "status": "MISSING"
+      },
+      "CometRewards": {
+        "address": "0x1B0e765F6224C21223AeA2af16c1C46E38887190",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Morpho Blue": {
+    "chain": "eth",
+    "contracts": {
+      "MorphoBlue": {
+        "address": "0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb",
+        "status": "OK"
+      }
+    }
+  },
+  "SparkLend": {
+    "chain": "eth",
+    "contracts": {
+      "Pool": {
+        "address": "0xC13e21B648A5Ee794902342038FF3aDAB66BE987",
+        "status": "MISSING"
+      },
+      "PoolAddressesProvider": {
+        "address": "0x02C3eA4e34C0cBd694D2adFa2c690EEcC171519D",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Venus": {
+    "chain": "bsc",
+    "contracts": {
+      "Comptroller": {
+        "address": "0xfD36E2c2a6789Db23113685031d7F16329158384",
+        "status": "BSC"
+      },
+      "vUSDC": {
+        "address": "0xecA88125a5ADbe82614ffC12D0DB554E2e2867C8",
+        "status": "BSC"
+      }
+    }
+  },
+  "Euler V2": {
+    "chain": "eth",
+    "contracts": {
+      "EulerRouter": {
+        "address": "0x0000000000000000000000000000000000000000",
+        "status": "SKIP"
+      },
+      "EVaultFactory": {
+        "address": "0x29a56a1b8214D9Cf7c5561811750D5cBdB46cc9d",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Lido": {
+    "chain": "eth",
+    "contracts": {
+      "stETH": {
+        "address": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+        "status": "OK"
+      },
+      "wstETH": {
+        "address": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
+        "status": "MISSING"
+      },
+      "WithdrawalQueue": {
+        "address": "0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1",
+        "status": "OK"
+      }
+    }
+  },
+  "Rocket Pool": {
+    "chain": "eth",
+    "contracts": {
+      "rETH": {
+        "address": "0xae78736Cd615f374D3085123A210448E74Fc6393",
+        "status": "OK"
+      },
+      "NodeStaking": {
+        "address": "0x3019227b2b8493e45Bf5d25302139c9a2713BF15",
+        "status": "MISSING"
+      }
+    }
+  },
+  "GMX": {
+    "chain": "arb",
+    "contracts": {
+      "Router": {
+        "address": "0xaBBc5F99639c9B6bCb58544ddf04EFA6802F4064",
+        "status": "ARB"
+      },
+      "Vault": {
+        "address": "0x489ee077994B6658eAfA855C308275EAd8097C4A",
+        "status": "ARB"
+      },
+      "Reader": {
+        "address": "0x2b43c90D1B727cEee1Bf89069e4770F1BDe6289f",
+        "status": "ARB"
+      }
+    }
+  },
+  "dYdX": {
+    "chain": "eth",
+    "contracts": {
+      "StarkProxy": {
+        "address": "0xD54f502e184B6B739d7D27a6410a67dc462D69c8",
+        "status": "MISSING"
+      }
+    }
+  },
+  "GMX V2": {
+    "chain": "arb",
+    "contracts": {
+      "ExchangeRouter": {
+        "address": "0x7C68C7867A44e79da48E87dfC4Ac0Ca5FCC1e1e5",
+        "status": "ARB"
+      },
+      "DepositVault": {
+        "address": "0xF89e77e8Dc11691C9e8757e84aaFbCD8A67d7A55",
+        "status": "ARB"
+      }
+    }
+  },
+  "Pendle": {
+    "chain": "eth",
+    "contracts": {
+      "RouterStatic": {
+        "address": "0x263833d47eA3fA4a30f269323aba6a107f9eB14C",
+        "status": "OK"
+      },
+      "Router": {
+        "address": "0x00000000005BBB0EF59571E58418F9a4357b68A0",
+        "status": "MISSING"
+      },
+      "RouterV4": {
+        "address": "0x888888888889758F76e7103c6CbF23ABbF58F946",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Convex Finance": {
+    "chain": "eth",
+    "contracts": {
+      "Booster": {
+        "address": "0xF403C135812408BFbE8713b5A23a04b3D48AAE31",
+        "status": "OK"
+      },
+      "cvxCRV": {
+        "address": "0x62B9c7356A2Dc64a1969e19C23e4f579F9810Aa7",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Yearn Finance": {
+    "chain": "eth",
+    "contracts": {
+      "Registry": {
+        "address": "0x50c1a2eA0a861A967D9d0FFE2AE47E915367d3f1",
+        "status": "MISSING"
+      },
+      "yvUSDC": {
+        "address": "0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE",
+        "status": "MISSING"
+      }
+    }
+  },
+  "EigenLayer": {
+    "chain": "eth",
+    "contracts": {
+      "StrategyManager": {
+        "address": "0x858646372CC42E1A627fcE94aa7A7033e7CF075A",
+        "status": "OK"
+      },
+      "DelegationManager": {
+        "address": "0x39053D51B77DC0d36036Fc1fCc8Cb819df8Ef37A",
+        "status": "OK"
+      },
+      "eETH": {
+        "address": "0x35fA164735182de50811E8e2E824cFb9B6118ac2",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Ethena": {
+    "chain": "eth",
+    "contracts": {
+      "USDe": {
+        "address": "0x4c9EDD5852cd905f086C759E8383e09bff1E68B3",
+        "status": "MISSING"
+      },
+      "sUSDe": {
+        "address": "0x9D39A5DE30e57443BfF2A8307A4256c8797A3497",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Stargate": {
+    "chain": "eth",
+    "contracts": {
+      "Router": {
+        "address": "0x8731d54E9D02c286767d56ac03e8037C07e01e98",
+        "status": "OK"
+      }
+    }
+  },
+  "Hop Protocol": {
+    "chain": "eth",
+    "contracts": {
+      "Bridge": {
+        "address": "0x3666f603Cc164906C1DBe9B67a21BfCa18931081",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Across": {
+    "chain": "eth",
+    "contracts": {
+      "SpokePool": {
+        "address": "0x5c7BCd6E7De5423a257D81B442095A1a6ced35C5",
+        "status": "OK"
+      }
+    }
+  },
+  "1inch V6": {
+    "chain": "eth",
+    "contracts": {
+      "AggregationRouterV6": {
+        "address": "0x1111111254EEB25477B68fb85Ed929f73A960582",
+        "status": "OK"
+      },
+      "AggregationRouterV5": {
+        "address": "0x111111125421cA6dc452d289314280a0f8842A65",
+        "status": "OK"
+      }
+    }
+  },
+  "ParaSwap V6": {
+    "chain": "eth",
+    "contracts": {
+      "AugustusSwapper": {
+        "address": "0x6a000f20005980200259b80c5102003040001068",
+        "status": "MISSING"
+      }
+    }
+  },
+  "0x Exchange": {
+    "chain": "eth",
+    "contracts": {
+      "ExchangeProxy": {
+        "address": "0xDef1C0ded9bec7F1a1670819833240f027b25EfF",
+        "status": "OK"
+      }
+    }
+  },
+  "CoW Protocol": {
+    "chain": "eth",
+    "contracts": {
+      "GPv2Settlement": {
+        "address": "0x9008D19f58AAbD9eD0D60971565AA8510560ab41",
+        "status": "OK"
+      }
+    }
+  },
+  "KyberSwap": {
+    "chain": "eth",
+    "contracts": {
+      "MetaAggregationRouter": {
+        "address": "0x6131B5fae19EA4f9D964eAc0408E4408b66337b5",
+        "status": "OK"
+      }
+    }
+  },
+  "Odos": {
+    "chain": "eth",
+    "contracts": {
+      "RouterV2": {
+        "address": "0xCf85f1b3d37d8c4F8D2d0Bf8E0420C6e2C7E3e7e",
+        "status": "MISSING"
+      }
+    }
+  },
+  "Raydium CLMM": {
+    "chain": "sol",
+    "contracts": {
+      "CLMM": {
+        "address": "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK",
+        "status": "SOL"
+      },
+      "CPMM": {
+        "address": "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C",
+        "status": "SOL"
+      }
+    }
+  },
+  "Orca Whirlpool": {
+    "chain": "sol",
+    "contracts": {
+      "Whirlpool": {
+        "address": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
+        "status": "SOL"
+      }
+    }
+  },
+  "Jupiter V6": {
+    "chain": "sol",
+    "contracts": {
+      "Aggregator": {
+        "address": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+        "status": "SOL"
+      }
+    }
+  },
+  "Meteora DLMM": {
+    "chain": "sol",
+    "contracts": {
+      "DLMM": {
+        "address": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
+        "status": "SOL"
+      }
+    }
+  }
+}
