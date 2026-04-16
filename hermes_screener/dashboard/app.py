@@ -863,7 +863,7 @@ def _get_top_wallets(limit: int = 200) -> list[dict]:
         return []
     try:
         rows = conn.execute(
-            "SELECT address, chain, wallet_score FROM tracked_wallets "
+            "SELECT * FROM tracked_wallets "
             "WHERE wallet_score > 0 ORDER BY wallet_score DESC LIMIT ?",
             (limit,),
         ).fetchall()
@@ -997,10 +997,16 @@ async def cross_tokens():
         sc_cls = "sc-h" if score >= 70 else "sc-m" if score >= 40 else "sc-l"
         wc = t.get("wallet_count", 0)
         wc_cls = "sc-h" if wc >= 10 else "sc-m" if wc >= 5 else "sc-l"
+        p1h = _pct_cls(t.get("price_change_h1"))
+        p6h = _pct_cls(t.get("price_change_h6"))
+        tags = "".join(
+            f'<span class="tag tag-g">{p}</span>'
+            for p in (t.get("positives") or [])[:2]
+        )
         addr = t.get("contract_address", "")
         holding_wallets = t.get("holding_wallets", [])
         wallet_links = ", ".join(
-            f'<a href="/wallet/{w}">{_trunc(w, 4)}</a>' for w in holding_wallets[:5]
+            f'<a href="/wallet/{w}">{_trunc(w, 4)}</a>' for w in holding_wallets[:3]
         )
 
         rows += f"""<tr>
@@ -1010,9 +1016,16 @@ async def cross_tokens():
   <td class="mono"><a href="{_explorer(t.get('chain',''), addr)}" target="_blank">{_trunc(addr)}</a></td>
   <td class="sc {sc_cls}">{score:.1f}</td>
   <td class="sc {wc_cls}">{wc}</td>
+  <td>{t.get('channel_count',0)}</td>
   <td>{_fmt_usd(t.get('fdv'))}</td>
   <td>{_fmt_usd(t.get('volume_h24'))}</td>
-  <td class="mono" style="font-size:.7rem;max-width:300px;overflow:hidden;text-overflow:ellipsis">{wallet_links}</td>
+  <td>{_fmt_usd(t.get('volume_h1'))}</td>
+  <td class="{p1h}">{_fmt_pct(t.get('price_change_h1'))}</td>
+  <td class="{p6h}">{_fmt_pct(t.get('price_change_h6'))}</td>
+  <td>{t.get('age_hours',0):.1f}h</td>
+  <td>{t.get('gmgn_smart_wallets',0)}</td>
+  <td>{tags}</td>
+  <td class="mono" style="font-size:.65rem;max-width:150px;overflow:hidden;text-overflow:ellipsis">{wallet_links}</td>
 </tr>"""
 
     return _page(
@@ -1022,7 +1035,7 @@ async def cross_tokens():
 <h1>Tokens Ranked by Wallet Count</h1>
 <div class="sub">Top tokens sorted by how many smart money wallets hold them &middot; {len(tokens)} tokens analyzed</div>
 <div class="tbl"><table>
-<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>🧬 Wallets</th><th>FDV</th><th>Vol24h</th><th>Top Holders</th></tr></thead>
+<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>🧬</th><th>Ch</th><th>FDV</th><th>Vol24h</th><th>Vol1h</th><th>1h</th><th>6h</th><th>Age</th><th>🧠</th><th>Signals</th><th>Holders</th></tr></thead>
 <tbody>{rows}</tbody>
 </table></div>""",
     )
