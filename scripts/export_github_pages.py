@@ -33,9 +33,13 @@ def export_tokens():
     else:
         with open(src) as f:
             data = json.load(f)
-    
+
+    # Handle both "tokens" and "top_tokens" key names
+    tokens = data.get("tokens") or data.get("top_tokens") or []
+    data["tokens"] = tokens
+
     # Clean up data for JSON serialization (remove sets, etc.)
-    for token in data.get("tokens", []):
+    for token in tokens:
         for key in list(token.keys()):
             if isinstance(token[key], set):
                 token[key] = list(token[key])
@@ -89,7 +93,7 @@ def export_cross_tokens():
     
     with open(src) as f:
         token_data = json.load(f)
-    tokens = token_data.get("tokens", [])
+    tokens = token_data.get("tokens") or token_data.get("top_tokens") or []
     
     # Get wallet holdings
     db_path = settings.wallets_db_path
@@ -157,7 +161,7 @@ def export_cross_wallets():
     
     with open(src) as f:
         token_data = json.load(f)
-    tokens = token_data.get("tokens", [])
+    tokens = token_data.get("tokens") or token_data.get("top_tokens") or []
     top_token_addrs = {t.get("contract_address", "") for t in tokens if t.get("contract_address")}
     
     # Get wallets
@@ -170,34 +174,33 @@ def export_cross_wallets():
     conn.row_factory = sqlite3.Row
     try:
         top_wallets = conn.execute(
-            "SELECT address, chain, wallet_score FROM tracked_wallets "
-            "WHERE wallet_score > 0 ORDER BY wallet_score DESC LIMIT 500"
+            "SELECT * FROM tracked_wallets "
+            "WHERE wallet_score > 0 AND total_trades > 0 "
+            "ORDER BY wallet_score DESC LIMIT 500"
         ).fetchall()
-        
+
         wallet_results = []
         for w in top_wallets:
             w_addr = w["address"]
             rows = conn.execute(
                 "SELECT DISTINCT token_address FROM wallet_token_entries "
                 "WHERE wallet_address = ? AND token_address IS NOT NULL",
-                (w_addr,)
+                (w_addr,),
             ).fetchall()
             held_set = {r[0] for r in rows if r[0]}
             overlap = held_set & top_token_addrs
-            
+
             # Get symbols
             held_symbols = []
             for t in tokens:
                 if t.get("contract_address") in overlap:
                     held_symbols.append(t.get("symbol", "?"))
-            
-            wallet_results.append({
-                "address": w_addr,
-                "chain": w["chain"],
-                "wallet_score": w["wallet_score"],
-                "top_token_count": len(overlap),
-                "top_tokens": held_symbols[:10],
-            })
+
+            # Include ALL wallet fields
+            result = dict(w)
+            result["top_token_count"] = len(overlap)
+            result["top_tokens"] = held_symbols[:10]
+            wallet_results.append(result)
     finally:
         conn.close()
     
