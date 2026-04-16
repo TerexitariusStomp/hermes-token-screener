@@ -11,12 +11,23 @@
   <a href="wallets.html" class="active">Smart Money</a>
   <a href="cross-tokens.html">Tokens×Wallets</a>
   <a href="cross-wallets.html">Wallets×Tokens</a>
+  <a href="tiered.html">Market Cap Tiers</a>
   <a href="columns.html">Guide</a>
   <a href="https://github.com/TerexitariusStomp/hermes-token-screener">GitHub</a>
 </div></nav>
 <div class="wrap">
 <h1>Smart Money Wallets</h1>
 <div class="sub">Top wallets ranked by trading performance score</div>
+
+<div class="filters">
+  <label>Chain
+    <select id="filter-chain">
+      <option value="">All Chains</option>
+    </select>
+  </label>
+  <span class="filter-count" id="filter-count"></span>
+</div>
+
 <div id="loading">Loading data...</div>
 <div class="tbl" id="table-container" style="display:none"><table>
 <thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Score</th><th>Profit</th><th>Win Rate</th><th>ROI</th><th>Trades</th><th>Tags</th></tr></thead>
@@ -25,34 +36,59 @@
 </div>
 <div class="updated" id="updated"></div>
 <script>
-function fmt_usd(v){if(!v)return"—";v=parseFloat(v);if(v>=1e9)return"$"+(v/1e9).toFixed(1)+"B";if(v>=1e6)return"$"+(v/1e6).toFixed(1)+"M";if(v>=1e3)return"$"+(v/1e3).toFixed(1)+"K";return"$"+v.toLocaleString()}
+function fmt_usd(v){if(!v)return"\u2014";v=parseFloat(v);if(v>=1e9)return"$"+(v/1e9).toFixed(1)+"B";if(v>=1e6)return"$"+(v/1e6).toFixed(1)+"M";if(v>=1e3)return"$"+(v/1e3).toFixed(1)+"K";return"$"+v.toLocaleString()}
 function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)+"..."+a.slice(-n)}
 function chain_cls(c){c=(c||"").toLowerCase();return["solana","sol","base","ethereum","eth","bsc","bnb","arbitrum","polygon","polygon-pos","avalanche","sui","optimism"].includes(c)?"chain-"+c:""}
+function chain_label(c){return{solana:"Solana",sol:"Solana",base:"Base",ethereum:"Ethereum",eth:"Ethereum",bsc:"BNB Chain",bnb:"BNB Chain",arbitrum:"Arbitrum",polygon:"Polygon","polygon-pos":"Polygon",avalanche:"Avalanche",sui:"Sui",optimism:"Optimism"}[(c||"").toLowerCase()]||c||"Unknown"}
+function block_url(addr,chain){chain=(chain||"").toLowerCase();if(chain==="solana"||chain==="sol")return"https://solscan.io/account/"+addr;if(chain==="base")return"https://basescan.org/address/"+addr;if(chain==="bsc"||chain==="bnb")return"https://bscscan.com/address/"+addr;if(chain==="arbitrum")return"https://arbiscan.io/address/"+addr;if(chain==="polygon"||chain==="polygon-pos")return"https://polygonscan.com/address/"+addr;if(chain==="avalanche")return"https://snowtrace.io/address/"+addr;if(chain==="optimism")return"https://optimistic.etherscan.io/address/"+addr;return"https://etherscan.io/address/"+addr}
 
-fetch("data/wallets.json").then(r=>r.json()).then(data=>{
-  const wallets=data.wallets||[];
+let ALL_WALLETS=[];
+
+function renderWallets(wallets){
   const tbody=document.getElementById("tbody");
+  tbody.innerHTML="";
   wallets.forEach((w,i)=>{
     const score=w.wallet_score||0;
     const sc_cls=score>=70?"sc-h":score>=40?"sc-m":"sc-l";
     const profit=w.total_profit;
     const profit_cls=profit>0?"pos":profit<0?"neg":"";
     const tags=(w.wallet_tags||"").split(",").filter(t=>t.trim()).map(t=>{
-      const cls=t.trim()in{"sniper":1,"insider":1}?"tag-r":t.trim()==="smart"?"tag-g":"";
+      const cls=t.trim() in{sniper:1,insider:1}?"tag-r":t.trim()==="smart"?"tag-g":"";
       return`<span class="tag ${cls}">${t.trim()}</span>`;
     }).join("");
     tbody.innerHTML+=`<tr>
   <td>${i+1}</td>
-  <td class="mono"><a href="https://app.zerion.io/${w.address}/overview" target="_blank">${trunc(w.address)}</a></td>
-  <td><span class="badge ${chain_cls(w.chain||"")}">${w.chain||""}</span></td>
+  <td class="mono"><a href="${block_url(w.address,w.chain)}" target="_blank">${trunc(w.address)}</a></td>
+  <td><span class="badge ${chain_cls(w.chain||"")}">${chain_label(w.chain)}</span></td>
   <td class="sc ${sc_cls}">${score.toFixed(0)}</td>
   <td class="${profit_cls}">${fmt_usd(profit)}</td>
-  <td>${w.win_rate!=null?(w.win_rate*100).toFixed(1)+"%":"—"}</td>
-  <td>${w.avg_roi!=null?w.avg_roi.toFixed(1)+"%":"—"}</td>
+  <td>${w.win_rate!=null?(w.win_rate*100).toFixed(1)+"%":"\u2014"}</td>
+  <td>${w.avg_roi!=null?w.avg_roi.toFixed(1)+"%":"\u2014"}</td>
   <td>${w.trade_count||0}</td>
   <td>${tags}</td>
 </tr>`;
   });
+}
+
+function applyFilters(){
+  const chain=document.getElementById("filter-chain").value.toLowerCase();
+  const filtered=chain?ALL_WALLETS.filter(w=>(w.chain||"").toLowerCase()===chain):ALL_WALLETS;
+  renderWallets(filtered);
+  document.getElementById("filter-count").textContent=filtered.length+" of "+ALL_WALLETS.length+" wallets";
+}
+
+fetch("data/wallets.json").then(r=>r.json()).then(data=>{
+  ALL_WALLETS=data.wallets||[];
+  // Populate chain filter
+  const chains=new Set(ALL_WALLETS.map(w=>(w.chain||"").toLowerCase()).filter(Boolean));
+  const sel=document.getElementById("filter-chain");
+  [...chains].sort().forEach(c=>{
+    const opt=document.createElement("option");
+    opt.value=c; opt.textContent=chain_label(c);
+    sel.appendChild(opt);
+  });
+  sel.addEventListener("change",applyFilters);
+  applyFilters();
   document.getElementById("loading").style.display="none";
   document.getElementById("table-container").style.display="";
   document.getElementById("updated").textContent="Last updated: "+new Date().toISOString().slice(0,16);

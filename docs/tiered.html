@@ -184,7 +184,12 @@ function renderTierContent(name){
       </tr>`;
     });
   }
+  // Update filter count
+  document.getElementById("tiered-filter-count").textContent=
+    (filteredTokens.length||allTokens.length)+" tokens, "+(filteredWallets.length||allWallets.length)+" wallets";
 }
+
+document.getElementById("filter-chain-tiered").addEventListener("change",()=>{if(activeTier)renderTierContent(activeTier)});
 
 fetch("data/tiered-wallets.json").then(r=>r.json()).then(data=>{
   DATA=data;
