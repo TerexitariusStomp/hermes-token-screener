@@ -26,3 +26,17 @@ tr:hover td{background:var(--s2)}
 .tag-g{background:#10b98133;color:#10b981}.tag-y{background:#f59e0b33;color:#f59e0b}.tag-r{background:#ef444433;color:#ef4444}
 .mono{font-family:inherit}
 .updated{text-align:center;padding:2rem;color:var(--t2);font-size:.75rem}
+
+/* Market Cap Tier Tabs */
+.tier-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.tier-tab{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:.5rem .75rem;cursor:pointer;color:var(--t2);font-family:inherit;font-size:.75rem;display:flex;flex-direction:column;align-items:center;gap:.2rem;transition:border-color .15s,background .15s}
+.tier-tab:hover{border-color:var(--c);background:var(--s2)}
+.tier-tab.active{border-color:var(--c);background:var(--s2);color:var(--c)}
+.tier-label{font-weight:600;white-space:nowrap}
+.tier-count{font-size:.65rem;opacity:.7}
+
+.tier-summary{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:.5rem 1rem;font-size:.8rem;color:var(--t2);display:flex;gap:.75rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
+.tier-summary .sep{color:var(--b)}
+
+.tier-section-title{font-size:1rem;margin:1.25rem 0 .5rem;color:var(--t2)}
+.tier-empty{text-align:center;padding:2rem;color:var(--t2);font-size:.85rem}
