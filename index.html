@@ -123,8 +123,6 @@ const TC=[
   {k:'dev',f:t=>t.gmgn_dev_hold!=null?(t.gmgn_dev_hold?'&#10003;':'—'):'—'},
   {k:'tg_ch',f:t=>t.tg_channel_count||0},
   {k:'tg_ment',f:t=>t.tg_mention_count||0},
-  {k:'tg_vel',f:t=>(t.tg_mention_velocity||0).toFixed(2)+'/hr'},
-  {k:'tg_qual',f:t=>(t.tg_channel_quality||0).toFixed(2)},
   {k:'tw',f:t=>t.tw_mention_count||0},
   {k:'tw_bull%',f:t=>{
     const s=t.tw_sentiment_score;
@@ -133,11 +131,8 @@ const TC=[
   }},
   {k:'tw_hot',f:t=>(t.tw_trending_score||0).toFixed(1)},
   {k:'social',f:t=>(t.social_score||0).toFixed(1)},
-  {k:'signals',f:t=>{
-    const p=(t.positives||[]).slice(0,1).map(p=>'<span class="tag tag-g">'+trunc(p,20)+'</span>').join('');
-    const n=(t.negatives||[]).slice(0,1).map(n=>'<span class="tag tag-r">'+trunc(n,20)+'</span>').join('');
-    return p+n;
-  }},
+  {k:'bullish',f:t=>(t.positives||[]).slice(0,2).map(p=>'<span class="tag tag-g">'+trunc(p,25)+'</span>').join(' ')||'—'},
+  {k:'bearish',f:t=>(t.negatives||[]).slice(0,2).map(n=>'<span class="tag tag-r">'+trunc(n,25)+'</span>').join(' ')||'—'},
 ];
 
 function renderTokens(){

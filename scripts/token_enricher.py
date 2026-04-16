@@ -1395,7 +1395,6 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
         elif fdv < 50_000_000: fdv_score = 3
         else: fdv_score = 1
         score += fdv_score
-        positives.append(f"FDV ${fdv:,.0f}")
 
     # 4. Volume (0-20)
     vol_h24 = dex.get('volume_h24', 0) or 0
@@ -1418,7 +1417,6 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
         else: vol_accel = 0
 
         score += vol_abs + vol_accel
-        positives.append(f"vol24 ${vol_h24:,.0f}")
 
     # 5. Transaction activity + buy ratio (0-15)
     txns_h1 = dex.get('txns_h1', {})
