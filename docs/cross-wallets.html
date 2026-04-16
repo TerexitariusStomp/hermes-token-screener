@@ -54,7 +54,7 @@ fetch("data/cross-wallets.json").then(r=>r.json()).then(wallets=>{
 
     tbody.innerHTML+=`<tr>
   <td>${i+1}</td>
-  <td class="mono"><a href="https://blockscan.com/address/${addr}" target="_blank">${trunc(addr)}</a></td>
+  <td class="mono"><a href="https://app.zerion.io/${addr}/overview" target="_blank">${trunc(addr)}</a></td>
   <td><span class="badge ${chain_cls(w.chain||"")}">${w.chain||""}</span></td>
   <td class="sc ${sc_cls}">${score.toFixed(0)}</td>
   <td class="sc ${tc_cls}">${tc}</td>
