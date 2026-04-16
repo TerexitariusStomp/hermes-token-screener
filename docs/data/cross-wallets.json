@@ -37,9 +37,10 @@
     "address": "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
     "chain": "solana",
     "wallet_score": 44.0,
-    "top_token_count": 8,
+    "top_token_count": 9,
     "top_tokens": [
       "unc",
+      "DUMBMONEY",
       "BULL",
       "LOL",
       "ROCKET",
@@ -68,7 +69,7 @@
   {
     "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
     "chain": "solana",
-    "wallet_score": 46.0,
+    "wallet_score": 49.0,
     "top_token_count": 7,
     "top_tokens": [
       "unc",
@@ -157,7 +158,7 @@
   {
     "address": "JC6RNWAYcgQWmw2eWz7kEVCRHWm17chmWhhqirQ25WaB",
     "chain": "solana",
-    "wallet_score": 43.0,
+    "wallet_score": 47.0,
     "top_token_count": 3,
     "top_tokens": [
       "unc",
@@ -245,16 +246,6 @@
     "address": "66wniJpXzCF3DT4R9nuHWpdwNwLNUeTN1jLJLNkzCFJf",
     "chain": "solana",
     "wallet_score": 47.0,
-    "top_token_count": 2,
-    "top_tokens": [
-      "unc",
-      "LOL"
-    ]
-  },
-  {
-    "address": "C92nBXrrANmWpgJKhBdbnqtUuCcoEZ7kQJoyScZ5sQak",
-    "chain": "solana",
-    "wallet_score": 46.0,
     "top_token_count": 2,
     "top_tokens": [
       "unc",
@@ -352,6 +343,16 @@
     ]
   },
   {
+    "address": "C92nBXrrANmWpgJKhBdbnqtUuCcoEZ7kQJoyScZ5sQak",
+    "chain": "solana",
+    "wallet_score": 40.0,
+    "top_token_count": 2,
+    "top_tokens": [
+      "unc",
+      "LOL"
+    ]
+  },
+  {
     "address": "1eveYYxZ2mDiAnmCh3fnAbJwjgErzokRA1b6UrRybSM",
     "chain": "solana",
     "wallet_score": 39.0,
@@ -365,6 +366,16 @@
     "address": "J3unmUghDf94NcQZzSXH5qW4FqFCTEH8w3VYkUkex4Au",
     "chain": "solana",
     "wallet_score": 38.0,
+    "top_token_count": 2,
+    "top_tokens": [
+      "DUMBMONEY",
+      "ROCKET"
+    ]
+  },
+  {
+    "address": "GxAiM4NEmH1GdGvGSggD8eUW5jYc1u2q6NK2s3sLWdgM",
+    "chain": "solana",
+    "wallet_score": 35.0,
     "top_token_count": 2,
     "top_tokens": [
       "DUMBMONEY",
@@ -392,16 +403,6 @@
     ]
   },
   {
-    "address": "GxAiM4NEmH1GdGvGSggD8eUW5jYc1u2q6NK2s3sLWdgM",
-    "chain": "solana",
-    "wallet_score": 34.0,
-    "top_token_count": 2,
-    "top_tokens": [
-      "DUMBMONEY",
-      "ROCKET"
-    ]
-  },
-  {
     "address": "FExezs2b4wUbJV4dKoNBE8xZCiH3bVcDnT569fTmkLyj",
     "chain": "solana",
     "wallet_score": 34.0,
@@ -412,13 +413,23 @@
     ]
   },
   {
-    "address": "2E5K1NviZAD4TYNDy8Kf1x7ta6QnCxeHnn5i9pHtn91i",
+    "address": "DiABLotEDhe6xPv5FSTn64N5sVPWViURFJu7BfLgcfq7",
     "chain": "solana",
-    "wallet_score": 33.0,
+    "wallet_score": 32.0,
     "top_token_count": 2,
     "top_tokens": [
       "unc",
-      "Rudi"
+      "Patapim"
+    ]
+  },
+  {
+    "address": "4BjMCYZRHAUYkJppmbi7g2KdkWaSyy79Wkqz5FdktWNM",
+    "chain": "solana",
+    "wallet_score": 32.0,
+    "top_token_count": 2,
+    "top_tokens": [
+      "LOL",
+      "ROCKET"
     ]
   },
   {
@@ -429,16 +440,6 @@
     "top_tokens": [
       "DUMBMONEY",
       "ROCKET"
-    ]
-  },
-  {
-    "address": "DiABLotEDhe6xPv5FSTn64N5sVPWViURFJu7BfLgcfq7",
-    "chain": "solana",
-    "wallet_score": 31.0,
-    "top_token_count": 2,
-    "top_tokens": [
-      "unc",
-      "Patapim"
     ]
   },
   {
@@ -479,36 +480,6 @@
     "top_tokens": [
       "ROCKET",
       "pumphouse"
-    ]
-  },
-  {
-    "address": "5SHdtN7jdhdKCqesbbYMezJh7KKu2hy5q9Vq8xjn4q7s",
-    "chain": "solana",
-    "wallet_score": 29.0,
-    "top_token_count": 2,
-    "top_tokens": [
-      "DUMBMONEY",
-      "SPIKE"
-    ]
-  },
-  {
-    "address": "4BjMCYZRHAUYkJppmbi7g2KdkWaSyy79Wkqz5FdktWNM",
-    "chain": "solana",
-    "wallet_score": 29.0,
-    "top_token_count": 2,
-    "top_tokens": [
-      "LOL",
-      "ROCKET"
-    ]
-  },
-  {
-    "address": "83HBKbzrLazwQrNQpWvRZNGKxigKFcHvaCnFALHLdvEM",
-    "chain": "solana",
-    "wallet_score": 29.0,
-    "top_token_count": 2,
-    "top_tokens": [
-      "LOL",
-      "ROCKET"
     ]
   },
   {
@@ -572,6 +543,26 @@
     ]
   },
   {
+    "address": "4rVRw3Zs4y8mqjU3PBFkmW7utEquYrvtaHJWZAbN4LTm",
+    "chain": "solana",
+    "wallet_score": 28.0,
+    "top_token_count": 2,
+    "top_tokens": [
+      "DUMBMONEY",
+      "ROCKET"
+    ]
+  },
+  {
+    "address": "5SHdtN7jdhdKCqesbbYMezJh7KKu2hy5q9Vq8xjn4q7s",
+    "chain": "solana",
+    "wallet_score": 27.0,
+    "top_token_count": 2,
+    "top_tokens": [
+      "DUMBMONEY",
+      "SPIKE"
+    ]
+  },
+  {
     "address": "7vhG2ZJv2Nt3uDUMNHp2tRW2VS2iNqbmsUGCXjcXMFiC",
     "chain": "solana",
     "wallet_score": 27.0,
@@ -608,6 +599,15 @@
     "top_token_count": 1,
     "top_tokens": [
       "ROCKET"
+    ]
+  },
+  {
+    "address": "8ywWnooJjPCeHeYdy1Ek8YXipMoYrfrTj7puQxFhrzez",
+    "chain": "solana",
+    "wallet_score": 54.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
     ]
   },
   {
@@ -665,6 +665,15 @@
     ]
   },
   {
+    "address": "6nbx3SVv83899msiSze1Zp9VfLRmxiRGwCcKcdjiof5B",
+    "chain": "solana",
+    "wallet_score": 52.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "9nzMbowKkDUGyipxzgLsH6Qj74U77pMP8QUDezVP7BPh",
     "chain": "solana",
     "wallet_score": 51.0,
@@ -701,9 +710,9 @@
     ]
   },
   {
-    "address": "6nbx3SVv83899msiSze1Zp9VfLRmxiRGwCcKcdjiof5B",
+    "address": "5NBhBhGe78Vonx1zJyV1wBjkZDtAAwLJzrFYaZmf2xLe",
     "chain": "solana",
-    "wallet_score": 51.0,
+    "wallet_score": 50.0,
     "top_token_count": 1,
     "top_tokens": [
       "unc"
@@ -725,15 +734,6 @@
     "top_token_count": 1,
     "top_tokens": [
       "LOL"
-    ]
-  },
-  {
-    "address": "EuWbAc5zTpRzTpxx89RhQGZnvPntyrTSQozkLs5QwyH1",
-    "chain": "solana",
-    "wallet_score": 50.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
     ]
   },
   {
@@ -809,6 +809,24 @@
     ]
   },
   {
+    "address": "7VMaZFSVjCvpiRfeW1DZJtMsweLMarEY9nipEd8E4crc",
+    "chain": "solana",
+    "wallet_score": 49.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
+    "address": "EuWbAc5zTpRzTpxx89RhQGZnvPntyrTSQozkLs5QwyH1",
+    "chain": "solana",
+    "wallet_score": 49.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "3jkDdP5Y3F78fzGBS6E4tYocEmzyU9q2wgTa49w2HxtF",
     "chain": "solana",
     "wallet_score": 48.0,
@@ -837,6 +855,15 @@
   },
   {
     "address": "HDXqd4gWBEauouDcVZvns62BuVfo36iLFH3QoucYLv3r",
+    "chain": "solana",
+    "wallet_score": 48.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
+    "address": "2v57PL3u1K21MVLVPL2fcwB2euvEo4uLXBADpPNLZxyJ",
     "chain": "solana",
     "wallet_score": 48.0,
     "top_token_count": 1,
@@ -890,15 +917,6 @@
     ]
   },
   {
-    "address": "7VMaZFSVjCvpiRfeW1DZJtMsweLMarEY9nipEd8E4crc",
-    "chain": "solana",
-    "wallet_score": 47.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "8rk4q6Z2cwEtVhAMyB18wErctoho8uUreK2hhzuRE3AS",
     "chain": "solana",
     "wallet_score": 47.0,
@@ -923,15 +941,6 @@
     "top_token_count": 1,
     "top_tokens": [
       "BULL"
-    ]
-  },
-  {
-    "address": "8ywWnooJjPCeHeYdy1Ek8YXipMoYrfrTj7puQxFhrzez",
-    "chain": "solana",
-    "wallet_score": 46.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
     ]
   },
   {
@@ -1016,7 +1025,7 @@
     ]
   },
   {
-    "address": "2v57PL3u1K21MVLVPL2fcwB2euvEo4uLXBADpPNLZxyJ",
+    "address": "Dk4na3gi8HYrrnFDcRgVfET23Ltm7AxbzvPpGyHaXwQJ",
     "chain": "solana",
     "wallet_score": 46.0,
     "top_token_count": 1,
@@ -1025,7 +1034,16 @@
     ]
   },
   {
-    "address": "Dk4na3gi8HYrrnFDcRgVfET23Ltm7AxbzvPpGyHaXwQJ",
+    "address": "ALPBqLwzNKZP7586RjTFKSW8Yvk2y5bSSk7JCwTmP8Tp",
+    "chain": "solana",
+    "wallet_score": 46.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
+    "address": "8GT5kWnRKyB5joUneovznffBY9Rzf9DxdBExsAWNGd2k",
     "chain": "solana",
     "wallet_score": 46.0,
     "top_token_count": 1,
@@ -1124,7 +1142,7 @@
     ]
   },
   {
-    "address": "ALPBqLwzNKZP7586RjTFKSW8Yvk2y5bSSk7JCwTmP8Tp",
+    "address": "HfPpwm8GQHttaBX8fZ7TZaFpJpcHFLVhpBhSvk1cxz9P",
     "chain": "solana",
     "wallet_score": 45.0,
     "top_token_count": 1,
@@ -1232,15 +1250,6 @@
     ]
   },
   {
-    "address": "8GT5kWnRKyB5joUneovznffBY9Rzf9DxdBExsAWNGd2k",
-    "chain": "solana",
-    "wallet_score": 44.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "6PhsUXpoP2F4FYx3vQb435QmSP97pMfqxUevvpjmdzkj",
     "chain": "solana",
     "wallet_score": 44.0,
@@ -1313,6 +1322,15 @@
     ]
   },
   {
+    "address": "ACFNvbyeyxRtTX29vYyp6ZURGyk1VUuTRmBjYCuSQZKL",
+    "chain": "solana",
+    "wallet_score": 43.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "4hkgHm84DWJPCTx6aqRq3bgr4YreenUSzQPTmUn9WNCG",
     "chain": "solana",
     "wallet_score": 43.0,
@@ -1322,7 +1340,25 @@
     ]
   },
   {
+    "address": "8vUyFMnDfDrsz6c9UupPBVp6A5DLCg45Nuh1Zj39b8ft",
+    "chain": "solana",
+    "wallet_score": 43.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "8VbetSGDVCB8GJxF2r8TeQK9ZrkaKA7LuLYpi2Mp7wtv",
+    "chain": "solana",
+    "wallet_score": 43.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
+    "address": "GUA5TyY4Mr5oFJBqURf6ZPxRp59Z7bDFM5SSg4rTNE4E",
     "chain": "solana",
     "wallet_score": 43.0,
     "top_token_count": 1,
@@ -1583,6 +1619,24 @@
     ]
   },
   {
+    "address": "GWDrfkCdRUe3jBHATWBSHNsKdhdEyGKx9PBZscMxWDXr",
+    "chain": "solana",
+    "wallet_score": 41.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
+    "address": "2QFXLBhHPngutPTDcjDG5Y4SfEJ7AR9onr72qRn7RN28",
+    "chain": "solana",
+    "wallet_score": 41.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "GLg7c5WceZdzTVenMXtUuttuQSjsoUvQRLzNupcLtYsH",
     "chain": "solana",
     "wallet_score": 41.0,
@@ -1601,15 +1655,6 @@
     ]
   },
   {
-    "address": "8vUyFMnDfDrsz6c9UupPBVp6A5DLCg45Nuh1Zj39b8ft",
-    "chain": "solana",
-    "wallet_score": 41.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "DhAHqrdZwm8iEJ3pfKkhDG27YNUjbWmFsDhaXCXAwHfk",
     "chain": "solana",
     "wallet_score": 41.0,
@@ -1620,15 +1665,6 @@
   },
   {
     "address": "EYkL72WANDphLXSKgKqTtoyuDuKa9NQTFrkYh8e8ANbz",
-    "chain": "solana",
-    "wallet_score": 41.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
-    "address": "GUA5TyY4Mr5oFJBqURf6ZPxRp59Z7bDFM5SSg4rTNE4E",
     "chain": "solana",
     "wallet_score": 41.0,
     "top_token_count": 1,
@@ -1697,24 +1733,6 @@
     "top_token_count": 1,
     "top_tokens": [
       "ROCKET"
-    ]
-  },
-  {
-    "address": "4y2ygxHoQUZCUTZ9c1z33R5arUZhnUyq1JxQ9AaSeMRe",
-    "chain": "solana",
-    "wallet_score": 41.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "LOL"
-    ]
-  },
-  {
-    "address": "5NBhBhGe78Vonx1zJyV1wBjkZDtAAwLJzrFYaZmf2xLe",
-    "chain": "solana",
-    "wallet_score": 40.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
     ]
   },
   {
@@ -1826,7 +1844,7 @@
     ]
   },
   {
-    "address": "HfPpwm8GQHttaBX8fZ7TZaFpJpcHFLVhpBhSvk1cxz9P",
+    "address": "7dPxmiFcY9zvBsWiDvXjNkcpDGxz7Em5rPvqZBd9h69G",
     "chain": "solana",
     "wallet_score": 40.0,
     "top_token_count": 1,
@@ -1835,7 +1853,7 @@
     ]
   },
   {
-    "address": "7dPxmiFcY9zvBsWiDvXjNkcpDGxz7Em5rPvqZBd9h69G",
+    "address": "FGJKiuMCkojVnYLpRH5HyhBNkJmT4rJqWNew4pTZtbid",
     "chain": "solana",
     "wallet_score": 40.0,
     "top_token_count": 1,
@@ -2015,34 +2033,7 @@
     ]
   },
   {
-    "address": "GWDrfkCdRUe3jBHATWBSHNsKdhdEyGKx9PBZscMxWDXr",
-    "chain": "solana",
-    "wallet_score": 39.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
-    "address": "FGJKiuMCkojVnYLpRH5HyhBNkJmT4rJqWNew4pTZtbid",
-    "chain": "solana",
-    "wallet_score": 39.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "BtDaZUqHr2mKH5EYQCztuerHBuBEfQNYdquTDtEZp2Ym",
-    "chain": "solana",
-    "wallet_score": 39.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
-    "address": "BZoyPiTXV1ZQfBnxg5SAJT81iVqRM5UDU6FTkWzAx1ys",
     "chain": "solana",
     "wallet_score": 39.0,
     "top_token_count": 1,
@@ -2075,6 +2066,15 @@
     "top_token_count": 1,
     "top_tokens": [
       "ROCKET"
+    ]
+  },
+  {
+    "address": "CoPyPPWdm8SirumaAEe8S68nSJpHYhguN2L5i2YGxLB",
+    "chain": "solana",
+    "wallet_score": 39.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
     ]
   },
   {
@@ -2186,25 +2186,7 @@
     ]
   },
   {
-    "address": "ACFNvbyeyxRtTX29vYyp6ZURGyk1VUuTRmBjYCuSQZKL",
-    "chain": "solana",
-    "wallet_score": 38.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "HX3xUGb96BfsBScCa4ZY1dfsurppgRTYRSmBRcqw1Bee",
-    "chain": "solana",
-    "wallet_score": 38.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
-    "address": "CdzW7yMqrQhHo9XsccXiNhDX7GVxFw64QZPQ6L3pPHy9",
     "chain": "solana",
     "wallet_score": 38.0,
     "top_token_count": 1,
@@ -2249,16 +2231,16 @@
     ]
   },
   {
-    "address": "CoPyPPWdm8SirumaAEe8S68nSJpHYhguN2L5i2YGxLB",
+    "address": "FXKTGvBCuutXtrw6ABiE8k6nMej2sqNEbrMt4SnhYhnx",
     "chain": "solana",
     "wallet_score": 38.0,
     "top_token_count": 1,
     "top_tokens": [
-      "unc"
+      "LOL"
     ]
   },
   {
-    "address": "FXKTGvBCuutXtrw6ABiE8k6nMej2sqNEbrMt4SnhYhnx",
+    "address": "4y2ygxHoQUZCUTZ9c1z33R5arUZhnUyq1JxQ9AaSeMRe",
     "chain": "solana",
     "wallet_score": 38.0,
     "top_token_count": 1,
@@ -2402,15 +2384,6 @@
     ]
   },
   {
-    "address": "2QFXLBhHPngutPTDcjDG5Y4SfEJ7AR9onr72qRn7RN28",
-    "chain": "solana",
-    "wallet_score": 37.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "7gQrnrWnLnFoDwdvWZp2p5diiSZfz7xcR96MMprfZSxE",
     "chain": "solana",
     "wallet_score": 37.0,
@@ -2430,6 +2403,15 @@
   },
   {
     "address": "G326ybE8zPE5tXXmnb9RMM536WW5Y8FFUWMnDk6NqKPD",
+    "chain": "solana",
+    "wallet_score": 37.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
+    "address": "DqqVaA77dUxoV7kgwudPUAWqRcnSdQd39G3chBSBpZwQ",
     "chain": "solana",
     "wallet_score": 37.0,
     "top_token_count": 1,
@@ -2591,6 +2573,15 @@
     ]
   },
   {
+    "address": "BZoyPiTXV1ZQfBnxg5SAJT81iVqRM5UDU6FTkWzAx1ys",
+    "chain": "solana",
+    "wallet_score": 36.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "2q3ABvRCf1772VnxW4Nauc4DGfJSANpLhBxBYajkLpC6",
     "chain": "solana",
     "wallet_score": 36.0,
@@ -2708,15 +2699,6 @@
     ]
   },
   {
-    "address": "FhsbQzAJWVDNwaH61cTo6XkkfEsmSYMZKs9VJHH32bVG",
-    "chain": "solana",
-    "wallet_score": 35.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "2YUQ33mz9cdss3DRmHnKNJLudpPFfwmUh1uH7JWqkfV5",
     "chain": "solana",
     "wallet_score": 35.0,
@@ -2745,15 +2727,6 @@
   },
   {
     "address": "G7ytsMjKJmAATstxE6Nt3YjGePrzmGMN2qnQJN5iyR4b",
-    "chain": "solana",
-    "wallet_score": 35.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
-    "address": "DqqVaA77dUxoV7kgwudPUAWqRcnSdQd39G3chBSBpZwQ",
     "chain": "solana",
     "wallet_score": 35.0,
     "top_token_count": 1,
@@ -2834,6 +2807,15 @@
     ]
   },
   {
+    "address": "F4JcWtTda2jNGTQrBExhmDgqrWpjC7jkhWC4PqvRF7NK",
+    "chain": "solana",
+    "wallet_score": 34.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "Bk4TyUvxfaa4rMZGgEJoSJm1aaiaUN2VGsumFETuvtJx",
     "chain": "solana",
     "wallet_score": 34.0,
@@ -2879,6 +2861,15 @@
     ]
   },
   {
+    "address": "5fW4HkSF2MLVArNr6qSYxtgkqKgGw2u8E85S43VKPZAN",
+    "chain": "solana",
+    "wallet_score": 34.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "6CuzHfwM2v8M3GW9GNiNmapSe1Fw3EU7L48YkRaGn6n9",
     "chain": "solana",
     "wallet_score": 34.0,
@@ -2906,12 +2897,48 @@
     ]
   },
   {
+    "address": "2wPbywQdEqCcizHsZZVBb4JsFQYBKV6fQSBFrgT4zAYb",
+    "chain": "solana",
+    "wallet_score": 33.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "LOL"
+    ]
+  },
+  {
     "address": "2XPjFWqb5nwPe3GdzHKnKR6yHzNo3BBYX6Y6og9BHcNo",
     "chain": "solana",
     "wallet_score": 33.0,
     "top_token_count": 1,
     "top_tokens": [
       "LOL"
+    ]
+  },
+  {
+    "address": "BKwy5fDcpdXLPKZTAKrJDTrf62AntAtTrH7soi8MfVgN",
+    "chain": "solana",
+    "wallet_score": 33.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "LOL"
+    ]
+  },
+  {
+    "address": "DmPvv1AdE7Eu9AdAfPRLRSjGbywwkiFWVgr5cxpnLMtK",
+    "chain": "solana",
+    "wallet_score": 33.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
+    "address": "4un4jepjZjbG8YdiAJCdAvGf9A2XK9Eg4G7kfMP7Eutg",
+    "chain": "solana",
+    "wallet_score": 33.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
     ]
   },
   {
@@ -3212,6 +3239,15 @@
     ]
   },
   {
+    "address": "FhsbQzAJWVDNwaH61cTo6XkkfEsmSYMZKs9VJHH32bVG",
+    "chain": "solana",
+    "wallet_score": 32.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "e9Kgn4FfzSGBhtjWA8iHZ5K9oPUWjeXNgpJ5ZQ8hT8U",
     "chain": "solana",
     "wallet_score": 32.0,
@@ -3266,15 +3302,6 @@
     ]
   },
   {
-    "address": "5fW4HkSF2MLVArNr6qSYxtgkqKgGw2u8E85S43VKPZAN",
-    "chain": "solana",
-    "wallet_score": 32.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "4Lb3MhXaX9sVFu4LDzu4SNxodEYagLQYniEgW9j4v7sa",
     "chain": "solana",
     "wallet_score": 31.0,
@@ -3284,7 +3311,7 @@
     ]
   },
   {
-    "address": "5aKP3v92xceHAv6eZbSewetNWaAUDVeEjYagV2kv7Gvg",
+    "address": "9XPGLRnkc3AARvWsLP3erYrmq65QTuKHURoQ6qR5Zttx",
     "chain": "solana",
     "wallet_score": 31.0,
     "top_token_count": 1,
@@ -3500,7 +3527,25 @@
     ]
   },
   {
+    "address": "8MoW9mtbEz6z3gPuAdYb1yWhjCAxQSYqpcTb1CQgN5qb",
+    "chain": "solana",
+    "wallet_score": 31.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "9bV6iCKENQZtZMdQkEeHmPBLXxgVPJHhvTESm7DzsbxX",
+    "chain": "solana",
+    "wallet_score": 31.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
+    "address": "HbbMTb52pzMqUfHTfGjgFMKjCo2kzEUm1EXJ4rcDqGgS",
     "chain": "solana",
     "wallet_score": 31.0,
     "top_token_count": 1,
@@ -3554,6 +3599,15 @@
     ]
   },
   {
+    "address": "2bKCTAxf2qtAyqD3zswkwBwbxGdvfxb62NhAhU8Zrf6D",
+    "chain": "solana",
+    "wallet_score": 31.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
+    ]
+  },
+  {
     "address": "DUcEQqE6rgHW3zNNAmeHE55RpfW4n3Y6ndWNFMWX5KD2",
     "chain": "solana",
     "wallet_score": 31.0,
@@ -3578,6 +3632,15 @@
     "top_token_count": 1,
     "top_tokens": [
       "DUMBMONEY"
+    ]
+  },
+  {
+    "address": "BNXQZJKmgaCCJRxFV9Yka5bfGRE7AA7AC2RFu7pkYa9Z",
+    "chain": "solana",
+    "wallet_score": 31.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "unc"
     ]
   },
   {
@@ -3644,39 +3707,12 @@
     ]
   },
   {
-    "address": "2wPbywQdEqCcizHsZZVBb4JsFQYBKV6fQSBFrgT4zAYb",
-    "chain": "solana",
-    "wallet_score": 30.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "LOL"
-    ]
-  },
-  {
-    "address": "BKwy5fDcpdXLPKZTAKrJDTrf62AntAtTrH7soi8MfVgN",
-    "chain": "solana",
-    "wallet_score": 30.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "LOL"
-    ]
-  },
-  {
     "address": "5qWGLq9XjEMbaN8CsFVYS3WvC5W8byBddi8wZBPRfL58",
     "chain": "solana",
     "wallet_score": 30.0,
     "top_token_count": 1,
     "top_tokens": [
       "SPIKE"
-    ]
-  },
-  {
-    "address": "F4JcWtTda2jNGTQrBExhmDgqrWpjC7jkhWC4PqvRF7NK",
-    "chain": "solana",
-    "wallet_score": 30.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
     ]
   },
   {
@@ -3896,15 +3932,6 @@
     ]
   },
   {
-    "address": "8MoW9mtbEz6z3gPuAdYb1yWhjCAxQSYqpcTb1CQgN5qb",
-    "chain": "solana",
-    "wallet_score": 29.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "ik1fCERApPcHVQCt5TFKZwcfUjS7XiCFyJuQih6Gqqh",
     "chain": "solana",
     "wallet_score": 29.0,
@@ -3968,15 +3995,6 @@
     ]
   },
   {
-    "address": "BNXQZJKmgaCCJRxFV9Yka5bfGRE7AA7AC2RFu7pkYa9Z",
-    "chain": "solana",
-    "wallet_score": 29.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "GgG65z3MXpmGnV3ZapKv5ayDqox1x7CJnqP1LD8FaZdt",
     "chain": "solana",
     "wallet_score": 29.0,
@@ -4004,7 +4022,7 @@
     ]
   },
   {
-    "address": "87v4fB1RVHwfkTx2vtF6Bes8QbegMVbzczJEpb6ipp5C",
+    "address": "CyyYUnP9PN4vdQZJUgBmL8etBT9MJ4wDCk9UXfm3z5Rw",
     "chain": "solana",
     "wallet_score": 28.0,
     "top_token_count": 1,
@@ -4148,24 +4166,6 @@
     ]
   },
   {
-    "address": "DmPvv1AdE7Eu9AdAfPRLRSjGbywwkiFWVgr5cxpnLMtK",
-    "chain": "solana",
-    "wallet_score": 28.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
-    "address": "4un4jepjZjbG8YdiAJCdAvGf9A2XK9Eg4G7kfMP7Eutg",
-    "chain": "solana",
-    "wallet_score": 28.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "unc"
-    ]
-  },
-  {
     "address": "CzYQ2kFnBxsNEt9Zy34vQ3n5fSDhvA4o4XaTnq1rLvyr",
     "chain": "solana",
     "wallet_score": 28.0,
@@ -4229,7 +4229,7 @@
     ]
   },
   {
-    "address": "CyyYUnP9PN4vdQZJUgBmL8etBT9MJ4wDCk9UXfm3z5Rw",
+    "address": "Yt3KrPSZjGNkJiqQvCaPGRCBQ9hj8V2Fr9g4VarL7sa",
     "chain": "solana",
     "wallet_score": 27.0,
     "top_token_count": 1,
@@ -4238,7 +4238,7 @@
     ]
   },
   {
-    "address": "Yt3KrPSZjGNkJiqQvCaPGRCBQ9hj8V2Fr9g4VarL7sa",
+    "address": "5aKP3v92xceHAv6eZbSewetNWaAUDVeEjYagV2kv7Gvg",
     "chain": "solana",
     "wallet_score": 27.0,
     "top_token_count": 1,
@@ -4293,15 +4293,6 @@
   },
   {
     "address": "3AkXyqZo7WCg9tDs47jf5cKQvbWjXrTEY8oYHBTPRmoX",
-    "chain": "solana",
-    "wallet_score": 27.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "DUMBMONEY"
-    ]
-  },
-  {
-    "address": "AXhDke8sjgyDaPzveFMuTAx9zQPgozKUV1MqjxyBbBfv",
     "chain": "solana",
     "wallet_score": 27.0,
     "top_token_count": 1,
@@ -4418,24 +4409,6 @@
     ]
   },
   {
-    "address": "BkRS83Mhozd7PSptwNWAw6bLBcuB7o19M7oYW8E6Qmcg",
-    "chain": "solana",
-    "wallet_score": 27.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "LOL"
-    ]
-  },
-  {
-    "address": "3gW5RB2yjgNAbC5DuCuz1yBq43N4iSiLU2AZLcxUWf5z",
-    "chain": "solana",
-    "wallet_score": 27.0,
-    "top_token_count": 1,
-    "top_tokens": [
-      "LOL"
-    ]
-  },
-  {
     "address": "8Pi3y1JeayKjsfxwVa7hd7ohAkJPAZKhcTkHuLdidaEX",
     "chain": "solana",
     "wallet_score": 27.0,
@@ -4455,6 +4428,33 @@
   },
   {
     "address": "3xxwELwQV7dp4efym9yKyo84LFusuqirSCjn1Jn7hieC",
+    "chain": "solana",
+    "wallet_score": 27.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "SPIKE"
+    ]
+  },
+  {
+    "address": "A6WvvXgdeZ4tuvHhfmj1XSomEzU4fdA2okLVBivXjhCa",
+    "chain": "solana",
+    "wallet_score": 27.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "SPIKE"
+    ]
+  },
+  {
+    "address": "6QnuU9Fw6CRtj1PtLdbQNEDkwPUdLv6tk6h3eUvqab7",
+    "chain": "solana",
+    "wallet_score": 27.0,
+    "top_token_count": 1,
+    "top_tokens": [
+      "SPIKE"
+    ]
+  },
+  {
+    "address": "GYdJfRSHnzQ2QxwADLwsVtuPeHR2shpWvdyR8eF4aVmz",
     "chain": "solana",
     "wallet_score": 27.0,
     "top_token_count": 1,
