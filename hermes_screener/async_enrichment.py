@@ -186,7 +186,7 @@ class AsyncDexscreenerEnricher:
     def _age_hours(created_at_ms) -> float | None:
         if not created_at_ms:
             return None
-        return round((time.time() * 1000 - created_at_ms) / 3600000, 2)
+        return round((time.time() * 1000 - created_at_ms) / 3600000, 2)  # type: ignore[no-any-return]
 
 
 class AsyncHttpEnricher:

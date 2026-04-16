@@ -76,7 +76,7 @@ def _call_llm(
                     timeout=timeout,
                 )
                 if r.status_code == 200:
-                    return r.json().get("response", "")
+                    return r.json().get("response", "")  # type: ignore[no-any-return]
 
             elif endpoint["type"] == "openai":
                 messages = []
@@ -98,7 +98,7 @@ def _call_llm(
                     # Check for cloud proxy error
                     if "error" in data and "cloud" in data["error"].get("type", ""):
                         continue
-                    return (
+                    return (  # type: ignore[no-any-return]
                         data.get("choices", [{}])[0]
                         .get("message", {})
                         .get("content", "")

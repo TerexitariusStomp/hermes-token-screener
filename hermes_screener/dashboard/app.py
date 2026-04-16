@@ -38,7 +38,7 @@ def _load_top100() -> dict[str, Any]:
     if not path.exists():
         return {"tokens": [], "generated_at_iso": "Never", "total_candidates": 0}
     with open(path) as f:
-        return json.load(f)  # type: ignore[return-value]
+        return json.load(f)  # type: ignore[no-any-return]
 
 
 def _get_wallet_db():
@@ -907,7 +907,7 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
     # Get top wallets
     top_wallets = _get_top_wallets(200)
     if not top_wallets:
-        return tokens  # Fallback: return tokens sorted by score
+        return tokens  # type: ignore[no-any-return]  # Fallback: return tokens sorted by score
 
     # For each top wallet, get their token holdings
     wallet_holdings: dict[str, set[str]] = (
@@ -931,7 +931,7 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
     tokens.sort(
         key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True
     )
-    return tokens  # type: ignore[return-value]
+    return tokens  # type: ignore[no-any-return]
 
 
 def _cross_reference_wallets_by_tokens() -> list[dict]:
