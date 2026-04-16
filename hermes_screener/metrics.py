@@ -197,7 +197,10 @@ def start_metrics_server(port: int | None = None) -> None:
     global _server_started, _server_thread
 
     if not settings.metrics_enabled:
-        log.info("metrics_disabled", msg="Prometheus exporter disabled via METRICS_ENABLED=false")
+        log.info(
+            "metrics_disabled",
+            msg="Prometheus exporter disabled via METRICS_ENABLED=false",
+        )
         return
 
     if _server_started:
@@ -208,9 +211,15 @@ def start_metrics_server(port: int | None = None) -> None:
 
     def _run():
         start_http_server(port, registry=REGISTRY)
-        log.info("metrics_server_started", port=port, endpoint=f"http://0.0.0.0:{port}/metrics")
+        log.info(
+            "metrics_server_started",
+            port=port,
+            endpoint=f"http://0.0.0.0:{port}/metrics",
+        )
 
-    _server_thread = threading.Thread(target=_run, daemon=True, name="prometheus-metrics")
+    _server_thread = threading.Thread(
+        target=_run, daemon=True, name="prometheus-metrics"
+    )
     _server_thread.start()
     _server_started = True
 

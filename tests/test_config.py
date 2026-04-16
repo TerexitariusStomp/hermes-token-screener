@@ -7,9 +7,15 @@ from pathlib import Path
 os.environ["HERMES_HOME"] = "/tmp/test_hermes"
 # Clear any real API keys that leak through env
 for key in [
-    "COINGECKO_API_KEY", "ETHERSCAN_API_KEY", "DEFI_API_KEY",
-    "RUGCHECK_API_KEY", "GMGN_API_KEY", "SURF_API_KEY",
-    "ALCHEMY_API_KEY", "HELIUS_API_KEY", "QUICKNODE_KEY",
+    "COINGECKO_API_KEY",
+    "ETHERSCAN_API_KEY",
+    "DEFI_API_KEY",
+    "RUGCHECK_API_KEY",
+    "GMGN_API_KEY",
+    "SURF_API_KEY",
+    "ALCHEMY_API_KEY",
+    "HELIUS_API_KEY",
+    "QUICKNODE_KEY",
     "LOG_LEVEL",
 ]:
     os.environ.pop(key, None)
@@ -18,7 +24,10 @@ for key in [
 def _fresh(**kw):
     """Create Settings with no env file."""
     from hermes_screener.config import Settings
-    return Settings(hermes_home=kw.pop("hermes_home", "/tmp/test_hermes"), _env_file=None, **kw)
+
+    return Settings(
+        hermes_home=kw.pop("hermes_home", "/tmp/test_hermes"), _env_file=None, **kw
+    )
 
 
 def test_defaults():
@@ -48,6 +57,7 @@ def test_api_keys_empty_by_default():
 
 def test_env_override(tmp_path):
     from hermes_screener.config import Settings
+
     env_file = tmp_path / ".env"
     env_file.write_text(
         "top_n=50\n"
@@ -83,7 +93,9 @@ def test_api_key_masked():
 
 def test_scoring_weights_sum():
     s = _fresh()
-    total = s.w_channel + s.w_freshness + s.w_low_fdv + s.w_volume + s.w_txns + s.w_momentum
+    total = (
+        s.w_channel + s.w_freshness + s.w_low_fdv + s.w_volume + s.w_txns + s.w_momentum
+    )
     assert total == 100.0
 
 

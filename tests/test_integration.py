@@ -8,9 +8,15 @@ import pytest
 
 os.environ.setdefault("HERMES_HOME", "/tmp/test_hermes")
 # Clear env keys that leak into settings
-for key in ["COINGECKO_API_KEY", "ETHERSCAN_API_KEY", "GMGN_API_KEY",
-            "SURF_API_KEY", "DEFI_API_KEY", "ZERION_API_KEY",
-            "LOG_LEVEL"]:
+for key in [
+    "COINGECKO_API_KEY",
+    "ETHERSCAN_API_KEY",
+    "GMGN_API_KEY",
+    "SURF_API_KEY",
+    "DEFI_API_KEY",
+    "ZERION_API_KEY",
+    "LOG_LEVEL",
+]:
     os.environ.pop(key, None)
 
 SCRIPTS_DIR = Path(__file__).parent.parent / "scripts"
@@ -60,7 +66,9 @@ def test_script_imports_hermes_config(script):
     """Every script imports hermes_screener.config."""
     tree = _parse_script(script)
     imports = _get_imports(tree)
-    assert "hermes_screener.config" in imports, f"{script} missing hermes_screener.config import"
+    assert (
+        "hermes_screener.config" in imports
+    ), f"{script} missing hermes_screener.config import"
 
 
 @pytest.mark.parametrize("script", SCRIPT_NAMES)
@@ -68,7 +76,9 @@ def test_script_imports_hermes_logging(script):
     """Every script imports hermes_screener.logging."""
     tree = _parse_script(script)
     imports = _get_imports(tree)
-    assert "hermes_screener.logging" in imports, f"{script} missing hermes_screener.logging import"
+    assert (
+        "hermes_screener.logging" in imports
+    ), f"{script} missing hermes_screener.logging import"
 
 
 @pytest.mark.parametrize("script", SCRIPT_NAMES)
@@ -76,7 +86,9 @@ def test_script_imports_hermes_metrics(script):
     """Every script imports hermes_screener.metrics."""
     tree = _parse_script(script)
     imports = _get_imports(tree)
-    assert "hermes_screener.metrics" in imports, f"{script} missing hermes_screener.metrics import"
+    assert (
+        "hermes_screener.metrics" in imports
+    ), f"{script} missing hermes_screener.metrics import"
 
 
 @pytest.mark.parametrize("script", SCRIPT_NAMES)
@@ -101,7 +113,9 @@ def test_script_no_os_getenv(script):
 def test_script_no_stdlib_logging(script):
     """No script uses stdlib logging.basicConfig or logging.getLogger."""
     source = (SCRIPTS_DIR / script).read_text()
-    assert "logging.basicConfig" not in source, f"{script} still uses logging.basicConfig"
+    assert (
+        "logging.basicConfig" not in source
+    ), f"{script} still uses logging.basicConfig"
     assert "logging.getLogger" not in source, f"{script} still uses logging.getLogger"
     assert "import logging" not in source, f"{script} still imports logging"
 
@@ -110,7 +124,9 @@ def test_script_no_stdlib_logging(script):
 def test_script_calls_start_metrics(script):
     """Every script calls start_metrics_server()."""
     source = (SCRIPTS_DIR / script).read_text()
-    assert "start_metrics_server()" in source, f"{script} missing start_metrics_server() call"
+    assert (
+        "start_metrics_server()" in source
+    ), f"{script} missing start_metrics_server() call"
 
 
 @pytest.mark.parametrize("script", SCRIPT_NAMES)

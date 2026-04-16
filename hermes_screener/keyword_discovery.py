@@ -45,48 +45,213 @@ DB_PATH = settings.db_path
 
 # Common English stop words + crypto noise
 STOP_WORDS = {
-    "the", "a", "an", "is", "are", "was", "were", "be", "been", "being",
-    "have", "has", "had", "do", "does", "did", "will", "would", "could",
-    "should", "may", "might", "can", "shall", "to", "of", "in", "for",
-    "on", "with", "at", "by", "from", "as", "into", "through", "during",
-    "before", "after", "above", "below", "between", "out", "off", "over",
-    "under", "again", "further", "then", "once", "here", "there", "when",
-    "where", "why", "how", "all", "each", "every", "both", "few", "more",
-    "most", "other", "some", "such", "no", "nor", "not", "only", "own",
-    "same", "so", "than", "too", "very", "just", "don", "now", "and",
-    "but", "or", "if", "while", "about", "up", "it", "its", "this",
-    "that", "these", "those", "i", "me", "my", "we", "our", "you", "your",
-    "he", "him", "his", "she", "her", "they", "them", "their", "what",
-    "which", "who", "whom", "get", "got", "like", "one", "also", "back",
-    "going", "new", "see", "way", "make", "many", "time", "much", "well", "come", # Crypto template noise (from Telegram scraper formatting)
-    "token", "contract", "address", "solana", "ethereum", "base", "bsc",
-    "chain", "chart", "buy", "sell", "trading", "trade", "dex", "pool",
-    "pair", "https", "http", "www", "com", "io", "gg", "xyz",
-    "0x", "pump", "raydium", "jupiter", "uniswap", "ca", "mc", "mcap",
+    "the",
+    "a",
+    "an",
+    "is",
+    "are",
+    "was",
+    "were",
+    "be",
+    "been",
+    "being",
+    "have",
+    "has",
+    "had",
+    "do",
+    "does",
+    "did",
+    "will",
+    "would",
+    "could",
+    "should",
+    "may",
+    "might",
+    "can",
+    "shall",
+    "to",
+    "of",
+    "in",
+    "for",
+    "on",
+    "with",
+    "at",
+    "by",
+    "from",
+    "as",
+    "into",
+    "through",
+    "during",
+    "before",
+    "after",
+    "above",
+    "below",
+    "between",
+    "out",
+    "off",
+    "over",
+    "under",
+    "again",
+    "further",
+    "then",
+    "once",
+    "here",
+    "there",
+    "when",
+    "where",
+    "why",
+    "how",
+    "all",
+    "each",
+    "every",
+    "both",
+    "few",
+    "more",
+    "most",
+    "other",
+    "some",
+    "such",
+    "no",
+    "nor",
+    "not",
+    "only",
+    "own",
+    "same",
+    "so",
+    "than",
+    "too",
+    "very",
+    "just",
+    "don",
+    "now",
+    "and",
+    "but",
+    "or",
+    "if",
+    "while",
+    "about",
+    "up",
+    "it",
+    "its",
+    "this",
+    "that",
+    "these",
+    "those",
+    "i",
+    "me",
+    "my",
+    "we",
+    "our",
+    "you",
+    "your",
+    "he",
+    "him",
+    "his",
+    "she",
+    "her",
+    "they",
+    "them",
+    "their",
+    "what",
+    "which",
+    "who",
+    "whom",
+    "get",
+    "got",
+    "like",
+    "one",
+    "also",
+    "back",
+    "going",
+    "new",
+    "see",
+    "way",
+    "make",
+    "many",
+    "time",
+    "much",
+    "well",
+    "come",  # Crypto template noise (from Telegram scraper formatting)
+    "token",
+    "contract",
+    "address",
+    "solana",
+    "ethereum",
+    "base",
+    "bsc",
+    "chain",
+    "chart",
+    "buy",
+    "sell",
+    "trading",
+    "trade",
+    "dex",
+    "pool",
+    "pair",
+    "https",
+    "http",
+    "www",
+    "com",
+    "io",
+    "gg",
+    "xyz",
+    "0x",
+    "pump",
+    "raydium",
+    "jupiter",
+    "uniswap",
+    "ca",
+    "mc",
+    "mcap",
     # Telegram template abbreviations (not real topics)
-    "vol", "chg", "age", "fdv", "liq", "m5", "h1", "h6", "h24",
-    "ath", "txns", "buys", "sells", "price", "total",
-    "score", "risk", "level", "high", "low", "mid", "top", "bot",
-    "hot", "trending", "signal", "alert", "call", "alpha",
+    "vol",
+    "chg",
+    "age",
+    "fdv",
+    "liq",
+    "m5",
+    "h1",
+    "h6",
+    "h24",
+    "ath",
+    "txns",
+    "buys",
+    "sells",
+    "price",
+    "total",
+    "score",
+    "risk",
+    "level",
+    "high",
+    "low",
+    "mid",
+    "top",
+    "bot",
+    "hot",
+    "trending",
+    "signal",
+    "alert",
+    "call",
+    "alpha",
 }
 
 # Crypto-relevant term patterns (boosted 2x in scoring)
 CRYPTO_PATTERNS = re.compile(
-    r'\b(?:meme|ai|artificial|intelligence|defi|nft|gaming|metaverse|'
-    r'layer2|l2|zkevm|bridge|staking|yield|farming|dao|governance|'
-    r'oracle|dex|perps|perpetual|launchpad|presale|fairlaunch|airdrop|'
-    r'burn|mint|tokenomics|rwa|real.world.asset|depin|social.fi|'
-    r'pay|infra|infrastructure|rollup|zkproof|privacy|cross.chain|'
-    r'liquid.staking|restaking|lsd|lrt|nftfi|gamefi|move.to.earn|'
-    r'play.to.earn|watch.to.earn|prediction.market|brc20|erc404|'
-    r'drc20|ordinals|inscription|bitcoin|btc|eth|sol|bnb|matic|'
-    r'xrp|ada|avax|dot|link|uni|aave|crv|maker|compound|lido|'
-    r'arbitrum|optimism|polygon|avalanche|fantom|cronos|tron|'
-    r'pepe|doge|shib|floki|bonk|wif|brett|mog|slerf|sloth|'
-    r'cat|dog|frog|bear|bull|moon|rocket|gem|diamond|hands|'
-    r'community|cto|dev.team|marketing|partnership|listing|'
-    r'audit|kyc|doxxed|renounced|locked|burned|supply)\b',
-    re.IGNORECASE
+    r"\b(?:meme|ai|artificial|intelligence|defi|nft|gaming|metaverse|"
+    r"layer2|l2|zkevm|bridge|staking|yield|farming|dao|governance|"
+    r"oracle|dex|perps|perpetual|launchpad|presale|fairlaunch|airdrop|"
+    r"burn|mint|tokenomics|rwa|real.world.asset|depin|social.fi|"
+    r"pay|infra|infrastructure|rollup|zkproof|privacy|cross.chain|"
+    r"liquid.staking|restaking|lsd|lrt|nftfi|gamefi|move.to.earn|"
+    r"play.to.earn|watch.to.earn|prediction.market|brc20|erc404|"
+    r"drc20|ordinals|inscription|bitcoin|btc|eth|sol|bnb|matic|"
+    r"xrp|ada|avax|dot|link|uni|aave|crv|maker|compound|lido|"
+    r"arbitrum|optimism|polygon|avalanche|fantom|cronos|tron|"
+    r"pepe|doge|shib|floki|bonk|wif|brett|mog|slerf|sloth|"
+    r"cat|dog|frog|bear|bull|moon|rocket|gem|diamond|hands|"
+    r"community|cto|dev.team|marketing|partnership|listing|"
+    r"audit|kyc|doxxed|renounced|locked|burned|supply)\b",
+    re.IGNORECASE,
 )
 
 
@@ -96,7 +261,8 @@ def collect_telegram_texts(hours_back: int = 24) -> list[str]:
     c = conn.cursor()
 
     cutoff = time.time() - (hours_back * 3600)
-    c.execute("""
+    c.execute(
+        """
         SELECT DISTINCT message_text
         FROM telegram_contract_calls
         WHERE message_text IS NOT NULL
@@ -104,7 +270,9 @@ def collect_telegram_texts(hours_back: int = 24) -> list[str]:
         AND observed_at > ?
         ORDER BY observed_at DESC
         LIMIT 1000
-    """, (cutoff,))
+    """,
+        (cutoff,),
+    )
 
     texts = [row[0] for row in c.fetchall() if row[0]]
     conn.close()
@@ -124,13 +292,27 @@ def collect_twitter_texts(symbols: list[str], max_per_symbol: int = 5) -> list[s
         search_term = f"${sym}" if len(sym) <= 8 else sym
         try:
             result = subprocess.run(
-                ["surf", "search", "twitter", "--query", search_term,
-                 "--limit", str(max_per_symbol), "--raw"],
-                capture_output=True, text=True, timeout=15,
+                [
+                    "surf",
+                    "search",
+                    "twitter",
+                    "--query",
+                    search_term,
+                    "--limit",
+                    str(max_per_symbol),
+                    "--raw",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=15,
             )
             if result.returncode == 0:
                 data = json.loads(result.stdout)
-                tweets = data if isinstance(data, list) else data.get("results", data.get("tweets", []))
+                tweets = (
+                    data
+                    if isinstance(data, list)
+                    else data.get("results", data.get("tweets", []))
+                )
                 for tweet in (tweets if isinstance(tweets, list) else []):
                     if isinstance(tweet, dict):
                         text = tweet.get("text", tweet.get("content", ""))
@@ -151,7 +333,10 @@ def collect_twitter_texts(symbols: list[str], max_per_symbol: int = 5) -> list[s
 # KEYWORD EXTRACTION
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def extract_keywords_tfidf(texts: list[str], max_keywords: int = 10) -> list[tuple[str, float]]:
+
+def extract_keywords_tfidf(
+    texts: list[str], max_keywords: int = 10
+) -> list[tuple[str, float]]:
     """
     Extract trending keywords using TF-IDF-like scoring.
 
@@ -167,15 +352,15 @@ def extract_keywords_tfidf(texts: list[str], max_keywords: int = 10) -> list[tup
 
     for text in texts:
         # Clean: lowercase, remove URLs, mentions, special chars
-        text = re.sub(r'https?://\S+', '', text)
-        text = re.sub(r'@\w+', '', text)
-        text = re.sub(r'[^\w\s$]', ' ', text)
+        text = re.sub(r"https?://\S+", "", text)
+        text = re.sub(r"@\w+", "", text)
+        text = re.sub(r"[^\w\s$]", " ", text)
         words = text.lower().split()
 
         # Filter: 3+ chars, not stop words, not pure numbers
         doc_words = set()
         for w in words:
-            w = w.strip('$')
+            w = w.strip("$")
             if len(w) >= 3 and w not in STOP_WORDS and not w.isdigit():
                 all_words.append(w)
                 doc_words.add(w)
@@ -205,13 +390,16 @@ def extract_keywords_tfidf(texts: list[str], max_keywords: int = 10) -> list[tup
     ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
     # Filter out too-common single-char or very generic words
-    filtered = [(word, score) for word, score in ranked
-                if len(word) >= 3 and word.isalpha()]
+    filtered = [
+        (word, score) for word, score in ranked if len(word) >= 3 and word.isalpha()
+    ]
 
     return filtered[:max_keywords]
 
 
-def extract_keywords_llm(texts: list[str], max_keywords: int = 10) -> list[tuple[str, float]] | None:
+def extract_keywords_llm(
+    texts: list[str], max_keywords: int = 10
+) -> list[tuple[str, float]] | None:
     """
     Use local LLM to extract trending keywords from collected texts.
     Falls back to None if LLM is unavailable.
@@ -231,17 +419,20 @@ Posts:
 
 JSON:""",
                 "stream": False,
-                "options": {"temperature": 0.2, "num_predict": 200}
+                "options": {"temperature": 0.2, "num_predict": 200},
             },
             timeout=30,
         )
         if r.status_code == 200:
             content = r.json().get("response", "")
             # Extract JSON from response
-            json_match = re.search(r'\[.*?\]', content, re.DOTALL)
+            json_match = re.search(r"\[.*?\]", content, re.DOTALL)
             if json_match:
                 data = json.loads(json_match.group())
-                return [(item["keyword"], item.get("relevance", 50)) for item in data[:max_keywords]]
+                return [
+                    (item["keyword"], item.get("relevance", 50))
+                    for item in data[:max_keywords]
+                ]
     except Exception:
         pass
 
@@ -253,8 +444,14 @@ JSON:""",
             json={
                 "model": "Bonsai-8B.gguf",
                 "messages": [
-                    {"role": "system", "content": "Extract trending crypto keywords from text. Return JSON array: [{\"keyword\": \"...\", \"relevance\": 0-100}]"},
-                    {"role": "user", "content": f"Top {max_keywords} trending keywords from:\n\n{sample}"}
+                    {
+                        "role": "system",
+                        "content": 'Extract trending crypto keywords from text. Return JSON array: [{"keyword": "...", "relevance": 0-100}]',
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Top {max_keywords} trending keywords from:\n\n{sample}",
+                    },
                 ],
                 "max_tokens": 200,
                 "temperature": 0.2,
@@ -262,11 +459,16 @@ JSON:""",
             timeout=60,
         )
         if r.status_code == 200:
-            content = r.json().get("choices", [{}])[0].get("message", {}).get("content", "")
-            json_match = re.search(r'\[.*?\]', content, re.DOTALL)
+            content = (
+                r.json().get("choices", [{}])[0].get("message", {}).get("content", "")
+            )
+            json_match = re.search(r"\[.*?\]", content, re.DOTALL)
             if json_match:
                 data = json.loads(json_match.group())
-                return [(item["keyword"], item.get("relevance", 50)) for item in data[:max_keywords]]
+                return [
+                    (item["keyword"], item.get("relevance", 50))
+                    for item in data[:max_keywords]
+                ]
     except Exception:
         pass
 
@@ -276,6 +478,7 @@ JSON:""",
 # ═══════════════════════════════════════════════════════════════════════════════
 # DEXSCREENER KEYWORD SEARCH
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def search_dexscreener_keyword(keyword: str, max_results: int = 10) -> list[dict]:
     """Search Dexscreener for tokens matching a keyword."""
@@ -302,20 +505,22 @@ def search_dexscreener_keyword(keyword: str, max_results: int = 10) -> list[dict
                 fdv = pair.get("fdv", 0) or 0
                 volume = pair.get("volume", {}).get("h24", 0) or 0
 
-                tokens.append({
-                    "contract_address": addr,
-                    "chain": pair.get("chainId", "unknown"),
-                    "symbol": base.get("symbol", ""),
-                    "name": base.get("name", ""),
-                    "fdv": fdv,
-                    "liquidity_usd": liquidity,
-                    "volume_h24": volume,
-                    "dex": pair.get("dexId", ""),
-                    "pair_address": pair.get("pairAddress", ""),
-                    "dex_url": f"https://dexscreener.com/{pair.get('chainId','')}/{pair.get('pairAddress','')}",
-                    "price_usd": pair.get("priceUsd"),
-                    "discovered_via_keyword": keyword,
-                })
+                tokens.append(
+                    {
+                        "contract_address": addr,
+                        "chain": pair.get("chainId", "unknown"),
+                        "symbol": base.get("symbol", ""),
+                        "name": base.get("name", ""),
+                        "fdv": fdv,
+                        "liquidity_usd": liquidity,
+                        "volume_h24": volume,
+                        "dex": pair.get("dexId", ""),
+                        "pair_address": pair.get("pairAddress", ""),
+                        "dex_url": f"https://dexscreener.com/{pair.get('chainId','')}/{pair.get('pairAddress','')}",
+                        "price_usd": pair.get("priceUsd"),
+                        "discovered_via_keyword": keyword,
+                    }
+                )
 
         return tokens
     except Exception:
@@ -325,6 +530,7 @@ def search_dexscreener_keyword(keyword: str, max_results: int = 10) -> list[dict
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN PIPELINE
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def run_keyword_discovery(
     max_keywords: int = 10,
@@ -346,7 +552,9 @@ def run_keyword_discovery(
     start = time.time()
     existing_addresses = existing_addresses or set()
 
-    log.info("keyword_discovery_start", max_keywords=max_keywords, hours_back=hours_back)
+    log.info(
+        "keyword_discovery_start", max_keywords=max_keywords, hours_back=hours_back
+    )
 
     # Step 1: Collect social text
     tg_texts = collect_telegram_texts(hours_back)
@@ -355,7 +563,9 @@ def run_keyword_discovery(
     try:
         conn = sqlite3.connect(str(DB_PATH), timeout=30)
         c = conn.cursor()
-        c.execute("SELECT DISTINCT contract_address FROM telegram_contracts_unique LIMIT 50")
+        c.execute(
+            "SELECT DISTINCT contract_address FROM telegram_contracts_unique LIMIT 50"
+        )
         {row[0] for row in c.fetchall()}
         conn.close()
     except Exception:
@@ -374,7 +584,12 @@ def run_keyword_discovery(
         pass
 
     all_texts = tg_texts + tw_texts
-    log.info("texts_collected", telegram=len(tg_texts), twitter=len(tw_texts), total=len(all_texts))
+    log.info(
+        "texts_collected",
+        telegram=len(tg_texts),
+        twitter=len(tw_texts),
+        total=len(all_texts),
+    )
 
     if not all_texts:
         log.warning("no_texts_collected")
@@ -393,19 +608,27 @@ def run_keyword_discovery(
         keywords = extract_keywords_tfidf(all_texts, max_keywords)
         method = "tfidf"
 
-    log.info("keywords_extracted", method=method, count=len(keywords),
-             top5=[(k, round(s, 1)) for k, s in keywords[:5]])
+    log.info(
+        "keywords_extracted",
+        method=method,
+        count=len(keywords),
+        top5=[(k, round(s, 1)) for k, s in keywords[:5]],
+    )
 
     # Step 3: Search Dexscreener for each keyword
     all_discovered = []
     for keyword, score in keywords:
         tokens = search_dexscreener_keyword(keyword, max_tokens_per_keyword)
         # Filter out already-known tokens
-        new_tokens = [t for t in tokens if t["contract_address"] not in existing_addresses]
+        new_tokens = [
+            t for t in tokens if t["contract_address"] not in existing_addresses
+        ]
         for t in new_tokens:
             t["keyword_score"] = round(score, 1)
         all_discovered.extend(new_tokens)
-        metrics.api_calls.labels(provider="dexscreener_keyword", status="ok" if tokens else "empty").inc()
+        metrics.api_calls.labels(
+            provider="dexscreener_keyword", status="ok" if tokens else "empty"
+        ).inc()
 
     # Deduplicate by address
     seen = set()
@@ -419,10 +642,10 @@ def run_keyword_discovery(
     # Sort by combined keyword relevance + volume
     for t in unique_discovered:
         t["discovery_score"] = round(
-            (t.get("keyword_score", 0) * 0.4) +
-            (min(t.get("volume_h24", 0) / 100000, 30)) +
-            (min(t.get("fdv", 0) / 100000, 20)),
-            2
+            (t.get("keyword_score", 0) * 0.4)
+            + (min(t.get("volume_h24", 0) / 100000, 30))
+            + (min(t.get("fdv", 0) / 100000, 20)),
+            2,
         )
     unique_discovered.sort(key=lambda t: t.get("discovery_score", 0), reverse=True)
 
@@ -437,15 +660,22 @@ def run_keyword_discovery(
         "elapsed": round(elapsed, 1),
     }
 
-    log.info("keyword_discovery_done", keywords=len(keywords),
-             discovered=len(unique_discovered), method=method, elapsed=round(elapsed, 1))
+    log.info(
+        "keyword_discovery_done",
+        keywords=len(keywords),
+        discovered=len(unique_discovered),
+        method=method,
+        elapsed=round(elapsed, 1),
+    )
 
     return result
 
 
 def save_discovered_tokens(tokens: list[dict]) -> Path:
     """Save discovered tokens to a file for the enricher to pick up."""
-    output_path = settings.hermes_home / "data" / "token_screener" / "keyword_discoveries.json"
+    output_path = (
+        settings.hermes_home / "data" / "token_screener" / "keyword_discoveries.json"
+    )
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Append to existing (don't overwrite)
@@ -468,11 +698,16 @@ def save_discovered_tokens(tokens: list[dict]) -> Path:
     existing = existing[-500:]
 
     with open(output_path, "w") as f:
-        json.dump({
-            "generated_at": time.time(),
-            "total": len(existing),
-            "tokens": existing,
-        }, f, indent=2, default=str)
+        json.dump(
+            {
+                "generated_at": time.time(),
+                "total": len(existing),
+                "tokens": existing,
+            },
+            f,
+            indent=2,
+            default=str,
+        )
 
     log.info("discoveries_saved", path=str(output_path), total=len(existing))
     return output_path

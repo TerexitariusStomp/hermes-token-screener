@@ -34,14 +34,32 @@ log = get_logger("website_intelligence")
 
 # LLM endpoints to try (in order)
 LLM_ENDPOINTS = [
-    {"url": "http://localhost:8082/v1/chat/completions", "type": "openai", "model": "Bonsai-8B.gguf"},
-    {"url": "http://localhost:11434/api/generate", "type": "ollama", "model": "llama3.2"},
-    {"url": "http://localhost:8080/v1/chat/completions", "type": "openai", "model": "Bonsai-8B.gguf"},
-    {"url": "http://localhost:8081/v1/chat/completions", "type": "openai", "model": "IBM-Grok4-UltraFast-Coder-1B.Q4_K_M.gguf"},
+    {
+        "url": "http://localhost:8082/v1/chat/completions",
+        "type": "openai",
+        "model": "Bonsai-8B.gguf",
+    },
+    {
+        "url": "http://localhost:11434/api/generate",
+        "type": "ollama",
+        "model": "llama3.2",
+    },
+    {
+        "url": "http://localhost:8080/v1/chat/completions",
+        "type": "openai",
+        "model": "Bonsai-8B.gguf",
+    },
+    {
+        "url": "http://localhost:8081/v1/chat/completions",
+        "type": "openai",
+        "model": "IBM-Grok4-UltraFast-Coder-1B.Q4_K_M.gguf",
+    },
 ]
 
 
-def _call_llm(prompt: str, system: str = "", max_tokens: int = 300, timeout: int = 60) -> str | None:
+def _call_llm(
+    prompt: str, system: str = "", max_tokens: int = 300, timeout: int = 60
+) -> str | None:
     """Call local LLM with fallback chain. Returns response text or None."""
     for endpoint in LLM_ENDPOINTS:
         try:
@@ -53,7 +71,7 @@ def _call_llm(prompt: str, system: str = "", max_tokens: int = 300, timeout: int
                         "system": system,
                         "prompt": prompt,
                         "stream": False,
-                        "options": {"temperature": 0.2, "num_predict": max_tokens}
+                        "options": {"temperature": 0.2, "num_predict": max_tokens},
                     },
                     timeout=timeout,
                 )
@@ -80,7 +98,11 @@ def _call_llm(prompt: str, system: str = "", max_tokens: int = 300, timeout: int
                     # Check for cloud proxy error
                     if "error" in data and "cloud" in data["error"].get("type", ""):
                         continue
-                    return data.get("choices", [{}])[0].get("message", {}).get("content", "")
+                    return (
+                        data.get("choices", [{}])[0]
+                        .get("message", {})
+                        .get("content", "")
+                    )
         except Exception:
             continue
     return None
@@ -89,6 +111,7 @@ def _call_llm(prompt: str, system: str = "", max_tokens: int = 300, timeout: int
 # ═══════════════════════════════════════════════════════════════════════════════
 # WEBSITE FETCHING
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 async def fetch_website_content(url: str, client: httpx.AsyncClient) -> dict | None:
     """Fetch website and extract clean content for LLM analysis."""
@@ -100,28 +123,38 @@ async def fetch_website_content(url: str, client: httpx.AsyncClient) -> dict | N
         html = resp.text
 
         # Clean text for LLM
-        text = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL)
-        text = re.sub(r'<style[^>]*>.*?</style>', '', html, flags=re.DOTALL)
-        text = re.sub(r'<[^>]+>', ' ', text)
-        text = re.sub(r'\s+', ' ', text).strip()[:4000]  # limit for LLM context
+        text = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL)
+        text = re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL)
+        text = re.sub(r"<[^>]+>", " ", text)
+        text = re.sub(r"\s+", " ", text).strip()[:4000]  # limit for LLM context
 
         # Meta description
-        meta_match = re.search(r'<meta[^>]*name=["\']description["\'][^>]*content=["\']([^"\']*)["\']', html, re.I)
+        meta_match = re.search(
+            r'<meta[^>]*name=["\']description["\'][^>]*content=["\']([^"\']*)["\']',
+            html,
+            re.I,
+        )
         meta_desc = meta_match.group(1) if meta_match else ""
 
         # Detect structure
-        has_blog = bool(re.search(r'blog|news|announc|update', html, re.I))
-        has_buy = bool(re.search(r'buy.now|presale|swap|trade', html, re.I))
-        has_roadmap = bool(re.search(r'roadmap|tokenomics|whitepaper', html, re.I))
-        has_team = bool(re.search(r'team|founder|developer|about.us', html, re.I))
-        has_socials = bool(re.search(r'twitter|telegram|discord|instagram', html, re.I))
-        image_count = len(re.findall(r'<img', html, re.I))
+        has_blog = bool(re.search(r"blog|news|announc|update", html, re.I))
+        has_buy = bool(re.search(r"buy.now|presale|swap|trade", html, re.I))
+        has_roadmap = bool(re.search(r"roadmap|tokenomics|whitepaper", html, re.I))
+        has_team = bool(re.search(r"team|founder|developer|about.us", html, re.I))
+        has_socials = bool(re.search(r"twitter|telegram|discord|instagram", html, re.I))
+        image_count = len(re.findall(r"<img", html, re.I))
         word_count = len(text.split())
         page_kb = len(html) / 1024
 
         # Blog/announcement links
-        blog_links = re.findall(r'href=["\']([^"\']*(?:blog|news|post|announc)[^"\']*)["\']', html, re.I)
-        recent_dates = re.findall(r'(?:202[5-6][-/]\d|january|february|march|april|may|june|july|august|september|october|november|december).{0,20}202[5-6]', html, re.I)
+        blog_links = re.findall(
+            r'href=["\']([^"\']*(?:blog|news|post|announc)[^"\']*)["\']', html, re.I
+        )
+        recent_dates = re.findall(
+            r"(?:202[5-6][-/]\d|january|february|march|april|may|june|july|august|september|october|november|december).{0,20}202[5-6]",
+            html,
+            re.I,
+        )
 
         return {
             "url": url,
@@ -146,6 +179,7 @@ async def fetch_website_content(url: str, client: httpx.AsyncClient) -> dict | N
 # ═══════════════════════════════════════════════════════════════════════════════
 # LLM WEBSITE ANALYSIS
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def analyze_website_with_llm(
     website_data: dict,
@@ -202,7 +236,7 @@ Respond with ONLY a JSON object (no other text):
         # Parse LLM response
         try:
             # Extract JSON from response
-            json_match = re.search(r'\{[^{}]*\}', response, re.DOTALL)
+            json_match = re.search(r"\{[^{}]*\}", response, re.DOTALL)
             if json_match:
                 result = json.loads(json_match.group())
                 score = float(result.get("score", 0))
@@ -217,10 +251,13 @@ Respond with ONLY a JSON object (no other text):
                 }
         except (json.JSONDecodeError, ValueError):
             # Try to extract a number from the response
-            numbers = re.findall(r'\b(\d{1,3})\b', response)
+            numbers = re.findall(r"\b(\d{1,3})\b", response)
             if numbers:
                 score = min(float(numbers[0]), 100)
-                return round(score, 1), {"method": "llm_raw", "response": response[:200]}
+                return round(score, 1), {
+                    "method": "llm_raw",
+                    "response": response[:200],
+                }
 
     # LLM failed - fall back to algorithmic
     return _analyze_website_algorithmic(website_data, trending_keywords)
@@ -229,6 +266,7 @@ Respond with ONLY a JSON object (no other text):
 # ═══════════════════════════════════════════════════════════════════════════════
 # ALGORITHMIC FALLBACK
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def _analyze_website_algorithmic(
     website_data: dict,
@@ -286,9 +324,13 @@ def _analyze_website_algorithmic(
         score += 5
 
     # Trendiness (0-20)
-    text = (website_data.get("text", "") + " " + website_data.get("meta_description", "")).lower()
+    text = (
+        website_data.get("text", "") + " " + website_data.get("meta_description", "")
+    ).lower()
     if trending_keywords and text:
-        matches = sum(1 for kw in trending_keywords if kw.get("keyword", "").lower() in text)
+        matches = sum(
+            1 for kw in trending_keywords if kw.get("keyword", "").lower() in text
+        )
         score += min(matches * 2, 20)
 
     return round(min(score, 100), 1), details
@@ -297,6 +339,7 @@ def _analyze_website_algorithmic(
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN RUNNER
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 async def _analyze_all(
     tokens: list[dict],
@@ -331,10 +374,16 @@ async def _analyze_all(
 
             website_data = await fetch_website_content(url, client)
             if not website_data or website_data.get("error"):
-                results[addr] = {"website_score": 0, "has_website": False, "error": (website_data or {}).get("error", "fetch failed")}
+                results[addr] = {
+                    "website_score": 0,
+                    "has_website": False,
+                    "error": (website_data or {}).get("error", "fetch failed"),
+                }
                 continue
 
-            score, details = analyze_website_with_llm(website_data, trending_keywords, sym)
+            score, details = analyze_website_with_llm(
+                website_data, trending_keywords, sym
+            )
 
             results[addr] = {
                 "website_url": url,
@@ -343,7 +392,12 @@ async def _analyze_all(
                 "website_details": details,
             }
 
-            log.info("website_analyzed", token=sym, score=score, method=details.get("method", "?"))
+            log.info(
+                "website_analyzed",
+                token=sym,
+                score=score,
+                method=details.get("method", "?"),
+            )
 
     return results
 
@@ -354,4 +408,5 @@ def run_website_analysis(
 ) -> dict[str, dict]:
     """Sync wrapper for website analysis."""
     import asyncio
+
     return asyncio.run(_analyze_all(tokens, trending_keywords))

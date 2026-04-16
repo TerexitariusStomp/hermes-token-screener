@@ -40,6 +40,7 @@ log = get_logger("async_enrichment")
 # HTTP CLIENT FACTORY
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def _make_client(
     base_url: str = "",
     headers: dict | None = None,
@@ -64,9 +65,11 @@ def _make_client(
 # ASYNC ENRICHER WRAPPERS
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class LayerResult:
     """Result from a single enrichment layer."""
+
     name: str
     success: bool
     enriched_count: int
@@ -174,7 +177,9 @@ class AsyncDexscreenerEnricher:
             except Exception as e:
                 metrics.api_calls.labels(provider="dexscreener", status="error").inc()
                 if (idx + 1) % 50 == 0:
-                    log.warning("dexscreener_error", idx=idx + 1, total=total, error=str(e))
+                    log.warning(
+                        "dexscreener_error", idx=idx + 1, total=total, error=str(e)
+                    )
                 return token
 
     @staticmethod
@@ -245,7 +250,11 @@ class AsyncHttpEnricher:
                 metrics.enrich_layer_calls.labels(layer=self.name, status="error").inc()
                 if (idx + 1) % 20 == 0:
                     log.warning(
-                        "layer_error", layer=self.name, idx=idx + 1, total=total, error=str(e)
+                        "layer_error",
+                        layer=self.name,
+                        idx=idx + 1,
+                        total=total,
+                        error=str(e),
                     )
                 return False
 
@@ -254,13 +263,20 @@ class AsyncHttpEnricher:
 # INDIVIDUAL LAYER ASYNC IMPLEMENTATIONS
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 async def _enrich_goplus(token: dict, client: httpx.AsyncClient) -> None:
     """Layer 2: GoPlus security check (EVM chains only)."""
     chain = token.get("chain", "").lower()
     if chain not in ("ethereum", "eth", "base", "binance", "bsc", "polygon"):
         return
 
-    chain_map = {"eth": "1", "ethereum": "1", "bsc": "56", "binance": "56", "base": "8453"}
+    chain_map = {
+        "eth": "1",
+        "ethereum": "1",
+        "bsc": "56",
+        "binance": "56",
+        "base": "8453",
+    }
     chain_id = chain_map.get(chain, "")
     if not chain_id:
         return
@@ -308,9 +324,11 @@ async def _enrich_rugcheck(token: dict, client: httpx.AsyncClient) -> None:
         "top_holders_pct": sum(
             h.get("pct", 0) for h in data.get("topHolders", [])[:10]
         ),
-        "lp_locked": data.get("markets", [{}])[0].get("lp", {}).get("lpLocked", False)
-        if data.get("markets")
-        else False,
+        "lp_locked": (
+            data.get("markets", [{}])[0].get("lp", {}).get("lpLocked", False)
+            if data.get("markets")
+            else False
+        ),
     }
 
 
@@ -353,8 +371,12 @@ async def _enrich_defi(token: dict, client: httpx.AsyncClient) -> None:
     """Layer 5: De.Fi security analysis."""
     chain = token.get("chain", "").lower()
     chain_ids = {
-        "ethereum": 1, "eth": 1, "binance": 2, "bsc": 2,
-        "solana": 12, "base": 49,
+        "ethereum": 1,
+        "eth": 1,
+        "binance": 2,
+        "bsc": 2,
+        "solana": 12,
+        "base": 49,
     }
     de_fi_chain = chain_ids.get(chain)
     if de_fi_chain is None:
@@ -385,7 +407,9 @@ async def _enrich_defi(token: dict, client: httpx.AsyncClient) -> None:
         return
 
     data = resp.json()
-    report = data.get("data", {}).get("authenticatedGetAccessToSmartContractSecurityDatabase", {})
+    report = data.get("data", {}).get(
+        "authenticatedGetAccessToSmartContractSecurityDatabase", {}
+    )
     if not report:
         return
 
@@ -424,7 +448,9 @@ async def _enrich_coingecko(token: dict, client: httpx.AsyncClient) -> None:
         "sentiment_up": data.get("sentiment_votes_up_percentage", 0),
         "sentiment_down": data.get("sentiment_votes_down_percentage", 0),
         "ath": data.get("market_data", {}).get("ath", {}).get("usd"),
-        "ath_change_pct": data.get("market_data", {}).get("ath_change_percentage", {}).get("usd"),
+        "ath_change_pct": data.get("market_data", {})
+        .get("ath_change_percentage", {})
+        .get("usd"),
         "exchanges": len(data.get("tickers", [])) if data.get("tickers") else 0,
         "categories": data.get("categories", []),
     }
@@ -454,24 +480,41 @@ async def _enrich_zerion(token: dict, client: httpx.AsyncClient) -> None:
 # CLI ENRICHER WRAPPERS (async via to_thread)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-async def _run_cli_enricher(name: str, sync_fn: Callable, enriched: list) -> LayerResult:
+
+async def _run_cli_enricher(
+    name: str, sync_fn: Callable, enriched: list
+) -> LayerResult:
     """Run a synchronous CLI enricher in a thread."""
     start = time.time()
     try:
         _, count = await asyncio.to_thread(sync_fn, enriched)
         elapsed = time.time() - start
         metrics.enrich_layer_calls.labels(layer=name, status="ok").inc()
-        return LayerResult(name=name, success=True, enriched_count=count, total_count=len(enriched), elapsed=elapsed)
+        return LayerResult(
+            name=name,
+            success=True,
+            enriched_count=count,
+            total_count=len(enriched),
+            elapsed=elapsed,
+        )
     except Exception as e:
         elapsed = time.time() - start
         metrics.enrich_layer_calls.labels(layer=name, status="error").inc()
         log.warning("cli_layer_failed", layer=name, error=str(e))
-        return LayerResult(name=name, success=False, enriched_count=0, total_count=len(enriched), elapsed=elapsed, error=str(e))
+        return LayerResult(
+            name=name,
+            success=False,
+            enriched_count=0,
+            total_count=len(enriched),
+            elapsed=elapsed,
+            error=str(e),
+        )
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DERIVED (no API, pure computation)
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 async def _enrich_derived(enriched: list) -> int:
     """Layer 6: Computed security signals (no API needed)."""
@@ -486,10 +529,13 @@ async def _enrich_derived(enriched: list) -> int:
             ratio = liq / fdv
             derived["liq_fdv_ratio"] = round(ratio, 4)
             derived["liq_risk"] = (
-                "critical" if ratio < 0.02
-                else "high" if ratio < 0.05
-                else "moderate" if ratio < 0.10
-                else "healthy"
+                "critical"
+                if ratio < 0.02
+                else (
+                    "high"
+                    if ratio < 0.05
+                    else "moderate" if ratio < 0.10 else "healthy"
+                )
             )
 
         # Tax risk (from GoPlus)
@@ -514,6 +560,7 @@ async def _enrich_derived(enriched: list) -> int:
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN ORCHESTRATOR
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 async def run_async_enrichment(
     candidates: list[dict],
@@ -544,6 +591,7 @@ async def run_async_enrichment(
         _make_client,
         _run_cli_enricher,
     )
+
     sys.path.insert(0, str(settings.hermes_home / "scripts"))
     # These will be imported lazily to avoid circular imports
 
@@ -560,10 +608,21 @@ async def run_async_enrichment(
 
         if not enriched:
             log.error("dexscreener_empty", candidates=len(candidates))
-            return [], [LayerResult("Dexscreener", False, 0, total_candidates, elapsed, "no results")]
+            return [], [
+                LayerResult(
+                    "Dexscreener", False, 0, total_candidates, elapsed, "no results"
+                )
+            ]
 
-        results.append(LayerResult("Dexscreener", True, dex_count, total_candidates, elapsed))
-        log.info("phase1_complete", enriched=dex_count, total=total_candidates, elapsed=round(elapsed, 1))
+        results.append(
+            LayerResult("Dexscreener", True, dex_count, total_candidates, elapsed)
+        )
+        log.info(
+            "phase1_complete",
+            enriched=dex_count,
+            total=total_candidates,
+            elapsed=round(elapsed, 1),
+        )
 
         # ═══ Phase 2: All optional layers in parallel ═══
         log.info("phase2_parallel", layers=11, tokens=len(enriched))
@@ -590,81 +649,119 @@ async def run_async_enrichment(
         async def run_goplus():
             start = time.time()
             try:
-                ok, total = await goplus_enricher.enrich_batch(_enrich_goplus, enriched, client)
+                ok, total = await goplus_enricher.enrich_batch(
+                    _enrich_goplus, enriched, client
+                )
                 return LayerResult("GoPlus", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult("GoPlus", False, 0, len(enriched), time.time() - start, str(e))
+                return LayerResult(
+                    "GoPlus", False, 0, len(enriched), time.time() - start, str(e)
+                )
 
         async def run_rugcheck():
             start = time.time()
             try:
-                ok, total = await rugcheck_enricher.enrich_batch(_enrich_rugcheck, enriched, client)
+                ok, total = await rugcheck_enricher.enrich_batch(
+                    _enrich_rugcheck, enriched, client
+                )
                 return LayerResult("RugCheck", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult("RugCheck", False, 0, len(enriched), time.time() - start, str(e))
+                return LayerResult(
+                    "RugCheck", False, 0, len(enriched), time.time() - start, str(e)
+                )
 
         async def run_etherscan():
             start = time.time()
             try:
-                ok, total = await etherscan_enricher.enrich_batch(_enrich_etherscan, enriched, client)
+                ok, total = await etherscan_enricher.enrich_batch(
+                    _enrich_etherscan, enriched, client
+                )
                 return LayerResult("Etherscan", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult("Etherscan", False, 0, len(enriched), time.time() - start, str(e))
+                return LayerResult(
+                    "Etherscan", False, 0, len(enriched), time.time() - start, str(e)
+                )
 
         async def run_defi():
             start = time.time()
             try:
-                ok, total = await defi_enricher.enrich_batch(_enrich_defi, enriched, client)
+                ok, total = await defi_enricher.enrich_batch(
+                    _enrich_defi, enriched, client
+                )
                 return LayerResult("De.Fi", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult("De.Fi", False, 0, len(enriched), time.time() - start, str(e))
+                return LayerResult(
+                    "De.Fi", False, 0, len(enriched), time.time() - start, str(e)
+                )
 
         async def run_coingecko():
             start = time.time()
             try:
-                ok, total = await coingecko_enricher.enrich_batch(_enrich_coingecko, enriched, client)
+                ok, total = await coingecko_enricher.enrich_batch(
+                    _enrich_coingecko, enriched, client
+                )
                 return LayerResult("CoinGecko", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult("CoinGecko", False, 0, len(enriched), time.time() - start, str(e))
+                return LayerResult(
+                    "CoinGecko", False, 0, len(enriched), time.time() - start, str(e)
+                )
 
         async def run_zerion():
             start = time.time()
             try:
-                ok, total = await zerion_enricher.enrich_batch(_enrich_zerion, enriched, client)
+                ok, total = await zerion_enricher.enrich_batch(
+                    _enrich_zerion, enriched, client
+                )
                 return LayerResult("Zerion", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult("Zerion", False, 0, len(enriched), time.time() - start, str(e))
+                return LayerResult(
+                    "Zerion", False, 0, len(enriched), time.time() - start, str(e)
+                )
 
         async def run_derived():
             start = time.time()
             try:
                 count = await _enrich_derived(enriched)
-                return LayerResult("Derived", True, count, len(enriched), time.time() - start)
+                return LayerResult(
+                    "Derived", True, count, len(enriched), time.time() - start
+                )
             except Exception as e:
-                return LayerResult("Derived", False, 0, len(enriched), time.time() - start, str(e))
+                return LayerResult(
+                    "Derived", False, 0, len(enriched), time.time() - start, str(e)
+                )
 
         # Surf, GMGN — CLI-based, run in threads
         async def run_surf():
             try:
                 from token_enricher import SurfEnricher
-                return await _run_cli_enricher("Surf", lambda t: SurfEnricher().enrich_batch(t), enriched)
+
+                return await _run_cli_enricher(
+                    "Surf", lambda t: SurfEnricher().enrich_batch(t), enriched
+                )
             except ImportError:
                 return LayerResult("Surf", False, 0, len(enriched), 0, "import failed")
 
         async def run_gmgn():
             try:
                 from token_enricher import GMGNEnricher
-                return await _run_cli_enricher("GMGN", lambda t: GMGNEnricher().enrich_batch(t), enriched)
+
+                return await _run_cli_enricher(
+                    "GMGN", lambda t: GMGNEnricher().enrich_batch(t), enriched
+                )
             except ImportError:
                 return LayerResult("GMGN", False, 0, len(enriched), 0, "import failed")
-
 
         async def run_social():
             try:
                 from token_enricher import SocialSignalEnricher
-                return await _run_cli_enricher("Social", lambda t: SocialSignalEnricher().enrich_batch(t), enriched)
+
+                return await _run_cli_enricher(
+                    "Social", lambda t: SocialSignalEnricher().enrich_batch(t), enriched
+                )
             except ImportError:
-                return LayerResult("Social", False, 0, len(enriched), 0, "import failed")
+                return LayerResult(
+                    "Social", False, 0, len(enriched), 0, "import failed"
+                )
 
         # ═══ RUN ALL IN PARALLEL ═══
         phase2_start = time.time()

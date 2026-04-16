@@ -45,7 +45,10 @@ def test_log_duration_logs_error_on_exception():
     from hermes_screener.logging import get_logger, log_duration
 
     log = get_logger("duration_error_test")
-    with pytest.raises(ValueError, match="test error"), log_duration(log, "failing_operation"):
+    with (
+        pytest.raises(ValueError, match="test error"),
+        log_duration(log, "failing_operation"),
+    ):
         raise ValueError("test error")
 
 
@@ -66,4 +69,6 @@ def test_multiple_loggers_independent():
     log1 = get_logger("module_a")
     log2 = get_logger("module_b")
     assert log1 is not log2
-    assert log1._context.get("logger") != log2._context.get("logger") or True  # Both work
+    assert (
+        log1._context.get("logger") != log2._context.get("logger") or True
+    )  # Both work

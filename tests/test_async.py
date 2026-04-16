@@ -7,8 +7,14 @@ import time
 import httpx
 
 os.environ.setdefault("HERMES_HOME", "/tmp/test_hermes")
-for key in ["COINGECKO_API_KEY", "ETHERSCAN_API_KEY", "GMGN_API_KEY",
-            "SURF_API_KEY", "DEFI_API_KEY", "ZERION_API_KEY"]:
+for key in [
+    "COINGECKO_API_KEY",
+    "ETHERSCAN_API_KEY",
+    "GMGN_API_KEY",
+    "SURF_API_KEY",
+    "DEFI_API_KEY",
+    "ZERION_API_KEY",
+]:
     os.environ.pop(key, None)
 
 
@@ -18,6 +24,7 @@ def test_imports():
         run_async_enrichment,
         run_async_enrichment_sync,
     )
+
     assert callable(run_async_enrichment)
     assert callable(run_async_enrichment_sync)
 
@@ -25,6 +32,7 @@ def test_imports():
 def test_layer_result():
     """LayerResult dataclass works."""
     from hermes_screener.async_enrichment import LayerResult
+
     r = LayerResult("test", True, 5, 10, 1.23)
     assert r.name == "test"
     assert r.success is True
@@ -37,6 +45,7 @@ def test_layer_result():
 def test_make_client():
     """_make_client creates httpx.AsyncClient."""
     from hermes_screener.async_enrichment import _make_client
+
     client = _make_client(timeout=5.0)
     assert isinstance(client, httpx.AsyncClient)
 
@@ -44,6 +53,7 @@ def test_make_client():
 def test_async_dexscreener_enricher_init():
     """AsyncDexscreenerEnricher initializes with semaphore."""
     from hermes_screener.async_enrichment import AsyncDexscreenerEnricher
+
     enricher = AsyncDexscreenerEnricher(concurrency=3)
     assert enricher.semaphore._value == 3
 
@@ -51,6 +61,7 @@ def test_async_dexscreener_enricher_init():
 def test_async_http_enricher_init():
     """AsyncHttpEnricher initializes correctly."""
     from hermes_screener.async_enrichment import AsyncHttpEnricher
+
     enricher = AsyncHttpEnricher(
         name="Test",
         concurrency=2,
@@ -137,6 +148,7 @@ def test_cli_enricher_wrapper():
 def test_age_hours():
     """Dexscreener age_hours calculation."""
     from hermes_screener.async_enrichment import AsyncDexscreenerEnricher
+
     assert AsyncDexscreenerEnricher._age_hours(None) is None
     age = AsyncDexscreenerEnricher._age_hours(int(time.time() * 1000))
     assert age is not None

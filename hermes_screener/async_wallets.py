@@ -40,8 +40,13 @@ SORT_ORDERS = [
 ]
 
 CHAIN_MAP = {
-    "solana": "sol", "sol": "sol", "base": "base",
-    "ethereum": "base", "eth": "base", "binance": "bsc", "bsc": "bsc",
+    "solana": "sol",
+    "sol": "sol",
+    "base": "base",
+    "ethereum": "base",
+    "eth": "base",
+    "binance": "bsc",
+    "bsc": "bsc",
 }
 
 
@@ -54,7 +59,8 @@ async def _find_node() -> str:
     ]:
         try:
             proc = await asyncio.create_subprocess_exec(
-                c, "--version",
+                c,
+                "--version",
                 stdout=asyncio.subprocess.DEVNULL,
                 stderr=asyncio.subprocess.DEVNULL,
             )
@@ -70,7 +76,9 @@ async def _gmgn_cmd_async(args: list, node_bin: str) -> Any:
     """Run GMGN CLI asynchronously."""
     try:
         proc = await asyncio.create_subprocess_exec(
-            node_bin, GMGN_CLI, *args,
+            node_bin,
+            GMGN_CLI,
+            *args,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
@@ -90,14 +98,24 @@ async def _fetch_holders_batch(
     direction: str,
 ) -> list[dict]:
     """Fetch one batch of holders with a specific sort order."""
-    data = await _gmgn_cmd_async([
-        "token", "holders", "--chain", chain,
-        "--address", address,
-        "--limit", str(GMGN_MAX),
-        "--order-by", order_by,
-        "--direction", direction,
-        "--raw",
-    ], node_bin)
+    data = await _gmgn_cmd_async(
+        [
+            "token",
+            "holders",
+            "--chain",
+            chain,
+            "--address",
+            address,
+            "--limit",
+            str(GMGN_MAX),
+            "--order-by",
+            order_by,
+            "--direction",
+            direction,
+            "--raw",
+        ],
+        node_bin,
+    )
     if not data:
         return []
     return data if isinstance(data, list) else data.get("list", [])
@@ -163,6 +181,7 @@ async def enrich_wallets_async(
         _fetch_all_holders_for_token,
         _find_node,
     )
+
     sys.path.insert(0, str(settings.hermes_home / "scripts"))
     from wallet_tracker import (
         detect_copy_traders,
@@ -173,7 +192,12 @@ async def enrich_wallets_async(
     )
 
     node_bin = await _find_node()
-    log.info("async_wallet_start", tokens=len(tokens), min_score=min_token_score, concurrency=max_concurrent_tokens)
+    log.info(
+        "async_wallet_start",
+        tokens=len(tokens),
+        min_score=min_token_score,
+        concurrency=max_concurrent_tokens,
+    )
 
     # Filter tokens
     eligible = [t for t in tokens if (t.get("score") or 0) >= min_token_score]
@@ -194,11 +218,19 @@ async def enrich_wallets_async(
 
         async with semaphore:
             start = time.time()
-            holders = await _fetch_all_holders_for_token(node_bin, chain, addr, limit=settings.holders_per_token)
+            holders = await _fetch_all_holders_for_token(
+                node_bin, chain, addr, limit=settings.holders_per_token
+            )
             elapsed = time.time() - start
 
             tokens_scanned += 1
-            log.info("scanned", token=sym, score=score, wallets=len(holders), elapsed=round(elapsed, 1))
+            log.info(
+                "scanned",
+                token=sym,
+                score=score,
+                wallets=len(holders),
+                elapsed=round(elapsed, 1),
+            )
 
             for h in holders:
                 w = h.get("address", "")
@@ -216,7 +248,8 @@ async def enrich_wallets_async(
                     "unrealized_profit": h.get("unrealized_profit", 0) or 0,
                     "buy_tx_count": h.get("buy_tx_count_cur", 0) or 0,
                     "sell_tx_count": h.get("sell_tx_count_cur", 0) or 0,
-                    "total_trades": (h.get("buy_tx_count_cur", 0) or 0) + (h.get("sell_tx_count_cur", 0) or 0),
+                    "total_trades": (h.get("buy_tx_count_cur", 0) or 0)
+                    + (h.get("sell_tx_count_cur", 0) or 0),
                     "avg_cost": h.get("avg_cost"),
                     "start_holding_at": h.get("start_holding_at"),
                     "is_profitable": 1 if profit > 0 else 0,
@@ -232,7 +265,13 @@ async def enrich_wallets_async(
 
     enrichment_elapsed = time.time() - now
     unique_wallets = len(wallet_appearances)
-    log.info("enrichment_done", tokens=tokens_scanned, holders=holders_found, unique=unique_wallets, elapsed=round(enrichment_elapsed, 1))
+    log.info(
+        "enrichment_done",
+        tokens=tokens_scanned,
+        holders=holders_found,
+        unique=unique_wallets,
+        elapsed=round(enrichment_elapsed, 1),
+    )
 
     # Write to DB (sync)
     if not dry_run and wallet_appearances:
@@ -249,7 +288,8 @@ async def enrich_wallets_async(
             profitable = sum(e["is_profitable"] for e in entries)
             win_rate = profitable / len(entries) if entries else 0
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO tracked_wallets (address, chain, discovered_at, last_updated,
                     source_tokens, source_token_count, wallet_score, realized_pnl, unrealized_pnl,
                     total_profit, avg_roi, total_trades, buy_count, sell_count,
@@ -260,33 +300,71 @@ async def enrich_wallets_async(
                     realized_pnl=?, unrealized_pnl=?, total_profit=?, avg_roi=?,
                     total_trades=?, buy_count=?, sell_count=?,
                     win_rate=?, tokens_profitable=?, tokens_total=?, last_active_at=?
-            """, (
-                w_addr, entries[0]["chain"], now, now,
-                json.dumps(source_tokens), len(source_tokens),
-                total_realized, total_unrealized, total_profit,
-                avg_roi, total_trades, buy_count, sell_count,
-                win_rate, profitable, len(entries), now, now,
-                # ON CONFLICT updates
-                now, json.dumps(source_tokens), len(source_tokens),
-                total_realized, total_unrealized, total_profit, avg_roi,
-                total_trades, buy_count, sell_count,
-                win_rate, profitable, len(entries), now,
-            ))
+            """,
+                (
+                    w_addr,
+                    entries[0]["chain"],
+                    now,
+                    now,
+                    json.dumps(source_tokens),
+                    len(source_tokens),
+                    total_realized,
+                    total_unrealized,
+                    total_profit,
+                    avg_roi,
+                    total_trades,
+                    buy_count,
+                    sell_count,
+                    win_rate,
+                    profitable,
+                    len(entries),
+                    now,
+                    now,
+                    # ON CONFLICT updates
+                    now,
+                    json.dumps(source_tokens),
+                    len(source_tokens),
+                    total_realized,
+                    total_unrealized,
+                    total_profit,
+                    avg_roi,
+                    total_trades,
+                    buy_count,
+                    sell_count,
+                    win_rate,
+                    profitable,
+                    len(entries),
+                    now,
+                ),
+            )
 
             for entry in entries:
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT OR IGNORE INTO wallet_token_entries
                     (wallet_address, chain, token_address, token_symbol, profit,
                      profit_change, realized_profit, unrealized_profit,
                      buy_tx_count, sell_tx_count, avg_cost, start_holding_at,
                      is_profitable, discovered_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    w_addr, entry["chain"], entry["token_address"], entry["token_symbol"],
-                    entry["profit"], entry["profit_change"], entry["realized_profit"],
-                    entry["unrealized_profit"], entry["buy_tx_count"], entry["sell_tx_count"],
-                    entry["avg_cost"], entry["start_holding_at"], entry["is_profitable"], now,
-                ))
+                """,
+                    (
+                        w_addr,
+                        entry["chain"],
+                        entry["token_address"],
+                        entry["token_symbol"],
+                        entry["profit"],
+                        entry["profit_change"],
+                        entry["realized_profit"],
+                        entry["unrealized_profit"],
+                        entry["buy_tx_count"],
+                        entry["sell_tx_count"],
+                        entry["avg_cost"],
+                        entry["start_holding_at"],
+                        entry["is_profitable"],
+                        now,
+                    ),
+                )
 
         conn.commit()
         log.info("db_written", wallets=unique_wallets)
@@ -301,7 +379,12 @@ async def enrich_wallets_async(
     conn.commit()
 
     elapsed = time.time() - now
-    log.info("async_wallet_done", elapsed=round(elapsed, 1), tokens=tokens_scanned, unique_wallets=unique_wallets)
+    log.info(
+        "async_wallet_done",
+        elapsed=round(elapsed, 1),
+        tokens=tokens_scanned,
+        unique_wallets=unique_wallets,
+    )
 
     metrics.wallets_discovered.inc(unique_wallets)
 
@@ -321,6 +404,8 @@ def enrich_wallets_async_sync(
     dry_run: bool = False,
 ) -> dict[str, Any]:
     """Synchronous wrapper for enrich_wallets_async()."""
-    return asyncio.run(enrich_wallets_async(
-        conn, tokens, min_token_score, max_concurrent_tokens, dry_run
-    ))
+    return asyncio.run(
+        enrich_wallets_async(
+            conn, tokens, min_token_score, max_concurrent_tokens, dry_run
+        )
+    )

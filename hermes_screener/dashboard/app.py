@@ -19,7 +19,7 @@ from fastapi.responses import HTMLResponse
 
 from hermes_screener.config import settings
 
-sys.path.insert(0, str(settings.hermes_home / 'scripts'))
+sys.path.insert(0, str(settings.hermes_home / "scripts"))
 
 app = FastAPI(
     title="Hermes Token Screener",
@@ -31,6 +31,7 @@ app = FastAPI(
 # ═══════════════════════════════════════════════════════════════════════════════
 # DATA ACCESS
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def _load_top100() -> dict[str, Any]:
     path = settings.output_path
@@ -61,15 +62,18 @@ def _fmt_usd(v):
         return f"${v/1e3:.1f}K"
     return f"${v:,.0f}"
 
+
 def _fmt_pct(v):
     if v is None:
         return "—"
     return f"{'+' if v > 0 else ''}{v:.1f}%"
 
+
 def _pct_cls(v):
     if v is None:
         return ""
     return "pos" if v > 0 else "neg" if v < 0 else ""
+
 
 def _time_ago(ts):
     if not ts:
@@ -83,10 +87,12 @@ def _time_ago(ts):
         return f"{int(d/3600)}h"
     return f"{int(d/86400)}d"
 
+
 def _trunc(a, n=8):
-    if not a or len(a) <= n*2:
+    if not a or len(a) <= n * 2:
         return a or ""
     return f"{a[:n]}...{a[-n:]}"
+
 
 def _explorer(chain, addr):
     if chain in ("solana", "sol"):
@@ -95,8 +101,13 @@ def _explorer(chain, addr):
         return f"https://basescan.org/address/{addr}"
     return f"https://etherscan.io/address/{addr}"
 
+
 def _chain_cls(chain):
-    return f"chain-{chain}" if chain in ("solana","sol","base","ethereum","bsc") else ""
+    return (
+        f"chain-{chain}"
+        if chain in ("solana", "sol", "base", "ethereum", "bsc")
+        else ""
+    )
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -158,6 +169,7 @@ CHART_CSS = """
 .chart-footer{margin-top:.75rem;font-size:.72rem;color:var(--t2)}
 """
 
+
 def _nav(active):
     return f"""<nav>
 <div class="logo">HERMES <span>&#9670;</span> SCREENER</div>
@@ -169,6 +181,7 @@ def _nav(active):
   <a href="/api/top100" target="_blank">API</a>
   <a href="/health" target="_blank">Health</a>
 </div></nav>"""
+
 
 def _page(title, active, body, extra_css=""):
     return f"""<!DOCTYPE html><html><head><meta charset="utf-8">
@@ -182,7 +195,10 @@ def _page(title, active, body, extra_css=""):
 # CHART PAGE
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def _chart_html(symbol, chain, address, dex_url, pair_address, current_price, fdv, vol24):
+
+def _chart_html(
+    symbol, chain, address, dex_url, pair_address, current_price, fdv, vol24
+):
     """Generate full chart page with TradingView Lightweight Charts."""
     return f"""<!DOCTYPE html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -367,6 +383,7 @@ loadChart('hour', 1);
 # ROUTES
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @app.get("/", response_class=HTMLResponse)
 async def index():
     data = _load_top100()
@@ -394,8 +411,11 @@ async def index():
         sc_cls = "sc-h" if score >= 70 else "sc-m" if score >= 40 else "sc-l"
         p1h = _pct_cls(t.get("price_change_h1"))
         p6h = _pct_cls(t.get("price_change_h6"))
-        tags = "".join(f'<span class="tag tag-g">{p}</span>' for p in (t.get("positives") or [])[:2])
-        addr = t.get('contract_address','')
+        tags = "".join(
+            f'<span class="tag tag-g">{p}</span>'
+            for p in (t.get("positives") or [])[:2]
+        )
+        addr = t.get("contract_address", "")
         rows += f"""<tr>
   <td>{i}</td>
   <td><a href="/token/{addr}"><strong>{t.get('symbol','???')}</strong></a></td>
@@ -413,21 +433,29 @@ async def index():
   <td>{tags}</td>
 </tr>"""
 
-    return _page("Tokens", "tokens", f"""
+    return _page(
+        "Tokens",
+        "tokens",
+        f"""
 {trending_html}
 <h1>Token Leaderboard</h1>
 <div class="sub">Top {len(tokens)} tokens from {data.get('total_candidates',0)} candidates &middot; {data.get('generated_at_iso','')}</div>
 <div class="tbl"><table>
 <thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>Ch</th><th>FDV</th><th>Vol24h</th><th>Vol1h</th><th>1h</th><th>6h</th><th>Age</th><th>&#x1f9e0;</th><th>Signals</th></tr></thead>
 <tbody>{rows}</tbody>
-</table></div>""")
+</table></div>""",
+    )
 
 
 @app.get("/wallets", response_class=HTMLResponse)
 async def wallets(min_score: float = Query(0), chain: str = Query("")):
     conn = _get_wallet_db()
     if not conn:
-        return _page("Smart Money", "wallets", "<h1>Smart Money Wallets</h1><p class='sub'>Wallet DB not available</p>")
+        return _page(
+            "Smart Money",
+            "wallets",
+            "<h1>Smart Money Wallets</h1><p class='sub'>Wallet DB not available</p>",
+        )
 
     q = "SELECT * FROM tracked_wallets WHERE wallet_score >= ?"
     params: list[float | str] = [min_score]
@@ -448,12 +476,18 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
         score = w.get("wallet_score", 0) or 0
         sc_cls = "sc-h" if score >= 70 else "sc-m" if score >= 40 else "sc-l"
         profit = w.get("total_profit")
-        profit_cls = "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
+        profit_cls = (
+            "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
+        )
         tags_html = ""
         for t in (w.get("wallet_tags") or "").split(","):
             t = t.strip()
             if t:
-                tag_cls = "tag-r" if t in ("sniper", "insider") else "tag-g" if t == "smart" else ""
+                tag_cls = (
+                    "tag-r"
+                    if t in ("sniper", "insider")
+                    else "tag-g" if t == "smart" else ""
+                )
                 tags_html += f'<span class="tag {tag_cls}">{t}</span>'
         if w.get("insider_flag"):
             tags_html += '<span class="tag tag-y">INSIDER</span>'
@@ -471,13 +505,17 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
   <td>{_time_ago(w.get('last_active_at'))}</td>
 </tr>"""
 
-    return _page("Smart Money", "wallets", f"""
+    return _page(
+        "Smart Money",
+        "wallets",
+        f"""
 <h1>Smart Money Wallets</h1>
 <div class="sub">{len(wallets_list)} wallets tracked</div>
 <div class="tbl"><table>
 <thead><tr><th>#</th><th>Address</th><th>Chain</th><th>Score</th><th>PnL</th><th>ROI</th><th>Win</th><th>Trades</th><th>Tags</th><th>Active</th></tr></thead>
 <tbody>{rows_html}</tbody>
-</table></div>""")
+</table></div>""",
+    )
 
 
 @app.get("/token/{address}", response_class=HTMLResponse)
@@ -490,12 +528,23 @@ async def token_detail(address: str):
             break
 
     if not token:
-        return _page("Token", "tokens", f"<h1>Token Detail</h1><p class='sub'>{address}</p><div class='card'><h3>Not Found</h3><p>Not in current top100.json</p></div>")
+        return _page(
+            "Token",
+            "tokens",
+            f"<h1>Token Detail</h1><p class='sub'>{address}</p><div class='card'><h3>Not Found</h3><p>Not in current top100.json</p></div>",
+        )
 
-    pos = "".join(f'<span class="tag tag-g">{p}</span>' for p in (token.get("positives") or []))
-    neg = "".join(f'<span class="tag tag-r">{n}</span>' for n in (token.get("negatives") or []))
+    pos = "".join(
+        f'<span class="tag tag-g">{p}</span>' for p in (token.get("positives") or [])
+    )
+    neg = "".join(
+        f'<span class="tag tag-r">{n}</span>' for n in (token.get("negatives") or [])
+    )
 
-    return _page(token.get("symbol","Token"), "tokens", f"""
+    return _page(
+        token.get("symbol", "Token"),
+        "tokens",
+        f"""
 <h1>{token.get('symbol','???')} <span style="color:var(--t2);font-weight:normal">({token.get('name','')})</span></h1>
 <div class="sub">
   <span class="badge {_chain_cls(token.get('chain',''))}">{token.get('chain','')}</span>
@@ -529,7 +578,8 @@ async def token_detail(address: str):
     <div class="row"><a href="{token.get('dex_url','')}" target="_blank">Dexscreener &rarr;</a></div>
     <div class="row"><a href="{_explorer(token.get('chain',''), address)}" target="_blank">Explorer &rarr;</a></div>
   </div>
-</div>""")
+</div>""",
+    )
 
 
 @app.get("/token/{address}/chart", response_class=HTMLResponse)
@@ -543,35 +593,50 @@ async def token_chart(address: str):
             break
 
     if not token:
-        return _page("Chart", "tokens", "<h1>Chart</h1><p class='sub'>Token not found</p>")
+        return _page(
+            "Chart", "tokens", "<h1>Chart</h1><p class='sub'>Token not found</p>"
+        )
 
-    return HTMLResponse(_chart_html(
-        symbol=token.get("symbol", "???"),
-        chain=token.get("chain", "solana"),
-        address=address,
-        dex_url=token.get("dex_url", ""),
-        pair_address=token.get("pair_address", ""),
-        current_price=token.get("fdv"),
-        fdv=token.get("fdv"),
-        vol24=token.get("volume_h24"),
-    ))
+    return HTMLResponse(
+        _chart_html(
+            symbol=token.get("symbol", "???"),
+            chain=token.get("chain", "solana"),
+            address=address,
+            dex_url=token.get("dex_url", ""),
+            pair_address=token.get("pair_address", ""),
+            current_price=token.get("fdv"),
+            fdv=token.get("fdv"),
+            vol24=token.get("volume_h24"),
+        )
+    )
 
 
 @app.get("/wallet/{address}", response_class=HTMLResponse)
 async def wallet_detail(address: str):
     conn = _get_wallet_db()
     if not conn:
-        return _page("Wallet", "wallets", "<h1>Wallet</h1><p class='sub'>DB not available</p>")
+        return _page(
+            "Wallet", "wallets", "<h1>Wallet</h1><p class='sub'>DB not available</p>"
+        )
 
-    wallet = conn.execute("SELECT * FROM tracked_wallets WHERE address = ?", (address,)).fetchone()
-    positions = conn.execute("SELECT * FROM wallet_token_entries WHERE wallet_address = ? ORDER BY profit DESC LIMIT 50", (address,)).fetchall()
+    wallet = conn.execute(
+        "SELECT * FROM tracked_wallets WHERE address = ?", (address,)
+    ).fetchone()
+    positions = conn.execute(
+        "SELECT * FROM wallet_token_entries WHERE wallet_address = ? ORDER BY profit DESC LIMIT 50",
+        (address,),
+    ).fetchall()
     conn.close()
 
     w = dict(wallet) if wallet else {}
     pos_list = [dict(p) for p in positions]
 
     if not w:
-        return _page("Wallet", "wallets", f"<h1>Wallet</h1><p class='sub'>{address}</p><div class='card'><h3>Not Found</h3></div>")
+        return _page(
+            "Wallet",
+            "wallets",
+            f"<h1>Wallet</h1><p class='sub'>{address}</p><div class='card'><h3>Not Found</h3></div>",
+        )
 
     pos_rows = ""
     for p in pos_list:
@@ -586,7 +651,10 @@ async def wallet_detail(address: str):
   <td>{_time_ago(p.get('start_holding_at'))}</td>
 </tr>"""
 
-    return _page(f"Wallet {_trunc(address,12)}", "wallets", f"""
+    return _page(
+        f"Wallet {_trunc(address,12)}",
+        "wallets",
+        f"""
 <h1>Wallet Detail</h1>
 <div class="sub">
   <span class="badge {_chain_cls(w.get('chain',''))}">{w.get('chain','')}</span>
@@ -609,18 +677,27 @@ async def wallet_detail(address: str):
     <div class="row"><span class="l">Last Active</span><span>{_time_ago(w.get('last_active_at'))}</span></div>
   </div>
 </div>
-{'<div style="margin-top:1.5rem"><h2 style="font-size:1rem;margin-bottom:.75rem">Token Positions (' + str(len(pos_list)) + ')</h2><div class="tbl"><table><thead><tr><th>Token</th><th>PnL</th><th>Realized</th><th>Buy</th><th>Sell</th><th>Win</th><th>Seen</th></tr></thead><tbody>' + pos_rows + '</tbody></table></div></div>' if pos_list else ''}""")
+{'<div style="margin-top:1.5rem"><h2 style="font-size:1rem;margin-bottom:.75rem">Token Positions (' + str(len(pos_list)) + ')</h2><div class="tbl"><table><thead><tr><th>Token</th><th>PnL</th><th>Realized</th><th>Buy</th><th>Sell</th><th>Win</th><th>Seen</th></tr></thead><tbody>' + pos_rows + '</tbody></table></div></div>' if pos_list else ''}""",
+    )
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # API ENDPOINTS
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @app.get("/health")
 async def health():
     checks = {}
-    for name, path in [("top100", settings.output_path), ("contracts_db", settings.db_path), ("wallets_db", settings.wallets_db_path)]:
-        checks[name] = {"exists": path.exists(), "size": path.stat().st_size if path.exists() else 0}
+    for name, path in [
+        ("top100", settings.output_path),
+        ("contracts_db", settings.db_path),
+        ("wallets_db", settings.wallets_db_path),
+    ]:
+        checks[name] = {
+            "exists": path.exists(),
+            "size": path.stat().st_size if path.exists() else 0,
+        }
     return {"status": "healthy", "version": "9.0.0", "checks": checks}
 
 
@@ -634,7 +711,10 @@ async def api_wallets(min_score: float = Query(0), limit: int = Query(50, le=200
     conn = _get_wallet_db()
     if not conn:
         return []
-    rows = conn.execute("SELECT * FROM tracked_wallets WHERE wallet_score >= ? ORDER BY wallet_score DESC LIMIT ?", (min_score, limit)).fetchall()
+    rows = conn.execute(
+        "SELECT * FROM tracked_wallets WHERE wallet_score >= ? ORDER BY wallet_score DESC LIMIT ?",
+        (min_score, limit),
+    ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
 
@@ -644,13 +724,27 @@ async def api_stats():
     data = _load_top100()
     try:
         conn = _get_wallet_db()
-        wc = conn.execute("SELECT COUNT(*) FROM tracked_wallets").fetchone()[0] if conn else 0
-        avg = conn.execute("SELECT AVG(wallet_score) FROM tracked_wallets").fetchone()[0] if conn else 0
+        wc = (
+            conn.execute("SELECT COUNT(*) FROM tracked_wallets").fetchone()[0]
+            if conn
+            else 0
+        )
+        avg = (
+            conn.execute("SELECT AVG(wallet_score) FROM tracked_wallets").fetchone()[0]
+            if conn
+            else 0
+        )
         if conn:
             conn.close()
     except Exception:
         wc = avg = 0
-    return {"tokens_scored": len(data.get("tokens",[])), "total_candidates": data.get("total_candidates",0), "wallets_tracked": wc, "avg_wallet_score": round(avg or 0,1), "last_generated": data.get("generated_at_iso","Never")}
+    return {
+        "tokens_scored": len(data.get("tokens", [])),
+        "total_candidates": data.get("total_candidates", 0),
+        "wallets_tracked": wc,
+        "avg_wallet_score": round(avg or 0, 1),
+        "last_generated": data.get("generated_at_iso", "Never"),
+    }
 
 
 @app.get("/api/trending_keywords")
@@ -667,10 +761,14 @@ async def api_trending_keywords():
 
 # Chain ID mapping for GeckoTerminal
 _GT_NETWORKS = {
-    "solana": "solana", "sol": "solana",
-    "ethereum": "eth", "eth": "eth",
+    "solana": "solana",
+    "sol": "solana",
+    "ethereum": "eth",
+    "eth": "eth",
     "base": "base",
-    "binance": "bsc", "bsc": "bsc", "binance-smart-chain": "bsc",
+    "binance": "bsc",
+    "bsc": "bsc",
+    "binance-smart-chain": "bsc",
 }
 
 
@@ -726,9 +824,17 @@ async def api_chart_ohlcv(
                 params={"aggregate": str(aggregate), "limit": str(limit)},
             )
             if resp.status_code != 200:
-                return {"candles": [], "count": 0, "timeframe": timeframe, "aggregate": aggregate, "error": f"status {resp.status_code}"}
+                return {
+                    "candles": [],
+                    "count": 0,
+                    "timeframe": timeframe,
+                    "aggregate": aggregate,
+                    "error": f"status {resp.status_code}",
+                }
 
-            candles = resp.json().get("data", {}).get("attributes", {}).get("ohlcv_list", [])
+            candles = (
+                resp.json().get("data", {}).get("attributes", {}).get("ohlcv_list", [])
+            )
             return {
                 "candles": candles,
                 "count": len(candles),
@@ -736,12 +842,19 @@ async def api_chart_ohlcv(
                 "aggregate": aggregate,
             }
     except Exception as e:
-        return {"candles": [], "count": 0, "timeframe": timeframe, "aggregate": aggregate, "error": str(e)}
+        return {
+            "candles": [],
+            "count": 0,
+            "timeframe": timeframe,
+            "aggregate": aggregate,
+            "error": str(e),
+        }
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CROSS-REFERENCE: TOKENS × WALLETS
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def _get_top_wallets(limit: int = 200) -> list[dict]:
     """Get top wallets by score from wallet DB."""
@@ -752,7 +865,7 @@ def _get_top_wallets(limit: int = 200) -> list[dict]:
         rows = conn.execute(
             "SELECT address, chain, wallet_score FROM tracked_wallets "
             "WHERE wallet_score > 0 ORDER BY wallet_score DESC LIMIT ?",
-            (limit,)
+            (limit,),
         ).fetchall()
         return [dict(r) for r in rows]
     except Exception:
@@ -770,7 +883,7 @@ def _get_wallet_token_holdings(wallet_address: str) -> list[str]:
         rows = conn.execute(
             "SELECT DISTINCT token_address FROM wallet_token_entries "
             "WHERE wallet_address = ? AND token_address IS NOT NULL",
-            (wallet_address,)
+            (wallet_address,),
         ).fetchall()
         return [r[0] for r in rows if r[0]]
     except Exception:
@@ -797,7 +910,9 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
         return tokens  # Fallback: return tokens sorted by score
 
     # For each top wallet, get their token holdings
-    wallet_holdings: dict[str, set[str]] = {}  # token_address -> set of wallet addresses
+    wallet_holdings: dict[str, set[str]] = (
+        {}
+    )  # token_address -> set of wallet addresses
     for w in top_wallets:
         addr = w["address"]
         held_tokens = _get_wallet_token_holdings(addr)
@@ -813,7 +928,9 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
         t["holding_wallets"] = list(wallet_holdings.get(t_addr, set()))[:10]
 
     # Sort by wallet_count DESC, then score DESC
-    tokens.sort(key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True)
+    tokens.sort(
+        key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True
+    )
     return tokens  # type: ignore[return-value]
 
 
@@ -826,7 +943,9 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
     # Load top tokens
     data = _load_top100()
     tokens = data.get("tokens", [])
-    top_token_addrs = {t.get("contract_address", "") for t in tokens if t.get("contract_address")}
+    top_token_addrs = {
+        t.get("contract_address", "") for t in tokens if t.get("contract_address")
+    }
 
     if not top_token_addrs:
         return []
@@ -850,16 +969,20 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
             if t.get("contract_address") in top_token_overlap:
                 held_symbols.append(t.get("symbol", "?"))
 
-        wallet_results.append({
-            "address": addr,
-            "chain": w.get("chain", ""),
-            "wallet_score": w.get("wallet_score", 0),
-            "top_token_count": len(top_token_overlap),
-            "top_tokens": held_symbols[:10],
-        })
+        wallet_results.append(
+            {
+                "address": addr,
+                "chain": w.get("chain", ""),
+                "wallet_score": w.get("wallet_score", 0),
+                "top_token_count": len(top_token_overlap),
+                "top_tokens": held_symbols[:10],
+            }
+        )
 
     # Sort by top_token_count DESC, then wallet_score DESC
-    wallet_results.sort(key=lambda w: (w["top_token_count"], w["wallet_score"]), reverse=True)
+    wallet_results.sort(
+        key=lambda w: (w["top_token_count"], w["wallet_score"]), reverse=True
+    )
     return wallet_results
 
 
@@ -892,13 +1015,17 @@ async def cross_tokens():
   <td class="mono" style="font-size:.7rem;max-width:300px;overflow:hidden;text-overflow:ellipsis">{wallet_links}</td>
 </tr>"""
 
-    return _page("Tokens × Wallets", "cross-tokens", f"""
+    return _page(
+        "Tokens × Wallets",
+        "cross-tokens",
+        f"""
 <h1>Tokens Ranked by Wallet Count</h1>
 <div class="sub">Top tokens sorted by how many smart money wallets hold them &middot; {len(tokens)} tokens analyzed</div>
 <div class="tbl"><table>
 <thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>🧬 Wallets</th><th>FDV</th><th>Vol24h</th><th>Top Holders</th></tr></thead>
 <tbody>{rows}</tbody>
-</table></div>""")
+</table></div>""",
+    )
 
 
 @app.get("/cross/wallets", response_class=HTMLResponse)
@@ -914,7 +1041,9 @@ async def cross_wallets():
         tc_cls = "sc-h" if tc >= 10 else "sc-m" if tc >= 5 else "sc-l"
         addr = w.get("address", "")
         top_tokens = w.get("top_tokens", [])
-        token_badges = " ".join(f'<span class="tag tag-g">{t}</span>' for t in top_tokens[:8])
+        token_badges = " ".join(
+            f'<span class="tag tag-g">{t}</span>' for t in top_tokens[:8]
+        )
 
         rows += f"""<tr>
   <td>{i}</td>
@@ -925,13 +1054,17 @@ async def cross_wallets():
   <td>{token_badges}</td>
 </tr>"""
 
-    return _page("Wallets × Tokens", "cross-wallets", f"""
+    return _page(
+        "Wallets × Tokens",
+        "cross-wallets",
+        f"""
 <h1>Wallets Ranked by Top Token Count</h1>
 <div class="sub">Smart money wallets sorted by how many top-100 tokens they hold &middot; {len(wallets)} wallets analyzed</div>
 <div class="tbl"><table>
 <thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Score</th><th>🧬 Top Tokens</th><th>Held Tokens</th></tr></thead>
 <tbody>{rows}</tbody>
-</table></div>""")
+</table></div>""",
+    )
 
 
 @app.get("/api/cross/tokens")
