@@ -1003,7 +1003,8 @@ async def cross_tokens():
         addr = t.get("contract_address", "")
         holding_wallets = t.get("holding_wallets", [])
         wallet_links = ", ".join(
-            f'<a href="https://blockscan.com/address/{w}" target="_blank">{_trunc(w, 4)}</a>' for w in holding_wallets[:3]
+            f'<a href="https://blockscan.com/address/{w}" target="_blank">{_trunc(w, 4)}</a>'
+            for w in holding_wallets[:3]
         )
 
         rows += f"""<tr>
