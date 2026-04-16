@@ -11,29 +11,77 @@
   <a href="wallets.html">Smart Money</a>
   <a href="cross-tokens.html">Tokens×Wallets</a>
   <a href="cross-wallets.html" class="active">Wallets×Tokens</a>
+  <a href="tiered.html">Market Cap Tiers</a>
   <a href="columns.html">Guide</a>
   <a href="https://github.com/TerexitariusStomp/hermes-token-screener">GitHub</a>
 </div></nav>
 <div class="wrap">
 <h1>Wallets Ranked by Top Token Count</h1>
-<div class="sub">Smart money wallets sorted by how many top-100 tokens they hold</div>
+<div class="sub">Smart money wallets sorted by how many top-100 tokens they hold, categorized by average token market cap</div>
+
+<div class="filters">
+  <label>Chain
+    <select id="filter-chain">
+      <option value="">All Chains</option>
+    </select>
+  </label>
+  <label>Market Cap Tier
+    <select id="filter-mcap">
+      <option value="">All</option>
+      <option value="< $50K">&lt; $50K</option>
+      <option value="$50K - $250K">$50K - $250K</option>
+      <option value="$250K - $1M">$250K - $1M</option>
+      <option value="$1M - $10M">$1M - $10M</option>
+      <option value="$10M - $100M">$10M - $100M</option>
+      <option value="$100M+">$100M+</option>
+    </select>
+  </label>
+  <span class="filter-count" id="filter-count"></span>
+</div>
+
 <div id="loading">Loading cross-reference data...</div>
 <div class="tbl" id="table-container" style="display:none"><table>
-<thead><tr><th>#</th><th>Address</th><th>Chain</th><th>Score</th><th>🧬</th><th>PnL</th><th>ROI</th><th>Win</th><th>Trades</th><th>Tags</th><th>Active</th><th>Top Tokens</th></tr></thead>
+<thead><tr>
+  <th>#</th>
+  <th data-sort="address">Address <span class="sort-arrow"></span></th>
+  <th data-sort="chain">Chain <span class="sort-arrow"></span></th>
+  <th data-sort="wallet_score">Score <span class="sort-arrow"></span></th>
+  <th data-sort="top_token_count">🧬 Top <span class="sort-arrow"></span></th>
+  <th data-sort="avg_fdv">Avg FDV <span class="sort-arrow"></span></th>
+  <th>MCap Tier</th>
+  <th data-sort="total_profit">PnL <span class="sort-arrow"></span></th>
+  <th data-sort="avg_roi">ROI <span class="sort-arrow"></span></th>
+  <th data-sort="win_rate">Win <span class="sort-arrow"></span></th>
+  <th data-sort="total_trades">Trades <span class="sort-arrow"></span></th>
+  <th>Tags</th>
+  <th data-sort="last_active_at">Active <span class="sort-arrow"></span></th>
+  <th>Top Tokens</th>
+</tr></thead>
 <tbody id="tbody"></tbody>
 </table></div>
 </div>
 <div class="updated" id="updated"></div>
 <script>
-function fmt_usd(v){if(!v)return"—";v=parseFloat(v);if(v>=1e9)return"$"+(v/1e9).toFixed(1)+"B";if(v>=1e6)return"$"+(v/1e6).toFixed(1)+"M";if(v>=1e3)return"$"+(v/1e3).toFixed(1)+"K";return"$"+v.toLocaleString()}
-function fmt_pct(v){if(v==null)return"—";return(v>0?"+":"")+parseFloat(v).toFixed(1)+"%"}
+function fmt_usd(v){if(!v)return"\u2014";v=parseFloat(v);if(v>=1e9)return"$"+(v/1e9).toFixed(1)+"B";if(v>=1e6)return"$"+(v/1e6).toFixed(1)+"M";if(v>=1e3)return"$"+(v/1e3).toFixed(1)+"K";return"$"+v.toLocaleString()}
+function fmt_pct(v){if(v==null)return"\u2014";return(v>0?"+":"")+parseFloat(v).toFixed(1)+"%"}
 function pct_cls(v){if(v==null)return"";return v>0?"pos":v<0?"neg":""}
 function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)+"..."+a.slice(-n)}
 function chain_cls(c){c=(c||"").toLowerCase();return["solana","sol","base","ethereum","eth","bsc","bnb","arbitrum","polygon","polygon-pos","avalanche","sui","optimism"].includes(c)?"chain-"+c:""}
-function time_ago(ts){if(!ts)return"—";const d=Date.now()/1000-parseFloat(ts);if(d<60)return Math.floor(d)+"s";if(d<3600)return Math.floor(d/60)+"m";if(d<86400)return Math.floor(d/3600)+"h";return Math.floor(d/86400)+"d"}
+function chain_label(c){return{solana:"Solana",sol:"Solana",base:"Base",ethereum:"Ethereum",eth:"Ethereum",bsc:"BNB Chain",bnb:"BNB Chain",arbitrum:"Arbitrum",polygon:"Polygon","polygon-pos":"Polygon",avalanche:"Avalanche",sui:"Sui",optimism:"Optimism"}[(c||"").toLowerCase()]||c||"Unknown"}
+function block_url(addr,chain){chain=(chain||"").toLowerCase();if(chain==="solana"||chain==="sol")return"https://solscan.io/account/"+addr;if(chain==="base")return"https://basescan.org/address/"+addr;if(chain==="bsc"||chain==="bnb")return"https://bscscan.com/address/"+addr;if(chain==="arbitrum")return"https://arbiscan.io/address/"+addr;if(chain==="polygon"||chain==="polygon-pos")return"https://polygonscan.com/address/"+addr;if(chain==="avalanche")return"https://snowtrace.io/address/"+addr;if(chain==="optimism")return"https://optimistic.etherscan.io/address/"+addr;return"https://etherscan.io/address/"+addr}
+function time_ago(ts){if(!ts)return"\u2014";const d=Date.now()/1000-parseFloat(ts);if(d<60)return Math.floor(d)+"s";if(d<3600)return Math.floor(d/60)+"m";if(d<86400)return Math.floor(d/3600)+"h";return Math.floor(d/86400)+"d"}
 
-fetch("data/cross-wallets.json").then(r=>r.json()).then(wallets=>{
+let ALL_WALLETS=[], sortKey="top_token_count", sortDir=-1;
+
+function getVal(w,k){
+  if(k==="address")return(w.address||"").toLowerCase();
+  if(k==="chain")return(w.chain||"").toLowerCase();
+  return w[k]!=null?w[k]:0;
+}
+
+function renderTable(wallets){
   const tbody=document.getElementById("tbody");
+  tbody.innerHTML="";
   wallets.slice(0,100).forEach((w,i)=>{
     const score=w.wallet_score||0;
     const sc_cls=score>=70?"sc-h":score>=40?"sc-m":"sc-l";
@@ -47,18 +95,21 @@ fetch("data/cross-wallets.json").then(r=>r.json()).then(wallets=>{
     (w.wallet_tags||"").split(",").forEach(t=>{
       t=t.trim();
       if(t){
-        const cls=t in{"sniper":1,"insider":1}?"tag-r":t==="smart"?"tag-g":"";
+        const cls=t in{sniper:1,insider:1}?"tag-r":t==="smart"?"tag-g":"";
         tags_html+=`<span class="tag ${cls}">${t}</span>`;
       }
     });
     if(w.insider_flag) tags_html+='<span class="tag tag-y">INSIDER</span>';
+    const mcap_tier=w.mcap_tier||"\u2014";
 
     tbody.innerHTML+=`<tr>
   <td>${i+1}</td>
-  <td class="mono"><a href="https://app.zerion.io/${addr}/overview" target="_blank">${trunc(addr)}</a></td>
-  <td><span class="badge ${chain_cls(w.chain||"")}">${w.chain||""}</span></td>
+  <td class="mono"><a href="${block_url(addr,w.chain)}" target="_blank">${trunc(addr)}</a></td>
+  <td><span class="badge ${chain_cls(w.chain||"")}">${chain_label(w.chain)}</span></td>
   <td class="sc ${sc_cls}">${score.toFixed(0)}</td>
   <td class="sc ${tc_cls}">${tc}</td>
+  <td>${fmt_usd(w.avg_fdv)}</td>
+  <td><span class="tag tag-y">${mcap_tier}</span></td>
   <td class="${profit_cls}">${fmt_usd(profit)}</td>
   <td class="${pct_cls(w.avg_roi)}">${fmt_pct(w.avg_roi)}</td>
   <td>${((w.win_rate||0)*100).toFixed(0)}%</td>
@@ -68,6 +119,50 @@ fetch("data/cross-wallets.json").then(r=>r.json()).then(wallets=>{
   <td>${top_tokens}</td>
 </tr>`;
   });
+}
+
+function applyFilters(){
+  const chain=document.getElementById("filter-chain").value;
+  const mcap=document.getElementById("filter-mcap").value;
+  let filtered=ALL_WALLETS.filter(w=>{
+    if(chain && chain_label(w.chain)!==chain && (w.chain||"").toLowerCase()!==chain.toLowerCase())return false;
+    if(mcap && (w.mcap_tier||"")!==mcap)return false;
+    return true;
+  });
+  filtered.sort((a,b)=>{
+    let va=getVal(a,sortKey),vb=getVal(b,sortKey);
+    if(typeof va==="string")return sortDir*va.localeCompare(vb);
+    return sortDir*(va-vb);
+  });
+  renderTable(filtered);
+  document.getElementById("filter-count").textContent=filtered.length+" of "+ALL_WALLETS.length+" wallets";
+}
+
+document.querySelectorAll("th[data-sort]").forEach(th=>{
+  th.style.cursor="pointer";
+  th.addEventListener("click",()=>{
+    const key=th.dataset.sort;
+    if(sortKey===key)sortDir*=-1;
+    else{sortKey=key;sortDir=key==="address"||key==="chain"?1:-1;}
+    document.querySelectorAll("th[data-sort]").forEach(h=>h.querySelector(".sort-arrow").textContent="");
+    th.querySelector(".sort-arrow").textContent=sortDir>0?" \u25B2":" \u25BC";
+    applyFilters();
+  });
+});
+
+document.getElementById("filter-chain").addEventListener("change",applyFilters);
+document.getElementById("filter-mcap").addEventListener("change",applyFilters);
+
+fetch("data/cross-wallets.json").then(r=>r.json()).then(wallets=>{
+  ALL_WALLETS=wallets;
+  const chains=new Set(wallets.map(w=>chain_label(w.chain)).filter(Boolean));
+  const sel=document.getElementById("filter-chain");
+  [...chains].sort().forEach(c=>{
+    const opt=document.createElement("option");
+    opt.value=c; opt.textContent=c;
+    sel.appendChild(opt);
+  });
+  applyFilters();
   document.getElementById("loading").style.display="none";
   document.getElementById("table-container").style.display="";
 }).catch(e=>{
