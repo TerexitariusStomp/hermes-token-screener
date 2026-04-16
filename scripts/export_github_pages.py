@@ -323,6 +323,167 @@ def export_cross_wallets():
     print(f"Exported {len(wallet_results)} cross-referenced wallets to {dst}")
 
 
+def export_tiered_wallets():
+    """Export tokens and wallets grouped by market cap tiers for GitHub Pages."""
+    from datetime import datetime, timezone
+
+    MARKET_CAP_TIERS = [
+        (0, 50_000, "micro", "$0 - $50K"),
+        (50_000, 100_000, "tiny", "$50K - $100K"),
+        (100_000, 250_000, "small_low", "$100K - $250K"),
+        (250_000, 500_000, "small_mid", "$250K - $500K"),
+        (500_000, 750_000, "small_high", "$500K - $750K"),
+        (750_000, 1_000_000, "mid_low", "$750K - $1M"),
+        (1_000_000, 5_000_000, "mid", "$1M - $5M"),
+        (5_000_000, 10_000_000, "mid_high", "$5M - $10M"),
+        (10_000_000, 50_000_000, "large_low", "$10M - $50M"),
+        (50_000_000, 100_000_000, "large_high", "$50M - $100M"),
+        (100_000_000, float("inf"), "mega", "$100M+"),
+    ]
+    tier_order = [name for _, _, name, _ in MARKET_CAP_TIERS]
+
+    def get_market_cap(token):
+        return float(token.get("fdv") or token.get("market_cap") or 0)
+
+    def get_tier(mcap):
+        for low, high, name, label in MARKET_CAP_TIERS:
+            if low <= mcap < high:
+                return name, label
+        return "mega", "$100M+"
+
+    # Load tokens from enriched data source (same pattern as cross exports)
+    data_dir = settings.output_path.parent
+    candidates = [
+        data_dir / "top100_phase4_social.json",
+        data_dir / "top100_phase3_smartmoney.json",
+        data_dir / "top100_phase1_initial.json",
+        settings.output_path,
+    ]
+
+    tokens = []
+    for src in candidates:
+        if src.exists():
+            with open(src) as f:
+                raw = json.load(f)
+            candidate_tokens = raw.get("tokens") or raw.get("top_tokens") or []
+            if candidate_tokens and candidate_tokens[0].get("contract_address"):
+                tokens = candidate_tokens
+                print(f"Tiered: using {src.name}")
+                break
+
+    if not tokens:
+        print("No token data, skipping tiered wallets")
+        return
+
+    # Classify tokens by tier
+    tiered_tokens = {name: [] for name in tier_order}
+    tier_labels = {name: label for _, _, name, label in MARKET_CAP_TIERS}
+
+    for t in tokens:
+        mcap = get_market_cap(t)
+        tier_name, _ = get_tier(mcap)
+        tiered_tokens[tier_name].append(t)
+
+    # Sort tokens within each tier by score desc
+    for name in tier_order:
+        tiered_tokens[name].sort(key=lambda t: t.get("score", 0) or 0, reverse=True)
+
+    # Build wallet mapping per tier
+    db_path = settings.wallets_db_path
+    tiered_data = {}
+    tier_order_out = []
+
+    for tier_name in tier_order:
+        tier_token_list = tiered_tokens[tier_name]
+        if not tier_token_list:
+            continue
+
+        tier_token_addrs = {
+            t.get("contract_address", "")
+            for t in tier_token_list
+            if t.get("contract_address")
+        }
+        tier_wallets = []
+
+        if db_path.exists():
+            conn = sqlite3.connect(str(db_path))
+            conn.row_factory = sqlite3.Row
+            try:
+                placeholders = ",".join("?" * len(tier_token_addrs))
+                rows = conn.execute(
+                    f"""
+                    SELECT DISTINCT w.address, w.chain, w.wallet_score,
+                           w.total_profit, w.win_rate, w.avg_roi, w.total_trades,
+                           w.wallet_tags, w.source_tokens
+                    FROM tracked_wallets w
+                    JOIN wallet_token_entries e ON w.address = e.wallet_address
+                    WHERE e.token_address IN ({placeholders})
+                      AND w.wallet_score > 0
+                    ORDER BY w.wallet_score DESC
+                    LIMIT 100
+                """,
+                    list(tier_token_addrs),
+                ).fetchall()
+
+                for w in rows:
+                    held_rows = conn.execute(
+                        "SELECT token_address FROM wallet_token_entries "
+                        "WHERE wallet_address = ? AND token_address IN ("
+                        + placeholders
+                        + ")",
+                        [w["address"]] + list(tier_token_addrs),
+                    ).fetchall()
+                    held_in_tier = [r[0] for r in held_rows]
+
+                    tier_wallets.append(
+                        {
+                            "address": w["address"],
+                            "chain": w["chain"],
+                            "wallet_score": w["wallet_score"],
+                            "total_profit": w["total_profit"],
+                            "win_rate": w["win_rate"],
+                            "avg_roi": w["avg_roi"],
+                            "trade_count": w["total_trades"],
+                            "wallet_tags": w["wallet_tags"],
+                            "tokens_held": len(held_in_tier),
+                            "token_addresses": held_in_tier[:5],
+                        }
+                    )
+            except Exception as e:
+                print(f"ERROR reading tier {tier_name} wallets: {e}")
+            finally:
+                conn.close()
+
+        # Convert sets to lists in tokens
+        clean_tokens = []
+        for t in tier_token_list:
+            ct = dict(t)
+            for key in list(ct.keys()):
+                if isinstance(ct[key], set):
+                    ct[key] = list(ct[key])
+            clean_tokens.append(ct)
+
+        tiered_data[tier_name] = {
+            "label": tier_labels[tier_name],
+            "token_count": len(clean_tokens),
+            "wallet_count": len(tier_wallets),
+            "tokens": clean_tokens,
+            "wallets": tier_wallets,
+        }
+        tier_order_out.append(tier_name)
+
+    output = {
+        "generated_at_iso": datetime.now(timezone.utc).isoformat(),
+        "tier_order": tier_order_out,
+        "tiers": tiered_data,
+    }
+
+    dst = DOCS_DATA / "tiered-wallets.json"
+    with open(dst, "w") as f:
+        json.dump(output, f, indent=2, default=str)
+    print(f"Exported tiered wallets ({len(tier_order_out)} tiers) to {dst}")
+
+
 if __name__ == "__main__":
     print("Exporting data for GitHub Pages...")
     DOCS_DATA.mkdir(parents=True, exist_ok=True)
@@ -330,6 +491,7 @@ if __name__ == "__main__":
     export_wallets()
     export_cross_tokens()
     export_cross_wallets()
+    export_tiered_wallets()
     print("\nDone! Now commit and push the docs/data/ folder:")
     print("  cd /path/to/hermes-token-screener")
     print("  git add docs/data/")

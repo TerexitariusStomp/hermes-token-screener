@@ -1,5 +1,5 @@
 {
-  "generated_at_iso": "2026-04-16T17:23:43.492892+00:00",
+  "generated_at_iso": "2026-04-16T17:37:15.008070+00:00",
   "tier_order": [
     "micro",
     "tiny",
@@ -22,7 +22,7 @@
           "chain": "solana",
           "symbol": "SNIFFER",
           "name": "sniffer",
-          "score": 5.73,
+          "score": 4.01,
           "channel_count": 2,
           "mentions": 2,
           "fdv": 12224,
@@ -51,6 +51,8 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 0.0
           },
           "tg_channel_count": 2,
@@ -58,52 +60,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.0,
-          "tg_first_mention_hours_ago": 59.8,
-          "tg_last_mention_minutes_ago": 3549.8,
-          "tw_mention_count": 0,
-          "tw_sentiment_score": 0,
-          "tw_trending_score": 0,
-          "tw_kol_score": 0
-        },
-        {
-          "contract_address": "6kNqMmexpkX89Rpwm2xCLQvm1Dy6Qc5D3E7FqFvJpump",
-          "chain": "solana",
-          "symbol": "Son",
-          "name": "Son",
-          "score": 0.0,
-          "channel_count": 2,
-          "mentions": 3,
-          "fdv": 26416,
-          "volume_h24": 84532.05,
-          "volume_h1": 5183.44,
-          "age_hours": 47.63,
-          "price_change_h1": -37.52,
-          "price_change_h6": -27.44,
-          "social_score": 5.0,
-          "gmgn_smart_wallets": 19,
-          "gmgn_dev_hold": false,
-          "positives": [
-            "2 smart wallets (avg 35)",
-            "1 smart wallets (avg 31)"
-          ],
-          "negatives": [
-            "POSSIBLE RUG"
-          ],
-          "dex_url": "https://dexscreener.com/solana/6kNqMmexpkX89Rpwm2xCLQvm1Dy6Qc5D3E7FqFvJpump",
-          "smart_wallet_count": 2,
-          "smart_wallet_avg_score": 35.0,
-          "insider_count": 0,
-          "sniper_count": 0,
-          "social_details": {
-            "tg_quality_pts": 5.0
-          },
-          "tg_channel_count": 2,
-          "tg_mention_count": 3,
-          "tg_mention_velocity": 0,
-          "tg_viral_score": 0,
-          "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 61.7,
-          "tg_last_mention_minutes_ago": 3484.5,
+          "tg_first_mention_hours_ago": 60.8,
+          "tg_last_mention_minutes_ago": 3609.8,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -114,7 +72,7 @@
           "chain": "solana",
           "symbol": "pumphouse",
           "name": "pumphouse",
-          "score": 0,
+          "score": 3.0,
           "channel_count": 2,
           "mentions": 7,
           "fdv": 10573,
@@ -145,6 +103,8 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 10.0
           },
           "tg_channel_count": 2,
@@ -152,8 +112,54 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 1.0,
-          "tg_first_mention_hours_ago": 79.5,
-          "tg_last_mention_minutes_ago": 3651.1,
+          "tg_first_mention_hours_ago": 80.5,
+          "tg_last_mention_minutes_ago": 3711.2,
+          "tw_mention_count": 0,
+          "tw_sentiment_score": 0,
+          "tw_trending_score": 0,
+          "tw_kol_score": 0
+        },
+        {
+          "contract_address": "6kNqMmexpkX89Rpwm2xCLQvm1Dy6Qc5D3E7FqFvJpump",
+          "chain": "solana",
+          "symbol": "Son",
+          "name": "Son",
+          "score": 1.5,
+          "channel_count": 2,
+          "mentions": 3,
+          "fdv": 26416,
+          "volume_h24": 84532.05,
+          "volume_h1": 5183.44,
+          "age_hours": 47.63,
+          "price_change_h1": -37.52,
+          "price_change_h6": -27.44,
+          "social_score": 5.0,
+          "gmgn_smart_wallets": 19,
+          "gmgn_dev_hold": false,
+          "positives": [
+            "2 smart wallets (avg 35)",
+            "1 smart wallets (avg 31)"
+          ],
+          "negatives": [
+            "POSSIBLE RUG"
+          ],
+          "dex_url": "https://dexscreener.com/solana/6kNqMmexpkX89Rpwm2xCLQvm1Dy6Qc5D3E7FqFvJpump",
+          "smart_wallet_count": 2,
+          "smart_wallet_avg_score": 35.0,
+          "insider_count": 0,
+          "sniper_count": 0,
+          "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
+            "tg_quality_pts": 5.0
+          },
+          "tg_channel_count": 2,
+          "tg_mention_count": 3,
+          "tg_mention_velocity": 0,
+          "tg_viral_score": 0,
+          "tg_channel_quality": 0.5,
+          "tg_first_mention_hours_ago": 62.7,
+          "tg_last_mention_minutes_ago": 3544.5,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -190,6 +196,8 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 0.0
           },
           "tg_channel_count": 2,
@@ -197,8 +205,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.0,
-          "tg_first_mention_hours_ago": 131.6,
-          "tg_last_mention_minutes_ago": 4173.6,
+          "tg_first_mention_hours_ago": 132.6,
+          "tg_last_mention_minutes_ago": 4233.6,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -207,24 +215,9 @@
       ],
       "wallets": [
         {
-          "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
-          "chain": "solana",
-          "wallet_score": 49.0,
-          "total_profit": 16880.415062488384,
-          "win_rate": 1.0,
-          "avg_roi": 0.05474707871685697,
-          "trade_count": 2076,
-          "wallet_tags": "TOP52,TOP13,TOP62,TOP79,TOP44",
-          "tokens_held": 2,
-          "token_addresses": [
-            "6t12PVyDCTpwiFWBKHHc1vAKocUUKexkHXM5tEtUpump",
-            "AnAVK1B3ZQRcUVriqLNTYFZ32PgJUSDDvJmT4WdXpump"
-          ]
-        },
-        {
           "address": "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
           "chain": "solana",
-          "wallet_score": 46.0,
+          "wallet_score": 56.0,
           "total_profit": 27745.64227403131,
           "win_rate": 1.0,
           "avg_roi": 0.07270895009163393,
@@ -239,7 +232,7 @@
         {
           "address": "gtagyESa99t49VmUqnnfsuowYnigSNKuYXdXWyXWNdd",
           "chain": "solana",
-          "wallet_score": 46.0,
+          "wallet_score": 56.0,
           "total_profit": 12608.329806151654,
           "win_rate": 1.0,
           "avg_roi": 0.045058436923768194,
@@ -254,12 +247,27 @@
         {
           "address": "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
           "chain": "solana",
-          "wallet_score": 45.0,
+          "wallet_score": 55.0,
           "total_profit": 9114.918217516959,
           "win_rate": 1.0,
           "avg_roi": 0.03586892189750701,
           "trade_count": 2645,
           "wallet_tags": "TOP18,TOP36,TOP24,TOP61,TOP20",
+          "tokens_held": 2,
+          "token_addresses": [
+            "6t12PVyDCTpwiFWBKHHc1vAKocUUKexkHXM5tEtUpump",
+            "AnAVK1B3ZQRcUVriqLNTYFZ32PgJUSDDvJmT4WdXpump"
+          ]
+        },
+        {
+          "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
+          "chain": "solana",
+          "wallet_score": 54.0,
+          "total_profit": 16880.415062488384,
+          "win_rate": 1.0,
+          "avg_roi": 0.05474707871685697,
+          "trade_count": 2076,
+          "wallet_tags": "TOP52,TOP13,TOP62,TOP79,TOP44",
           "tokens_held": 2,
           "token_addresses": [
             "6t12PVyDCTpwiFWBKHHc1vAKocUUKexkHXM5tEtUpump",
@@ -1631,7 +1639,7 @@
           "chain": "solana",
           "symbol": "Patapim",
           "name": "Brr Brr Patapim",
-          "score": 12.73,
+          "score": 11.91,
           "channel_count": 2,
           "mentions": 5,
           "fdv": 52641,
@@ -1658,6 +1666,8 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 10.0
           },
           "tg_channel_count": 2,
@@ -1665,8 +1675,55 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 1.0,
-          "tg_first_mention_hours_ago": 68.3,
-          "tg_last_mention_minutes_ago": 3651.1,
+          "tg_first_mention_hours_ago": 69.3,
+          "tg_last_mention_minutes_ago": 3711.2,
+          "tw_mention_count": 0,
+          "tw_sentiment_score": 0,
+          "tw_trending_score": 0,
+          "tw_kol_score": 0
+        },
+        {
+          "contract_address": "8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump",
+          "chain": "solana",
+          "symbol": "CLAWD",
+          "name": "solanaclawd",
+          "score": 1.5,
+          "channel_count": 2,
+          "mentions": 3,
+          "fdv": 83894,
+          "volume_h24": 14092.52,
+          "volume_h1": 121.11,
+          "age_hours": 191.11,
+          "price_change_h1": 1.7,
+          "price_change_h6": 10.05,
+          "social_score": 5.0,
+          "gmgn_smart_wallets": 30,
+          "gmgn_dev_hold": false,
+          "positives": [
+            "burned",
+            "CTO"
+          ],
+          "negatives": [
+            "token farmer",
+            "stagnant volume"
+          ],
+          "dex_url": "https://dexscreener.com/solana/8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump",
+          "smart_wallet_count": 0,
+          "smart_wallet_avg_score": 0.0,
+          "insider_count": 0,
+          "sniper_count": 0,
+          "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
+            "tg_quality_pts": 5.0
+          },
+          "tg_channel_count": 2,
+          "tg_mention_count": 3,
+          "tg_mention_velocity": 0,
+          "tg_viral_score": 0,
+          "tg_channel_quality": 0.5,
+          "tg_first_mention_hours_ago": 205.9,
+          "tg_last_mention_minutes_ago": 12335.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -1677,7 +1734,7 @@
           "chain": "solana",
           "symbol": "ROCKET",
           "name": "ROCKET",
-          "score": 0,
+          "score": 0.99,
           "channel_count": 3,
           "mentions": 4,
           "fdv": 89853,
@@ -1708,6 +1765,8 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 3.3
           },
           "tg_channel_count": 3,
@@ -1715,53 +1774,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.33,
-          "tg_first_mention_hours_ago": 334.4,
-          "tg_last_mention_minutes_ago": 10668.0,
-          "tw_mention_count": 0,
-          "tw_sentiment_score": 0,
-          "tw_trending_score": 0,
-          "tw_kol_score": 0
-        },
-        {
-          "contract_address": "8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump",
-          "chain": "solana",
-          "symbol": "CLAWD",
-          "name": "solanaclawd",
-          "score": 0,
-          "channel_count": 2,
-          "mentions": 3,
-          "fdv": 83894,
-          "volume_h24": 14092.52,
-          "volume_h1": 121.11,
-          "age_hours": 191.11,
-          "price_change_h1": 1.7,
-          "price_change_h6": 10.05,
-          "social_score": 5.0,
-          "gmgn_smart_wallets": 30,
-          "gmgn_dev_hold": false,
-          "positives": [
-            "burned",
-            "CTO"
-          ],
-          "negatives": [
-            "token farmer",
-            "stagnant volume"
-          ],
-          "dex_url": "https://dexscreener.com/solana/8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump",
-          "smart_wallet_count": 0,
-          "smart_wallet_avg_score": 0.0,
-          "insider_count": 0,
-          "sniper_count": 0,
-          "social_details": {
-            "tg_quality_pts": 5.0
-          },
-          "tg_channel_count": 2,
-          "tg_mention_count": 3,
-          "tg_mention_velocity": 0,
-          "tg_viral_score": 0,
-          "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 204.9,
-          "tg_last_mention_minutes_ago": 12275.2,
+          "tg_first_mention_hours_ago": 335.4,
+          "tg_last_mention_minutes_ago": 10728.0,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -1797,6 +1811,8 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 0.0
           },
           "tg_channel_count": 2,
@@ -1804,8 +1820,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.0,
-          "tg_first_mention_hours_ago": 72.4,
-          "tg_last_mention_minutes_ago": 4337.0,
+          "tg_first_mention_hours_ago": 73.4,
+          "tg_last_mention_minutes_ago": 4397.0,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -1813,6 +1829,62 @@
         }
       ],
       "wallets": [
+        {
+          "address": "DtvmxrTACskMG2W8a6KXgSemUfvyNVeQTgfpJoGvMVKx",
+          "chain": "solana",
+          "wallet_score": 58.0,
+          "total_profit": 10921.625957621261,
+          "win_rate": 1.0,
+          "avg_roi": 0.05251739603626354,
+          "trade_count": 1808,
+          "wallet_tags": "TOP25,TOP55,TOP31,TOP35,TOP48",
+          "tokens_held": 1,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
+          ]
+        },
+        {
+          "address": "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 27745.64227403131,
+          "win_rate": 1.0,
+          "avg_roi": 0.07270895009163393,
+          "trade_count": 2943,
+          "wallet_tags": "TOP17,TOP21,TOP9,TOP19,TOP44",
+          "tokens_held": 1,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
+          ]
+        },
+        {
+          "address": "gtagyESa99t49VmUqnnfsuowYnigSNKuYXdXWyXWNdd",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 12608.329806151654,
+          "win_rate": 1.0,
+          "avg_roi": 0.045058436923768194,
+          "trade_count": 4624,
+          "wallet_tags": "TOP18,TOP25,TOP31,TOP15,TOP32,sandwich_bot",
+          "tokens_held": 1,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
+          ]
+        },
+        {
+          "address": "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
+          "chain": "solana",
+          "wallet_score": 55.0,
+          "total_profit": 9114.918217516959,
+          "win_rate": 1.0,
+          "avg_roi": 0.03586892189750701,
+          "trade_count": 2645,
+          "wallet_tags": "TOP18,TOP36,TOP24,TOP61,TOP20",
+          "tokens_held": 1,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
+          ]
+        },
         {
           "address": "GCQ9QqzvNMpeMKAXJYDePpoJr5DPNve2DkXUpAbzQrmW",
           "chain": "solana",
@@ -1822,6 +1894,49 @@
           "avg_roi": 4.84557111187186,
           "trade_count": 1666,
           "wallet_tags": "TOP66",
+          "tokens_held": 1,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
+          ]
+        },
+        {
+          "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
+          "chain": "solana",
+          "wallet_score": 54.0,
+          "total_profit": 16880.415062488384,
+          "win_rate": 1.0,
+          "avg_roi": 0.05474707871685697,
+          "trade_count": 2076,
+          "wallet_tags": "TOP52,TOP13,TOP62,TOP79,TOP44",
+          "tokens_held": 2,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump",
+            "W6wjBw8HJ65PyyHr9RkTXK7dKvrP1CNkgPWVEHDbrrr"
+          ]
+        },
+        {
+          "address": "JBVpuKD4cEVUjZ7conFwKZKzdpY92C1hzwCHYr99L54z",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 15080.017130211902,
+          "win_rate": 1.0,
+          "avg_roi": 0.09345306276459997,
+          "trade_count": 1581,
+          "wallet_tags": "TOP45,TOP57,TOP96,sandwich_bot,TOP42",
+          "tokens_held": 1,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
+          ]
+        },
+        {
+          "address": "ALtB6ZhU51EQh9KtH4m3WoYdoTL8UoXoHxHY3fbhbb4u",
+          "chain": "solana",
+          "wallet_score": 50.0,
+          "total_profit": 14802.355610180839,
+          "win_rate": 1.0,
+          "avg_roi": 0.1973335802039944,
+          "trade_count": 174,
+          "wallet_tags": "TOP30,TOP118",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
@@ -1842,71 +1957,28 @@
           ]
         },
         {
-          "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
-          "chain": "solana",
-          "wallet_score": 49.0,
-          "total_profit": 16880.415062488384,
-          "win_rate": 1.0,
-          "avg_roi": 0.05474707871685697,
-          "trade_count": 2076,
-          "wallet_tags": "TOP52,TOP13,TOP62,TOP79,TOP44",
-          "tokens_held": 2,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump",
-            "W6wjBw8HJ65PyyHr9RkTXK7dKvrP1CNkgPWVEHDbrrr"
-          ]
-        },
-        {
-          "address": "DtvmxrTACskMG2W8a6KXgSemUfvyNVeQTgfpJoGvMVKx",
+          "address": "GpiY1js36rZ1PeEqAACxK51syvqLT2tUykSvsBpP84uj",
           "chain": "solana",
           "wallet_score": 48.0,
-          "total_profit": 10921.625957621261,
+          "total_profit": 6945.648181446264,
           "win_rate": 1.0,
-          "avg_roi": 0.05251739603626354,
-          "trade_count": 1808,
-          "wallet_tags": "TOP25,TOP55,TOP31,TOP35,TOP48",
+          "avg_roi": 0.24087256397426332,
+          "trade_count": 251,
+          "wallet_tags": "TOP43,TOP50",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
           ]
         },
         {
-          "address": "JBVpuKD4cEVUjZ7conFwKZKzdpY92C1hzwCHYr99L54z",
+          "address": "BvhZDhhnsChEGFTBUcEUjeqAHoVkA16mTsydWCUHzKFs",
           "chain": "solana",
           "wallet_score": 48.0,
-          "total_profit": 15080.017130211902,
+          "total_profit": 2062.9668448059674,
           "win_rate": 1.0,
-          "avg_roi": 0.09345306276459997,
-          "trade_count": 1581,
-          "wallet_tags": "TOP45,TOP57,TOP96,sandwich_bot,TOP42",
-          "tokens_held": 1,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
-          ]
-        },
-        {
-          "address": "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 27745.64227403131,
-          "win_rate": 1.0,
-          "avg_roi": 0.07270895009163393,
-          "trade_count": 2943,
-          "wallet_tags": "TOP17,TOP21,TOP9,TOP19,TOP44",
-          "tokens_held": 1,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
-          ]
-        },
-        {
-          "address": "gtagyESa99t49VmUqnnfsuowYnigSNKuYXdXWyXWNdd",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 12608.329806151654,
-          "win_rate": 1.0,
-          "avg_roi": 0.045058436923768194,
-          "trade_count": 4624,
-          "wallet_tags": "TOP18,TOP25,TOP31,TOP15,TOP32,sandwich_bot",
+          "avg_roi": 0.01680760933192161,
+          "trade_count": 594,
+          "wallet_tags": "TOP16,TOP44",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
@@ -1921,34 +1993,6 @@
           "avg_roi": 0.5249200495230468,
           "trade_count": 2598,
           "wallet_tags": "TOP53",
-          "tokens_held": 1,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
-          ]
-        },
-        {
-          "address": "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
-          "chain": "solana",
-          "wallet_score": 45.0,
-          "total_profit": 9114.918217516959,
-          "win_rate": 1.0,
-          "avg_roi": 0.03586892189750701,
-          "trade_count": 2645,
-          "wallet_tags": "TOP18,TOP36,TOP24,TOP61,TOP20",
-          "tokens_held": 1,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
-          ]
-        },
-        {
-          "address": "ALtB6ZhU51EQh9KtH4m3WoYdoTL8UoXoHxHY3fbhbb4u",
-          "chain": "solana",
-          "wallet_score": 45.0,
-          "total_profit": 14802.355610180839,
-          "win_rate": 1.0,
-          "avg_roi": 0.1973335802039944,
-          "trade_count": 174,
-          "wallet_tags": "TOP30,TOP118",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
@@ -2011,14 +2055,28 @@
           ]
         },
         {
-          "address": "BvhZDhhnsChEGFTBUcEUjeqAHoVkA16mTsydWCUHzKFs",
+          "address": "6AGp6zbGNuyZpmzeswv9KCNU15Rf37UQDqDqFAeHmS8d",
           "chain": "solana",
           "wallet_score": 43.0,
-          "total_profit": 2062.9668448059674,
+          "total_profit": 4049.772557896222,
           "win_rate": 1.0,
-          "avg_roi": 0.01680760933192161,
-          "trade_count": 594,
-          "wallet_tags": "TOP16,TOP44",
+          "avg_roi": 0.05646063739138635,
+          "trade_count": 1158,
+          "wallet_tags": "TOP93,TOP82,TOP100",
+          "tokens_held": 1,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
+          ]
+        },
+        {
+          "address": "8c3sWHwi96ZCP9rJqaRJUmCsYexbTHheGMaKth31m1m",
+          "chain": "solana",
+          "wallet_score": 43.0,
+          "total_profit": 3147.3055309296988,
+          "win_rate": 1.0,
+          "avg_roi": 0.027959801520106606,
+          "trade_count": 3714,
+          "wallet_tags": "sandwich_bot,TOP42,TOP15,TOP60",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
@@ -2151,6 +2209,20 @@
           ]
         },
         {
+          "address": "FExezs2b4wUbJV4dKoNBE8xZCiH3bVcDnT569fTmkLyj",
+          "chain": "solana",
+          "wallet_score": 41.0,
+          "total_profit": 2.237446477211865,
+          "win_rate": 1.0,
+          "avg_roi": 0.041422461858202586,
+          "trade_count": 780,
+          "wallet_tags": "TOP67,TOP34",
+          "tokens_held": 1,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
+          ]
+        },
+        {
           "address": "1FXZB935wbSn93PCGCqQbGXfg3BZ3MWCvMUiVvsvFR6",
           "chain": "solana",
           "wallet_score": 41.0,
@@ -2159,6 +2231,20 @@
           "avg_roi": 0.6200472426546256,
           "trade_count": 2052,
           "wallet_tags": "TOP86",
+          "tokens_held": 1,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
+          ]
+        },
+        {
+          "address": "2PZbVpz3fuqL1orpGP8Y7QRHtF7DGEjuFGsCbSQ2QChR",
+          "chain": "solana",
+          "wallet_score": 40.0,
+          "total_profit": 5.02705071028979,
+          "win_rate": 1.0,
+          "avg_roi": 0.13642465434531437,
+          "trade_count": 760,
+          "wallet_tags": "TOP51,TOP50",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
@@ -2193,42 +2279,56 @@
           ]
         },
         {
-          "address": "GpiY1js36rZ1PeEqAACxK51syvqLT2tUykSvsBpP84uj",
+          "address": "GxAiM4NEmH1GdGvGSggD8eUW5jYc1u2q6NK2s3sLWdgM",
           "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 6945.648181446264,
+          "wallet_score": 39.0,
+          "total_profit": 1.0984104532294874,
           "win_rate": 1.0,
-          "avg_roi": 0.24087256397426332,
-          "trade_count": 251,
-          "wallet_tags": "TOP43,TOP50",
+          "avg_roi": 0.05001161970155736,
+          "trade_count": 806,
+          "wallet_tags": "TOP64,TOP40",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
           ]
         },
         {
-          "address": "6AGp6zbGNuyZpmzeswv9KCNU15Rf37UQDqDqFAeHmS8d",
+          "address": "8jC3YvmpAfeH4yL5GZXgt2ECXGFnAFKkspZX9PkUppkh",
           "chain": "solana",
           "wallet_score": 38.0,
-          "total_profit": 4049.772557896222,
-          "win_rate": 1.0,
-          "avg_roi": 0.05646063739138635,
-          "trade_count": 1158,
-          "wallet_tags": "TOP93,TOP82,TOP100",
+          "total_profit": 1552.6448616161488,
+          "win_rate": 0.5,
+          "avg_roi": 0.16340166014897486,
+          "trade_count": 465,
+          "wallet_tags": "TOP16,TOP78",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
           ]
         },
         {
-          "address": "8c3sWHwi96ZCP9rJqaRJUmCsYexbTHheGMaKth31m1m",
+          "address": "Cc9VCX3fQMpiTAZDh99t18uop2qLNKQ2xeVoFk2SkaNe",
           "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 3147.3055309296988,
+          "wallet_score": 37.0,
+          "total_profit": 5514.865287768658,
           "win_rate": 1.0,
-          "avg_roi": 0.027959801520106606,
-          "trade_count": 3714,
-          "wallet_tags": "sandwich_bot,TOP42,TOP15,TOP60",
+          "avg_roi": 1.955235805635041,
+          "trade_count": 35,
+          "wallet_tags": "TOP133",
+          "tokens_held": 1,
+          "token_addresses": [
+            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
+          ]
+        },
+        {
+          "address": "4BjMCYZRHAUYkJppmbi7g2KdkWaSyy79Wkqz5FdktWNM",
+          "chain": "solana",
+          "wallet_score": 37.0,
+          "total_profit": 6289.474778354944,
+          "win_rate": 1.0,
+          "avg_roi": 6.050485284220169,
+          "trade_count": 4,
+          "wallet_tags": "TOP165",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
@@ -2249,20 +2349,6 @@
           ]
         },
         {
-          "address": "FExezs2b4wUbJV4dKoNBE8xZCiH3bVcDnT569fTmkLyj",
-          "chain": "solana",
-          "wallet_score": 36.0,
-          "total_profit": 2.237446477211865,
-          "win_rate": 1.0,
-          "avg_roi": 0.041422461858202586,
-          "trade_count": 780,
-          "wallet_tags": "TOP67,TOP34",
-          "tokens_held": 1,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
-          ]
-        },
-        {
           "address": "EzsTM2VjZmASPEUvTbRDjGh3FW3DEntygC1bAmei3GkQ",
           "chain": "solana",
           "wallet_score": 35.0,
@@ -2271,20 +2357,6 @@
           "avg_roi": 0.012018311541349868,
           "trade_count": 283,
           "wallet_tags": "TOP55",
-          "tokens_held": 1,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
-          ]
-        },
-        {
-          "address": "2PZbVpz3fuqL1orpGP8Y7QRHtF7DGEjuFGsCbSQ2QChR",
-          "chain": "solana",
-          "wallet_score": 35.0,
-          "total_profit": 5.02705071028979,
-          "win_rate": 1.0,
-          "avg_roi": 0.13642465434531437,
-          "trade_count": 760,
-          "wallet_tags": "TOP51,TOP50",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
@@ -2333,34 +2405,6 @@
           ]
         },
         {
-          "address": "GxAiM4NEmH1GdGvGSggD8eUW5jYc1u2q6NK2s3sLWdgM",
-          "chain": "solana",
-          "wallet_score": 34.0,
-          "total_profit": 1.0984104532294874,
-          "win_rate": 1.0,
-          "avg_roi": 0.05001161970155736,
-          "trade_count": 806,
-          "wallet_tags": "TOP64,TOP40",
-          "tokens_held": 1,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
-          ]
-        },
-        {
-          "address": "8jC3YvmpAfeH4yL5GZXgt2ECXGFnAFKkspZX9PkUppkh",
-          "chain": "solana",
-          "wallet_score": 33.0,
-          "total_profit": 1552.6448616161488,
-          "win_rate": 0.5,
-          "avg_roi": 0.16340166014897486,
-          "trade_count": 465,
-          "wallet_tags": "TOP16,TOP78",
-          "tokens_held": 1,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
-          ]
-        },
-        {
           "address": "SeaRXZ7wZwig8nKqwCFoR7FS6NP8kARevY8GCVEDgCB",
           "chain": "solana",
           "wallet_score": 33.0,
@@ -2383,34 +2427,6 @@
           "avg_roi": 0.010627251729100336,
           "trade_count": 415,
           "wallet_tags": "TOP49",
-          "tokens_held": 1,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
-          ]
-        },
-        {
-          "address": "Cc9VCX3fQMpiTAZDh99t18uop2qLNKQ2xeVoFk2SkaNe",
-          "chain": "solana",
-          "wallet_score": 32.0,
-          "total_profit": 5514.865287768658,
-          "win_rate": 1.0,
-          "avg_roi": 1.955235805635041,
-          "trade_count": 35,
-          "wallet_tags": "TOP133",
-          "tokens_held": 1,
-          "token_addresses": [
-            "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
-          ]
-        },
-        {
-          "address": "4BjMCYZRHAUYkJppmbi7g2KdkWaSyy79Wkqz5FdktWNM",
-          "chain": "solana",
-          "wallet_score": 32.0,
-          "total_profit": 6289.474778354944,
-          "win_rate": 1.0,
-          "avg_roi": 6.050485284220169,
-          "trade_count": 4,
-          "wallet_tags": "TOP165",
           "tokens_held": 1,
           "token_addresses": [
             "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump"
@@ -3227,7 +3243,7 @@
           "chain": "solana",
           "symbol": "Rudi",
           "name": "AI Coach Rudi",
-          "score": 31.47,
+          "score": 23.53,
           "channel_count": 2,
           "mentions": 3,
           "fdv": 132401,
@@ -3253,6 +3269,8 @@
           "insider_count": 1,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 5.0
           },
           "tg_channel_count": 2,
@@ -3260,8 +3278,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 78.1,
-          "tg_last_mention_minutes_ago": 3651.1,
+          "tg_first_mention_hours_ago": 79.1,
+          "tg_last_mention_minutes_ago": 3711.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -3272,7 +3290,7 @@
           "chain": "solana",
           "symbol": "Skibidi",
           "name": "Skibidi Toilet",
-          "score": 6.23,
+          "score": 5.86,
           "channel_count": 2,
           "mentions": 1,
           "fdv": 149383,
@@ -3296,6 +3314,8 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 5.0
           },
           "tg_channel_count": 2,
@@ -3303,8 +3323,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 57.8,
-          "tg_last_mention_minutes_ago": 2026.9,
+          "tg_first_mention_hours_ago": 58.8,
+          "tg_last_mention_minutes_ago": 2086.9,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -3315,7 +3335,7 @@
           "chain": "solana",
           "symbol": "mogging",
           "name": "mogging",
-          "score": 0,
+          "score": 0.0,
           "channel_count": 2,
           "mentions": 1,
           "fdv": 171284,
@@ -3339,6 +3359,8 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 0.0
           },
           "tg_channel_count": 2,
@@ -3346,8 +3368,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.0,
-          "tg_first_mention_hours_ago": 848.0,
-          "tg_last_mention_minutes_ago": 2026.9,
+          "tg_first_mention_hours_ago": 849.0,
+          "tg_last_mention_minutes_ago": 2086.9,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -4773,7 +4795,7 @@
           "chain": "ethereum",
           "symbol": "PP",
           "name": "Prison Professors",
-          "score": 0.0,
+          "score": 3.0,
           "channel_count": 2,
           "mentions": 4,
           "fdv": 478507,
@@ -4797,6 +4819,8 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 10.0
           },
           "tg_channel_count": 2,
@@ -4804,8 +4828,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 1.0,
-          "tg_first_mention_hours_ago": 91.7,
-          "tg_last_mention_minutes_ago": 3724.6,
+          "tg_first_mention_hours_ago": 92.7,
+          "tg_last_mention_minutes_ago": 3784.6,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -4824,7 +4848,7 @@
           "chain": "solana",
           "symbol": "MOLTING",
           "name": "Molting",
-          "score": 0,
+          "score": 14.4,
           "channel_count": 2,
           "mentions": 1,
           "fdv": 860104,
@@ -4833,12 +4857,13 @@
           "age_hours": 1790.73,
           "price_change_h1": -11.38,
           "price_change_h6": -4.65,
-          "social_score": 0.0,
+          "social_score": 48.0,
           "gmgn_smart_wallets": 11,
           "gmgn_dev_hold": true,
           "positives": [
             "41 smart wallets (avg 37)",
-            "CTO"
+            "CTO",
+            "VIRAL TG (30)"
           ],
           "negatives": [
             "down h24 (-24%)",
@@ -4850,15 +4875,18 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
-            "tg_quality_pts": 0.0
+            "tg_velocity_pts": 25.0,
+            "tg_viral_pts": 15.0,
+            "tg_quality_pts": 5.0,
+            "cross_platform_bonus": 3
           },
           "tg_channel_count": 2,
-          "tg_mention_count": 2,
-          "tg_mention_velocity": 0,
-          "tg_viral_score": 0,
-          "tg_channel_quality": 0.0,
-          "tg_first_mention_hours_ago": 141.7,
-          "tg_last_mention_minutes_ago": 3467.1,
+          "tg_mention_count": 3,
+          "tg_mention_velocity": 0.17,
+          "tg_viral_score": 30.0,
+          "tg_channel_quality": 0.5,
+          "tg_first_mention_hours_ago": 142.7,
+          "tg_last_mention_minutes_ago": 18.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -4869,7 +4897,7 @@
         {
           "address": "FEDnR9WFHVC72nwo7KZfsgfNaspRsG5JT464AmK7rUkz",
           "chain": "solana",
-          "wallet_score": 53.0,
+          "wallet_score": 63.0,
           "total_profit": 25630.103983599205,
           "win_rate": 1.0,
           "avg_roi": 1.381439397139232,
@@ -4883,7 +4911,7 @@
         {
           "address": "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
           "chain": "solana",
-          "wallet_score": 46.0,
+          "wallet_score": 56.0,
           "total_profit": 27745.64227403131,
           "win_rate": 1.0,
           "avg_roi": 0.07270895009163393,
@@ -4897,7 +4925,7 @@
         {
           "address": "gtagyESa99t49VmUqnnfsuowYnigSNKuYXdXWyXWNdd",
           "chain": "solana",
-          "wallet_score": 46.0,
+          "wallet_score": 56.0,
           "total_profit": 12608.329806151654,
           "win_rate": 1.0,
           "avg_roi": 0.045058436923768194,
@@ -4911,7 +4939,7 @@
         {
           "address": "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
           "chain": "solana",
-          "wallet_score": 45.0,
+          "wallet_score": 55.0,
           "total_profit": 9114.918217516959,
           "win_rate": 1.0,
           "avg_roi": 0.03586892189750701,
@@ -4925,7 +4953,7 @@
         {
           "address": "2gv65LZTq9s8hFmyHuJmLcoTv5Fnh3gj9LJ6fuzBx756",
           "chain": "solana",
-          "wallet_score": 45.0,
+          "wallet_score": 55.0,
           "total_profit": 6248.711940252916,
           "win_rate": 1.0,
           "avg_roi": 191.34974716167113,
@@ -4939,7 +4967,7 @@
         {
           "address": "8FHsiu8PVYgpZPANGAKMb98Z9oeBfNKyQT7puxGWbkaQ",
           "chain": "solana",
-          "wallet_score": 42.0,
+          "wallet_score": 52.0,
           "total_profit": 8612.036172694014,
           "win_rate": 1.0,
           "avg_roi": 2.819403864362336,
@@ -4953,7 +4981,7 @@
         {
           "address": "75uYdSzscTypH5bs6LRN2LSn4AUn1mDqGaMVwcumwxMX",
           "chain": "solana",
-          "wallet_score": 42.0,
+          "wallet_score": 52.0,
           "total_profit": 6047.710992398781,
           "win_rate": 1.0,
           "avg_roi": 0.23977324479132167,
@@ -4967,7 +4995,7 @@
         {
           "address": "HMbSdMHK35sm9tiQk2qJoZ5W9S7gLKYbsjnZ2A1KwCkD",
           "chain": "solana",
-          "wallet_score": 42.0,
+          "wallet_score": 52.0,
           "total_profit": 2384.3172580757814,
           "win_rate": 1.0,
           "avg_roi": 0.11672102749296889,
@@ -4981,7 +5009,7 @@
         {
           "address": "6hAD3gHzEhiPPgM76Myk3AKHHP7nAtuneh4PL6CXLYJT",
           "chain": "solana",
-          "wallet_score": 41.0,
+          "wallet_score": 51.0,
           "total_profit": 14792.713836545485,
           "win_rate": 1.0,
           "avg_roi": 2.521673658376671,
@@ -4995,7 +5023,7 @@
         {
           "address": "EPtjWEJS2SnWuhd9aENW8FXpvj75LnsmMTV8pT3Hcaq1",
           "chain": "solana",
-          "wallet_score": 41.0,
+          "wallet_score": 51.0,
           "total_profit": 6882.8234181990065,
           "win_rate": 1.0,
           "avg_roi": 2.9870946447073563,
@@ -5009,7 +5037,7 @@
         {
           "address": "ERruSW7Tcos34v5kvEfCd2D54Uk1CB9c3xb92GnvyGUS",
           "chain": "solana",
-          "wallet_score": 40.0,
+          "wallet_score": 50.0,
           "total_profit": 5237.70365549191,
           "win_rate": 1.0,
           "avg_roi": 13.97362267157421,
@@ -5023,7 +5051,7 @@
         {
           "address": "DpN2MzcABP32FeWiT6Hkqw3QbiD6h3FYRsQ6ojec2Pxs",
           "chain": "solana",
-          "wallet_score": 39.0,
+          "wallet_score": 49.0,
           "total_profit": 11198.831320615594,
           "win_rate": 1.0,
           "avg_roi": 10.80850261639457,
@@ -5037,7 +5065,7 @@
         {
           "address": "Bu2niPM3VWwz1U4nsZPSGF9g1Xmcfgv2u6ons191reAp",
           "chain": "solana",
-          "wallet_score": 39.0,
+          "wallet_score": 49.0,
           "total_profit": 3937.682069454775,
           "win_rate": 1.0,
           "avg_roi": 14.678923914251854,
@@ -5051,7 +5079,7 @@
         {
           "address": "EZXAQRfZXeSQ7B1kN3H9QJtfNtbxqPkqjmaGAwoJPt61",
           "chain": "solana",
-          "wallet_score": 39.0,
+          "wallet_score": 49.0,
           "total_profit": 5760.392142717677,
           "win_rate": 1.0,
           "avg_roi": 0.9875850088796994,
@@ -5065,7 +5093,7 @@
         {
           "address": "C1A2wsusAxBqXj8x9F91AUAmPVgvs7B8FjoWxAU6DamR",
           "chain": "solana",
-          "wallet_score": 38.0,
+          "wallet_score": 48.0,
           "total_profit": 7615.57405079137,
           "win_rate": 1.0,
           "avg_roi": 4.856850575457425,
@@ -5079,7 +5107,7 @@
         {
           "address": "2RVxYTF3ZS54AHDkYwZUTrnmY8vvEz661ZBkHW6STXK2",
           "chain": "solana",
-          "wallet_score": 38.0,
+          "wallet_score": 48.0,
           "total_profit": 557.9602686657773,
           "win_rate": 1.0,
           "avg_roi": 0.031200910724719932,
@@ -5093,7 +5121,7 @@
         {
           "address": "GpiY1js36rZ1PeEqAACxK51syvqLT2tUykSvsBpP84uj",
           "chain": "solana",
-          "wallet_score": 38.0,
+          "wallet_score": 48.0,
           "total_profit": 6945.648181446264,
           "win_rate": 1.0,
           "avg_roi": 0.24087256397426332,
@@ -5107,7 +5135,7 @@
         {
           "address": "JD25qVdtd65FoiXNmR89JjmoJdYk9sjYQeSTZAALFiMy",
           "chain": "solana",
-          "wallet_score": 38.0,
+          "wallet_score": 48.0,
           "total_profit": 1216.73608553412,
           "win_rate": 1.0,
           "avg_roi": 0.12293010779978804,
@@ -5121,7 +5149,7 @@
         {
           "address": "FuzTieDDDG47NXsToDzCvQfFfuHxShupJ6vaEfz1Xzyx",
           "chain": "solana",
-          "wallet_score": 37.0,
+          "wallet_score": 47.0,
           "total_profit": 11360.31956762915,
           "win_rate": 1.0,
           "avg_roi": 3.679750314554715,
@@ -5135,7 +5163,7 @@
         {
           "address": "EfEytvXnNWmpNwfcPVQqVtL35JdBsLiASKxacxbQi7Ep",
           "chain": "solana",
-          "wallet_score": 37.0,
+          "wallet_score": 47.0,
           "total_profit": 5609.222102828362,
           "win_rate": 1.0,
           "avg_roi": 6.345239332910683,
@@ -5149,7 +5177,7 @@
         {
           "address": "7ZGbz4YKcTJuBSLR75Ypzog3Uy7Z6PHTvLjNz23FfpRk",
           "chain": "solana",
-          "wallet_score": 36.0,
+          "wallet_score": 46.0,
           "total_profit": 3160.659662761758,
           "win_rate": 1.0,
           "avg_roi": 0.7614371360825025,
@@ -5163,7 +5191,7 @@
         {
           "address": "BVoiqr23eg5KqvpcLo3EBikPnmPMtrAU9RPjTiLjUesG",
           "chain": "solana",
-          "wallet_score": 35.0,
+          "wallet_score": 45.0,
           "total_profit": 8607.330877412065,
           "win_rate": 1.0,
           "avg_roi": 0.9192775069618481,
@@ -5177,7 +5205,7 @@
         {
           "address": "GSZjyKXJgiwNXPkUn7oLP5oSn16EuUC1uFgk5NrExrca",
           "chain": "solana",
-          "wallet_score": 35.0,
+          "wallet_score": 45.0,
           "total_profit": 9594.215799299054,
           "win_rate": 1.0,
           "avg_roi": 1.3873077379254055,
@@ -5191,7 +5219,7 @@
         {
           "address": "DY2n8fPmwAGAAQ3obCrtsdC6GkQr8pv5GkGWe89DJUPK",
           "chain": "solana",
-          "wallet_score": 35.0,
+          "wallet_score": 45.0,
           "total_profit": 2520.6031305521583,
           "win_rate": 1.0,
           "avg_roi": 11.352697086066515,
@@ -5205,7 +5233,7 @@
         {
           "address": "8FRQcKhw9iG8YoEyndMGZTFz4vgJZhqGeFpx8nEf5wr8",
           "chain": "solana",
-          "wallet_score": 34.0,
+          "wallet_score": 44.0,
           "total_profit": 8039.54915695492,
           "win_rate": 1.0,
           "avg_roi": 0.9235457515163521,
@@ -5219,7 +5247,7 @@
         {
           "address": "JD38n7ynKYcgPpF7k1BhXEeREu1KqptU93fVGy3S624k",
           "chain": "solana",
-          "wallet_score": 34.0,
+          "wallet_score": 44.0,
           "total_profit": 491.81552073344676,
           "win_rate": 1.0,
           "avg_roi": 0.06416484502582918,
@@ -5233,7 +5261,7 @@
         {
           "address": "u96HD8sZmkYFMpCJDeZiWpqQXVWdFtUpdyX6CNDtWG4",
           "chain": "solana",
-          "wallet_score": 33.0,
+          "wallet_score": 43.0,
           "total_profit": 18720.068385563107,
           "win_rate": 1.0,
           "avg_roi": 8.60465472210432,
@@ -5247,7 +5275,7 @@
         {
           "address": "Em2XKPg57rJpxShiskiQ2RiS2fhS1mChor5Dtqp4zE3H",
           "chain": "solana",
-          "wallet_score": 33.0,
+          "wallet_score": 43.0,
           "total_profit": 3314.05644854534,
           "win_rate": 1.0,
           "avg_roi": 2.4527901836522594,
@@ -5261,7 +5289,7 @@
         {
           "address": "9BxFUM6VbprqvsGv7yw5zaYDVbt97LUuXWHk5dQ27eN1",
           "chain": "solana",
-          "wallet_score": 32.0,
+          "wallet_score": 42.0,
           "total_profit": 31644.03616831326,
           "win_rate": 1.0,
           "avg_roi": 42.60857587689563,
@@ -5275,7 +5303,7 @@
         {
           "address": "2aSNiY78ruhx7cGDHapqA9tdP6Zm7Srzmh8zF6UHqH5d",
           "chain": "solana",
-          "wallet_score": 32.0,
+          "wallet_score": 42.0,
           "total_profit": 2694.7397072191566,
           "win_rate": 1.0,
           "avg_roi": 0.41031052370604765,
@@ -5289,7 +5317,7 @@
         {
           "address": "Fsao27ebMv2kkR1BYmgy9UMCuWp3kuPUNWQEw9xG2YPJ",
           "chain": "solana",
-          "wallet_score": 32.0,
+          "wallet_score": 42.0,
           "total_profit": 5931.996967018319,
           "win_rate": 1.0,
           "avg_roi": 3.7203530696356504,
@@ -5303,7 +5331,7 @@
         {
           "address": "3HaTPU1Bm2nVHUd8fGq529cxgh6vtkE1kwDCCCScrXk5",
           "chain": "solana",
-          "wallet_score": 32.0,
+          "wallet_score": 42.0,
           "total_profit": 5261.070923372865,
           "win_rate": 1.0,
           "avg_roi": 3.289632243160404,
@@ -5317,7 +5345,7 @@
         {
           "address": "Awf86qvg52MaYsL5Ms6Rf8pb5CqSCsxJku3dUFoHYMHW",
           "chain": "solana",
-          "wallet_score": 32.0,
+          "wallet_score": 42.0,
           "total_profit": 2766.5848995792303,
           "win_rate": 1.0,
           "avg_roi": 1.3209128767206195,
@@ -5331,7 +5359,7 @@
         {
           "address": "QhsabUwT24pMiwnP4wEPqH7e28pC8z9UZ51LiikBUVY",
           "chain": "solana",
-          "wallet_score": 32.0,
+          "wallet_score": 42.0,
           "total_profit": 1018.9034227363047,
           "win_rate": 1.0,
           "avg_roi": 0.47876614402503614,
@@ -5345,7 +5373,7 @@
         {
           "address": "6gVimKkKbeqFDRjXAkf24YnjuYgGS47Cjr29VXMQFYGY",
           "chain": "solana",
-          "wallet_score": 31.0,
+          "wallet_score": 41.0,
           "total_profit": 2975.446523342094,
           "win_rate": 1.0,
           "avg_roi": 1.0811459080496182,
@@ -5359,7 +5387,7 @@
         {
           "address": "FXzQzchghnzMuuidHR6nzAoZxZ7FyMJQrSWs6BAoXB9f",
           "chain": "solana",
-          "wallet_score": 31.0,
+          "wallet_score": 41.0,
           "total_profit": 2164.9365078172023,
           "win_rate": 1.0,
           "avg_roi": 2.5809824337095617,
@@ -5373,7 +5401,7 @@
         {
           "address": "H1qs6SvB2oG1tRpSyJacxKeqx8U1S973X33t3tjxeKpc",
           "chain": "solana",
-          "wallet_score": 31.0,
+          "wallet_score": 41.0,
           "total_profit": 1193.9794845502852,
           "win_rate": 1.0,
           "avg_roi": 11.539248635610784,
@@ -5387,7 +5415,7 @@
         {
           "address": "te81haoLmMfCgLF9xdqqjLkDLuGhUyNq7J5WkKFoewq",
           "chain": "solana",
-          "wallet_score": 31.0,
+          "wallet_score": 41.0,
           "total_profit": 1035.2644048793595,
           "win_rate": 1.0,
           "avg_roi": 13.073356302624317,
@@ -5401,7 +5429,7 @@
         {
           "address": "FFR82zEb38WSt3tk7BeezadWoSGR5J4UfyyKXcvc9dBU",
           "chain": "solana",
-          "wallet_score": 31.0,
+          "wallet_score": 41.0,
           "total_profit": 7.2963935505945265,
           "win_rate": 1.0,
           "avg_roi": 0.0011477260303196092,
@@ -5415,7 +5443,7 @@
         {
           "address": "HkJGPJuTZEvAQaJqWedV3MqyBUvHQBXzM8oyGabcLmLg",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 331.43219992937816,
           "win_rate": 1.0,
           "avg_roi": 0.0780995364481948,
@@ -5429,7 +5457,7 @@
         {
           "address": "G8gQPaNqJjdx5NGrmR2ym7c8tPCsT7PcjJJTR1Ks3Bm",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 341.53539514422505,
           "win_rate": 1.0,
           "avg_roi": 0.08727180539258554,
@@ -6278,7 +6306,7 @@
           "chain": "solana",
           "symbol": "DUMBMONEY",
           "name": "Dumb Money",
-          "score": 47.26,
+          "score": 46.97,
           "channel_count": 5,
           "mentions": 5,
           "fdv": 2562038,
@@ -6287,7 +6315,7 @@
           "age_hours": 50.64,
           "price_change_h1": 5.35,
           "price_change_h6": 12.79,
-          "social_score": 3.3,
+          "social_score": 46.3,
           "gmgn_smart_wallets": 31,
           "gmgn_dev_hold": true,
           "positives": [
@@ -6303,7 +6331,8 @@
             "28 smart wallets (avg 37), 3 insiders",
             "27 smart wallets (avg 37), 3 insiders",
             "burned",
-            "CoinGecko listed"
+            "CoinGecko listed",
+            "VIRAL TG (30)"
           ],
           "negatives": [
             "token farmer"
@@ -6314,15 +6343,18 @@
           "insider_count": 3,
           "sniper_count": 0,
           "social_details": {
-            "tg_quality_pts": 3.3
+            "tg_velocity_pts": 25.0,
+            "tg_viral_pts": 15.0,
+            "tg_quality_pts": 3.3,
+            "cross_platform_bonus": 3
           },
           "tg_channel_count": 6,
-          "tg_mention_count": 8,
-          "tg_mention_velocity": 0,
-          "tg_viral_score": 0,
+          "tg_mention_count": 9,
+          "tg_mention_velocity": 0.17,
+          "tg_viral_score": 30.0,
           "tg_channel_quality": 0.33,
-          "tg_first_mention_hours_ago": 62.9,
-          "tg_last_mention_minutes_ago": 2026.9,
+          "tg_first_mention_hours_ago": 63.9,
+          "tg_last_mention_minutes_ago": 18.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -6331,23 +6363,9 @@
       ],
       "wallets": [
         {
-          "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
-          "chain": "solana",
-          "wallet_score": 49.0,
-          "total_profit": 16880.415062488384,
-          "win_rate": 1.0,
-          "avg_roi": 0.05474707871685697,
-          "trade_count": 2076,
-          "wallet_tags": "TOP52,TOP13,TOP62,TOP79,TOP44",
-          "tokens_held": 1,
-          "token_addresses": [
-            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
-          ]
-        },
-        {
           "address": "DtvmxrTACskMG2W8a6KXgSemUfvyNVeQTgfpJoGvMVKx",
           "chain": "solana",
-          "wallet_score": 48.0,
+          "wallet_score": 58.0,
           "total_profit": 10921.625957621261,
           "win_rate": 1.0,
           "avg_roi": 0.05251739603626354,
@@ -6361,7 +6379,7 @@
         {
           "address": "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
           "chain": "solana",
-          "wallet_score": 46.0,
+          "wallet_score": 56.0,
           "total_profit": 27745.64227403131,
           "win_rate": 1.0,
           "avg_roi": 0.07270895009163393,
@@ -6375,7 +6393,7 @@
         {
           "address": "gtagyESa99t49VmUqnnfsuowYnigSNKuYXdXWyXWNdd",
           "chain": "solana",
-          "wallet_score": 46.0,
+          "wallet_score": 56.0,
           "total_profit": 12608.329806151654,
           "win_rate": 1.0,
           "avg_roi": 0.045058436923768194,
@@ -6389,7 +6407,7 @@
         {
           "address": "9qhkWvC7K2wtsn3H8sbEWAGv82LD12uKxmyN7YdmxS8D",
           "chain": "solana",
-          "wallet_score": 45.0,
+          "wallet_score": 55.0,
           "total_profit": 38548.515024720284,
           "win_rate": 1.0,
           "avg_roi": 71.45125365586429,
@@ -6403,7 +6421,7 @@
         {
           "address": "95rwF14CWBfCgbWbiME5HKC2fc7iXrycVvodVXSnwzzV",
           "chain": "solana",
-          "wallet_score": 45.0,
+          "wallet_score": 55.0,
           "total_profit": 35656.287609447914,
           "win_rate": 1.0,
           "avg_roi": 51.47933827717897,
@@ -6417,7 +6435,7 @@
         {
           "address": "Ew5rWyoonD9MYuArCpoc2D65HDyhzqa9P8B5aeDzaCuq",
           "chain": "solana",
-          "wallet_score": 45.0,
+          "wallet_score": 55.0,
           "total_profit": 31043.757466099265,
           "win_rate": 1.0,
           "avg_roi": 27.63118609403234,
@@ -6431,7 +6449,7 @@
         {
           "address": "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
           "chain": "solana",
-          "wallet_score": 45.0,
+          "wallet_score": 55.0,
           "total_profit": 9114.918217516959,
           "win_rate": 1.0,
           "avg_roi": 0.03586892189750701,
@@ -6445,7 +6463,7 @@
         {
           "address": "4RrRHzka841p8qfzyaFzna17iAMmVb1oVm2BiwJBZb2e",
           "chain": "solana",
-          "wallet_score": 44.0,
+          "wallet_score": 54.0,
           "total_profit": 31674.61163115429,
           "win_rate": 1.0,
           "avg_roi": 4.588210259141783,
@@ -6457,9 +6475,23 @@
           ]
         },
         {
+          "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
+          "chain": "solana",
+          "wallet_score": 54.0,
+          "total_profit": 16880.415062488384,
+          "win_rate": 1.0,
+          "avg_roi": 0.05474707871685697,
+          "trade_count": 2076,
+          "wallet_tags": "TOP52,TOP13,TOP62,TOP79,TOP44",
+          "tokens_held": 1,
+          "token_addresses": [
+            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
+          ]
+        },
+        {
           "address": "E6ic8e94V5hsrdyFrgxkdcNL3qFkHEdBFCfFT7Teg74W",
           "chain": "solana",
-          "wallet_score": 43.0,
+          "wallet_score": 53.0,
           "total_profit": 8692.351014989164,
           "win_rate": 1.0,
           "avg_roi": 0.05142391098254104,
@@ -6473,7 +6505,7 @@
         {
           "address": "Ap1ctYVBvdbDphaSpn97d9PVbkArC4YnZxPJRYrD4so1",
           "chain": "solana",
-          "wallet_score": 39.0,
+          "wallet_score": 49.0,
           "total_profit": 665.8444458027493,
           "win_rate": 1.0,
           "avg_roi": 0.015182599509540866,
@@ -6485,23 +6517,9 @@
           ]
         },
         {
-          "address": "CLKyaAHCk8AWkNbfPfoUexmmrs8LrtS1jBKWSbdoG8Dt",
-          "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 70008.83268570302,
-          "win_rate": 1.0,
-          "avg_roi": 3.990814099487149,
-          "trade_count": 53,
-          "wallet_tags": "TOP59,TOP8",
-          "tokens_held": 1,
-          "token_addresses": [
-            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
-          ]
-        },
-        {
           "address": "5sAmbApNwQZxHidauscmq1PPPjfcZQk2za85DEtXvmZn",
           "chain": "solana",
-          "wallet_score": 38.0,
+          "wallet_score": 48.0,
           "total_profit": 18926.61398950117,
           "win_rate": 1.0,
           "avg_roi": 7.473410759277402,
@@ -6515,7 +6533,7 @@
         {
           "address": "3P51mfjg52mdjnKWW5FBxcmToiJ9xtsQV8XkbLxT4aFP",
           "chain": "solana",
-          "wallet_score": 38.0,
+          "wallet_score": 48.0,
           "total_profit": 27104.243515802864,
           "win_rate": 1.0,
           "avg_roi": 18.239515564563373,
@@ -6529,7 +6547,7 @@
         {
           "address": "7Qvhc1r3Y1q5XUQ8Gt7DJFT8UMXsjRDNeTbBAZ8UqHBk",
           "chain": "solana",
-          "wallet_score": 38.0,
+          "wallet_score": 48.0,
           "total_profit": 24898.730260938868,
           "win_rate": 1.0,
           "avg_roi": 6.999105534117711,
@@ -6543,7 +6561,7 @@
         {
           "address": "GpiY1js36rZ1PeEqAACxK51syvqLT2tUykSvsBpP84uj",
           "chain": "solana",
-          "wallet_score": 38.0,
+          "wallet_score": 48.0,
           "total_profit": 6945.648181446264,
           "win_rate": 1.0,
           "avg_roi": 0.24087256397426332,
@@ -6555,23 +6573,9 @@
           ]
         },
         {
-          "address": "8c3sWHwi96ZCP9rJqaRJUmCsYexbTHheGMaKth31m1m",
-          "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 3147.3055309296988,
-          "win_rate": 1.0,
-          "avg_roi": 0.027959801520106606,
-          "trade_count": 3714,
-          "wallet_tags": "sandwich_bot,TOP42,TOP15,TOP60",
-          "tokens_held": 1,
-          "token_addresses": [
-            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
-          ]
-        },
-        {
           "address": "BKwy5fDcpdXLPKZTAKrJDTrf62AntAtTrH7soi8MfVgN",
           "chain": "solana",
-          "wallet_score": 37.0,
+          "wallet_score": 47.0,
           "total_profit": 1804.2431651400268,
           "win_rate": 1.0,
           "avg_roi": 0.09525603249163225,
@@ -6585,7 +6589,7 @@
         {
           "address": "8bq8VETg757gnGKuwMZWVPc7jRn7qtFsCY68nAzfmppd",
           "chain": "solana",
-          "wallet_score": 36.0,
+          "wallet_score": 46.0,
           "total_profit": 9300.08307984093,
           "win_rate": 1.0,
           "avg_roi": 0.4307288669999203,
@@ -6599,7 +6603,7 @@
         {
           "address": "91MQknpPMVf8drZqZDQQ4CgkQSVQzyk9kV3kaE6VwFYi",
           "chain": "solana",
-          "wallet_score": 36.0,
+          "wallet_score": 46.0,
           "total_profit": 4957.426090691675,
           "win_rate": 1.0,
           "avg_roi": 0.32721369228694397,
@@ -6611,37 +6615,9 @@
           ]
         },
         {
-          "address": "FExezs2b4wUbJV4dKoNBE8xZCiH3bVcDnT569fTmkLyj",
-          "chain": "solana",
-          "wallet_score": 36.0,
-          "total_profit": 2.237446477211865,
-          "win_rate": 1.0,
-          "avg_roi": 0.041422461858202586,
-          "trade_count": 780,
-          "wallet_tags": "TOP67,TOP34",
-          "tokens_held": 1,
-          "token_addresses": [
-            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
-          ]
-        },
-        {
-          "address": "2PZbVpz3fuqL1orpGP8Y7QRHtF7DGEjuFGsCbSQ2QChR",
-          "chain": "solana",
-          "wallet_score": 35.0,
-          "total_profit": 5.02705071028979,
-          "win_rate": 1.0,
-          "avg_roi": 0.13642465434531437,
-          "trade_count": 760,
-          "wallet_tags": "TOP51,TOP50",
-          "tokens_held": 1,
-          "token_addresses": [
-            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
-          ]
-        },
-        {
           "address": "ASPwVUawXE6YVY8EKhy1SVpG746XuLgSQAEmqYZmqm5e",
           "chain": "solana",
-          "wallet_score": 34.0,
+          "wallet_score": 44.0,
           "total_profit": 18039.69892242126,
           "win_rate": 1.0,
           "avg_roi": 2.0667670663286293,
@@ -6653,23 +6629,9 @@
           ]
         },
         {
-          "address": "GxAiM4NEmH1GdGvGSggD8eUW5jYc1u2q6NK2s3sLWdgM",
-          "chain": "solana",
-          "wallet_score": 34.0,
-          "total_profit": 1.0984104532294874,
-          "win_rate": 1.0,
-          "avg_roi": 0.05001161970155736,
-          "trade_count": 806,
-          "wallet_tags": "TOP64,TOP40",
-          "tokens_held": 1,
-          "token_addresses": [
-            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
-          ]
-        },
-        {
           "address": "6s9RFeeACHwuRo59MBduKnsMAj9MWvZSEaTSwPYtivQ4",
           "chain": "solana",
-          "wallet_score": 34.0,
+          "wallet_score": 44.0,
           "total_profit": 7919.0517090043195,
           "win_rate": 1.0,
           "avg_roi": 0.9300898897862621,
@@ -6683,7 +6645,7 @@
         {
           "address": "6CuzHfwM2v8M3GW9GNiNmapSe1Fw3EU7L48YkRaGn6n9",
           "chain": "solana",
-          "wallet_score": 34.0,
+          "wallet_score": 44.0,
           "total_profit": 632.8013604741898,
           "win_rate": 1.0,
           "avg_roi": 0.05232318998722098,
@@ -6695,9 +6657,23 @@
           ]
         },
         {
+          "address": "CLKyaAHCk8AWkNbfPfoUexmmrs8LrtS1jBKWSbdoG8Dt",
+          "chain": "solana",
+          "wallet_score": 43.0,
+          "total_profit": 70008.83268570302,
+          "win_rate": 1.0,
+          "avg_roi": 3.990814099487149,
+          "trade_count": 53,
+          "wallet_tags": "TOP59,TOP8",
+          "tokens_held": 1,
+          "token_addresses": [
+            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
+          ]
+        },
+        {
           "address": "5g8wbdG68PAVrDdotA3eLmWBPfGuHeVgo4fdx6v3L5Go",
           "chain": "solana",
-          "wallet_score": 33.0,
+          "wallet_score": 43.0,
           "total_profit": 12852.36283988117,
           "win_rate": 1.0,
           "avg_roi": 1.6644516430094727,
@@ -6709,23 +6685,9 @@
           ]
         },
         {
-          "address": "8jC3YvmpAfeH4yL5GZXgt2ECXGFnAFKkspZX9PkUppkh",
-          "chain": "solana",
-          "wallet_score": 33.0,
-          "total_profit": 1552.6448616161488,
-          "win_rate": 0.5,
-          "avg_roi": 0.16340166014897486,
-          "trade_count": 465,
-          "wallet_tags": "TOP16,TOP78",
-          "tokens_held": 1,
-          "token_addresses": [
-            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
-          ]
-        },
-        {
           "address": "8Pi3y1JeayKjsfxwVa7hd7ohAkJPAZKhcTkHuLdidaEX",
           "chain": "solana",
-          "wallet_score": 33.0,
+          "wallet_score": 43.0,
           "total_profit": 1581.3430636476187,
           "win_rate": 1.0,
           "avg_roi": 0.037929448939159754,
@@ -6737,14 +6699,14 @@
           ]
         },
         {
-          "address": "Cc9VCX3fQMpiTAZDh99t18uop2qLNKQ2xeVoFk2SkaNe",
+          "address": "8c3sWHwi96ZCP9rJqaRJUmCsYexbTHheGMaKth31m1m",
           "chain": "solana",
-          "wallet_score": 32.0,
-          "total_profit": 5514.865287768658,
+          "wallet_score": 43.0,
+          "total_profit": 3147.3055309296988,
           "win_rate": 1.0,
-          "avg_roi": 1.955235805635041,
-          "trade_count": 35,
-          "wallet_tags": "TOP133",
+          "avg_roi": 0.027959801520106606,
+          "trade_count": 3714,
+          "wallet_tags": "sandwich_bot,TOP42,TOP15,TOP60",
           "tokens_held": 1,
           "token_addresses": [
             "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
@@ -6753,7 +6715,7 @@
         {
           "address": "5aKP3v92xceHAv6eZbSewetNWaAUDVeEjYagV2kv7Gvg",
           "chain": "solana",
-          "wallet_score": 31.0,
+          "wallet_score": 41.0,
           "total_profit": 10642.47311068198,
           "win_rate": 1.0,
           "avg_roi": 0.29339510008738423,
@@ -6767,7 +6729,7 @@
         {
           "address": "Cas1nCoPHbb6mAidNUPvqwHxe3CPe1MxZ1KzYPmPpyuE",
           "chain": "solana",
-          "wallet_score": 31.0,
+          "wallet_score": 41.0,
           "total_profit": 12310.827139355555,
           "win_rate": 1.0,
           "avg_roi": 2.209119362592118,
@@ -6781,7 +6743,7 @@
         {
           "address": "jVCFS7iBovufqcgKuXvP34RggPLrsPDhseeNzmvtp5o",
           "chain": "solana",
-          "wallet_score": 31.0,
+          "wallet_score": 41.0,
           "total_profit": 1838.7122194551753,
           "win_rate": 1.0,
           "avg_roi": 0.5263011631246727,
@@ -6793,9 +6755,23 @@
           ]
         },
         {
+          "address": "FExezs2b4wUbJV4dKoNBE8xZCiH3bVcDnT569fTmkLyj",
+          "chain": "solana",
+          "wallet_score": 41.0,
+          "total_profit": 2.237446477211865,
+          "win_rate": 1.0,
+          "avg_roi": 0.041422461858202586,
+          "trade_count": 780,
+          "wallet_tags": "TOP67,TOP34",
+          "tokens_held": 1,
+          "token_addresses": [
+            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
+          ]
+        },
+        {
           "address": "87v4fB1RVHwfkTx2vtF6Bes8QbegMVbzczJEpb6ipp5C",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 27062.423126685684,
           "win_rate": 1.0,
           "avg_roi": 3.209759351390023,
@@ -6809,7 +6785,7 @@
         {
           "address": "5ZwvSW5PxX5gmQgmA4R3QdnQDP3GdCjavscYwkNTJvNd",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 23186.01145200184,
           "win_rate": 1.0,
           "avg_roi": 2.754153370773118,
@@ -6823,7 +6799,7 @@
         {
           "address": "7MoSpK4nLBfnZHfB1Y5VLCDuboskjkTScSAVA32SdjfW",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 13080.726658946633,
           "win_rate": 1.0,
           "avg_roi": 1.828759051018421,
@@ -6837,7 +6813,7 @@
         {
           "address": "EEDDw7jTyACq8UZFyK5ABb9vgfsDTJd77TieB4yckYio",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 9044.353492553579,
           "win_rate": 1.0,
           "avg_roi": 1.3962334429585286,
@@ -6851,7 +6827,7 @@
         {
           "address": "HsKq3MjsFmL4G3BWXVe6TsZfiRrPRTHutD9qV33Uw3ZL",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 4.0728534664414555,
           "win_rate": 1.0,
           "avg_roi": 0.0006860775170877271,
@@ -6863,9 +6839,23 @@
           ]
         },
         {
+          "address": "2PZbVpz3fuqL1orpGP8Y7QRHtF7DGEjuFGsCbSQ2QChR",
+          "chain": "solana",
+          "wallet_score": 40.0,
+          "total_profit": 5.02705071028979,
+          "win_rate": 1.0,
+          "avg_roi": 0.13642465434531437,
+          "trade_count": 760,
+          "wallet_tags": "TOP51,TOP50",
+          "tokens_held": 1,
+          "token_addresses": [
+            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
+          ]
+        },
+        {
           "address": "4gxfQ31gikFLtM525VJqYP8Hw5CXuKomexT9txn39dM9",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 7099.39049154534,
           "win_rate": 1.0,
           "avg_roi": 0.7520118200983097,
@@ -6879,7 +6869,7 @@
         {
           "address": "97fFJu68J2iwpEgPkMnnreXc8TUtgM5AVLphZ7PknVtT",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 2254.8722831921964,
           "win_rate": 1.0,
           "avg_roi": 0.6458281108992817,
@@ -6893,7 +6883,7 @@
         {
           "address": "DNmsjtCiB2Ys3HEHMuCCMw7HrYNuMNNQKXDft6yBZng1",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 984.0474095159319,
           "win_rate": 1.0,
           "avg_roi": 0.13585065813098268,
@@ -6907,12 +6897,54 @@
         {
           "address": "ESZERcwH15AHRVyeapZer1xFQqb11JyhYuEjPukHvBge",
           "chain": "solana",
-          "wallet_score": 30.0,
+          "wallet_score": 40.0,
           "total_profit": 501.2664704097924,
           "win_rate": 1.0,
           "avg_roi": 0.05450183157252395,
           "trade_count": 110,
           "wallet_tags": "TOP92",
+          "tokens_held": 1,
+          "token_addresses": [
+            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
+          ]
+        },
+        {
+          "address": "GxAiM4NEmH1GdGvGSggD8eUW5jYc1u2q6NK2s3sLWdgM",
+          "chain": "solana",
+          "wallet_score": 39.0,
+          "total_profit": 1.0984104532294874,
+          "win_rate": 1.0,
+          "avg_roi": 0.05001161970155736,
+          "trade_count": 806,
+          "wallet_tags": "TOP64,TOP40",
+          "tokens_held": 1,
+          "token_addresses": [
+            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
+          ]
+        },
+        {
+          "address": "8jC3YvmpAfeH4yL5GZXgt2ECXGFnAFKkspZX9PkUppkh",
+          "chain": "solana",
+          "wallet_score": 38.0,
+          "total_profit": 1552.6448616161488,
+          "win_rate": 0.5,
+          "avg_roi": 0.16340166014897486,
+          "trade_count": 465,
+          "wallet_tags": "TOP16,TOP78",
+          "tokens_held": 1,
+          "token_addresses": [
+            "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
+          ]
+        },
+        {
+          "address": "Cc9VCX3fQMpiTAZDh99t18uop2qLNKQ2xeVoFk2SkaNe",
+          "chain": "solana",
+          "wallet_score": 37.0,
+          "total_profit": 5514.865287768658,
+          "win_rate": 1.0,
+          "avg_roi": 1.955235805635041,
+          "trade_count": 35,
+          "wallet_tags": "TOP133",
           "tokens_held": 1,
           "token_addresses": [
             "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump"
@@ -7738,39 +7770,106 @@
       "wallet_count": 100,
       "tokens": [
         {
-          "contract_address": "5",
+          "contract_address": "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
           "chain": "solana",
-          "symbol": "aDOT",
-          "name": "aDOT",
-          "score": 15.0,
+          "symbol": "LOL",
+          "name": "LOL",
+          "score": 21.24,
           "channel_count": 2,
-          "mentions": 3,
-          "fdv": 8467010,
-          "volume_h24": 299762.74,
-          "volume_h1": 6132.1,
-          "age_hours": null,
-          "price_change_h1": -0.34,
-          "price_change_h6": -1.84,
-          "social_score": 5.0,
-          "gmgn_smart_wallets": null,
-          "gmgn_dev_hold": null,
-          "positives": [],
-          "negatives": [],
-          "dex_url": "https://dexscreener.com/solana/5",
-          "smart_wallet_count": 0,
-          "smart_wallet_avg_score": 0.0,
+          "mentions": 1,
+          "fdv": 5775049,
+          "volume_h24": 1164594.38,
+          "volume_h1": 31899.63,
+          "age_hours": 673.98,
+          "price_change_h1": -4.58,
+          "price_change_h6": -6.62,
+          "social_score": 46.3,
+          "gmgn_smart_wallets": 54,
+          "gmgn_dev_hold": false,
+          "positives": [
+            "87 smart wallets (avg 41), 3 insiders",
+            "88 smart wallets (avg 41), 3 insiders",
+            "91 smart wallets (avg 41), 3 insiders",
+            "90 smart wallets (avg 41), 3 insiders",
+            "89 smart wallets (avg 41), 3 insiders",
+            "89 smart wallets (avg 40), 3 insiders",
+            "burned",
+            "CTO",
+            "VIRAL TG (30)"
+          ],
+          "negatives": [
+            "token farmer"
+          ],
+          "dex_url": "https://dexscreener.com/solana/34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
+          "smart_wallet_count": 87,
+          "smart_wallet_avg_score": 41.0,
+          "insider_count": 3,
+          "sniper_count": 0,
+          "social_details": {
+            "tg_velocity_pts": 25.0,
+            "tg_viral_pts": 15.0,
+            "tg_quality_pts": 3.3,
+            "cross_platform_bonus": 3
+          },
+          "tg_channel_count": 3,
+          "tg_mention_count": 5,
+          "tg_mention_velocity": 0.17,
+          "tg_viral_score": 30.0,
+          "tg_channel_quality": 0.33,
+          "tg_first_mention_hours_ago": 74.7,
+          "tg_last_mention_minutes_ago": 18.2,
+          "tw_mention_count": 0,
+          "tw_sentiment_score": 0,
+          "tw_trending_score": 0,
+          "tw_kol_score": 0
+        },
+        {
+          "contract_address": "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump",
+          "chain": "solana",
+          "symbol": "SPIKE",
+          "name": "SPIKE ",
+          "score": 15.2,
+          "channel_count": 4,
+          "mentions": 5,
+          "fdv": 5310570,
+          "volume_h24": 2137325.44,
+          "volume_h1": 34557.95,
+          "age_hours": 193.32,
+          "price_change_h1": -2.98,
+          "price_change_h6": -15.28,
+          "social_score": 49.0,
+          "gmgn_smart_wallets": 23,
+          "gmgn_dev_hold": false,
+          "positives": [
+            "42 smart wallets (avg 39)",
+            "41 smart wallets (avg 39)",
+            "burned",
+            "CTO",
+            "CoinGecko listed",
+            "VIRAL TG (30)"
+          ],
+          "negatives": [
+            "down h24 (-24%)",
+            "token farmer"
+          ],
+          "dex_url": "https://dexscreener.com/solana/BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump",
+          "smart_wallet_count": 42,
+          "smart_wallet_avg_score": 39.0,
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
-            "tg_quality_pts": 5.0
+            "tg_velocity_pts": 25.0,
+            "tg_viral_pts": 15.0,
+            "tg_quality_pts": 6.0,
+            "cross_platform_bonus": 3
           },
-          "tg_channel_count": 2,
-          "tg_mention_count": 3,
-          "tg_mention_velocity": 0,
-          "tg_viral_score": 0,
-          "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 57.9,
-          "tg_last_mention_minutes_ago": 3470.2,
+          "tg_channel_count": 5,
+          "tg_mention_count": 8,
+          "tg_mention_velocity": 0.17,
+          "tg_viral_score": 30.0,
+          "tg_channel_quality": 0.6,
+          "tg_first_mention_hours_ago": 91.0,
+          "tg_last_mention_minutes_ago": 18.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -7781,7 +7880,7 @@
           "chain": "solana",
           "symbol": "BULL",
           "name": "Bull",
-          "score": 14.04,
+          "score": 12.08,
           "channel_count": 15,
           "mentions": 70,
           "fdv": 8029243,
@@ -7811,6 +7910,8 @@
           "insider_count": 4,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 7.5
           },
           "tg_channel_count": 16,
@@ -7818,106 +7919,49 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.75,
-          "tg_first_mention_hours_ago": 358.2,
-          "tg_last_mention_minutes_ago": 2026.9,
+          "tg_first_mention_hours_ago": 359.2,
+          "tg_last_mention_minutes_ago": 2086.9,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
           "tw_kol_score": 0
         },
         {
-          "contract_address": "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
+          "contract_address": "5",
           "chain": "solana",
-          "symbol": "LOL",
-          "name": "LOL",
-          "score": 10.5,
+          "symbol": "aDOT",
+          "name": "aDOT",
+          "score": 12.0,
           "channel_count": 2,
-          "mentions": 1,
-          "fdv": 5775049,
-          "volume_h24": 1164594.38,
-          "volume_h1": 31899.63,
-          "age_hours": 673.98,
-          "price_change_h1": -4.58,
-          "price_change_h6": -6.62,
-          "social_score": 3.3,
-          "gmgn_smart_wallets": 54,
-          "gmgn_dev_hold": false,
-          "positives": [
-            "87 smart wallets (avg 41), 3 insiders",
-            "88 smart wallets (avg 41), 3 insiders",
-            "91 smart wallets (avg 41), 3 insiders",
-            "90 smart wallets (avg 41), 3 insiders",
-            "89 smart wallets (avg 41), 3 insiders",
-            "89 smart wallets (avg 40), 3 insiders",
-            "burned",
-            "CTO"
-          ],
-          "negatives": [
-            "token farmer"
-          ],
-          "dex_url": "https://dexscreener.com/solana/34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
-          "smart_wallet_count": 87,
-          "smart_wallet_avg_score": 41.0,
-          "insider_count": 3,
-          "sniper_count": 0,
-          "social_details": {
-            "tg_quality_pts": 3.3
-          },
-          "tg_channel_count": 3,
-          "tg_mention_count": 4,
-          "tg_mention_velocity": 0,
-          "tg_viral_score": 0,
-          "tg_channel_quality": 0.33,
-          "tg_first_mention_hours_ago": 73.7,
-          "tg_last_mention_minutes_ago": 2026.9,
-          "tw_mention_count": 0,
-          "tw_sentiment_score": 0,
-          "tw_trending_score": 0,
-          "tw_kol_score": 0
-        },
-        {
-          "contract_address": "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump",
-          "chain": "solana",
-          "symbol": "SPIKE",
-          "name": "SPIKE ",
-          "score": 0.72,
-          "channel_count": 4,
-          "mentions": 5,
-          "fdv": 5310570,
-          "volume_h24": 2137325.44,
-          "volume_h1": 34557.95,
-          "age_hours": 193.32,
-          "price_change_h1": -2.98,
-          "price_change_h6": -15.28,
-          "social_score": 4.0,
-          "gmgn_smart_wallets": 23,
-          "gmgn_dev_hold": false,
-          "positives": [
-            "42 smart wallets (avg 39)",
-            "41 smart wallets (avg 39)",
-            "burned",
-            "CTO",
-            "CoinGecko listed"
-          ],
-          "negatives": [
-            "down h24 (-24%)",
-            "token farmer"
-          ],
-          "dex_url": "https://dexscreener.com/solana/BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump",
-          "smart_wallet_count": 42,
-          "smart_wallet_avg_score": 39.0,
+          "mentions": 3,
+          "fdv": 8467010,
+          "volume_h24": 299762.74,
+          "volume_h1": 6132.1,
+          "age_hours": null,
+          "price_change_h1": -0.34,
+          "price_change_h6": -1.84,
+          "social_score": 5.0,
+          "gmgn_smart_wallets": null,
+          "gmgn_dev_hold": null,
+          "positives": [],
+          "negatives": [],
+          "dex_url": "https://dexscreener.com/solana/5",
+          "smart_wallet_count": 0,
+          "smart_wallet_avg_score": 0.0,
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
-            "tg_quality_pts": 4.0
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
+            "tg_quality_pts": 5.0
           },
-          "tg_channel_count": 5,
-          "tg_mention_count": 7,
+          "tg_channel_count": 2,
+          "tg_mention_count": 3,
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
-          "tg_channel_quality": 0.4,
-          "tg_first_mention_hours_ago": 90.0,
-          "tg_last_mention_minutes_ago": 2186.3,
+          "tg_channel_quality": 0.5,
+          "tg_first_mention_hours_ago": 58.9,
+          "tg_last_mention_minutes_ago": 3530.2,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -7928,7 +7972,7 @@
         {
           "address": "3TchpxjnoxneW2QrfhYEK9fZRaMEWvezQ5Z8vD3bHBVW",
           "chain": "solana",
-          "wallet_score": 54.0,
+          "wallet_score": 64.0,
           "total_profit": 32461.689665330083,
           "win_rate": 1.0,
           "avg_roi": 9.228238304545131,
@@ -7942,7 +7986,7 @@
         {
           "address": "6sYRmBUsuTVQForYcGZNuKPcj1edzZFo7Jmnp9WSF1M1",
           "chain": "solana",
-          "wallet_score": 53.0,
+          "wallet_score": 63.0,
           "total_profit": 65865.58986881845,
           "win_rate": 1.0,
           "avg_roi": 20.598898874592024,
@@ -7956,7 +8000,7 @@
         {
           "address": "6aWXxk1QKzrpZVNXVXsDhjh2usqcNFNHvrY33WpQxk3j",
           "chain": "solana",
-          "wallet_score": 53.0,
+          "wallet_score": 63.0,
           "total_profit": 43796.212782363364,
           "win_rate": 1.0,
           "avg_roi": 13.948401374424327,
@@ -7970,7 +8014,7 @@
         {
           "address": "D9NKx3SkKfJzXENgdPbTDxdvxTM7p6ckxoXmHwkgugVy",
           "chain": "solana",
-          "wallet_score": 52.0,
+          "wallet_score": 62.0,
           "total_profit": 62399.784086824686,
           "win_rate": 1.0,
           "avg_roi": 1.4134087685672276,
@@ -7984,7 +8028,7 @@
         {
           "address": "f4CpFrPgQquyWaHHrcQ7dCsdLSDhJCooyjyXZrHWU9d",
           "chain": "solana",
-          "wallet_score": 52.0,
+          "wallet_score": 62.0,
           "total_profit": 23952.049718948343,
           "win_rate": 1.0,
           "avg_roi": 3.5324778539335755,
@@ -7998,7 +8042,7 @@
         {
           "address": "Cp9JejUQsPKCaQpEc6XAHFz9W1JEo9AUeVtSYtLcKX7C",
           "chain": "solana",
-          "wallet_score": 51.0,
+          "wallet_score": 61.0,
           "total_profit": 47655.764790274305,
           "win_rate": 1.0,
           "avg_roi": 3.19369812188603,
@@ -8012,7 +8056,7 @@
         {
           "address": "HD98rDehDa4HJogTq3QRKGcC9A1AE9cSoEV3SgVSds8U",
           "chain": "solana",
-          "wallet_score": 51.0,
+          "wallet_score": 61.0,
           "total_profit": 65466.81604315604,
           "win_rate": 1.0,
           "avg_roi": 28.02672592870284,
@@ -8026,7 +8070,7 @@
         {
           "address": "4UYSuQMRTGmqzH62iE66QQ5KqYuCfRRWAJxE1myrBG42",
           "chain": "solana",
-          "wallet_score": 51.0,
+          "wallet_score": 61.0,
           "total_profit": 64116.84173282526,
           "win_rate": 1.0,
           "avg_roi": 279.06525708760324,
@@ -8040,7 +8084,7 @@
         {
           "address": "DL4sCkgLD8NhKVixeoafdVjzqAX1R7vvifzbW6eRod5G",
           "chain": "solana",
-          "wallet_score": 51.0,
+          "wallet_score": 61.0,
           "total_profit": 63323.69186905293,
           "win_rate": 1.0,
           "avg_roi": 230.3595388605962,
@@ -8052,24 +8096,9 @@
           ]
         },
         {
-          "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
-          "chain": "solana",
-          "wallet_score": 49.0,
-          "total_profit": 16880.415062488384,
-          "win_rate": 1.0,
-          "avg_roi": 0.05474707871685697,
-          "trade_count": 2076,
-          "wallet_tags": "TOP52,TOP13,TOP62,TOP79,TOP44",
-          "tokens_held": 2,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
           "address": "FdKmnZF3osMNj7VisxJiKZNx5cMCX6tv47d2ChWnenPG",
           "chain": "solana",
-          "wallet_score": 49.0,
+          "wallet_score": 59.0,
           "total_profit": 62593.36685962213,
           "win_rate": 1.0,
           "avg_roi": 186.96928510756814,
@@ -8083,7 +8112,7 @@
         {
           "address": "9wUxp26YeoiT1AxL6sfCjow1Z4EcLsSJD3xkMs3bgUeP",
           "chain": "solana",
-          "wallet_score": 49.0,
+          "wallet_score": 59.0,
           "total_profit": 61975.03919759979,
           "win_rate": 1.0,
           "avg_roi": 148.75059821911324,
@@ -8097,7 +8126,7 @@
         {
           "address": "AeA5wrUt1L7gkbDfzQfUUmzWJfd3kodNQpBTVN4R2Fdw",
           "chain": "solana",
-          "wallet_score": 49.0,
+          "wallet_score": 59.0,
           "total_profit": 61114.56632448674,
           "win_rate": 1.0,
           "avg_roi": 114.72429810916053,
@@ -8111,7 +8140,7 @@
         {
           "address": "HKmDFH74wi5fg6N3xtMfM5FwEiNBYEW2g8C15q4VVpvr",
           "chain": "solana",
-          "wallet_score": 49.0,
+          "wallet_score": 59.0,
           "total_profit": 60176.57915384152,
           "win_rate": 1.0,
           "avg_roi": 85.33939539161834,
@@ -8125,7 +8154,7 @@
         {
           "address": "6rKWwcGaJCM4xHQvAicPqNPvDYHwCLZNqcbKYLELXsAu",
           "chain": "solana",
-          "wallet_score": 49.0,
+          "wallet_score": 59.0,
           "total_profit": 58888.50413219447,
           "win_rate": 1.0,
           "avg_roi": 40.74202307849856,
@@ -8139,7 +8168,7 @@
         {
           "address": "DK2YYYf4jdKryLTD861MPAip9dUPA32JrBeD4qjCBYB",
           "chain": "solana",
-          "wallet_score": 49.0,
+          "wallet_score": 59.0,
           "total_profit": 59317.11345264667,
           "win_rate": 1.0,
           "avg_roi": 60.683139788621965,
@@ -8147,6 +8176,732 @@
           "wallet_tags": "TOP48",
           "tokens_held": 1,
           "token_addresses": [
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "DtvmxrTACskMG2W8a6KXgSemUfvyNVeQTgfpJoGvMVKx",
+          "chain": "solana",
+          "wallet_score": 58.0,
+          "total_profit": 10921.625957621261,
+          "win_rate": 1.0,
+          "avg_roi": 0.05251739603626354,
+          "trade_count": 1808,
+          "wallet_tags": "TOP25,TOP55,TOP31,TOP35,TOP48",
+          "tokens_held": 3,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
+            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "7rqFQwnz1pGHLTCTMsk17RYXFtRujokrCtdgWKaoedar",
+          "chain": "solana",
+          "wallet_score": 58.0,
+          "total_profit": 46853.283299699135,
+          "win_rate": 1.0,
+          "avg_roi": 13.599696402946785,
+          "trade_count": 40,
+          "wallet_tags": "TOP23",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "Ho3dYsEZ5ssU82fm7bV7L45sQknijPYyDGrS1pD5ZMzY",
+          "chain": "solana",
+          "wallet_score": 58.0,
+          "total_profit": 54199.545237869715,
+          "win_rate": 1.0,
+          "avg_roi": 10.839993360039186,
+          "trade_count": 65,
+          "wallet_tags": "TOP48,gmgn",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "BVabVxQnsHCEWiapqMUFdatKmPQ6C2buvQ5xbbcBbokP",
+          "chain": "solana",
+          "wallet_score": 58.0,
+          "total_profit": 21418.579138920082,
+          "win_rate": 1.0,
+          "avg_roi": 0.24079215117127736,
+          "trade_count": 1325,
+          "wallet_tags": "TOP68,TOP27",
+          "tokens_held": 2,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "HVGchamESZi8qkPCdKqkYPDX9uG1ry7ix3Q2HCiZ6Qkm",
+          "chain": "solana",
+          "wallet_score": 58.0,
+          "total_profit": 23792.58772721585,
+          "win_rate": 1.0,
+          "avg_roi": 8.387471583075023,
+          "trade_count": 86,
+          "wallet_tags": "TOP96",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "6icXjmobk7zx1eLnfnSNKsZCMYHfW4CaeybKrSNzTifg",
+          "chain": "solana",
+          "wallet_score": 57.0,
+          "total_profit": 32082.701005446135,
+          "win_rate": 1.0,
+          "avg_roi": 12.123236000214607,
+          "trade_count": 5,
+          "wallet_tags": "TOP158",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "4JiwfKJTHujtRMBRiSUDnoMm5ryYTqAjxZawTpB39T2u",
+          "chain": "solana",
+          "wallet_score": 57.0,
+          "total_profit": 30532.01531018733,
+          "win_rate": 1.0,
+          "avg_roi": 0.4746938204160487,
+          "trade_count": 240,
+          "wallet_tags": "TOP38",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 27745.64227403131,
+          "win_rate": 1.0,
+          "avg_roi": 0.07270895009163393,
+          "trade_count": 2943,
+          "wallet_tags": "TOP17,TOP21,TOP9,TOP19,TOP44",
+          "tokens_held": 3,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
+            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "gtagyESa99t49VmUqnnfsuowYnigSNKuYXdXWyXWNdd",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 12608.329806151654,
+          "win_rate": 1.0,
+          "avg_roi": 0.045058436923768194,
+          "trade_count": 4624,
+          "wallet_tags": "TOP18,TOP25,TOP31,TOP15,TOP32,sandwich_bot",
+          "tokens_held": 3,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
+            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "6Mj5utcnKE2Gjt31eqtgMTa6AePUTL49sPVLGZ41CmJ8",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 50129.43226558342,
+          "win_rate": 1.0,
+          "avg_roi": 18.140630764271005,
+          "trade_count": 15,
+          "wallet_tags": "TOP19",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "DpYuj2At1Z1tH4baoz5A1XV4AanjJa8bgbB51BWSZUyn",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 37964.44335216768,
+          "win_rate": 1.0,
+          "avg_roi": 21.251692671872483,
+          "trade_count": 43,
+          "wallet_tags": "TOP98",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "GL9s7EA4XBSq4Qm3qJyrwYGdnMDHjo7BMGn8rBpaH6aC",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 89730.76944040283,
+          "win_rate": 1.0,
+          "avg_roi": 0.40208819744447094,
+          "trade_count": 85,
+          "wallet_tags": "TOP4,gmgn",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "FeuXmotDkBEPCCzjydy2yi8QK17YFxoT2vrtMNMjZMUs",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 27805.36673721089,
+          "win_rate": 1.0,
+          "avg_roi": 0.6010550648211649,
+          "trade_count": 265,
+          "wallet_tags": "TOP46",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "6AZ1Wc123JNvXeLHVp26xtnGQuom2RjHiHS9VEknLVg3",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 28468.8008722404,
+          "win_rate": 1.0,
+          "avg_roi": 5.902025988130836,
+          "trade_count": 74,
+          "wallet_tags": "TOP85",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "4LuMD3Ymp1WvddSJpW1qDkvhh3CzCLd277Umyvnr9j8t",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 11693.39584565353,
+          "win_rate": 1.0,
+          "avg_roi": 0.2275920954576277,
+          "trade_count": 456,
+          "wallet_tags": "TOP40",
+          "tokens_held": 1,
+          "token_addresses": [
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "2jpFfwXDP8LmXiMa2fHM45mrvXTjb8Ekg3THAFBGJtTM",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 10607.59898314916,
+          "win_rate": 1.0,
+          "avg_roi": 0.2482162371852819,
+          "trade_count": 420,
+          "wallet_tags": "TOP46",
+          "tokens_held": 1,
+          "token_addresses": [
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "7curNz7wnvSPYoKGdY4bhu1crpR4jMqJqxiNrUBmsBJJ",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 94036.14258164071,
+          "win_rate": 1.0,
+          "avg_roi": 3.4342125456525663,
+          "trade_count": 20,
+          "wallet_tags": "TOP54",
+          "tokens_held": 1,
+          "token_addresses": [
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
+          "chain": "solana",
+          "wallet_score": 55.0,
+          "total_profit": 9114.918217516959,
+          "win_rate": 1.0,
+          "avg_roi": 0.03586892189750701,
+          "trade_count": 2645,
+          "wallet_tags": "TOP18,TOP36,TOP24,TOP61,TOP20",
+          "tokens_held": 3,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
+            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "4RrRHzka841p8qfzyaFzna17iAMmVb1oVm2BiwJBZb2e",
+          "chain": "solana",
+          "wallet_score": 54.0,
+          "total_profit": 31674.61163115429,
+          "win_rate": 1.0,
+          "avg_roi": 4.588210259141783,
+          "trade_count": 24,
+          "wallet_tags": "TOP142,TOP121",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
+          "chain": "solana",
+          "wallet_score": 54.0,
+          "total_profit": 16880.415062488384,
+          "win_rate": 1.0,
+          "avg_roi": 0.05474707871685697,
+          "trade_count": 2076,
+          "wallet_tags": "TOP52,TOP13,TOP62,TOP79,TOP44",
+          "tokens_held": 2,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
+            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
+          ]
+        },
+        {
+          "address": "3WMGD3kBX9wcmVXeLiX8LJyrNQ66mnbdJb6oD6tNy3Zd",
+          "chain": "solana",
+          "wallet_score": 54.0,
+          "total_profit": 35912.88793743178,
+          "win_rate": 1.0,
+          "avg_roi": 13.721093954226387,
+          "trade_count": 37,
+          "wallet_tags": "TOP27",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "GhBDNXvMZicfoCvxhCpJ2Tozc2PAwfqZsVRyxTKuhG5K",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 7586.054233497422,
+          "win_rate": 1.0,
+          "avg_roi": 0.1754104391210245,
+          "trade_count": 101,
+          "wallet_tags": "TOP76",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "82vDRwsebqxJWJPcnT9w6ECny8r2ry5EovP4Dkkt6phB",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 12499.91348182362,
+          "win_rate": 1.0,
+          "avg_roi": 0.11078952364579273,
+          "trade_count": 1291,
+          "wallet_tags": "TOP34,TOP28",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "FHJnj9y8yPeRnYMq3QWcgyyptm1Yz1ct3g4we4i6zux6",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 18326.189302272924,
+          "win_rate": 1.0,
+          "avg_roi": 0.27862640948625345,
+          "trade_count": 1343,
+          "wallet_tags": "TOP39,TOP75",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "JBVpuKD4cEVUjZ7conFwKZKzdpY92C1hzwCHYr99L54z",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 15080.017130211902,
+          "win_rate": 1.0,
+          "avg_roi": 0.09345306276459997,
+          "trade_count": 1581,
+          "wallet_tags": "TOP45,TOP57,TOP96,sandwich_bot,TOP42",
+          "tokens_held": 2,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
+            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
+          ]
+        },
+        {
+          "address": "5tra33amvzXwnnzgwtaYEofWJifwyRc5WcVGxKqtNkiy",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 12192.199248786832,
+          "win_rate": 1.0,
+          "avg_roi": 0.13094664866785094,
+          "trade_count": 1290,
+          "wallet_tags": "TOP36,TOP54",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "Gtt2r4imeZ7Vgda3qLrSKbjwUDRsnyiGSyhKBaU4LbaY",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 8633.210366270487,
+          "win_rate": 1.0,
+          "avg_roi": 0.23415035013292723,
+          "trade_count": 101,
+          "wallet_tags": "TOP66",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "BeghwSP1Htiy1W7ZeD8G4Y3zyp5Dy8NGRgkpWiu3qDGM",
+          "chain": "solana",
+          "wallet_score": 52.0,
+          "total_profit": 12773.463323090356,
+          "win_rate": 1.0,
+          "avg_roi": 0.17368513073248487,
+          "trade_count": 95,
+          "wallet_tags": "TOP21",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "FVWWFyVNw25ViuXhqGjpM79H6uEyF4v6FSuESXArps3X",
+          "chain": "solana",
+          "wallet_score": 52.0,
+          "total_profit": 37561.28974569963,
+          "win_rate": 1.0,
+          "avg_roi": 7.948172630783773,
+          "trade_count": 26,
+          "wallet_tags": "TOP24",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "68NyL7wGz1SKBTJk1LbuT7b6TZ1tV4niLKGyDNmiEkS3",
+          "chain": "solana",
+          "wallet_score": 52.0,
+          "total_profit": 14561.916065075366,
+          "win_rate": 1.0,
+          "avg_roi": 1.6127409324894415,
+          "trade_count": 64,
+          "wallet_tags": "photon,TOP128",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "GBDosdE692mfFgZUQdPQ4Nae1xoBcT4MMJXVukniMZ6X",
+          "chain": "solana",
+          "wallet_score": 52.0,
+          "total_profit": 10755.041709933152,
+          "win_rate": 1.0,
+          "avg_roi": 0.15745728240515341,
+          "trade_count": 98,
+          "wallet_tags": "TOP25",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "H6EtpNNizCppByyt5Jj5bmpm1GN9MMpBoycBzDhiWrQS",
+          "chain": "solana",
+          "wallet_score": 52.0,
+          "total_profit": 13300.248115287233,
+          "win_rate": 1.0,
+          "avg_roi": 0.24034791198131109,
+          "trade_count": 1331,
+          "wallet_tags": "TOP51,TOP84",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "66wniJpXzCF3DT4R9nuHWpdwNwLNUeTN1jLJLNkzCFJf",
+          "chain": "solana",
+          "wallet_score": 52.0,
+          "total_profit": 21069.83527411724,
+          "win_rate": 1.0,
+          "avg_roi": 0.2960348540201394,
+          "trade_count": 1287,
+          "wallet_tags": "TOP64,TOP55",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "FbXVMSGU8GcorT3M8eprQRAT3U9WYi1kciNH2XLX4rag",
+          "chain": "solana",
+          "wallet_score": 52.0,
+          "total_profit": 27536.555636984485,
+          "win_rate": 1.0,
+          "avg_roi": 1.416641510093115,
+          "trade_count": 64,
+          "wallet_tags": "TOP38",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "65zKYEKPhL2f3mVQudNw2BFXHRZccTszLrjPct6vfJmp",
+          "chain": "solana",
+          "wallet_score": 52.0,
+          "total_profit": 5309.03473039195,
+          "win_rate": 1.0,
+          "avg_roi": 0.12513274178891326,
+          "trade_count": 418,
+          "wallet_tags": "TOP47",
+          "tokens_held": 1,
+          "token_addresses": [
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "9QbVWvQBvgdQr9gT46BroHXYnB9H7Ecx9nPoWHbzVWR5",
+          "chain": "solana",
+          "wallet_score": 51.0,
+          "total_profit": 15215.025320975728,
+          "win_rate": 1.0,
+          "avg_roi": 0.6270540523261702,
+          "trade_count": 61,
+          "wallet_tags": "TOP58",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "BDMkxtQZnF2itcKB4TzshuvSQ9v3feD5p8vy9Rqn7FPk",
+          "chain": "solana",
+          "wallet_score": 51.0,
+          "total_profit": 34232.427104566625,
+          "win_rate": 1.0,
+          "avg_roi": 1.5860173070340113,
+          "trade_count": 21,
+          "wallet_tags": "TOP101",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "AUn7v7iApbJfBUr6JBERQdeet8tmxouNZcn1hhQaq2Ca",
+          "chain": "solana",
+          "wallet_score": 51.0,
+          "total_profit": 5923.1785297392535,
+          "win_rate": 1.0,
+          "avg_roi": 0.07822788696803713,
+          "trade_count": 106,
+          "wallet_tags": "TOP159",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "3EKX2bfqj6hKNeM4yMxEDMZB4vGB9RmQcdovgQZb7GGQ",
+          "chain": "solana",
+          "wallet_score": 51.0,
+          "total_profit": 11156.117815441117,
+          "win_rate": 1.0,
+          "avg_roi": 0.1302304832700158,
+          "trade_count": 1288,
+          "wallet_tags": "TOP56,TOP47",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "ALtB6ZhU51EQh9KtH4m3WoYdoTL8UoXoHxHY3fbhbb4u",
+          "chain": "solana",
+          "wallet_score": 50.0,
+          "total_profit": 14802.355610180839,
+          "win_rate": 1.0,
+          "avg_roi": 0.1973335802039944,
+          "trade_count": 174,
+          "wallet_tags": "TOP30,TOP118",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "GjdmHjPZQ7wY8R4CXFCCSJxxDDo8w8Xya1NjdRvoNDmJ",
+          "chain": "solana",
+          "wallet_score": 50.0,
+          "total_profit": 1033.9168657353866,
+          "win_rate": 1.0,
+          "avg_roi": 0.009919988190145484,
+          "trade_count": 222,
+          "wallet_tags": "TOP114",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "5rkSwEceTC6TxtQwzMVdsdmG4xs7u3iZMH3isU8tssdh",
+          "chain": "solana",
+          "wallet_score": 50.0,
+          "total_profit": 7199.471417467518,
+          "win_rate": 1.0,
+          "avg_roi": 0.10235158797068991,
+          "trade_count": 1355,
+          "wallet_tags": "TOP33,TOP14",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "AccVJGCog5YCJ6J64CvxkQNGADLHUvc4ZjqBU1z56coq",
+          "chain": "solana",
+          "wallet_score": 50.0,
+          "total_profit": 14439.579327690115,
+          "win_rate": 1.0,
+          "avg_roi": 0.525925991670147,
+          "trade_count": 67,
+          "wallet_tags": "TOP94",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "HGtHqgqwKrC7giPURxcT5Pts5uB6iWCJKbXu25dzo4xN",
+          "chain": "solana",
+          "wallet_score": 49.0,
+          "total_profit": 12389.60923817495,
+          "win_rate": 1.0,
+          "avg_roi": 0.2822569520440936,
+          "trade_count": 98,
+          "wallet_tags": "TOP12",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "6cp1JBiNcgQPbLYVrLB9zBmFbTDTi44Y1cRT5x9yte5i",
+          "chain": "solana",
+          "wallet_score": 49.0,
+          "total_profit": 42698.02296209893,
+          "win_rate": 1.0,
+          "avg_roi": 29.015692547744113,
+          "trade_count": 2,
+          "wallet_tags": "TOP16",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "C92nBXrrANmWpgJKhBdbnqtUuCcoEZ7kQJoyScZ5sQak",
+          "chain": "solana",
+          "wallet_score": 49.0,
+          "total_profit": 29375.823080933216,
+          "win_rate": 1.0,
+          "avg_roi": 10.83719211950299,
+          "trade_count": 19,
+          "wallet_tags": "TOP164",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "7La7VK2zYG5f7fvbhXS4h7vddPvqHeYbrPhVNrx5bJB7",
+          "chain": "solana",
+          "wallet_score": 49.0,
+          "total_profit": 6777.351995407438,
+          "win_rate": 1.0,
+          "avg_roi": 0.3085702176318028,
+          "trade_count": 48,
+          "wallet_tags": "TOP116",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "GVQ3Fuzf15FLsMmwarnxpPLfi6BF6mLJ1miEihQyEeHS",
+          "chain": "solana",
+          "wallet_score": 49.0,
+          "total_profit": 6282.379783010878,
+          "win_rate": 1.0,
+          "avg_roi": 0.2849033843794977,
+          "trade_count": 82,
+          "wallet_tags": "TOP156",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "2FDFZVGGkXbb9PzLu2PgPrMMN3dHcSJEqv95muKURxJF",
+          "chain": "solana",
+          "wallet_score": 49.0,
+          "total_profit": 6506.585159476679,
+          "win_rate": 1.0,
+          "avg_roi": 0.0941268937959489,
+          "trade_count": 1282,
+          "wallet_tags": "TOP37,TOP80",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "8FdncLaqcYndRMphT2zkQ7EPwfT4ENiEuHZEHPYpa9Lu",
+          "chain": "solana",
+          "wallet_score": 49.0,
+          "total_profit": 10040.4169046965,
+          "win_rate": 1.0,
+          "avg_roi": 3.9192049614958333,
+          "trade_count": 11,
+          "wallet_tags": "TOP68",
+          "tokens_held": 1,
+          "token_addresses": [
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+          ]
+        },
+        {
+          "address": "JD25qVdtd65FoiXNmR89JjmoJdYk9sjYQeSTZAALFiMy",
+          "chain": "solana",
+          "wallet_score": 48.0,
+          "total_profit": 1216.73608553412,
+          "win_rate": 1.0,
+          "avg_roi": 0.12293010779978804,
+          "trade_count": 734,
+          "wallet_tags": "sandwich_bot,TOP49",
+          "tokens_held": 2,
+          "token_addresses": [
+            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
             "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
           ]
         },
@@ -8165,186 +8920,168 @@
           ]
         },
         {
-          "address": "DtvmxrTACskMG2W8a6KXgSemUfvyNVeQTgfpJoGvMVKx",
+          "address": "2WHeT9bv8Javs5yRbynf4pnn5fNHvcSD4VEcXgcCVVRg",
           "chain": "solana",
           "wallet_score": 48.0,
-          "total_profit": 10921.625957621261,
+          "total_profit": 16811.126725738945,
           "win_rate": 1.0,
-          "avg_roi": 0.05251739603626354,
-          "trade_count": 1808,
-          "wallet_tags": "TOP25,TOP55,TOP31,TOP35,TOP48",
-          "tokens_held": 3,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
-          ]
-        },
-        {
-          "address": "7rqFQwnz1pGHLTCTMsk17RYXFtRujokrCtdgWKaoedar",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 46853.283299699135,
-          "win_rate": 1.0,
-          "avg_roi": 13.599696402946785,
-          "trade_count": 40,
-          "wallet_tags": "TOP23",
+          "avg_roi": 4.49197484717654,
+          "trade_count": 44,
+          "wallet_tags": "gmgn,TOP81",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "Ho3dYsEZ5ssU82fm7bV7L45sQknijPYyDGrS1pD5ZMzY",
+          "address": "BvhZDhhnsChEGFTBUcEUjeqAHoVkA16mTsydWCUHzKFs",
           "chain": "solana",
           "wallet_score": 48.0,
-          "total_profit": 54199.545237869715,
+          "total_profit": 2062.9668448059674,
           "win_rate": 1.0,
-          "avg_roi": 10.839993360039186,
-          "trade_count": 65,
-          "wallet_tags": "TOP48,gmgn",
+          "avg_roi": 0.01680760933192161,
+          "trade_count": 594,
+          "wallet_tags": "TOP16,TOP44",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "82vDRwsebqxJWJPcnT9w6ECny8r2ry5EovP4Dkkt6phB",
+          "address": "FXKTGvBCuutXtrw6ABiE8k6nMej2sqNEbrMt4SnhYhnx",
           "chain": "solana",
           "wallet_score": 48.0,
-          "total_profit": 12499.91348182362,
+          "total_profit": 2137.1124824648177,
           "win_rate": 1.0,
-          "avg_roi": 0.11078952364579273,
-          "trade_count": 1291,
-          "wallet_tags": "TOP34,TOP28",
+          "avg_roi": 0.08824263709321668,
+          "trade_count": 235,
+          "wallet_tags": "TOP92",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "BVabVxQnsHCEWiapqMUFdatKmPQ6C2buvQ5xbbcBbokP",
+          "address": "4y2ygxHoQUZCUTZ9c1z33R5arUZhnUyq1JxQ9AaSeMRe",
           "chain": "solana",
           "wallet_score": 48.0,
-          "total_profit": 21418.579138920082,
+          "total_profit": 2071.3267479338974,
           "win_rate": 1.0,
-          "avg_roi": 0.24079215117127736,
-          "trade_count": 1325,
-          "wallet_tags": "TOP68,TOP27",
-          "tokens_held": 2,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
-          ]
-        },
-        {
-          "address": "FHJnj9y8yPeRnYMq3QWcgyyptm1Yz1ct3g4we4i6zux6",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 18326.189302272924,
-          "win_rate": 1.0,
-          "avg_roi": 0.27862640948625345,
-          "trade_count": 1343,
-          "wallet_tags": "TOP39,TOP75",
+          "avg_roi": 0.06358127974480807,
+          "trade_count": 250,
+          "wallet_tags": "TOP88",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "JBVpuKD4cEVUjZ7conFwKZKzdpY92C1hzwCHYr99L54z",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 15080.017130211902,
-          "win_rate": 1.0,
-          "avg_roi": 0.09345306276459997,
-          "trade_count": 1581,
-          "wallet_tags": "TOP45,TOP57,TOP96,sandwich_bot,TOP42",
-          "tokens_held": 2,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "5tra33amvzXwnnzgwtaYEofWJifwyRc5WcVGxKqtNkiy",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 12192.199248786832,
-          "win_rate": 1.0,
-          "avg_roi": 0.13094664866785094,
-          "trade_count": 1290,
-          "wallet_tags": "TOP36,TOP54",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "HVGchamESZi8qkPCdKqkYPDX9uG1ry7ix3Q2HCiZ6Qkm",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 23792.58772721585,
-          "win_rate": 1.0,
-          "avg_roi": 8.387471583075023,
-          "trade_count": 86,
-          "wallet_tags": "TOP96",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "6icXjmobk7zx1eLnfnSNKsZCMYHfW4CaeybKrSNzTifg",
+          "address": "BRWC8rEUwau4Cevi8z3w4G2cpcXL425jFyfGA3GjtGwK",
           "chain": "solana",
           "wallet_score": 47.0,
-          "total_profit": 32082.701005446135,
+          "total_profit": 12763.751142107463,
           "win_rate": 1.0,
-          "avg_roi": 12.123236000214607,
-          "trade_count": 5,
-          "wallet_tags": "TOP158",
+          "avg_roi": 10.432886230925813,
+          "trade_count": 11,
+          "wallet_tags": "trojan,TOP124",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "4JiwfKJTHujtRMBRiSUDnoMm5ryYTqAjxZawTpB39T2u",
+          "address": "Hv2Nmbouoq4trzAA2H4jcnYfNm2Bo8qe1oCvt8qxA6Rn",
           "chain": "solana",
           "wallet_score": 47.0,
-          "total_profit": 30532.01531018733,
+          "total_profit": 61.04110694673318,
           "win_rate": 1.0,
-          "avg_roi": 0.4746938204160487,
-          "trade_count": 240,
-          "wallet_tags": "TOP38",
+          "avg_roi": 0.00045003382073536484,
+          "trade_count": 217,
+          "wallet_tags": "TOP6",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "H6EtpNNizCppByyt5Jj5bmpm1GN9MMpBoycBzDhiWrQS",
+          "address": "3GS1k6eqsSo9UX88cHpDLxzMk4dheiyZ3CNbkSZuDJKs",
           "chain": "solana",
           "wallet_score": 47.0,
-          "total_profit": 13300.248115287233,
+          "total_profit": 1206.3501261238978,
           "win_rate": 1.0,
-          "avg_roi": 0.24034791198131109,
-          "trade_count": 1331,
-          "wallet_tags": "TOP51,TOP84",
+          "avg_roi": 0.020776619558192065,
+          "trade_count": 173,
+          "wallet_tags": "TOP30",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "66wniJpXzCF3DT4R9nuHWpdwNwLNUeTN1jLJLNkzCFJf",
+          "address": "DoKapu1jQJpnmkRBoQZGUpxq48AkPz78KCpLacY9w3G5",
           "chain": "solana",
           "wallet_score": 47.0,
-          "total_profit": 21069.83527411724,
+          "total_profit": 1024.5883199731832,
           "win_rate": 1.0,
-          "avg_roi": 0.2960348540201394,
-          "trade_count": 1287,
-          "wallet_tags": "TOP64,TOP55",
+          "avg_roi": 0.013417993833179707,
+          "trade_count": 256,
+          "wallet_tags": "TOP45",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "C45vtuN2X6hUG5g3StpDp6UkFToi487KFW35gpe691iA",
+          "chain": "solana",
+          "wallet_score": 47.0,
+          "total_profit": 23536.177379126264,
+          "win_rate": 1.0,
+          "avg_roi": 1.2983394767406666,
+          "trade_count": 39,
+          "wallet_tags": "TOP55",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "5KusWxmuo1qDUFV3TXgLECpZhvzAvsJJXRGM1YURtfCb",
+          "chain": "solana",
+          "wallet_score": 47.0,
+          "total_profit": 3293.4694743570585,
+          "win_rate": 1.0,
+          "avg_roi": 0.14027275845140103,
+          "trade_count": 396,
+          "wallet_tags": "axiom,TOP94",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "BKwy5fDcpdXLPKZTAKrJDTrf62AntAtTrH7soi8MfVgN",
+          "chain": "solana",
+          "wallet_score": 47.0,
+          "total_profit": 1804.2431651400268,
+          "win_rate": 1.0,
+          "avg_roi": 0.09525603249163225,
+          "trade_count": 157,
+          "wallet_tags": "TOP100",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "BH654FPUseGrKY2i1ANr4cpztP8mkAu14H2nx6iTfTet",
+          "chain": "solana",
+          "wallet_score": 47.0,
+          "total_profit": 1394.460145843569,
+          "win_rate": 1.0,
+          "avg_roi": 0.05885660690985439,
+          "trade_count": 233,
+          "wallet_tags": "TOP97",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
@@ -8365,35 +9102,17 @@
           ]
         },
         {
-          "address": "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
+          "address": "DfzFUGhtk2bV5JLpRRhcALSJZ1SeTeM3LqrQS7Fz6V8Z",
           "chain": "solana",
           "wallet_score": 46.0,
-          "total_profit": 27745.64227403131,
+          "total_profit": 42698.06592342714,
           "win_rate": 1.0,
-          "avg_roi": 0.07270895009163393,
-          "trade_count": 2943,
-          "wallet_tags": "TOP17,TOP21,TOP9,TOP19,TOP44",
-          "tokens_held": 3,
+          "avg_roi": 1.2321906371804334,
+          "trade_count": 15,
+          "wallet_tags": "TOP11",
+          "tokens_held": 1,
           "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
-          ]
-        },
-        {
-          "address": "gtagyESa99t49VmUqnnfsuowYnigSNKuYXdXWyXWNdd",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 12608.329806151654,
-          "win_rate": 1.0,
-          "avg_roi": 0.045058436923768194,
-          "trade_count": 4624,
-          "wallet_tags": "TOP18,TOP25,TOP31,TOP15,TOP32,sandwich_bot",
-          "tokens_held": 3,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
@@ -8411,145 +9130,59 @@
           ]
         },
         {
-          "address": "6Mj5utcnKE2Gjt31eqtgMTa6AePUTL49sPVLGZ41CmJ8",
+          "address": "ECf7EEB1ZidrabNj2gypq1Xe3Q3MBLyncPB253LvvEJS",
           "chain": "solana",
           "wallet_score": 46.0,
-          "total_profit": 50129.43226558342,
+          "total_profit": 20017.936106745034,
           "win_rate": 1.0,
-          "avg_roi": 18.140630764271005,
-          "trade_count": 15,
-          "wallet_tags": "TOP19",
+          "avg_roi": 1.9609542833099272,
+          "trade_count": 7,
+          "wallet_tags": "TOP151",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "DpYuj2At1Z1tH4baoz5A1XV4AanjJa8bgbB51BWSZUyn",
+          "address": "97UQFX1ZwLynjAvoAia9rzMX5iMR3SaL1uDNC9xv1XD7",
           "chain": "solana",
           "wallet_score": 46.0,
-          "total_profit": 37964.44335216768,
+          "total_profit": 10545.21060314406,
           "win_rate": 1.0,
-          "avg_roi": 21.251692671872483,
-          "trade_count": 43,
-          "wallet_tags": "TOP98",
+          "avg_roi": 6.764414606382249,
+          "trade_count": 18,
+          "wallet_tags": "TOP131",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "GL9s7EA4XBSq4Qm3qJyrwYGdnMDHjo7BMGn8rBpaH6aC",
+          "address": "FtZmxudGnt3BoYo3AUxSypHcpuCw4DfprVFJMVzKz1wX",
           "chain": "solana",
           "wallet_score": 46.0,
-          "total_profit": 89730.76944040283,
+          "total_profit": 9016.216013746835,
           "win_rate": 1.0,
-          "avg_roi": 0.40208819744447094,
-          "trade_count": 85,
-          "wallet_tags": "TOP4,gmgn",
+          "avg_roi": 0.27187990469477774,
+          "trade_count": 64,
+          "wallet_tags": "TOP75",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "FeuXmotDkBEPCCzjydy2yi8QK17YFxoT2vrtMNMjZMUs",
+          "address": "8BDT8Jebp6Roda8QsALo7FQiZA5xq26HwS568qsrLFPQ",
           "chain": "solana",
           "wallet_score": 46.0,
-          "total_profit": 27805.36673721089,
+          "total_profit": 5655.851145621636,
           "win_rate": 1.0,
-          "avg_roi": 0.6010550648211649,
-          "trade_count": 265,
-          "wallet_tags": "TOP46",
+          "avg_roi": 0.12896475713543393,
+          "trade_count": 60,
+          "wallet_tags": "TOP49",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "3EKX2bfqj6hKNeM4yMxEDMZB4vGB9RmQcdovgQZb7GGQ",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 11156.117815441117,
-          "win_rate": 1.0,
-          "avg_roi": 0.1302304832700158,
-          "trade_count": 1288,
-          "wallet_tags": "TOP56,TOP47",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "6AZ1Wc123JNvXeLHVp26xtnGQuom2RjHiHS9VEknLVg3",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 28468.8008722404,
-          "win_rate": 1.0,
-          "avg_roi": 5.902025988130836,
-          "trade_count": 74,
-          "wallet_tags": "TOP85",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "4LuMD3Ymp1WvddSJpW1qDkvhh3CzCLd277Umyvnr9j8t",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 11693.39584565353,
-          "win_rate": 1.0,
-          "avg_roi": 0.2275920954576277,
-          "trade_count": 456,
-          "wallet_tags": "TOP40",
-          "tokens_held": 1,
-          "token_addresses": [
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
-          ]
-        },
-        {
-          "address": "2jpFfwXDP8LmXiMa2fHM45mrvXTjb8Ekg3THAFBGJtTM",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 10607.59898314916,
-          "win_rate": 1.0,
-          "avg_roi": 0.2482162371852819,
-          "trade_count": 420,
-          "wallet_tags": "TOP46",
-          "tokens_held": 1,
-          "token_addresses": [
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
-          ]
-        },
-        {
-          "address": "7curNz7wnvSPYoKGdY4bhu1crpR4jMqJqxiNrUBmsBJJ",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 94036.14258164071,
-          "win_rate": 1.0,
-          "avg_roi": 3.4342125456525663,
-          "trade_count": 20,
-          "wallet_tags": "TOP54",
-          "tokens_held": 1,
-          "token_addresses": [
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
-          ]
-        },
-        {
-          "address": "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
-          "chain": "solana",
-          "wallet_score": 45.0,
-          "total_profit": 9114.918217516959,
-          "win_rate": 1.0,
-          "avg_roi": 0.03586892189750701,
-          "trade_count": 2645,
-          "wallet_tags": "TOP18,TOP36,TOP24,TOP61,TOP20",
-          "tokens_held": 3,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
           ]
         },
         {
@@ -8595,45 +9228,74 @@
           ]
         },
         {
-          "address": "ALtB6ZhU51EQh9KtH4m3WoYdoTL8UoXoHxHY3fbhbb4u",
+          "address": "3MyAtbzyQdewGtHsugMCFy3VDyVQ5gX4jXwjVgcoHxjb",
           "chain": "solana",
           "wallet_score": 45.0,
-          "total_profit": 14802.355610180839,
+          "total_profit": 13506.705272284918,
           "win_rate": 1.0,
-          "avg_roi": 0.1973335802039944,
-          "trade_count": 174,
-          "wallet_tags": "TOP30,TOP118",
+          "avg_roi": 2.9671136691915083,
+          "trade_count": 28,
+          "wallet_tags": "TOP118",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "5rkSwEceTC6TxtQwzMVdsdmG4xs7u3iZMH3isU8tssdh",
+          "address": "7uJBVf86fvj6vHCqDdAtXYjscRZzZ4jfpj2AjDBicFSU",
           "chain": "solana",
           "wallet_score": 45.0,
-          "total_profit": 7199.471417467518,
+          "total_profit": 5515.3394040473395,
           "win_rate": 1.0,
-          "avg_roi": 0.10235158797068991,
-          "trade_count": 1355,
-          "wallet_tags": "TOP33,TOP14",
+          "avg_roi": 0.6812358911018616,
+          "trade_count": 85,
+          "wallet_tags": "TOP140",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
           ]
         },
         {
-          "address": "4RrRHzka841p8qfzyaFzna17iAMmVb1oVm2BiwJBZb2e",
+          "address": "AzffGgqDuv3eNmjM9cq4rEcLb9d1Na8uh9nrszFq3FYi",
+          "chain": "solana",
+          "wallet_score": 45.0,
+          "total_profit": 693.2170432489997,
+          "win_rate": 1.0,
+          "avg_roi": 0.05808062374175151,
+          "trade_count": 72,
+          "wallet_tags": "TOP175",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "AWGJqmxRRQ2ZAE82nnuPJ1BosCTQSTiNx8sg75bJ62Zb",
+          "chain": "solana",
+          "wallet_score": 45.0,
+          "total_profit": 4182.501915464797,
+          "win_rate": 1.0,
+          "avg_roi": 0.08811074507268475,
+          "trade_count": 142,
+          "wallet_tags": "TOP42",
+          "tokens_held": 1,
+          "token_addresses": [
+            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+          ]
+        },
+        {
+          "address": "JD38n7ynKYcgPpF7k1BhXEeREu1KqptU93fVGy3S624k",
           "chain": "solana",
           "wallet_score": 44.0,
-          "total_profit": 31674.61163115429,
+          "total_profit": 491.81552073344676,
           "win_rate": 1.0,
-          "avg_roi": 4.588210259141783,
-          "trade_count": 24,
-          "wallet_tags": "TOP142,TOP121",
-          "tokens_held": 1,
+          "avg_roi": 0.06416484502582918,
+          "trade_count": 777,
+          "wallet_tags": "sandwich_bot,TOP29",
+          "tokens_held": 2,
           "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
+            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
+            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
           ]
         },
         {
@@ -8693,499 +9355,9 @@
           ]
         },
         {
-          "address": "3WMGD3kBX9wcmVXeLiX8LJyrNQ66mnbdJb6oD6tNy3Zd",
-          "chain": "solana",
-          "wallet_score": 44.0,
-          "total_profit": 35912.88793743178,
-          "win_rate": 1.0,
-          "avg_roi": 13.721093954226387,
-          "trade_count": 37,
-          "wallet_tags": "TOP27",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "C92nBXrrANmWpgJKhBdbnqtUuCcoEZ7kQJoyScZ5sQak",
-          "chain": "solana",
-          "wallet_score": 44.0,
-          "total_profit": 29375.823080933216,
-          "win_rate": 1.0,
-          "avg_roi": 10.83719211950299,
-          "trade_count": 19,
-          "wallet_tags": "TOP164",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "2FDFZVGGkXbb9PzLu2PgPrMMN3dHcSJEqv95muKURxJF",
-          "chain": "solana",
-          "wallet_score": 44.0,
-          "total_profit": 6506.585159476679,
-          "win_rate": 1.0,
-          "avg_roi": 0.0941268937959489,
-          "trade_count": 1282,
-          "wallet_tags": "TOP37,TOP80",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "7UZXa24PHSQ7tegcEnrc45WS1yMVRf5NEcgX7MGLw4BE",
-          "chain": "solana",
-          "wallet_score": 43.0,
-          "total_profit": 15776.767566667335,
-          "win_rate": 1.0,
-          "avg_roi": 1.6610741988126032,
-          "trade_count": 1249,
-          "wallet_tags": "axiom,TOP95",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "GhBDNXvMZicfoCvxhCpJ2Tozc2PAwfqZsVRyxTKuhG5K",
-          "chain": "solana",
-          "wallet_score": 43.0,
-          "total_profit": 7586.054233497422,
-          "win_rate": 1.0,
-          "avg_roi": 0.1754104391210245,
-          "trade_count": 101,
-          "wallet_tags": "TOP76",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "BvhZDhhnsChEGFTBUcEUjeqAHoVkA16mTsydWCUHzKFs",
-          "chain": "solana",
-          "wallet_score": 43.0,
-          "total_profit": 2062.9668448059674,
-          "win_rate": 1.0,
-          "avg_roi": 0.01680760933192161,
-          "trade_count": 594,
-          "wallet_tags": "TOP16,TOP44",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "Gtt2r4imeZ7Vgda3qLrSKbjwUDRsnyiGSyhKBaU4LbaY",
-          "chain": "solana",
-          "wallet_score": 43.0,
-          "total_profit": 8633.210366270487,
-          "win_rate": 1.0,
-          "avg_roi": 0.23415035013292723,
-          "trade_count": 101,
-          "wallet_tags": "TOP66",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "5TXLUNXmMCd37ZurKQ8x6ih8frUBeXYLYiLdkfcPkUKL",
-          "chain": "solana",
-          "wallet_score": 42.0,
-          "total_profit": 12024.925264225287,
-          "win_rate": 1.0,
-          "avg_roi": 0.7696350336202589,
-          "trade_count": 133,
-          "wallet_tags": "trojan,TOP100",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "BeghwSP1Htiy1W7ZeD8G4Y3zyp5Dy8NGRgkpWiu3qDGM",
-          "chain": "solana",
-          "wallet_score": 42.0,
-          "total_profit": 12773.463323090356,
-          "win_rate": 1.0,
-          "avg_roi": 0.17368513073248487,
-          "trade_count": 95,
-          "wallet_tags": "TOP21",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "FVWWFyVNw25ViuXhqGjpM79H6uEyF4v6FSuESXArps3X",
-          "chain": "solana",
-          "wallet_score": 42.0,
-          "total_profit": 37561.28974569963,
-          "win_rate": 1.0,
-          "avg_roi": 7.948172630783773,
-          "trade_count": 26,
-          "wallet_tags": "TOP24",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "68NyL7wGz1SKBTJk1LbuT7b6TZ1tV4niLKGyDNmiEkS3",
-          "chain": "solana",
-          "wallet_score": 42.0,
-          "total_profit": 14561.916065075366,
-          "win_rate": 1.0,
-          "avg_roi": 1.6127409324894415,
-          "trade_count": 64,
-          "wallet_tags": "photon,TOP128",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "GBDosdE692mfFgZUQdPQ4Nae1xoBcT4MMJXVukniMZ6X",
-          "chain": "solana",
-          "wallet_score": 42.0,
-          "total_profit": 10755.041709933152,
-          "win_rate": 1.0,
-          "avg_roi": 0.15745728240515341,
-          "trade_count": 98,
-          "wallet_tags": "TOP25",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "FbXVMSGU8GcorT3M8eprQRAT3U9WYi1kciNH2XLX4rag",
-          "chain": "solana",
-          "wallet_score": 42.0,
-          "total_profit": 27536.555636984485,
-          "win_rate": 1.0,
-          "avg_roi": 1.416641510093115,
-          "trade_count": 64,
-          "wallet_tags": "TOP38",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "65zKYEKPhL2f3mVQudNw2BFXHRZccTszLrjPct6vfJmp",
-          "chain": "solana",
-          "wallet_score": 42.0,
-          "total_profit": 5309.03473039195,
-          "win_rate": 1.0,
-          "avg_roi": 0.12513274178891326,
-          "trade_count": 418,
-          "wallet_tags": "TOP47",
-          "tokens_held": 1,
-          "token_addresses": [
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
-          ]
-        },
-        {
-          "address": "AnVctBEoyEXviyAJbCg7u2GiKmYQBH7WscxwXN51BtYY",
-          "chain": "solana",
-          "wallet_score": 41.0,
-          "total_profit": 15571.685365574162,
-          "win_rate": 1.0,
-          "avg_roi": 3.7918237374877397,
-          "trade_count": 27,
-          "wallet_tags": "TOP161",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "5BBW7evNt3FNFj1By1yeMJXSMhCJhKAicwmUymLWCaVS",
-          "chain": "solana",
-          "wallet_score": 41.0,
-          "total_profit": 10763.547026236982,
-          "win_rate": 1.0,
-          "avg_roi": 0.4052580753441737,
-          "trade_count": 2181,
-          "wallet_tags": "axiom,TOP100",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "5iSYSrPjTFgN3fQsqmRpaDn16hJqfTbDUf3VtekPKPr1",
-          "chain": "solana",
-          "wallet_score": 41.0,
-          "total_profit": 37126.10810747442,
-          "win_rate": 1.0,
-          "avg_roi": 0.7827606286839264,
-          "trade_count": 97,
-          "wallet_tags": "TOP50",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "25t5GZQ1KfSwyz9es1d13R6YFXRbnYv7hNRh8E6ngReH",
-          "chain": "solana",
-          "wallet_score": 41.0,
-          "total_profit": 36470.25088889257,
-          "win_rate": 1.0,
-          "avg_roi": 2.4441688403325297,
-          "trade_count": 24,
-          "wallet_tags": "TOP55",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "9QbVWvQBvgdQr9gT46BroHXYnB9H7Ecx9nPoWHbzVWR5",
-          "chain": "solana",
-          "wallet_score": 41.0,
-          "total_profit": 15215.025320975728,
-          "win_rate": 1.0,
-          "avg_roi": 0.6270540523261702,
-          "trade_count": 61,
-          "wallet_tags": "TOP58",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "BDMkxtQZnF2itcKB4TzshuvSQ9v3feD5p8vy9Rqn7FPk",
-          "chain": "solana",
-          "wallet_score": 41.0,
-          "total_profit": 34232.427104566625,
-          "win_rate": 1.0,
-          "avg_roi": 1.5860173070340113,
-          "trade_count": 21,
-          "wallet_tags": "TOP101",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "AUn7v7iApbJfBUr6JBERQdeet8tmxouNZcn1hhQaq2Ca",
-          "chain": "solana",
-          "wallet_score": 41.0,
-          "total_profit": 5923.1785297392535,
-          "win_rate": 1.0,
-          "avg_roi": 0.07822788696803713,
-          "trade_count": 106,
-          "wallet_tags": "TOP159",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "5F45ZnX8rmCbSGWnLdNLvgaQFA8Q8P95TkV1ofzYP9Xw",
-          "chain": "solana",
-          "wallet_score": 40.0,
-          "total_profit": 36096.600119525574,
-          "win_rate": 1.0,
-          "avg_roi": 5.95538984943426,
-          "trade_count": 49,
-          "wallet_tags": "TOP29",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "BQ4nSMR51uSb7nmrmfo8oi299Ni3i6RVgEMbxnoXGiG7",
-          "chain": "solana",
-          "wallet_score": 40.0,
-          "total_profit": 30359.089861263452,
-          "win_rate": 1.0,
-          "avg_roi": 5.710341379308626,
-          "trade_count": 39,
-          "wallet_tags": "TOP37",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "DBA34VtQiUC78y6ZfdcBBpaNKief2nafnuPVfsvP1MBs",
-          "chain": "solana",
-          "wallet_score": 40.0,
-          "total_profit": 27412.468200276177,
-          "win_rate": 1.0,
-          "avg_roi": 3.0070694822837445,
-          "trade_count": 39,
-          "wallet_tags": "TOP39",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "7j4r4yjLEZNnsGzjfVMbG9BzzeziR7wJkz7UtqWzyv9S",
-          "chain": "solana",
-          "wallet_score": 40.0,
-          "total_profit": 4029.188491594478,
-          "win_rate": 1.0,
-          "avg_roi": 0.059577452120232854,
-          "trade_count": 4129,
-          "wallet_tags": "axiom,TOP27",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "2tynzFsSY5sUt5fTfWGx6siCKgFREUnp3NxdeuvHKLmx",
-          "chain": "solana",
-          "wallet_score": 40.0,
-          "total_profit": 3021.194404923555,
-          "win_rate": 1.0,
-          "avg_roi": 0.04930092852595628,
-          "trade_count": 4143,
-          "wallet_tags": "axiom,TOP33",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "ARKhSBBYU1zc587zywsmJdg15yU9B5bREqChPDQPu3bC",
-          "chain": "solana",
-          "wallet_score": 40.0,
-          "total_profit": 2776.0075351702653,
-          "win_rate": 1.0,
-          "avg_roi": 0.04632664910986949,
-          "trade_count": 4189,
-          "wallet_tags": "axiom,TOP35",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "4RCRqnt4FiaByWVvAbgp8v5vHZbdLRDAHXi9fKTwhoWi",
-          "chain": "solana",
-          "wallet_score": 40.0,
-          "total_profit": 2599.0445281994016,
-          "win_rate": 1.0,
-          "avg_roi": 0.047009942593566965,
-          "trade_count": 3840,
-          "wallet_tags": "axiom,TOP47",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "BJC14MphucxH1Kc7YZxzmHkSd95osUM5WzH54NFNrXEd",
-          "chain": "solana",
-          "wallet_score": 40.0,
-          "total_profit": 1762.0580222374433,
-          "win_rate": 1.0,
-          "avg_roi": 0.03288240314348295,
-          "trade_count": 3710,
-          "wallet_tags": "axiom,TOP50",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "GjdmHjPZQ7wY8R4CXFCCSJxxDDo8w8Xya1NjdRvoNDmJ",
-          "chain": "solana",
-          "wallet_score": 40.0,
-          "total_profit": 1033.9168657353866,
-          "win_rate": 1.0,
-          "avg_roi": 0.009919988190145484,
-          "trade_count": 222,
-          "wallet_tags": "TOP114",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "AccVJGCog5YCJ6J64CvxkQNGADLHUvc4ZjqBU1z56coq",
-          "chain": "solana",
-          "wallet_score": 40.0,
-          "total_profit": 14439.579327690115,
-          "win_rate": 1.0,
-          "avg_roi": 0.525925991670147,
-          "trade_count": 67,
-          "wallet_tags": "TOP94",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "HGtHqgqwKrC7giPURxcT5Pts5uB6iWCJKbXu25dzo4xN",
-          "chain": "solana",
-          "wallet_score": 39.0,
-          "total_profit": 12389.60923817495,
-          "win_rate": 1.0,
-          "avg_roi": 0.2822569520440936,
-          "trade_count": 98,
-          "wallet_tags": "TOP12",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "6cp1JBiNcgQPbLYVrLB9zBmFbTDTi44Y1cRT5x9yte5i",
-          "chain": "solana",
-          "wallet_score": 39.0,
-          "total_profit": 42698.02296209893,
-          "win_rate": 1.0,
-          "avg_roi": 29.015692547744113,
-          "trade_count": 2,
-          "wallet_tags": "TOP16",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "8qthL9tVhD1F2muvcEjXMp4sryW8fGYVw8SzMz6Qh8DZ",
-          "chain": "solana",
-          "wallet_score": 39.0,
-          "total_profit": 15883.193497721906,
-          "win_rate": 1.0,
-          "avg_roi": 1.085911261482393,
-          "trade_count": 87,
-          "wallet_tags": "TOP104",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "WASJf6MUEVqSJVn7Aubycr5n6cWXznv9mZj9LRQZie7",
-          "chain": "solana",
-          "wallet_score": 39.0,
-          "total_profit": 5712.729662197171,
-          "win_rate": 1.0,
-          "avg_roi": 0.15053316452172336,
-          "trade_count": 258,
-          "wallet_tags": "TOP79",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
           "address": "1eveYYxZ2mDiAnmCh3fnAbJwjgErzokRA1b6UrRybSM",
           "chain": "solana",
-          "wallet_score": 39.0,
+          "wallet_score": 44.0,
           "total_profit": 1531.30349635702,
           "win_rate": 1.0,
           "avg_roi": 0.022486074006762703,
@@ -9198,145 +9370,17 @@
           ]
         },
         {
-          "address": "7La7VK2zYG5f7fvbhXS4h7vddPvqHeYbrPhVNrx5bJB7",
+          "address": "65paNwPDtxtu7ze5VprZcjKGpyTBUvfjQfVjz4UcuVfN",
           "chain": "solana",
-          "wallet_score": 39.0,
-          "total_profit": 6777.351995407438,
+          "wallet_score": 44.0,
+          "total_profit": 9710.585184202644,
           "win_rate": 1.0,
-          "avg_roi": 0.3085702176318028,
-          "trade_count": 48,
-          "wallet_tags": "TOP116",
+          "avg_roi": 2.541977352149327,
+          "trade_count": 8,
+          "wallet_tags": "TOP134",
           "tokens_held": 1,
           "token_addresses": [
             "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "GVQ3Fuzf15FLsMmwarnxpPLfi6BF6mLJ1miEihQyEeHS",
-          "chain": "solana",
-          "wallet_score": 39.0,
-          "total_profit": 6282.379783010878,
-          "win_rate": 1.0,
-          "avg_roi": 0.2849033843794977,
-          "trade_count": 82,
-          "wallet_tags": "TOP156",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "8FdncLaqcYndRMphT2zkQ7EPwfT4ENiEuHZEHPYpa9Lu",
-          "chain": "solana",
-          "wallet_score": 39.0,
-          "total_profit": 10040.4169046965,
-          "win_rate": 1.0,
-          "avg_roi": 3.9192049614958333,
-          "trade_count": 11,
-          "wallet_tags": "TOP68",
-          "tokens_held": 1,
-          "token_addresses": [
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
-          ]
-        },
-        {
-          "address": "53LtLScuzsvjgC6wrYbTtGTMCnM85HRi21wDVezwtndZ",
-          "chain": "solana",
-          "wallet_score": 39.0,
-          "total_profit": 14940.180412080826,
-          "win_rate": 1.0,
-          "avg_roi": 0.16980728302429887,
-          "trade_count": 60,
-          "wallet_tags": "TOP89",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "CLKyaAHCk8AWkNbfPfoUexmmrs8LrtS1jBKWSbdoG8Dt",
-          "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 70008.83268570302,
-          "win_rate": 1.0,
-          "avg_roi": 3.990814099487149,
-          "trade_count": 53,
-          "wallet_tags": "TOP59,TOP8",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "JD25qVdtd65FoiXNmR89JjmoJdYk9sjYQeSTZAALFiMy",
-          "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 1216.73608553412,
-          "win_rate": 1.0,
-          "avg_roi": 0.12293010779978804,
-          "trade_count": 734,
-          "wallet_tags": "sandwich_bot,TOP49",
-          "tokens_held": 2,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
-          ]
-        },
-        {
-          "address": "CcPKcpMHyZSssavG9Dr84LiUy63HudeTqq4uiUxHwJBQ",
-          "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 38857.008559083566,
-          "win_rate": 1.0,
-          "avg_roi": 4.991036851905409,
-          "trade_count": 39,
-          "wallet_tags": "TOP26,trojan",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "A1yeLPryvwquujZsXvU1yamYRoWtqmfcbQA7pDqNVJej",
-          "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 463.9980780515689,
-          "win_rate": 1.0,
-          "avg_roi": 0.007852597354408481,
-          "trade_count": 4379,
-          "wallet_tags": "TOP39",
-          "tokens_held": 1,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump"
-          ]
-        },
-        {
-          "address": "2WHeT9bv8Javs5yRbynf4pnn5fNHvcSD4VEcXgcCVVRg",
-          "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 16811.126725738945,
-          "win_rate": 1.0,
-          "avg_roi": 4.49197484717654,
-          "trade_count": 44,
-          "wallet_tags": "gmgn,TOP81",
-          "tokens_held": 1,
-          "token_addresses": [
-            "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb"
-          ]
-        },
-        {
-          "address": "6AGp6zbGNuyZpmzeswv9KCNU15Rf37UQDqDqFAeHmS8d",
-          "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 4049.772557896222,
-          "win_rate": 1.0,
-          "avg_roi": 0.05646063739138635,
-          "trade_count": 1158,
-          "wallet_tags": "TOP93,TOP82,TOP100",
-          "tokens_held": 2,
-          "token_addresses": [
-            "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
-            "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump"
           ]
         }
       ]
@@ -9351,7 +9395,7 @@
           "chain": "solana",
           "symbol": "unc",
           "name": "unc",
-          "score": 42.0,
+          "score": 30.15,
           "channel_count": 3,
           "mentions": 4,
           "fdv": 12090230,
@@ -9386,6 +9430,8 @@
           "insider_count": 19,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 2.5
           },
           "tg_channel_count": 4,
@@ -9393,8 +9439,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.25,
-          "tg_first_mention_hours_ago": 115.2,
-          "tg_last_mention_minutes_ago": 2186.3,
+          "tg_first_mention_hours_ago": 116.2,
+          "tg_last_mention_minutes_ago": 2246.3,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
@@ -9431,6 +9477,34 @@
           ]
         },
         {
+          "address": "DtvmxrTACskMG2W8a6KXgSemUfvyNVeQTgfpJoGvMVKx",
+          "chain": "solana",
+          "wallet_score": 58.0,
+          "total_profit": 10921.625957621261,
+          "win_rate": 1.0,
+          "avg_roi": 0.05251739603626354,
+          "trade_count": 1808,
+          "wallet_tags": "TOP25,TOP55,TOP31,TOP35,TOP48",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "BVabVxQnsHCEWiapqMUFdatKmPQ6C2buvQ5xbbcBbokP",
+          "chain": "solana",
+          "wallet_score": 58.0,
+          "total_profit": 21418.579138920082,
+          "win_rate": 1.0,
+          "avg_roi": 0.24079215117127736,
+          "trade_count": 1325,
+          "wallet_tags": "TOP68,TOP27",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
           "address": "5NBhBhGe78Vonx1zJyV1wBjkZDtAAwLJzrFYaZmf2xLe",
           "chain": "solana",
           "wallet_score": 56.0,
@@ -9439,6 +9513,48 @@
           "avg_roi": 87.54203235737491,
           "trade_count": 36,
           "wallet_tags": "TOP40",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 27745.64227403131,
+          "win_rate": 1.0,
+          "avg_roi": 0.07270895009163393,
+          "trade_count": 2943,
+          "wallet_tags": "TOP17,TOP21,TOP9,TOP19,TOP44",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "gtagyESa99t49VmUqnnfsuowYnigSNKuYXdXWyXWNdd",
+          "chain": "solana",
+          "wallet_score": 56.0,
+          "total_profit": 12608.329806151654,
+          "win_rate": 1.0,
+          "avg_roi": 0.045058436923768194,
+          "trade_count": 4624,
+          "wallet_tags": "TOP18,TOP25,TOP31,TOP15,TOP32,sandwich_bot",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
+          "chain": "solana",
+          "wallet_score": 55.0,
+          "total_profit": 9114.918217516959,
+          "win_rate": 1.0,
+          "avg_roi": 0.03586892189750701,
+          "trade_count": 2645,
+          "wallet_tags": "TOP18,TOP36,TOP24,TOP61,TOP20",
           "tokens_held": 1,
           "token_addresses": [
             "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
@@ -9473,6 +9589,20 @@
           ]
         },
         {
+          "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
+          "chain": "solana",
+          "wallet_score": 54.0,
+          "total_profit": 16880.415062488384,
+          "win_rate": 1.0,
+          "avg_roi": 0.05474707871685697,
+          "trade_count": 2076,
+          "wallet_tags": "TOP52,TOP13,TOP62,TOP79,TOP44",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
           "address": "8ywWnooJjPCeHeYdy1Ek8YXipMoYrfrTj7puQxFhrzez",
           "chain": "solana",
           "wallet_score": 53.0,
@@ -9481,6 +9611,90 @@
           "avg_roi": 26.58767314558977,
           "trade_count": 41,
           "wallet_tags": "TOP20",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "82vDRwsebqxJWJPcnT9w6ECny8r2ry5EovP4Dkkt6phB",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 12499.91348182362,
+          "win_rate": 1.0,
+          "avg_roi": 0.11078952364579273,
+          "trade_count": 1291,
+          "wallet_tags": "TOP34,TOP28",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "FHJnj9y8yPeRnYMq3QWcgyyptm1Yz1ct3g4we4i6zux6",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 18326.189302272924,
+          "win_rate": 1.0,
+          "avg_roi": 0.27862640948625345,
+          "trade_count": 1343,
+          "wallet_tags": "TOP39,TOP75",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "JBVpuKD4cEVUjZ7conFwKZKzdpY92C1hzwCHYr99L54z",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 15080.017130211902,
+          "win_rate": 1.0,
+          "avg_roi": 0.09345306276459997,
+          "trade_count": 1581,
+          "wallet_tags": "TOP45,TOP57,TOP96,sandwich_bot,TOP42",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "5tra33amvzXwnnzgwtaYEofWJifwyRc5WcVGxKqtNkiy",
+          "chain": "solana",
+          "wallet_score": 53.0,
+          "total_profit": 12192.199248786832,
+          "win_rate": 1.0,
+          "avg_roi": 0.13094664866785094,
+          "trade_count": 1290,
+          "wallet_tags": "TOP36,TOP54",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "H6EtpNNizCppByyt5Jj5bmpm1GN9MMpBoycBzDhiWrQS",
+          "chain": "solana",
+          "wallet_score": 52.0,
+          "total_profit": 13300.248115287233,
+          "win_rate": 1.0,
+          "avg_roi": 0.24034791198131109,
+          "trade_count": 1331,
+          "wallet_tags": "TOP51,TOP84",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "66wniJpXzCF3DT4R9nuHWpdwNwLNUeTN1jLJLNkzCFJf",
+          "chain": "solana",
+          "wallet_score": 52.0,
+          "total_profit": 21069.83527411724,
+          "win_rate": 1.0,
+          "avg_roi": 0.2960348540201394,
+          "trade_count": 1287,
+          "wallet_tags": "TOP64,TOP55",
           "tokens_held": 1,
           "token_addresses": [
             "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
@@ -9529,6 +9743,34 @@
           ]
         },
         {
+          "address": "3EKX2bfqj6hKNeM4yMxEDMZB4vGB9RmQcdovgQZb7GGQ",
+          "chain": "solana",
+          "wallet_score": 51.0,
+          "total_profit": 11156.117815441117,
+          "win_rate": 1.0,
+          "avg_roi": 0.1302304832700158,
+          "trade_count": 1288,
+          "wallet_tags": "TOP56,TOP47",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "5rkSwEceTC6TxtQwzMVdsdmG4xs7u3iZMH3isU8tssdh",
+          "chain": "solana",
+          "wallet_score": 50.0,
+          "total_profit": 7199.471417467518,
+          "win_rate": 1.0,
+          "avg_roi": 0.10235158797068991,
+          "trade_count": 1355,
+          "wallet_tags": "TOP33,TOP14",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
           "address": "ALPBqLwzNKZP7586RjTFKSW8Yvk2y5bSSk7JCwTmP8Tp",
           "chain": "solana",
           "wallet_score": 50.0,
@@ -9557,14 +9799,28 @@
           ]
         },
         {
-          "address": "MRiYA4oN3158fCV8evhuCofrDzbHyYvYnGZUDJvoCsa",
+          "address": "C92nBXrrANmWpgJKhBdbnqtUuCcoEZ7kQJoyScZ5sQak",
           "chain": "solana",
           "wallet_score": 49.0,
-          "total_profit": 16880.415062488384,
+          "total_profit": 29375.823080933216,
           "win_rate": 1.0,
-          "avg_roi": 0.05474707871685697,
-          "trade_count": 2076,
-          "wallet_tags": "TOP52,TOP13,TOP62,TOP79,TOP44",
+          "avg_roi": 10.83719211950299,
+          "trade_count": 19,
+          "wallet_tags": "TOP164",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "2FDFZVGGkXbb9PzLu2PgPrMMN3dHcSJEqv95muKURxJF",
+          "chain": "solana",
+          "wallet_score": 49.0,
+          "total_profit": 6506.585159476679,
+          "win_rate": 1.0,
+          "avg_roi": 0.0941268937959489,
+          "trade_count": 1282,
+          "wallet_tags": "TOP37,TOP80",
           "tokens_held": 1,
           "token_addresses": [
             "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
@@ -9593,90 +9849,6 @@
           "avg_roi": 34.375708749279944,
           "trade_count": 52,
           "wallet_tags": "padre,TOP166",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "DtvmxrTACskMG2W8a6KXgSemUfvyNVeQTgfpJoGvMVKx",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 10921.625957621261,
-          "win_rate": 1.0,
-          "avg_roi": 0.05251739603626354,
-          "trade_count": 1808,
-          "wallet_tags": "TOP25,TOP55,TOP31,TOP35,TOP48",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "82vDRwsebqxJWJPcnT9w6ECny8r2ry5EovP4Dkkt6phB",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 12499.91348182362,
-          "win_rate": 1.0,
-          "avg_roi": 0.11078952364579273,
-          "trade_count": 1291,
-          "wallet_tags": "TOP34,TOP28",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "BVabVxQnsHCEWiapqMUFdatKmPQ6C2buvQ5xbbcBbokP",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 21418.579138920082,
-          "win_rate": 1.0,
-          "avg_roi": 0.24079215117127736,
-          "trade_count": 1325,
-          "wallet_tags": "TOP68,TOP27",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "FHJnj9y8yPeRnYMq3QWcgyyptm1Yz1ct3g4we4i6zux6",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 18326.189302272924,
-          "win_rate": 1.0,
-          "avg_roi": 0.27862640948625345,
-          "trade_count": 1343,
-          "wallet_tags": "TOP39,TOP75",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "JBVpuKD4cEVUjZ7conFwKZKzdpY92C1hzwCHYr99L54z",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 15080.017130211902,
-          "win_rate": 1.0,
-          "avg_roi": 0.09345306276459997,
-          "trade_count": 1581,
-          "wallet_tags": "TOP45,TOP57,TOP96,sandwich_bot,TOP42",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "5tra33amvzXwnnzgwtaYEofWJifwyRc5WcVGxKqtNkiy",
-          "chain": "solana",
-          "wallet_score": 48.0,
-          "total_profit": 12192.199248786832,
-          "win_rate": 1.0,
-          "avg_roi": 0.13094664866785094,
-          "trade_count": 1290,
-          "wallet_tags": "TOP36,TOP54",
           "tokens_held": 1,
           "token_addresses": [
             "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
@@ -9753,34 +9925,6 @@
           ]
         },
         {
-          "address": "H6EtpNNizCppByyt5Jj5bmpm1GN9MMpBoycBzDhiWrQS",
-          "chain": "solana",
-          "wallet_score": 47.0,
-          "total_profit": 13300.248115287233,
-          "win_rate": 1.0,
-          "avg_roi": 0.24034791198131109,
-          "trade_count": 1331,
-          "wallet_tags": "TOP51,TOP84",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "66wniJpXzCF3DT4R9nuHWpdwNwLNUeTN1jLJLNkzCFJf",
-          "chain": "solana",
-          "wallet_score": 47.0,
-          "total_profit": 21069.83527411724,
-          "win_rate": 1.0,
-          "avg_roi": 0.2960348540201394,
-          "trade_count": 1287,
-          "wallet_tags": "TOP64,TOP55",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
           "address": "HfPpwm8GQHttaBX8fZ7TZaFpJpcHFLVhpBhSvk1cxz9P",
           "chain": "solana",
           "wallet_score": 47.0,
@@ -9837,48 +9981,6 @@
           ]
         },
         {
-          "address": "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 27745.64227403131,
-          "win_rate": 1.0,
-          "avg_roi": 0.07270895009163393,
-          "trade_count": 2943,
-          "wallet_tags": "TOP17,TOP21,TOP9,TOP19,TOP44",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "gtagyESa99t49VmUqnnfsuowYnigSNKuYXdXWyXWNdd",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 12608.329806151654,
-          "win_rate": 1.0,
-          "avg_roi": 0.045058436923768194,
-          "trade_count": 4624,
-          "wallet_tags": "TOP18,TOP25,TOP31,TOP15,TOP32,sandwich_bot",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "3EKX2bfqj6hKNeM4yMxEDMZB4vGB9RmQcdovgQZb7GGQ",
-          "chain": "solana",
-          "wallet_score": 46.0,
-          "total_profit": 11156.117815441117,
-          "win_rate": 1.0,
-          "avg_roi": 0.1302304832700158,
-          "trade_count": 1288,
-          "wallet_tags": "TOP56,TOP47",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
           "address": "GWDrfkCdRUe3jBHATWBSHNsKdhdEyGKx9PBZscMxWDXr",
           "chain": "solana",
           "wallet_score": 46.0,
@@ -9915,34 +10017,6 @@
           "avg_roi": 7.328476028465343,
           "trade_count": 112,
           "wallet_tags": "TOP171,fresh_wallet",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
-          "chain": "solana",
-          "wallet_score": 45.0,
-          "total_profit": 9114.918217516959,
-          "win_rate": 1.0,
-          "avg_roi": 0.03586892189750701,
-          "trade_count": 2645,
-          "wallet_tags": "TOP18,TOP36,TOP24,TOP61,TOP20",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "5rkSwEceTC6TxtQwzMVdsdmG4xs7u3iZMH3isU8tssdh",
-          "chain": "solana",
-          "wallet_score": 45.0,
-          "total_profit": 7199.471417467518,
-          "win_rate": 1.0,
-          "avg_roi": 0.10235158797068991,
-          "trade_count": 1355,
-          "wallet_tags": "TOP33,TOP14",
           "tokens_held": 1,
           "token_addresses": [
             "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
@@ -10033,34 +10107,6 @@
           ]
         },
         {
-          "address": "C92nBXrrANmWpgJKhBdbnqtUuCcoEZ7kQJoyScZ5sQak",
-          "chain": "solana",
-          "wallet_score": 44.0,
-          "total_profit": 29375.823080933216,
-          "win_rate": 1.0,
-          "avg_roi": 10.83719211950299,
-          "trade_count": 19,
-          "wallet_tags": "TOP164",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "2FDFZVGGkXbb9PzLu2PgPrMMN3dHcSJEqv95muKURxJF",
-          "chain": "solana",
-          "wallet_score": 44.0,
-          "total_profit": 6506.585159476679,
-          "win_rate": 1.0,
-          "avg_roi": 0.0941268937959489,
-          "trade_count": 1282,
-          "wallet_tags": "TOP37,TOP80",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
           "address": "8GT5kWnRKyB5joUneovznffBY9Rzf9DxdBExsAWNGd2k",
           "chain": "solana",
           "wallet_score": 44.0,
@@ -10083,6 +10129,20 @@
           "avg_roi": 25.434255310408858,
           "trade_count": 9,
           "wallet_tags": "TOP151",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "6AGp6zbGNuyZpmzeswv9KCNU15Rf37UQDqDqFAeHmS8d",
+          "chain": "solana",
+          "wallet_score": 43.0,
+          "total_profit": 4049.772557896222,
+          "win_rate": 1.0,
+          "avg_roi": 0.05646063739138635,
+          "trade_count": 1158,
+          "wallet_tags": "TOP93,TOP82,TOP100",
           "tokens_held": 1,
           "token_addresses": [
             "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
@@ -10139,6 +10199,20 @@
           "avg_roi": 6.007311669427847,
           "trade_count": 32,
           "wallet_tags": "TOP94",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
+          "address": "8c3sWHwi96ZCP9rJqaRJUmCsYexbTHheGMaKth31m1m",
+          "chain": "solana",
+          "wallet_score": 43.0,
+          "total_profit": 3147.3055309296988,
+          "win_rate": 1.0,
+          "avg_roi": 0.027959801520106606,
+          "trade_count": 3714,
+          "wallet_tags": "sandwich_bot,TOP42,TOP15,TOP60",
           "tokens_held": 1,
           "token_addresses": [
             "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
@@ -10467,20 +10541,6 @@
           ]
         },
         {
-          "address": "6AGp6zbGNuyZpmzeswv9KCNU15Rf37UQDqDqFAeHmS8d",
-          "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 4049.772557896222,
-          "win_rate": 1.0,
-          "avg_roi": 0.05646063739138635,
-          "trade_count": 1158,
-          "wallet_tags": "TOP93,TOP82,TOP100",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
           "address": "HX3xUGb96BfsBScCa4ZY1dfsurppgRTYRSmBRcqw1Bee",
           "chain": "solana",
           "wallet_score": 38.0,
@@ -10559,20 +10619,6 @@
           "avg_roi": 2.72549186580941,
           "trade_count": 27,
           "wallet_tags": "TOP103",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
-        },
-        {
-          "address": "8c3sWHwi96ZCP9rJqaRJUmCsYexbTHheGMaKth31m1m",
-          "chain": "solana",
-          "wallet_score": 38.0,
-          "total_profit": 3147.3055309296988,
-          "win_rate": 1.0,
-          "avg_roi": 0.027959801520106606,
-          "trade_count": 3714,
-          "wallet_tags": "sandwich_bot,TOP42,TOP15,TOP60",
           "tokens_held": 1,
           "token_addresses": [
             "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
@@ -10705,6 +10751,20 @@
           ]
         },
         {
+          "address": "J6RAdBfWVoY3yvtJQnbiDcxbhFkAnfroHhMpGwze5bUv",
+          "chain": "solana",
+          "wallet_score": 36.0,
+          "total_profit": 2210.134087070524,
+          "win_rate": 1.0,
+          "avg_roi": 0.0888667975336298,
+          "trade_count": 69,
+          "wallet_tags": "TOP97",
+          "tokens_held": 1,
+          "token_addresses": [
+            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
+          ]
+        },
+        {
           "address": "4s4z8U5Z3Ss81vkPimF6sGXYxvsJfrrx6viPS5HQEx64",
           "chain": "solana",
           "wallet_score": 36.0,
@@ -10787,20 +10847,6 @@
           "token_addresses": [
             "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
           ]
-        },
-        {
-          "address": "AmNDwgNNYH4C5b2MJg66joSxR6XdRgJXkB1ywG8DMq8J",
-          "chain": "solana",
-          "wallet_score": 36.0,
-          "total_profit": 29657.203688785095,
-          "win_rate": 1.0,
-          "avg_roi": 56.5601714472514,
-          "trade_count": 8,
-          "wallet_tags": "TOP116",
-          "tokens_held": 1,
-          "token_addresses": [
-            "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump"
-          ]
         }
       ]
     },
@@ -10814,7 +10860,7 @@
           "chain": "ethereum",
           "symbol": "GENIUS",
           "name": "Genius",
-          "score": 2.0,
+          "score": 2.9,
           "channel_count": 2,
           "mentions": 3,
           "fdv": 525150889,
@@ -10836,6 +10882,8 @@
           "insider_count": 0,
           "sniper_count": 0,
           "social_details": {
+            "tg_velocity_pts": 0.0,
+            "tg_viral_pts": 0.0,
             "tg_quality_pts": 5.0
           },
           "tg_channel_count": 2,
@@ -10843,8 +10891,8 @@
           "tg_mention_velocity": 0,
           "tg_viral_score": 0,
           "tg_channel_quality": 0.5,
-          "tg_first_mention_hours_ago": 72.3,
-          "tg_last_mention_minutes_ago": 4243.5,
+          "tg_first_mention_hours_ago": 73.3,
+          "tg_last_mention_minutes_ago": 4303.6,
           "tw_mention_count": 0,
           "tw_sentiment_score": 0,
           "tw_trending_score": 0,
