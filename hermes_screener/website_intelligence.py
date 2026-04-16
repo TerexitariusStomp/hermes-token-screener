@@ -331,7 +331,7 @@ async def _analyze_all(
 
             website_data = await fetch_website_content(url, client)
             if not website_data or website_data.get("error"):
-                results[addr] = {"website_score": 0, "has_website": False, "error": website_data.get("error", "fetch failed")}
+                results[addr] = {"website_score": 0, "has_website": False, "error": (website_data or {}).get("error", "fetch failed")}
                 continue
 
             score, details = analyze_website_with_llm(website_data, trending_keywords, sym)

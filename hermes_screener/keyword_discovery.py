@@ -162,7 +162,7 @@ def extract_keywords_tfidf(texts: list[str], max_keywords: int = 10) -> list[tup
 
     # Tokenize all texts
     all_words = []
-    doc_freq = Counter()  # how many docs contain each word
+    doc_freq: Counter[str] = Counter()  # how many docs contain each word
     total_docs = len(texts)
 
     for text in texts:
@@ -331,7 +331,7 @@ def run_keyword_discovery(
     max_tokens_per_keyword: int = 10,
     hours_back: int = 24,
     use_llm: bool = True,
-    existing_addresses: set = None,
+    existing_addresses: set | None = None,
 ) -> dict[str, Any]:
     """
     Discover new tokens from trending social keywords.

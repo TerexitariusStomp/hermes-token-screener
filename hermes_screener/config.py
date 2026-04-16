@@ -34,32 +34,32 @@ class Settings(BaseSettings):
     )
 
     @computed_field
-    @property
+    @property  # type: ignore[misc]
     def db_path(self) -> Path:
         return self.hermes_home / "data" / "central_contracts.db"
 
     @computed_field
-    @property
+    @property  # type: ignore[misc]
     def wallets_db_path(self) -> Path:
         return self.hermes_home / "data" / "wallet_tracker.db"
 
     @computed_field
-    @property
+    @property  # type: ignore[misc]
     def output_path(self) -> Path:
         return self.hermes_home / "data" / "token_screener" / "top100.json"
 
     @computed_field
-    @property
+    @property  # type: ignore[misc]
     def log_dir(self) -> Path:
         return self.hermes_home / "logs"
 
     @computed_field
-    @property
+    @property  # type: ignore[misc]
     def session_path(self) -> Path:
         return self.hermes_home / ".telegram_session" / "hermes_user"
 
     @computed_field
-    @property
+    @property  # type: ignore[misc]
     def state_file(self) -> Path:
         return self.hermes_home / "data" / "tg_scraper_state.json"
 

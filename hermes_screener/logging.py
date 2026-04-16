@@ -86,7 +86,7 @@ def _configure_structlog() -> None:
 
     if settings.log_json:
         # Production: JSON lines (parseable by jq, Loki, ELK)
-        renderer = structlog.processors.JSONRenderer(ensure_ascii=False)
+        renderer: Any = structlog.processors.JSONRenderer(ensure_ascii=False)
     else:
         # Development: Rich console with colors
         renderer = structlog.dev.ConsoleRenderer(colors=True)
@@ -117,7 +117,7 @@ def _configure_structlog() -> None:
 @lru_cache(maxsize=64)
 def get_logger(name: str) -> structlog.stdlib.BoundLogger:
     """Get a named structlog logger. Cached per name."""
-    return structlog.get_logger(name)
+    return structlog.get_logger(name)  # type: ignore[no-any-return]
 
 
 @contextmanager

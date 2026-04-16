@@ -127,7 +127,7 @@ async def _fetch_all_holders_for_token(
     for batch in results:
         if isinstance(batch, Exception):
             continue
-        for h in batch:
+        for h in batch:  # type: ignore[union-attr]
             addr = h.get("address", "")
             if addr and addr not in seen:
                 seen.add(addr)

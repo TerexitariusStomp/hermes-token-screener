@@ -31,7 +31,7 @@ app = FastAPI(
 # DATA ACCESS
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def _load_top100() -> dict:
+def _load_top100() -> dict[str, Any]:
     path = settings.output_path
     if not path.exists():
         return {"tokens": [], "generated_at_iso": "Never", "total_candidates": 0}
@@ -429,7 +429,7 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
         return _page("Smart Money", "wallets", "<h1>Smart Money Wallets</h1><p class='sub'>Wallet DB not available</p>")
 
     q = "SELECT * FROM tracked_wallets WHERE wallet_score >= ?"
-    params = [min_score]
+    params: list[float | str] = [min_score]
     if chain:
         q += " AND chain = ?"
         params.append(chain)
@@ -796,7 +796,7 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
         return tokens  # Fallback: return tokens sorted by score
 
     # For each top wallet, get their token holdings
-    wallet_holdings = {}  # token_address -> set of wallet addresses
+    wallet_holdings: dict[str, set[str]] = {}  # token_address -> set of wallet addresses
     for w in top_wallets:
         addr = w["address"]
         held_tokens = _get_wallet_token_holdings(addr)
@@ -813,7 +813,7 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
 
     # Sort by wallet_count DESC, then score DESC
     tokens.sort(key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True)
-    return tokens
+    return tokens  # type: ignore[return-value]
 
 
 def _cross_reference_wallets_by_tokens() -> list[dict]:
