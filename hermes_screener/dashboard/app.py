@@ -977,7 +977,8 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
 
     # Sort by top_token_count DESC, then wallet_score DESC
     wallet_results.sort(
-        key=lambda w: (w.get("top_token_count", 0), w.get("wallet_score", 0)), reverse=True
+        key=lambda w: (w.get("top_token_count", 0), w.get("wallet_score", 0)),
+        reverse=True,
     )
     return wallet_results
 
@@ -1050,7 +1051,9 @@ async def cross_wallets():
         tc_cls = "sc-h" if tc >= 10 else "sc-m" if tc >= 5 else "sc-l"
         addr = w.get("address", "")
         profit = w.get("total_profit")
-        profit_cls = "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
+        profit_cls = (
+            "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
+        )
         top_tokens = w.get("top_tokens", [])
         token_badges = " ".join(
             f'<span class="tag tag-g">{t}</span>' for t in top_tokens[:6]
