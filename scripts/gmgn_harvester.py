@@ -25,7 +25,7 @@ DB_PATH = DATA_DIR / 'central_contracts.db'
 GMGN_CLI = str(Path.home() / '.hermes' / 'scripts' / 'gmgn-cli')
 GMGN_API_KEY = os.environ.get('GMGN_API_KEY', '')
 
-CHAINS = ['sol']  # GMGN primarily Solana
+CHAINS = ['sol', 'base', 'eth', 'bsc']  # GMGN multi-chain
 TRENCH_LIMIT = 30       # per category per chain
 TRENDING_LIMIT = 30     # per interval per chain
 TRENDING_INTERVALS = ['5m', '1h']
