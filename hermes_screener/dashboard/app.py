@@ -494,7 +494,7 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
 
         rows_html += f"""<tr>
   <td>{i}</td>
-  <td class="mono"><a href="/wallet/{w.get('address','')}">{_trunc(w.get('address',''))}</a></td>
+  <td class="mono"><a href="https://blockscan.com/address/{w.get('address','')}" target="_blank">{_trunc(w.get('address',''))}</a></td>
   <td><span class="badge {_chain_cls(w.get('chain',''))}">{w.get('chain','')}</span></td>
   <td class="sc {sc_cls}">{score:.0f}</td>
   <td class="{profit_cls}">{_fmt_usd(profit)}</td>
@@ -1003,7 +1003,7 @@ async def cross_tokens():
         addr = t.get("contract_address", "")
         holding_wallets = t.get("holding_wallets", [])
         wallet_links = ", ".join(
-            f'<a href="/wallet/{w}">{_trunc(w, 4)}</a>' for w in holding_wallets[:3]
+            f'<a href="https://blockscan.com/address/{w}" target="_blank">{_trunc(w, 4)}</a>' for w in holding_wallets[:3]
         )
 
         rows += f"""<tr>
@@ -1073,7 +1073,7 @@ async def cross_wallets():
 
         rows += f"""<tr>
   <td>{i}</td>
-  <td class="mono"><a href="/wallet/{addr}">{_trunc(addr)}</a></td>
+  <td class="mono"><a href="https://blockscan.com/address/{addr}" target="_blank">{_trunc(addr)}</a></td>
   <td><span class="badge {_chain_cls(w.get('chain',''))}">{w.get('chain','')}</span></td>
   <td class="sc {sc_cls}">{score:.0f}</td>
   <td class="sc {tc_cls}">{tc}</td>
