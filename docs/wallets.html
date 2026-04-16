@@ -17,7 +17,7 @@
 </div></nav>
 <div class="wrap">
 <h1>Smart Money Wallets</h1>
-<div class="sub">Top wallets ranked by trading performance score</div>
+<div class="sub">Top wallets ranked by trading performance, grouped by average token market cap</div>
 
 <div class="filters">
   <label>Chain
@@ -25,12 +25,35 @@
       <option value="">All Chains</option>
     </select>
   </label>
+  <label>Market Cap
+    <select id="filter-mcap">
+      <option value="">All</option>
+      <option value="< $50K">&lt; $50K</option>
+      <option value="$50K - $250K">$50K - $250K</option>
+      <option value="$250K - $1M">$250K - $1M</option>
+      <option value="$1M - $10M">$1M - $10M</option>
+      <option value="$10M - $100M">$10M - $100M</option>
+      <option value="$100M+">$100M+</option>
+    </select>
+  </label>
   <span class="filter-count" id="filter-count"></span>
 </div>
 
 <div id="loading">Loading data...</div>
 <div class="tbl" id="table-container" style="display:none"><table>
-<thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Score</th><th>Profit</th><th>Win Rate</th><th>ROI</th><th>Trades</th><th>Tags</th></tr></thead>
+<thead><tr>
+  <th>#</th>
+  <th data-sort="address">Wallet <span class="sort-arrow"></span></th>
+  <th data-sort="chain">Chain <span class="sort-arrow"></span></th>
+  <th data-sort="wallet_score">Score <span class="sort-arrow"></span></th>
+  <th data-sort="avg_fdv">Avg FDV <span class="sort-arrow"></span></th>
+  <th>MCap Tier</th>
+  <th data-sort="total_profit">Profit <span class="sort-arrow"></span></th>
+  <th data-sort="win_rate">Win Rate <span class="sort-arrow"></span></th>
+  <th data-sort="avg_roi">ROI <span class="sort-arrow"></span></th>
+  <th data-sort="total_trades">Trades <span class="sort-arrow"></span></th>
+  <th>Tags</th>
+</tr></thead>
 <tbody id="tbody"></tbody>
 </table></div>
 </div>
@@ -42,7 +65,13 @@ function chain_cls(c){c=(c||"").toLowerCase();return["solana","sol","base","ethe
 function chain_label(c){return{solana:"Solana",sol:"Solana",base:"Base",ethereum:"Ethereum",eth:"Ethereum",bsc:"BNB Chain",bnb:"BNB Chain",arbitrum:"Arbitrum",polygon:"Polygon","polygon-pos":"Polygon",avalanche:"Avalanche",sui:"Sui",optimism:"Optimism"}[(c||"").toLowerCase()]||c||"Unknown"}
 function block_url(addr,chain){chain=(chain||"").toLowerCase();if(chain==="solana"||chain==="sol")return"https://solscan.io/account/"+addr;if(chain==="base")return"https://basescan.org/address/"+addr;if(chain==="bsc"||chain==="bnb")return"https://bscscan.com/address/"+addr;if(chain==="arbitrum")return"https://arbiscan.io/address/"+addr;if(chain==="polygon"||chain==="polygon-pos")return"https://polygonscan.com/address/"+addr;if(chain==="avalanche")return"https://snowtrace.io/address/"+addr;if(chain==="optimism")return"https://optimistic.etherscan.io/address/"+addr;return"https://etherscan.io/address/"+addr}
 
-let ALL_WALLETS=[];
+let ALL_WALLETS=[], sortKey="wallet_score", sortDir=-1;
+
+function getVal(w,k){
+  if(k==="address")return(w.address||"").toLowerCase();
+  if(k==="chain")return(w.chain||"").toLowerCase();
+  return w[k]!=null?w[k]:0;
+}
 
 function renderWallets(wallets){
   const tbody=document.getElementById("tbody");
@@ -56,42 +85,73 @@ function renderWallets(wallets){
       const cls=t.trim() in{sniper:1,insider:1}?"tag-r":t.trim()==="smart"?"tag-g":"";
       return`<span class="tag ${cls}">${t.trim()}</span>`;
     }).join("");
+    const mcap_tier=w.mcap_tier||"\u2014";
     tbody.innerHTML+=`<tr>
   <td>${i+1}</td>
   <td class="mono"><a href="${block_url(w.address,w.chain)}" target="_blank">${trunc(w.address)}</a></td>
   <td><span class="badge ${chain_cls(w.chain||"")}">${chain_label(w.chain)}</span></td>
   <td class="sc ${sc_cls}">${score.toFixed(0)}</td>
+  <td>${fmt_usd(w.avg_fdv)}</td>
+  <td><span class="tag tag-y">${mcap_tier}</span></td>
   <td class="${profit_cls}">${fmt_usd(profit)}</td>
   <td>${w.win_rate!=null?(w.win_rate*100).toFixed(1)+"%":"\u2014"}</td>
   <td>${w.avg_roi!=null?w.avg_roi.toFixed(1)+"%":"\u2014"}</td>
-  <td>${w.trade_count||0}</td>
+  <td>${w.total_trades||0}</td>
   <td>${tags}</td>
 </tr>`;
   });
 }
 
 function applyFilters(){
-  const chain=document.getElementById("filter-chain").value.toLowerCase();
-  const filtered=chain?ALL_WALLETS.filter(w=>(w.chain||"").toLowerCase()===chain):ALL_WALLETS;
+  const chain=document.getElementById("filter-chain").value;
+  const mcap=document.getElementById("filter-mcap").value;
+  let filtered=ALL_WALLETS.filter(w=>{
+    if(chain && chain_label(w.chain)!==chain && (w.chain||"").toLowerCase()!==chain.toLowerCase())return false;
+    if(mcap && (w.mcap_tier||"")!==mcap)return false;
+    return true;
+  });
+  // Sort preserving prioritization: by selected key, then by wallet_score as tiebreaker
+  filtered.sort((a,b)=>{
+    let va=getVal(a,sortKey),vb=getVal(b,sortKey);
+    if(typeof va==="string"){
+      const cmp=sortDir*va.localeCompare(vb);
+      return cmp!==0?cmp:(b.wallet_score||0)-(a.wallet_score||0);
+    }
+    const cmp=sortDir*(va-vb);
+    return cmp!==0?cmp:(b.wallet_score||0)-(a.wallet_score||0);
+  });
   renderWallets(filtered);
   document.getElementById("filter-count").textContent=filtered.length+" of "+ALL_WALLETS.length+" wallets";
 }
 
+document.querySelectorAll("th[data-sort]").forEach(th=>{
+  th.style.cursor="pointer";
+  th.addEventListener("click",()=>{
+    const key=th.dataset.sort;
+    if(sortKey===key)sortDir*=-1;
+    else{sortKey=key;sortDir=key==="address"||key==="chain"?1:-1;}
+    document.querySelectorAll("th[data-sort]").forEach(h=>h.querySelector(".sort-arrow").textContent="");
+    th.querySelector(".sort-arrow").textContent=sortDir>0?" \u25B2":" \u25BC";
+    applyFilters();
+  });
+});
+
+document.getElementById("filter-chain").addEventListener("change",applyFilters);
+document.getElementById("filter-mcap").addEventListener("change",applyFilters);
+
 fetch("data/wallets.json").then(r=>r.json()).then(data=>{
   ALL_WALLETS=data.wallets||[];
-  // Populate chain filter
-  const chains=new Set(ALL_WALLETS.map(w=>(w.chain||"").toLowerCase()).filter(Boolean));
+  const chains=new Set(ALL_WALLETS.map(w=>chain_label(w.chain)).filter(Boolean));
   const sel=document.getElementById("filter-chain");
   [...chains].sort().forEach(c=>{
     const opt=document.createElement("option");
-    opt.value=c; opt.textContent=chain_label(c);
+    opt.value=c; opt.textContent=c;
     sel.appendChild(opt);
   });
-  sel.addEventListener("change",applyFilters);
   applyFilters();
   document.getElementById("loading").style.display="none";
   document.getElementById("table-container").style.display="";
-  document.getElementById("updated").textContent="Last updated: "+new Date().toISOString().slice(0,16);
+  document.getElementById("updated").textContent="Data: "+(data.generated_at_iso||"Unknown");
 }).catch(e=>{
   document.getElementById("loading").textContent="Error: "+e.message;
 });

@@ -11,7 +11,6 @@ Usage:
 """
 
 import json
-import os
 import sqlite3
 import sys
 from pathlib import Path
@@ -132,12 +131,39 @@ def export_tokens():
 
 
 def export_wallets():
-    """Export top wallets for GitHub Pages."""
+    """Export top wallets for GitHub Pages with market cap tier classification."""
+    from datetime import datetime, timezone
+
     db_path = settings.wallets_db_path
     if not db_path.exists():
         print(f"WARNING: {db_path} not found, creating empty data")
         data = {"wallets": [], "generated_at_iso": "No data available"}
     else:
+        # Load token data for FDV-based tier classification
+        data_dir = settings.output_path.parent
+        candidates = [
+            data_dir / "top100_phase4_social.json",
+            data_dir / "top100_phase3_smartmoney.json",
+            data_dir / "top100_phase1_initial.json",
+            settings.output_path,
+        ]
+        token_fdv = {}
+        for src in candidates:
+            if src.exists():
+                with open(src) as f:
+                    raw = json.load(f)
+                toks = raw.get("tokens") or raw.get("top_tokens") or []
+                if toks and toks[0].get("contract_address"):
+                    for t in toks:
+                        addr = t.get("contract_address", "")
+                        if addr:
+                            fdv = t.get("fdv") or t.get("market_cap") or 0
+                            t_chain = normalize_chain(
+                                t.get("chain", ""), t.get("dex_url", "")
+                            )
+                            token_fdv[addr] = {"fdv": fdv, "chain": t_chain}
+                    break
+
         conn = sqlite3.connect(str(db_path))
         conn.row_factory = sqlite3.Row
         try:
@@ -146,22 +172,51 @@ def export_wallets():
                 "ORDER BY wallet_score DESC LIMIT 200"
             ).fetchall()
             wallets = [dict(r) for r in rows]
-            # Sort by composite: prioritize high ROI, high win rate, more trades
+
+            # Enrich each wallet with avg_fdv and mcap_tier
+            for w in wallets:
+                w_addr = w.get("address", "")
+                # Get tokens this wallet has traded
+                held_rows = conn.execute(
+                    "SELECT token_address FROM wallet_token_entries "
+                    "WHERE wallet_address = ? AND token_address IS NOT NULL",
+                    (w_addr,),
+                ).fetchall()
+                held_fdvs = []
+                held_chains = set()
+                for r in held_rows:
+                    t_addr = r[0]
+                    if t_addr and t_addr in token_fdv:
+                        held_fdvs.append(token_fdv[t_addr]["fdv"])
+                        c = token_fdv[t_addr]["chain"]
+                        if c and c != "unknown":
+                            held_chains.add(c)
+
+                avg_fdv = sum(held_fdvs) / len(held_fdvs) if held_fdvs else 0
+                w["avg_fdv"] = round(avg_fdv)
+                w["mcap_tier"] = mcap_tier_label(avg_fdv)
+                # Normalize chain
+                w["chain"] = normalize_chain(w.get("chain", ""))
+                if w["chain"] == "unknown" and held_chains:
+                    w["chain"] = sorted(held_chains)[0]
+
+            # Sort: prioritize by mcap_tier buckets first, then by composite score within each
+            # This groups wallets by market cap range for better browsing
             wallets.sort(
                 key=lambda w: (
-                    (max(0.1, w.get("win_rate", 0) or 0))
-                    * (1 + min(w.get("avg_roi", 0) or 0, 10))
-                    * min(w.get("total_trades", 0), 100)
+                    mcap_tier_key(w.get("avg_fdv", 0)),
+                    -(
+                        (max(0.1, w.get("win_rate", 0) or 0))
+                        * (1 + min(w.get("avg_roi", 0) or 0, 10))
+                        * min(w.get("total_trades", 0), 100)
+                    ),
                 ),
-                reverse=True,
             )
         except Exception as e:
             print(f"ERROR reading wallets: {e}")
             wallets = []
         finally:
             conn.close()
-
-        from datetime import datetime, timezone
 
         data = {
             "wallets": wallets,
