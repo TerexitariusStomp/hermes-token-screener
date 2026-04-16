@@ -102,16 +102,30 @@ def export_wallets():
 
 def export_cross_tokens():
     """Export tokens ranked by wallet count for GitHub Pages."""
-    # Load tokens
-    src = settings.output_path
-    if not src.exists():
-        print("No token data, skipping cross-tokens")
+    # Load tokens from enriched data source
+    data_dir = settings.output_path.parent
+    candidates = [
+        data_dir / "top100_phase4_social.json",
+        data_dir / "top100_phase3_smartmoney.json",
+        data_dir / "top100_phase1_initial.json",
+        settings.output_path,
+    ]
+
+    tokens = []
+    for src in candidates:
+        if src.exists():
+            with open(src) as f:
+                raw = json.load(f)
+            candidate_tokens = raw.get("tokens") or raw.get("top_tokens") or []
+            if candidate_tokens and candidate_tokens[0].get("contract_address"):
+                tokens = candidate_tokens
+                print(f"Cross-tokens: using {src.name}")
+                break
+
+    if not tokens:
+        print("No enriched token data, skipping cross-tokens")
         return
-    
-    with open(src) as f:
-        token_data = json.load(f)
-    tokens = token_data.get("tokens") or token_data.get("top_tokens") or []
-    
+
     # Get wallet holdings
     db_path = settings.wallets_db_path
     if not db_path.exists():
@@ -170,17 +184,32 @@ def export_cross_tokens():
 
 def export_cross_wallets():
     """Export wallets ranked by top token count for GitHub Pages."""
-    # Load tokens
-    src = settings.output_path
-    if not src.exists():
-        print("No token data, skipping cross-wallets")
+    # Load tokens from enriched data source
+    data_dir = settings.output_path.parent
+    candidates = [
+        data_dir / "top100_phase4_social.json",
+        data_dir / "top100_phase3_smartmoney.json",
+        data_dir / "top100_phase1_initial.json",
+        settings.output_path,
+    ]
+
+    tokens = []
+    for src in candidates:
+        if src.exists():
+            with open(src) as f:
+                raw = json.load(f)
+            candidate_tokens = raw.get("tokens") or raw.get("top_tokens") or []
+            if candidate_tokens and candidate_tokens[0].get("contract_address"):
+                tokens = candidate_tokens
+                print(f"Cross-wallets: using {src.name}")
+                break
+
+    if not tokens:
+        print("No enriched token data, skipping cross-wallets")
         return
-    
-    with open(src) as f:
-        token_data = json.load(f)
-    tokens = token_data.get("tokens") or token_data.get("top_tokens") or []
+
     top_token_addrs = {t.get("contract_address", "") for t in tokens if t.get("contract_address")}
-    
+
     # Get wallets
     db_path = settings.wallets_db_path
     if not db_path.exists():
