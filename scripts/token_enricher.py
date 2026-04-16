@@ -4,15 +4,15 @@ Token Enricher - Unified multi-source enrichment pipeline with resilient try/byp
 
 Consolidates all data sources into one self-contained script:
   Layer 0: Dexscreener (core market data)         [REQUIRED - pipeline stops if this fails]
-  Layer 1: Surf (market context + social)          [optional]
   Layer 2: GoPlus (EVM security)                   [optional]
   Layer 3: RugCheck (Solana security)              [optional]
   Layer 4: Etherscan (contract verification)       [optional]
   Layer 5: De.Fi (security analysis)               [optional]
-  Layer 6: Derived (computed security signals)     [optional, no API needed]
-  Layer 7: CoinGecko (market data + listings)      [optional]
-  Layer 8: GMGN (dev conviction + smart money)     [optional]
-  Layer 9: Social (Telegram DB + composite score)  [optional, no API needed]
+  Layer 6: Derived (computed signals)              [optional]
+  Layer 7: CoinGecko (market data)                 [optional]
+  Layer 8: GMGN (smart money + token security)     [optional]
+  Layer 9: Social (Telegram DB)                    [optional]
+  Layer 12: Mobula (organic ratio)                 [optional]
 
 Design: Each enricher is tried. If it fails, its fields are skipped but the
 pipeline continues. Status of each layer is logged and reported in output.
@@ -272,12 +272,6 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
         score *= 1.08
         positives.append("COINBASE")
 
-    # Surf trending
-    trending_rank = token.get('surf_trending_rank')
-    if trending_rank is not None and trending_rank <= 5:
-        score *= 1.15
-        positives.append(f"TRENDING #{trending_rank}")
-
     # Volume penalties
     buys_h1 = (dex.get('txns_h1', {}) or {}).get('buys', 0) or 0
     sells_h1 = (dex.get('txns_h1', {}) or {}).get('sells', 0) or 0
@@ -387,16 +381,7 @@ def run_enricher():
 
     # ── Optional enrichers (try/bypass) ──
 
-    # Layer 1: Surf
-    log.info("Layer 1: Surf (market context + social)...")
-    start = time.time()
-    try:
-        surf = SurfEnricher()
-        _, count = surf.enrich_batch(enriched)
-        status.record('Surf', True, count, len(enriched), elapsed=time.time() - start)
-    except Exception as e:
-        status.record('Surf', False, 0, len(enriched), str(e), time.time() - start)
-
+    # Layer 1: Surf — REMOVED (doesn't track Solana meme tokens)
     # Layer 2: GoPlus
     log.info("Layer 2: GoPlus (EVM security)...")
     start = time.time()
