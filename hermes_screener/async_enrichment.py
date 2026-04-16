@@ -156,6 +156,21 @@ class AsyncDexscreenerEnricher:
                 ds_chain = best.get("chainId", "")
                 if ds_chain and ds_chain != token.get("chain", ""):
                     token["chain"] = ds_chain
+
+                # Extract social links from Dexscreener info
+                info = best.get("info", {})
+                socials = info.get("socials", [])
+                websites = info.get("websites", [])
+                for s in socials:
+                    stype = s.get("type", "")
+                    surl = s.get("url", "")
+                    if stype == "twitter":
+                        dex_data["twitter_url"] = surl
+                    elif stype == "telegram":
+                        dex_data["telegram_url"] = surl
+                if websites:
+                    dex_data["website_url"] = websites[0].get("url", "")
+
                 return {**token, "dex": dex_data}
             except Exception as e:
                 metrics.api_calls.labels(provider="dexscreener", status="error").inc()

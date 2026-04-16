@@ -103,7 +103,11 @@ function getTokens(){
 
 const TC=[
   {k:'#',f:(t,i)=>i+1},
-  {k:'symbol',f:t=>'<strong>'+((t.symbol||'?'))+'</strong>'},
+  {k:'symbol',f:t=>{
+    const url=t.twitter_url||t.dex_url||'';
+    const sym=t.symbol||'?';
+    return url?'<a href="'+url+'" target="_blank"><strong>'+sym+'</strong></a>':'<strong>'+sym+'</strong>';
+  }},
   {k:'chain',f:t=>'<span class="badge '+chainCls(t.chain)+'">'+(t.chain||'')+'</span>'},
   {k:'address',f:t=>{
     const addr=t.contract_address||'';

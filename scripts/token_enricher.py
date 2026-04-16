@@ -494,6 +494,9 @@ def run_enricher():
             'positives': pos,
             'negatives': neg,
             'dex_url': f"https://dexscreener.com/{token['chain']}/{token['contract_address']}",
+            'twitter_url': dex.get('twitter_url', ''),
+            'telegram_url': dex.get('telegram_url', ''),
+            'website_url': dex.get('website_url', ''),
         })
 
     scored.sort(key=lambda x: x['score'], reverse=True)
