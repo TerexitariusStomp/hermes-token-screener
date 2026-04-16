@@ -26,13 +26,30 @@ DOCS_DATA = Path(__file__).parent.parent / "docs" / "data"
 
 def export_tokens():
     """Export top100.json for GitHub Pages."""
-    src = settings.output_path
-    if not src.exists():
-        print(f"WARNING: {src} not found, creating empty data")
+    # Prefer the enriched phase files over the raw top100.json
+    data_dir = settings.output_path.parent
+    candidates = [
+        data_dir / "top100_phase4_social.json",
+        data_dir / "top100_phase3_smartmoney.json",
+        data_dir / "top100_phase1_initial.json",
+        settings.output_path,
+    ]
+
+    data = None
+    for src in candidates:
+        if src.exists():
+            with open(src) as f:
+                raw = json.load(f)
+            # Check if it has the enriched format (contract_address field)
+            tokens = raw.get("tokens") or raw.get("top_tokens") or []
+            if tokens and tokens[0].get("contract_address"):
+                data = raw
+                print(f"Using enriched data from {src.name}")
+                break
+
+    if not data:
+        print("No enriched token data found, creating empty data")
         data = {"tokens": [], "generated_at_iso": "No data available", "total_candidates": 0}
-    else:
-        with open(src) as f:
-            data = json.load(f)
 
     # Handle both "tokens" and "top_tokens" key names
     tokens = data.get("tokens") or data.get("top_tokens") or []
