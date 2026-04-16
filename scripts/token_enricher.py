@@ -1363,102 +1363,107 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
     positives = []
     negatives = []
 
-    # 1. Cross-channel calls + social momentum (0-35)
-    social_score = token.get('social_score', 0)
-    channel_count = token.get('channel_count', 0)
-    if social_score:
-        score += social_score * 0.35
-        if token.get('social_hot'):
-            positives.append(f"social HOT (ch={channel_count})")
-        elif channel_count >= 5:
-            positives.append(f"called in {channel_count} channels")
-    else:
-        score += min(25, 5 + (math.log2(max(1, channel_count)) * 7))
+    # ── DISQUALIFIERS (return 0 immediately) ──
+    if token.get('gmgn_honeypot'):
+        return 0, [], ["HONEYPOT"]
+    if token.get('goplus_is_honeypot'):
+        return 0, [], ["HONEYPOT (GoPlus)"]
+    if token.get('rugcheck_rugged'):
+        return 0, [], ["RUGGED"]
+    if token.get('defi_scammed'):
+        return 0, [], ["SCAMMED"]
+    if token.get('derived_possible_rug'):
+        return 0, [], ["POSSIBLE RUG"]
+    if token.get('derived_massive_dump'):
+        return 0, [], ["MASSIVE DUMP"]
 
-    # 2. Freshness (0-15)
-    age_hours = dex.get('age_hours')
-    if age_hours is not None:
-        if age_hours < 6: freshness = 15
-        elif age_hours < 24: freshness = 12
-        elif age_hours < 72: freshness = 8
-        elif age_hours < 168: freshness = 4
-        else: freshness = 1
-        score += freshness
-
-    # 3. Low FDV (0-15)
-    fdv = dex.get('fdv') or dex.get('market_cap')
-    if fdv and fdv > 0:
-        if fdv < 50_000: fdv_score = 15
-        elif fdv < 200_000: fdv_score = 12
-        elif fdv < 1_000_000: fdv_score = 9
-        elif fdv < 5_000_000: fdv_score = 6
-        elif fdv < 50_000_000: fdv_score = 3
-        else: fdv_score = 1
-        score += fdv_score
-
-    # 4. Volume (0-20)
-    vol_h24 = dex.get('volume_h24', 0) or 0
-    vol_h1 = dex.get('volume_h1', 0) or 0
-    vol_m5 = dex.get('volume_m5', 0) or 0
-
-    if vol_h24 > 0:
-        if vol_h24 > 500_000: vol_abs = 10
-        elif vol_h24 > 100_000: vol_abs = 8
-        elif vol_h24 > 25_000: vol_abs = 6
-        elif vol_h24 > 5_000: vol_abs = 4
-        elif vol_h24 > 1_000: vol_abs = 2
-        else: vol_abs = 1
-
-        vol_h1_ratio = (vol_h1 * 24) / vol_h24 if vol_h24 > 0 else 0
-        if vol_h1_ratio > 3: vol_accel = 10
-        elif vol_h1_ratio > 1.5: vol_accel = 7
-        elif vol_h1_ratio > 0.5: vol_accel = 4
-        elif vol_m5 > 0: vol_accel = 2
-        else: vol_accel = 0
-
-        score += vol_abs + vol_accel
-
-    # 5. Transaction activity + buy ratio (0-15)
-    txns_h1 = dex.get('txns_h1', {})
-    txns_h6 = dex.get('txns_h6', {})
-    txns_h24 = dex.get('txns_h24', {})
-    buys_h1 = txns_h1.get('buys', 0) or 0
-    sells_h1 = txns_h1.get('sells', 0) or 0
-    buys_h6 = txns_h6.get('buys', 0) or 0
-    sells_h6 = txns_h6.get('sells', 0) or 0
-    buys_h24 = txns_h24.get('buys', 0) or 0
-    sells_h24 = txns_h24.get('sells', 0) or 0
-    total_h24 = buys_h24 + sells_h24
-
-    if total_h24 > 0:
-        if total_h24 > 500: txn_score = 7
-        elif total_h24 > 100: txn_score = 5
-        elif total_h24 > 30: txn_score = 3
-        else: txn_score = 1
-
-        buy_ratio = buys_h24 / total_h24
-        if buy_ratio > 0.7: buy_score = 8
-        elif buy_ratio > 0.6: buy_score = 6
-        elif buy_ratio > 0.5: buy_score = 4
-        elif buy_ratio > 0.4: buy_score = 2
-        else: buy_score = 0
-
-        score += txn_score + buy_score
-
-    # 6. Price momentum (0-10)
     pc_h1 = dex.get('price_change_h1')
     pc_h6 = dex.get('price_change_h6')
     pc_h24 = dex.get('price_change_h24')
-    momentum = 0
-    if pc_h1 is not None and pc_h1 > 0: momentum += 3
-    if pc_h6 is not None and pc_h6 > 0: momentum += 3
-    if pc_h24 is not None and pc_h24 > 10: momentum += 4
-    elif pc_h24 is not None and pc_h24 > 0: momentum += 2
-    score += momentum
+    fdv = dex.get('fdv') or dex.get('market_cap') or 0
+    vol_h24 = dex.get('volume_h24', 0) or 0
+    vol_h1 = dex.get('volume_h1', 0) or 0
+    age_hours = dex.get('age_hours')
+    channel_count = token.get('channel_count', 0)
+    mentions = token.get('mentions', 0)
+    smart = token.get('gmgn_smart_wallets', 0)
 
-    # ── STEEP DECLINE PENALTIES (price collapse = unlikely to recover) ──
+    # ── 1. FDV/VOLUME RATIO (0-25) ──
+    # Low FDV + high volume = high opportunity
+    if fdv > 0 and vol_h24 > 0:
+        vol_fdv_ratio = vol_h24 / fdv
+        if vol_fdv_ratio > 2: fdv_vol_score = 25      # FDV $100K, vol $200K+
+        elif vol_fdv_ratio > 1: fdv_vol_score = 22
+        elif vol_fdv_ratio > 0.5: fdv_vol_score = 18
+        elif vol_fdv_ratio > 0.2: fdv_vol_score = 14
+        elif vol_fdv_ratio > 0.05: fdv_vol_score = 10
+        else: fdv_vol_score = 5
+        score += fdv_vol_score
+    elif fdv > 0:
+        # Low FDV alone is good
+        if fdv < 50_000: score += 12
+        elif fdv < 200_000: score += 9
+        elif fdv < 1_000_000: score += 6
+        elif fdv < 5_000_000: score += 3
 
-    # Rapid crash in h1 (steep sell-off, rug in progress)
+    # ── 2. CHANNELS + MENTIONS (0-20) ──
+    # More channels mentioning = more legitimate discovery
+    if channel_count >= 10: score += 12
+    elif channel_count >= 5: score += 9
+    elif channel_count >= 3: score += 6
+    elif channel_count >= 2: score += 3
+
+    if mentions >= 10: score += 8
+    elif mentions >= 5: score += 6
+    elif mentions >= 3: score += 4
+    elif mentions >= 1: score += 2
+
+    # ── 3. SMART WALLETS (0-15) ──
+    if smart >= 50: score += 15
+    elif smart >= 30: score += 12
+    elif smart >= 20: score += 10
+    elif smart >= 10: score += 7
+    elif smart >= 5: score += 4
+    elif smart >= 1: score += 2
+
+    # ── 4. DEV HOLDING (0-10) ──
+    if token.get('gmgn_dev_hold'):
+        score += 10
+    dev_rate = token.get('gmgn_dev_team_hold_rate')
+    if dev_rate is not None and dev_rate > 0.05:
+        score += 3
+
+    # ── 5. SOCIAL SIGNALS (0-10) ──
+    tw_sent = token.get('tw_sentiment_score', 0) or 0
+    social = token.get('social_score', 0) or 0
+    if tw_sent > 70: score += 5
+    elif tw_sent > 50: score += 3
+    if social > 20: score += 5
+    elif social > 10: score += 3
+    elif social > 5: score += 1
+
+    # ── 6. PRICE MOMENTUM (0-10) ──
+    # Positive % on ALL timeframes = strong bullish
+    all_positive = True
+    if pc_h1 is not None:
+        if pc_h1 > 0: score += 3
+        else: all_positive = False
+    if pc_h6 is not None:
+        if pc_h6 > 0: score += 3
+        else: all_positive = False
+    if pc_h24 is not None:
+        if pc_h24 > 0: score += 2
+        else: all_positive = False
+    if all_positive and pc_h1 and pc_h6 and pc_h24:
+        score += 2  # bonus for all-positive
+
+    # ── 7. AGE PENALTY (older = harder to move) ──
+    if age_hours is not None:
+        if age_hours > 720: score *= 0.5        # >30 days
+        elif age_hours > 168: score *= 0.7      # >7 days
+        elif age_hours > 72: score *= 0.85      # >3 days
+
+    # ── STEEP DECLINE PENALTIES (>20% loss on any timeframe) ──
     if pc_h1 is not None:
         if pc_h1 < -60:
             score *= 0.1
@@ -1466,11 +1471,10 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
         elif pc_h1 < -40:
             score *= 0.2
             negatives.append(f"steep decline h1 ({pc_h1:+.0f}%)")
-        elif pc_h1 < -25:
+        elif pc_h1 < -20:
             score *= 0.5
-            negatives.append(f"heavy decline h1 ({pc_h1:+.0f}%)")
+            negatives.append(f"decline h1 ({pc_h1:+.0f}%)")
 
-    # Sustained decline over h6 (bleeding out)
     if pc_h6 is not None:
         if pc_h6 < -70:
             score *= 0.1
@@ -1478,11 +1482,10 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
         elif pc_h6 < -50:
             score *= 0.2
             negatives.append(f"crashed h6 ({pc_h6:+.0f}%)")
-        elif pc_h6 < -30:
+        elif pc_h6 < -20:
             score *= 0.5
             negatives.append(f"declining h6 ({pc_h6:+.0f}%)")
 
-    # 24h collapse
     if pc_h24 is not None:
         if pc_h24 < -80:
             score *= 0.1
@@ -1490,148 +1493,50 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
         elif pc_h24 < -50:
             score *= 0.3
             negatives.append(f"collapsed h24 ({pc_h24:+.0f}%)")
+        elif pc_h24 < -20:
+            score *= 0.6
+            negatives.append(f"down h24 ({pc_h24:+.0f}%)")
 
-    # Volume dying + price declining = death spiral
-    vol_h1 = dex.get('volume_h1', 0) or 0
-    vol_h24 = dex.get('volume_h24', 0) or 0
-    if vol_h24 > 0 and vol_h1 < vol_h24 * 0.005:  # h1 < 0.5% of h24
+    # Death spiral
+    if vol_h24 > 0 and vol_h1 < vol_h24 * 0.005:
         if pc_h6 is not None and pc_h6 < -10:
             score *= 0.3
-            negatives.append("death spiral (vol+dying+declining)")
+            negatives.append("death spiral")
 
-    # ── Multipliers from enrichers ──
-
-    # DISQUALIFIERS (score = 0, return early)
-    if token.get('gmgn_honeypot'):
-        return 0, [], ["HONEYPOT (GMGN)"]
-    if token.get('goplus_is_honeypot'):
-        return 0, [], ["HONEYPOT (GoPlus)"]
-    if token.get('rugcheck_rugged'):
-        return 0, [], ["RUGGED (RugCheck)"]
-    if token.get('defi_scammed'):
-        return 0, [], ["SCAMMED (De.Fi)"]
-
-    # Etherscan
+    # ── MULTIPLIERS (positive only) ──
     if token.get('etherscan_verified'):
-        score *= 1.20
-        positives.append(f"VERIFIED ({token.get('etherscan_contract_name', '')})")
-
-    # RugCheck
-    rc_score = token.get('rugcheck_score', 0)
-    if rc_score > 10: score *= 0.2
-    elif rc_score > 5: score *= 0.5
-    elif rc_score > 3: score *= 0.7
-
-    rc_risks = token.get('rugcheck_risk_count', 0)
-    if rc_risks > 3: score *= 0.3
-    elif rc_risks > 0: score *= max(0.5, 1 - rc_risks * 0.15)
-
-    if token.get('rugcheck_mint_renounced') is False:
-        score *= 0.3
-        negatives.append("mint not renounced (RugCheck)")
-    if token.get('rugcheck_freeze_renounced') is False:
-        score *= 0.5
-        negatives.append("freeze not renounced (RugCheck)")
-
-    insiders = token.get('rugcheck_insiders_detected', 0)
-    if insiders > 20: score *= 0.4
-    elif insiders > 5: score *= 0.7
-
-    rc_top10 = token.get('rugcheck_top_10_holder_pct')
-    if rc_top10 is not None and rc_top10 > 80: score *= 0.3
-    elif rc_top10 is not None and rc_top10 > 60: score *= 0.6
-
-    # GMGN
-    if token.get('gmgn_dev_hold'):
-        score *= 1.25
-        positives.append("DEV STILL HOLDING")
-    elif token.get('gmgn_creator_status') == 'creator_sold':
-        score *= 0.5
-        negatives.append("dev dumped")
-
-    dev_rate = token.get('gmgn_dev_team_hold_rate')
-    if dev_rate is not None:
-        if dev_rate > 0.05: score *= 1.10
-        elif dev_rate == 0: score *= 0.8
+        score *= 1.15
 
     if token.get('gmgn_renounced_mint') is True:
         score *= 1.10
     elif token.get('gmgn_renounced_mint') is False:
         score *= 0.3
+        negatives.append("mint not renounced")
 
-    burn = token.get('gmgn_burn_status')
-    if burn == 'burn': score *= 1.15
+    if token.get('rugcheck_freeze_renounced') is False:
+        score *= 0.5
+        negatives.append("freeze not renounced")
 
-    bot_rate = token.get('gmgn_bot_degen_rate')
-    if bot_rate is not None and bot_rate > 0.3:
-        score *= max(0.3, 1 - bot_rate)
-
-    smart = token.get('gmgn_smart_wallets', 0)
-    if smart > 20:
+    if token.get('gmgn_burn_status') == 'burn':
         score *= 1.15
-        positives.append(f"{smart} smart wallets")
-    elif smart > 5:
-        score *= 1.08
-
-    if token.get('gmgn_dev_token_farmer'):
-        score *= 0.6
+        if "burned" not in str(positives).lower():
+            positives.append("burned")
 
     if token.get('gmgn_cto_flag'):
         score *= 1.10
         positives.append("CTO")
 
-    # GoPlus
-    buy_tax = token.get('goplus_buy_tax')
-    sell_tax = token.get('goplus_sell_tax')
-    if buy_tax is not None and buy_tax > 0.10: score *= max(0.2, 1 - buy_tax)
-    if sell_tax is not None and sell_tax > 0.10: score *= max(0.2, 1 - sell_tax)
+    if token.get('gmgn_dev_token_farmer'):
+        score *= 0.6
+        negatives.append("token farmer")
 
-    if token.get('goplus_is_mintable'):
-        score *= 0.5
-        negatives.append("MINTABLE")
-    if token.get('goplus_owner_can_change_balance'):
-        score *= 0.2
-
-    top_10_pct = token.get('goplus_top_10_holder_pct')
-    if top_10_pct is not None and top_10_pct > 70:
-        score *= 0.3 if top_10_pct > 85 else 0.5
-
-    if token.get('goplus_is_trust_list'):
-        score *= 1.15
-
-    # De.Fi
-    critical = token.get('defi_issues_critical', 0) or 0
-    if critical > 0:
-        score *= max(0.1, 0.5 ** critical)
-
-    # Derived
     if token.get('derived_has_mint_authority'):
         score *= 0.3
         negatives.append("HAS MINT AUTHORITY")
     if token.get('derived_has_freeze_authority'):
         score *= 0.5
 
-    max_pct = token.get('derived_max_holder_pct')
-    if max_pct is not None and max_pct > 50:
-        score *= 0.2
-    elif max_pct is not None and max_pct > 25:
-        score *= 0.5
-
-    if token.get('derived_volume_dying'): score *= 0.4
-    if token.get('derived_no_recent_activity'): score *= 0.3
-    if token.get('derived_massive_dump'): score *= 0.2
-    if token.get('derived_possible_rug'): score *= 0.1
-    if token.get('derived_pump_and_dump'): score *= 0.3
-
-    if token.get('derived_liq_risk') == 'critical': score *= 0.4
-    elif token.get('derived_liq_risk') == 'high': score *= 0.7
-
-    if token.get('derived_brand_new'): score *= 0.6
-    if token.get('derived_suspect_buy_inflate'): score *= 0.7
-    if token.get('derived_activity_hot'): score *= 1.05
-    if token.get('derived_volume_accelerating'): score *= 1.05
-
-    # CoinGecko
+    # CoinGecko listings (unique signals)
     if token.get('cg_is_listed'):
         score *= 1.08
         positives.append("CoinGecko listed")
@@ -1642,21 +1547,18 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
         score *= 1.08
         positives.append("COINBASE")
 
-    # Surf
-    surf_sent = token.get('surf_social_sentiment')
-    if surf_sent is not None:
-        if surf_sent > 0.3: score *= 1.10
-        elif surf_sent < -0.2: score *= 0.85
-
+    # Surf trending
     trending_rank = token.get('surf_trending_rank')
     if trending_rank is not None and trending_rank <= 5:
         score *= 1.15
         positives.append(f"TRENDING #{trending_rank}")
 
     # Volume penalties
+    buys_h1 = (dex.get('txns_h1', {}) or {}).get('buys', 0) or 0
+    sells_h1 = (dex.get('txns_h1', {}) or {}).get('sells', 0) or 0
     if sells_h1 > 0 and buys_h1 == 0:
         score *= 0.1
-        negatives.append("ONLY SELLS in h1")
+        negatives.append("ONLY SELLS")
     elif sells_h1 > 0:
         sell_ratio = sells_h1 / (buys_h1 + sells_h1)
         if sell_ratio > SELL_RATIO_THRESHOLD:
@@ -1668,40 +1570,17 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
             score *= 0.5
             negatives.append("stagnant volume")
 
+    buys_h6 = (dex.get('txns_h6', {}) or {}).get('buys', 0) or 0
+    sells_h6 = (dex.get('txns_h6', {}) or {}).get('sells', 0) or 0
     total_h6 = buys_h6 + sells_h6
     if total_h6 == 0 and age_hours and age_hours > 1:
         score *= 0.4
         negatives.append("no txns in 6h")
 
-
-    # ── Zerion Token Signals ──
-    if token.get('zerion_verified'):
-        score *= 1.05
-        positives.append("Zerion verified")
-    if token.get('zerion_chain_count', 0) > 5:
-        score *= 1.03
-
-    # ── CoinStats Risk Score ──
-    cs_risk = token.get('cs_risk_score')
-    if cs_risk is not None:
-        if cs_risk > 80:
-            score *= 0.5
-            negatives.append(f"CoinStats risk {cs_risk:.0f}")
-        elif cs_risk > 60:
-            score *= 0.7
-            negatives.append(f"CoinStats risk {cs_risk:.0f}")
-        elif cs_risk < 30:
-            score *= 1.05
-            positives.append(f"CoinStats low risk ({cs_risk:.0f})")
-
-    cs_liq = token.get('cs_liquidity_score')
-    if cs_liq is not None and cs_liq < 10:
-        score *= 0.8
-        negatives.append(f"low CoinStats liquidity ({cs_liq:.0f})")
-
-    cs_vol = token.get('cs_volatility_score')
-    if cs_vol is not None and cs_vol > 95:
-        score *= 0.9
+    # RugCheck
+    rc_score = token.get('rugcheck_score', 0)
+    if rc_score > 10: score *= 0.2
+    elif rc_score > 5: score *= 0.5
 
     return round(score, 2), positives, negatives
 
