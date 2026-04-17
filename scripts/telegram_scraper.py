@@ -115,7 +115,7 @@ def load_state() -> dict:
     if STATE_FILE.exists():
         try:
             return json.loads(STATE_FILE.read_text())
-        except Exception:
+        except (json.JSONDecodeError, OSError):
             pass
     return {"last_seen_per_chat": {}, "last_run": 0, "known_dialogs": []}
 

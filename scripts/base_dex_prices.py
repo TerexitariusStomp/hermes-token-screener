@@ -98,7 +98,7 @@ def quote_v2(router, tA, tB, amount_wei):
         try:
             if int(result[66:130], 16) >= 2:
                 return int(result[194:258], 16)
-        except:
+        except ValueError:
             pass
     return None
 
@@ -112,7 +112,7 @@ def quote_v3_slot0(pool, dec0, dec1):
             if sqrt > 0:
                 price = (sqrt / (2**96)) ** 2 * (10 ** (dec0 - dec1))
                 return price
-        except:
+        except ValueError:
             pass
     return None
 

@@ -344,7 +344,7 @@ class TaskClassifier:
             try:
                 return json.loads(raw)
             except json.JSONDecodeError:
-                pass
+                logger.warning("LLM classify_llm returned non-JSON response; falling back to empty result")
         return {}
 
     def classify(self, text: str) -> dict[str, Any]:
@@ -419,7 +419,7 @@ class TaskDecomposer:
             try:
                 return json.loads(raw)
             except json.JSONDecodeError:
-                pass
+                logger.warning("LLM decompose_llm returned non-JSON response; falling back to empty subtask list")
         return []
 
     def decompose_keyword(

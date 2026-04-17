@@ -41,7 +41,7 @@ _WP_PATH = _os.path.join(
 try:
     with open(_WP_PATH) as _f:
         WORKING_PROTOCOLS = json.load(_f)
-except:
+except (FileNotFoundError, json.JSONDecodeError):
     WORKING_PROTOCOLS = {}
 
 # RPC endpoints per chain
@@ -183,7 +183,7 @@ class ContractExecutor:
                 if w3.is_connected():
                     self._chain_w3[chain] = w3
                     return w3
-            except:
+            except Exception:
                 continue
         return None
 

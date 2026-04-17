@@ -935,7 +935,7 @@ def upgrade_wallet_db(conn: sqlite3.Connection):
         if col not in existing:
             try:
                 c.execute(f"ALTER TABLE tracked_wallets ADD COLUMN {col} {col_type}")
-            except Exception:
+            except sqlite3.OperationalError:
                 pass
 
     conn.commit()

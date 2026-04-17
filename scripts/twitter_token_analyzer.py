@@ -103,11 +103,11 @@ def parse_n(s: str) -> int:
         if s.upper().endswith(suf):
             try:
                 return int(float(s[:-1]) * m)
-            except:
+            except ValueError:
                 return 0
     try:
         return int(float(s))
-    except:
+    except ValueError:
         return 0
 
 
@@ -287,7 +287,7 @@ def time_ago_days(ts: str) -> float | None:
     try:
         dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
         return (datetime.now(timezone.utc) - dt).total_seconds() / 86400
-    except:
+    except ValueError:
         return None
 
 
@@ -338,7 +338,7 @@ def extract_tweets(page) -> List[Tweet]:
                     from email.utils import parsedate_to_datetime
 
                     tweet.timestamp = parsedate_to_datetime(ts).isoformat()
-                except:
+                except (TypeError, ValueError):
                     tweet.timestamp = ts
 
         # Engagement: .tweet-stat > .icon-container > span.icon-*
@@ -403,7 +403,7 @@ def analyze_profile(handle: str, page) -> ProfileAnalysis:
         try:
             join_dt = datetime.strptime(a.join_date, "%B %Y")
             a.account_age_days = (datetime.now() - join_dt).days
-        except:
+        except ValueError:
             pass
 
     # Extract tweets
