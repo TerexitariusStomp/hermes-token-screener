@@ -1,0 +1,312 @@
+# DeFiLlama Chains vs Chainlist.org RPC Availability
+# Generated: April 16, 2026
+# Source: https://chainlist.org/rpcs.json
+# Total defillama chains: 288
+
+## Summary
+- Found RPCs on chainlist.org: 153
+- Non-EVM chains (no RPC expected): 81
+- EVM chains missing from chainlist.org: 54
+
+---
+
+## EVM CHAINS WITH RPCs (153)
+# chainlist_name (rpc_count)
+0G Mainnet (1)
+Abstract (5)
+Ancient8 (1)
+ApeChain (4)
+Arbitrum One (32)
+Arbitrum Nova (11)
+Astar (12)
+Astar zkEVM (1)
+Aurora Mainnet (7)
+Avalanche C-Chain (23)
+BOB (8)
+Base (36)
+Berachain (12)
+BNB Smart Chain Mainnet (56)
+Bitcoin Chain (1)
+Bitlayer Mainnet (6)
+Blast Mainnet (1)
+Boba Network (11)
+Botanix Mainnet (2)
+BounceBit Mainnet (1)
+CLV Parachain (1)
+Core Blockchain Mainnet (8)
+Canto (10)
+Celo Mainnet (10)
+Chiliz Chain (5)
+Citrea Mainnet (1)
+Conflux eSpace (3)
+Corn (3)
+COTI (12)
+Cronos Mainnet (15)
+Cronos zkEVM Mainnet (4)
+CYBERTRUST (1)
+Dexalot Subnet (1)
+EDU Chain (1)
+EOS EVM Network (1)
+Eclipse Subnet (1)
+Elastos Smart Chain (8)
+Empire Network (1)
+Ethereum Mainnet (79)
+Ethereum Classic (8)
+Evmos (33)
+Fantom Opera (23)
+Filecoin - Mainnet (11)
+Flare Mainnet (9)
+Flow EVM Mainnet (2)
+Fluence (2)
+Fraxtal (8)
+Fuse Mainnet (9)
+Fusion Mainnet (2)
+GOAT Network (4)
+Gravity Alpha Mainnet (2)
+Harmony Mainnet Shard 0 (10)
+HashKey Chain (3)
+Hela Official Runtime Mainnet (1)
+Huobi ECO Chain Mainnet (6)
+Hedera Mainnet (4)
+Hemi (3)
+Hyperliquid EVM Testnet (4)
+IOTA EVM (5)
+Immutable zkEVM (6)
+Injective (6)
+Ink (8)
+katana (5)
+Kava (18)
+Kaia Mainnet (13)
+Kroma (5)
+Kusama (4)
+LUKSO Mainnet (5)
+Linea (13)
+Lisk (5)
+LoopNetwork Mainnet (1)
+Manta Pacific Mainnet (11)
+Mantle (15)
+MANTRACHAIN Mainnet (2)
+MegaETH (4)
+Merlin Mainnet (8)
+Meter Mainnet (3)
+Metis Andromeda Mainnet (12)
+Mezo (10)
+Mint Mainnet (3)
+Mode (6)
+Monad (17)
+Moonbeam (23)
+Moonriver (16)
+Morph Hoodi (1)
+Movement EVM (2)
+NEAR Protocol (3)
+Neonlink Mainnet (1)
+Oasis Sapphire (3)
+Odyssey Chain Mainnet (1)
+Omax Mainnet (2)
+OP Mainnet (33)
+PGN (1)
+Perennial (1)
+Plasma Mainnet (4)
+Plume Mainnet (5)
+Polkadot (4)
+Polygon Mainnet (33)
+Polygon zkEVM (11)
+Polynomial (1)
+REI Network (2)
+Rootstock Mainnet (5)
+RARI Chain (2)
+Redstone (2)
+Reya Network (2)
+Ronin (7)
+Oasis Sapphire (3)
+Scroll (18)
+Sei Network (8)
+Shape (2)
+Shibarium (5)
+Shiden (9)
+Shido Network (4)
+ShimmerEVM (1)
+Silicon zkEVM (2)
+Somnia Mainnet (3)
+Soneium (4)
+Sonic Mainnet (13)
+Sophon (3)
+Stable Mainnet (1)
+Story Testnet (10)
+Superposition (1)
+Superseed (4)
+Swan Chain Mainnet (5)
+Swellchain (3)
+Syscoin Mainnet (8)
+Taiko Alethia (15)
+Telos EVM Mainnet (6)
+Theta Mainnet (1)
+ThunderCore Mainnet (5)
+Titan (2)
+Tomb Chain Mainnet (1)
+Viction (4)
+Tron Mainnet (7)
+Ultra EVM Network (1)
+Unichain (11)
+Velas EVM Mainnet (3)
+WEMIX3.0 Mainnet (4)
+Winr Protocol Mainnet (1)
+Wanchain (2)
+World Chain (7)
+XDC Network (15)
+XRPL EVM (5)
+Xai Mainnet (2)
+ZERO Network (3)
+ZetaChain Mainnet (8)
+Zircuit Mainnet (5)
+Zora (4)
+inEVM Mainnet (1)
+re.al (6)
+Smart Bitcoin Cash (7)
+Gnosis (23)
+zkSync Mainnet (14)
+
+---
+
+## NON-EVM CHAINS - No RPC on chainlist.org (81)
+# These chains use non-EVM runtimes (Solana VM, Move, Cosmos SDK, UTXO, etc.)
+Acala
+Algorand
+Aptos
+Archway
+Babylon Genesis
+BandChain
+Bifrost
+Bifrost Network
+Bitcoincash
+Bitkub
+CSC
+Cabal
+Cardano
+Celestia
+Chia
+Chihuahua
+Comdex
+Cosmos
+Crescent
+DFS Network
+Dash
+DeFiChain EVM
+DefiChain
+Doge
+Echelon
+Echelon Chain
+Electroneum
+Elrond
+Endurance
+EnergyWeb
+Equilibrium
+Ergo
+Gala
+HydraDX
+ICP
+Initia
+Interlay
+Juno
+Kinto
+Kujira
+Litecoin
+Manta Atlantic
+Map
+Mayachain
+Migaloo
+MilkyWay Rollup
+Milkyway
+NEO
+Neo3
+Neutron
+Noble
+Nolus
+Obyte
+Orai
+Osmosis
+Pego
+Persistence
+Proton
+Quicksilver
+RENEC
+Regen
+Ripple
+Solana
+Stafi
+Starknet
+Stellar
+Stratis
+Sui
+TON
+Tezos
+Thorchain
+Umee
+Verus
+Vite
+Voi Network
+Waves
+Wax
+XION
+ZIGChain
+Zcash
+dYdX
+
+---
+
+## EVM CHAINS MISSING FROM CHAINLIST.ORG (54)
+# These are EVM-compatible chains with DeFiLlama protocols but no RPC on chainlist
+AILayer
+Alephium
+BSquared
+Bitgert
+Bittensor
+Bittensor EVM
+Bittorrent
+Canton
+Chainflip
+Constellation
+Dogechain
+DuckChain
+Etherlink
+Everscale
+GravityBridge
+Grove
+HAQQ
+Horizen EON
+IOTA
+Icon
+IoTeX
+K2
+Kucoin
+LaChain Network
+Milkomeda
+Milkomeda A1
+Mixin
+MultiVAC
+Namada
+Nibiru
+OKExChain
+Ontology
+OntologyEVM
+Op_Bnb
+Polkadex
+Pulse
+Q Protocol
+Radix
+Rollux
+Songbird
+Stacks
+Supra
+TAC
+Taraxa
+Terra
+Terra2
+UNIT0
+Union
+Venom
+X Layer
+Zkfair
+aelf
+edgeX L1
+zkLink
