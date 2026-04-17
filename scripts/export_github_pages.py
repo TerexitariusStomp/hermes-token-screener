@@ -125,6 +125,18 @@ def export_tokens():
         # Normalize address field names
         if "contract_address" not in token and "address" in token:
             token["contract_address"] = token["address"]
+        # Flatten dex sub-object to top level for frontend
+        dex = token.get("dex", {})
+        if dex:
+            token["fdv"] = token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
+            token["symbol"] = token.get("symbol") or dex.get("symbol") or ""
+            token["name"] = token.get("name") or dex.get("name") or ""
+            token["volume_h24"] = dex.get("volume_h24", 0) or 0
+            token["volume_h1"] = dex.get("volume_h1", 0) or 0
+            token["price_change_h1"] = dex.get("price_change_h1")
+            token["price_change_h6"] = dex.get("price_change_h6")
+            token["age_hours"] = dex.get("age_hours")
+            token["dex_name"] = dex.get("dex", "")
         for key in list(token.keys()):
             if isinstance(token[key], set):
                 token[key] = list(token[key])
@@ -604,24 +616,29 @@ def export_smart_money():
         print("No wallet DB, skipping smart money export")
         return
 
-    # Load enriched token data for SM token matching
+    # Load enriched token data for SM token matching - use file with most tokens
     enriched_lookup = {}
     data_dir = settings.output_path.parent
+    best_count = 0
     for src in [
+        data_dir / "top100.json",
         data_dir / "top100_phase4_social.json",
         data_dir / "top100_phase3_smartmoney.json",
-        settings.output_path,
+        data_dir / "top100_phase1_initial.json",
     ]:
         if src.exists():
             with open(src) as f:
                 raw = json.load(f)
+            candidate = {}
             for t in (raw.get("tokens") or raw.get("top_tokens") or []):
                 addr = t.get("contract_address", "")
                 if addr:
-                    enriched_lookup[addr] = t
-            if enriched_lookup:
-                print(f"SM export: using {src.name} ({len(enriched_lookup)} enriched tokens)")
-                break
+                    candidate[addr] = t
+            if len(candidate) > best_count:
+                enriched_lookup = candidate
+                best_count = len(candidate)
+    if enriched_lookup:
+        print(f"SM export: using enriched data ({best_count} tokens)")
 
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
@@ -644,9 +661,10 @@ def export_smart_money():
             enriched = enriched_lookup.get(addr, {})
 
             # Merge enriched data with SM data
-            fdv = enriched.get("fdv") or enriched.get("market_cap") or 0
-            score = enriched.get("score", 0) or r["sm_score"] or 0
             dex_data = enriched.get("dex", {})
+            fdv = dex_data.get("fdv") or enriched.get("fdv") or enriched.get("market_cap") or 0
+            score = enriched.get("score", 0) or r["sm_score"] or 0
+            symbol = dex_data.get("symbol") or enriched.get("symbol") or r["symbol"] or ""
 
             try:
                 wallet_list = json.loads(r["discovery_wallets"] or "[]")
@@ -656,7 +674,7 @@ def export_smart_money():
             tokens.append({
                 "token_address": addr,
                 "chain": chain,
-                "symbol": r["symbol"] or enriched.get("symbol", ""),
+                "symbol": symbol,
                 "buyer_count": r["buyer_count"] or 0,
                 "total_buy_usd": r["total_buy_usd"] or 0,
                 "avg_buy_usd": r["avg_buy_usd"] or 0,
@@ -669,7 +687,7 @@ def export_smart_money():
                 "price_change_h1": dex_data.get("price_change_h1"),
                 "price_change_h6": dex_data.get("price_change_h6"),
                 "age_hours": dex_data.get("age_hours"),
-                "dex_url": enriched.get("dex_url", ""),
+                "dex_url": enriched.get("dex_url", "") or f"https://dexscreener.com/{chain.lower()}/{addr}",
                 "positives": enriched.get("positives", []),
                 "gmgn_smart_wallets": enriched.get("gmgn_smart_wallets", 0),
                 # Computed
@@ -698,51 +716,45 @@ def export_smart_money():
             )
         print(f"Exported {len(tokens)} enriched smart money tokens to {dst}")
 
-        # ── Export SM wallets (wallets buying SM tokens) ──
-        sm_token_addrs = {t["token_address"] for t in tokens}
-        if sm_token_addrs:
-            placeholders = ",".join("?" * len(sm_token_addrs))
-            sm_wallet_rows = conn.execute(f"""
-                SELECT DISTINCT w.address, w.chain, w.wallet_score,
-                       w.total_profit, w.win_rate, w.avg_roi, w.total_trades,
-                       w.wallet_tags, w.avg_hold_hours
-                FROM tracked_wallets w
-                JOIN wallet_token_entries e ON w.address = e.wallet_address
-                WHERE e.token_address IN ({placeholders})
-                  AND w.wallet_score > 0
-                ORDER BY w.wallet_score DESC
-                LIMIT 200
-            """, list(sm_token_addrs)).fetchall()
+        # ── Export SM wallets (wallets from smart_money_purchases) ──
+        # Get unique wallets that bought SM tokens
+        sm_wallet_rows = conn.execute("""
+            SELECT p.wallet_address, p.chain,
+                   MAX(p.wallet_score) as wallet_score,
+                   COUNT(DISTINCT p.token_address) as sm_token_count,
+                   GROUP_CONCAT(DISTINCT p.token_symbol) as sm_symbols
+            FROM smart_money_purchases p
+            WHERE p.side = 'buy'
+            GROUP BY p.wallet_address
+            HAVING sm_token_count >= 1
+            ORDER BY wallet_score DESC, sm_token_count DESC
+            LIMIT 200
+        """).fetchall()
 
-            wallets = []
-            for w in sm_wallet_rows:
-                w_addr = w["address"]
-                # Get which SM tokens this wallet holds
-                held = conn.execute(f"""
-                    SELECT token_address FROM wallet_token_entries
-                    WHERE wallet_address = ? AND token_address IN ({placeholders})
-                """, [w_addr] + list(sm_token_addrs)).fetchall()
-                held_addrs = [r[0] for r in held]
-                held_symbols = []
-                for ha in held_addrs:
-                    smt = next((t for t in tokens if t["token_address"] == ha), None)
-                    if smt:
-                        held_symbols.append(smt["symbol"] or "?")
+        wallets = []
+        for w in sm_wallet_rows:
+            w_addr = w["wallet_address"]
+            # Get wallet details from tracked_wallets if available
+            tw = conn.execute(
+                "SELECT total_profit, win_rate, avg_roi, total_trades, wallet_tags, avg_hold_hours "
+                "FROM tracked_wallets WHERE address = ?", (w_addr,)
+            ).fetchone()
 
-                chain = normalize_chain(w["chain"] or "")
-                wallets.append({
-                    "address": w_addr,
-                    "chain": chain,
-                    "wallet_score": w["wallet_score"] or 0,
-                    "total_profit": w["total_profit"] or 0,
-                    "win_rate": w["win_rate"] or 0,
-                    "avg_roi": w["avg_roi"] or 0,
-                    "total_trades": w["total_trades"] or 0,
-                    "wallet_tags": w["wallet_tags"] or "",
-                    "avg_hold_hours": w["avg_hold_hours"] or 0,
-                    "sm_tokens_held": len(held_addrs),
-                    "sm_tokens": held_symbols[:10],
-                })
+            chain = normalize_chain(w["chain"] or "")
+            symbols = (w["sm_symbols"] or "").split(",")[:10]
+            wallets.append({
+                "address": w_addr,
+                "chain": chain,
+                "wallet_score": w["wallet_score"] or 0,
+                "total_profit": tw["total_profit"] if tw else 0,
+                "win_rate": tw["win_rate"] if tw else 0,
+                "avg_roi": tw["avg_roi"] if tw else 0,
+                "total_trades": tw["total_trades"] if tw else 0,
+                "wallet_tags": tw["wallet_tags"] if tw else "",
+                "avg_hold_hours": tw["avg_hold_hours"] if tw else 0,
+                "sm_tokens_held": w["sm_token_count"] or 0,
+                "sm_tokens": symbols,
+            })
 
             # Sort by composite: score * sm_tokens_held
             wallets.sort(
@@ -762,8 +774,6 @@ def export_smart_money():
                     default=str,
                 )
             print(f"Exported {len(wallets)} smart money wallets to {dst}")
-        else:
-            print("No SM tokens with buyer_count >= 2, skipping SM wallets export")
 
         # ── Export recent purchases ──
         purchase_rows = conn.execute("""
