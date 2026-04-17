@@ -98,9 +98,9 @@ class Settings(BaseSettings):
     telegram_chat_id: str = Field(default="")
 
     # ── Screener Tuning ──────────────────────────────────────────────────────
-    top_n: int = Field(default=100)
-    max_enrich: int = Field(default=300)
-    min_channels: int = Field(default=2)
+    top_n: int = Field(default=1200)
+    max_enrich: int = Field(default=2000)
+    min_channels: int = Field(default=1)
 
     # ── Scoring Weights ──────────────────────────────────────────────────────
     w_channel: float = Field(default=25.0)
