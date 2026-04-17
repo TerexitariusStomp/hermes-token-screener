@@ -840,12 +840,14 @@ async def _enrich_goldsky(token: dict, client: httpx.AsyncClient) -> None:
             json={
                 "jsonrpc": "2.0",
                 "method": "eth_getLogs",
-                "params": [{
-                    "address": addr,
-                    "topics": [transfer_topic],
-                    "fromBlock": from_block,
-                    "toBlock": "latest",
-                }],
+                "params": [
+                    {
+                        "address": addr,
+                        "topics": [transfer_topic],
+                        "fromBlock": from_block,
+                        "toBlock": "latest",
+                    }
+                ],
                 "id": 2,
             },
             headers={"Content-Type": "application/json"},
