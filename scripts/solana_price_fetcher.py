@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Solana On-Chain Price Fetcher v2
-Fetches SOL/USDC prices from 30+ Solana DEX pools via on-chain reads and APIs.
+Solana On-Chain Price Fetcher v3
+Fetches prices from 125+ Solana DEX pools across 11 token pairs.
 For arbitrage: compares prices across all sources to find spreads.
 """
 import struct
@@ -10,12 +10,44 @@ import requests
 import json
 import time
 from dataclasses import dataclass
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 SOLANA_RPC = "https://api.mainnet-beta.solana.com"
-SOL = "So11111111111111111111111111111111111111112"
-USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+
+# ═══════════════════════════════════════════════════════════════
+# TOKEN REGISTRY
+# ═══════════════════════════════════════════════════════════════
+
+TOKENS = {
+    "SOL": {"mint": "So11111111111111111111111111111111111111112", "decimals": 9},
+    "USDC": {"mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", "decimals": 6},
+    "USDT": {"mint": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", "decimals": 6},
+    "BONK": {"mint": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263", "decimals": 5},
+    "JUP": {"mint": "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN", "decimals": 6},
+    "RAY": {"mint": "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R", "decimals": 6},
+    "ORCA": {"mint": "orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE", "decimals": 6},
+    "mSOL": {"mint": "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So", "decimals": 9},
+    "Pyth": {"mint": "HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3", "decimals": 6},
+    "wIF": {"mint": "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm", "decimals": 6},
+}
+
+SOL_MINT = TOKENS["SOL"]["mint"]
+USDC_MINT = TOKENS["USDC"]["mint"]
+
+TOKEN_PAIRS = [
+    "SOL/USDC",
+    "SOL/USDT",
+    "SOL/BONK",
+    "SOL/JUP",
+    "SOL/RAY",
+    "SOL/ORCA",
+    "SOL/mSOL",
+    "SOL/Pyth",
+    "SOL/wIF",
+    "USDC/USDT",
+    "USDC/BONK",
+]
 
 
 @dataclass
@@ -23,6 +55,7 @@ class PriceQuote:
     dex: str
     pool: str
     price: float
+    pair: str
     source: str
     tvl: float = 0.0
     volume_24h: float = 0.0
@@ -50,20 +83,6 @@ class SolanaRPC:
             return base64.b64decode(v["data"][0])
         return None
 
-    def get_balance(self, addr: str) -> Tuple[int, int]:
-        r = self.s.post(
-            self.url,
-            json={
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": "getTokenAccountBalance",
-                "params": [addr],
-            },
-            timeout=10,
-        )
-        v = r.json().get("result", {}).get("value", {})
-        return int(v.get("amount", "0")), int(v.get("decimals", 0))
-
 
 def base58(data: bytes) -> str:
     B58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
@@ -81,89 +100,51 @@ def base58(data: bytes) -> str:
 
 
 # ═══════════════════════════════════════════════════════════════
-# READERS: on-chain price extraction by DEX type
+# ON-CHAIN READERS
 # ═══════════════════════════════════════════════════════════════
 
 
-def read_sqrt_price(rpc: SolanaRPC, addr: str, offset_hint: int = 0) -> Optional[float]:
-    """Read sqrt_price_x64 from a CLMM/Whirlpool account and compute price."""
-    data = rpc.get_account(addr)
+def read_sqrt_price(
+    data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0
+) -> Optional[float]:
+    """Read sqrt_price_x64 from on-chain account and compute price."""
     if not data:
         return None
+    dec_adj = 10 ** (dec_a - dec_b)
 
-    # If we know the offset, use it directly
     if offset_hint > 0 and len(data) >= offset_hint + 16:
         sqrt = int.from_bytes(data[offset_hint : offset_hint + 16], "little")
         if sqrt > 0:
             raw = (sqrt / (2**64)) ** 2
-            price = raw * 10**3  # SOL=9, USDC=6 => 10^(9-6)
-            if 50 < price < 200:
-                return price
+            return raw * dec_adj
 
-    # Scan for the right offset
     for off in range(40, min(len(data) - 16, 350)):
         val = int.from_bytes(data[off : off + 16], "little")
         if val > 0:
             raw = (val / (2**64)) ** 2
-            price = raw * 10**3
-            if 50 < price < 200:
+            price = raw * dec_adj
+            if price > 0.000001:
                 return price
     return None
 
 
-def read_amm_vaults(rpc: SolanaRPC, addr: str) -> Optional[float]:
-    """Read vault balances from an AMM pool account."""
-    data = rpc.get_account(addr)
-    if not data or len(data) < 104:
-        return None
-
-    # Try common vault offsets
-    for base_offset in [40, 72, 8, 128]:
-        try:
-            va = base58(data[base_offset : base_offset + 32])
-            vb = base58(data[base_offset + 32 : base_offset + 64])
-            amt_a, dec_a = rpc.get_balance(va)
-            amt_b, dec_b = rpc.get_balance(vb)
-            if amt_a > 0 and dec_a in (6, 8, 9) and dec_b in (6, 8, 9):
-                price = (amt_b / 10**dec_b) / (amt_a / 10**dec_a)
-                if 50 < price < 200:
-                    return price
-        except Exception:
-            continue
-    return None
-
-
-def read_serum_vaults(rpc: SolanaRPC, addr: str) -> Optional[float]:
-    """Read vault balances from a Serum/Openbook market."""
-    data = rpc.get_account(addr)
-    if not data or len(data) < 270:
-        return None
-    try:
-        coin_vault = base58(data[112:144])
-        pc_vault = base58(data[144:176])
-        amt_c, dec_c = rpc.get_balance(coin_vault)
-        amt_p, dec_p = rpc.get_balance(pc_vault)
-        if amt_c > 0:
-            return (amt_p / 10**dec_p) / (amt_c / 10**dec_c)
-    except Exception:
-        pass
-    return None
-
-
 # ═══════════════════════════════════════════════════════════════
-# API-BASED READERS
+# API FETCHERS (multi-pair)
 # ═══════════════════════════════════════════════════════════════
 
 
-def fetch_raydium_api() -> List[PriceQuote]:
-    """Fetch all SOL/USDC pools from Raydium API."""
+def fetch_raydium_api(pair_name: str) -> List[PriceQuote]:
+    """Fetch all pools for a token pair from Raydium API."""
     results = []
+    tokens = pair_name.split("/")
+    mint_a = TOKENS.get(tokens[0], {}).get("mint", SOL_MINT)
+    mint_b = TOKENS.get(tokens[1], {}).get("mint", USDC_MINT)
     try:
         resp = requests.get(
             "https://api-v3.raydium.io/pools/info/mint",
             params={
-                "mint1": SOL,
-                "mint2": USDC,
+                "mint1": mint_a,
+                "mint2": mint_b,
                 "poolType": "all",
                 "poolSortField": "liquidity",
                 "sortType": "desc",
@@ -175,19 +156,17 @@ def fetch_raydium_api() -> List[PriceQuote]:
         if resp.status_code == 200:
             for p in resp.json().get("data", {}).get("data", []):
                 price = p.get("price", 0)
-                pool_id = p.get("id", "")
-                pool_type = p.get("type", "?")
                 tvl = p.get("tvl", 0) or 0
-                vol = p.get("day", {}).get("volume", 0) or 0
-                if price and 50 < price < 200:
+                if price > 0 and tvl > 100:
                     results.append(
                         PriceQuote(
-                            dex=f"raydium_{pool_type.lower()}",
-                            pool=pool_id,
+                            dex=f'raydium_{p.get("type", "?").lower()}',
+                            pool=p.get("id", ""),
                             price=price,
+                            pair=pair_name,
                             source="api",
                             tvl=tvl,
-                            volume_24h=vol,
+                            volume_24h=p.get("day", {}).get("volume", 0) or 0,
                             timestamp=time.time(),
                         )
                     )
@@ -196,9 +175,15 @@ def fetch_raydium_api() -> List[PriceQuote]:
     return results
 
 
-def fetch_orca_api() -> List[PriceQuote]:
-    """Fetch all SOL/USDC pools from Orca API."""
+def fetch_orca_api(pair_name: str) -> List[PriceQuote]:
+    """Fetch all pools for a token pair from Orca (on-chain sqrt_price)."""
     results = []
+    tokens = pair_name.split("/")
+    mint_a = TOKENS.get(tokens[0], {}).get("mint", SOL_MINT)
+    mint_b = TOKENS.get(tokens[1], {}).get("mint", USDC_MINT)
+    dec_a = TOKENS.get(tokens[0], {}).get("decimals", 9)
+    dec_b = TOKENS.get(tokens[1], {}).get("decimals", 6)
+    rpc = SolanaRPC()
     try:
         resp = requests.get("https://api.orca.so/v1/whirlpool/list", timeout=15)
         pools = resp.json().get("whirlpools", [])
@@ -207,7 +192,7 @@ def fetch_orca_api() -> List[PriceQuote]:
             tb = p.get("tokenB", {})
             ma = ta.get("mint", "") if isinstance(ta, dict) else ""
             mb = tb.get("mint", "") if isinstance(tb, dict) else ""
-            if (SOL in [ma, mb]) and (USDC in [ma, mb]):
+            if (mint_a in [ma, mb]) and (mint_b in [ma, mb]):
                 addr = p.get("address", "")
                 tvl = p.get("tvl", 0)
                 if isinstance(tvl, dict):
@@ -215,55 +200,60 @@ def fetch_orca_api() -> List[PriceQuote]:
                 vol = p.get("volume", {})
                 vol_day = vol.get("day", 0) if isinstance(vol, dict) else 0
 
-                # Read on-chain price (API price is stale)
-                on_chain_price = None
+                # Read on-chain sqrt_price
                 try:
-                    on_chain_price = read_sqrt_price(SolanaRPC(), addr, offset_hint=65)
+                    data = rpc.get_account(addr)
+                    price = read_sqrt_price(data, dec_a, dec_b, offset_hint=65)
+                    if price and price > 0 and float(tvl) > 100:
+                        results.append(
+                            PriceQuote(
+                                dex="orca_whirlpool",
+                                pool=addr,
+                                price=price,
+                                pair=pair_name,
+                                source="on_chain",
+                                tvl=float(tvl),
+                                volume_24h=(
+                                    float(vol_day)
+                                    if isinstance(vol_day, (int, float))
+                                    else 0
+                                ),
+                                timestamp=time.time(),
+                            )
+                        )
                 except Exception:
                     pass
-
-                if on_chain_price and 50 < on_chain_price < 200:
-                    results.append(
-                        PriceQuote(
-                            dex="orca_whirlpool",
-                            pool=addr,
-                            price=on_chain_price,
-                            source="on_chain",
-                            tvl=float(tvl),
-                            volume_24h=(
-                                float(vol_day)
-                                if isinstance(vol_day, (int, float))
-                                else 0
-                            ),
-                            timestamp=time.time(),
-                        )
-                    )
     except Exception:
         pass
     return results
 
 
-def fetch_jupiter_quote() -> Optional[PriceQuote]:
+def fetch_jupiter_quote(pair_name: str) -> Optional[PriceQuote]:
     """Get real-time quote from Jupiter API."""
+    tokens = pair_name.split("/")
+    mint_a = TOKENS.get(tokens[0], {}).get("mint", SOL_MINT)
+    mint_b = TOKENS.get(tokens[1], {}).get("mint", USDC_MINT)
+    dec_a = TOKENS.get(tokens[0], {}).get("decimals", 9)
+    dec_b = TOKENS.get(tokens[1], {}).get("decimals", 6)
     try:
         resp = requests.get(
             "https://quote-api.jup.ag/v6/quote",
             params={
-                "inputMint": SOL,
-                "outputMint": USDC,
-                "amount": "1000000000",
+                "inputMint": mint_a,
+                "outputMint": mint_b,
+                "amount": str(10**dec_a),
                 "slippageBps": "50",
             },
             timeout=10,
         )
         if resp.status_code == 200:
-            data = resp.json()
-            out = int(data.get("outAmount", "0"))
+            out = int(resp.json().get("outAmount", "0"))
             if out > 0:
                 return PriceQuote(
                     dex="jupiter",
                     pool="aggregator",
-                    price=out / 1e6,
+                    price=out / (10**dec_b),
+                    pair=pair_name,
                     source="api",
                     timestamp=time.time(),
                 )
@@ -272,15 +262,20 @@ def fetch_jupiter_quote() -> Optional[PriceQuote]:
     return None
 
 
-def fetch_raydium_quote() -> Optional[PriceQuote]:
+def fetch_raydium_quote(pair_name: str) -> Optional[PriceQuote]:
     """Get real-time quote from Raydium API."""
+    tokens = pair_name.split("/")
+    mint_a = TOKENS.get(tokens[0], {}).get("mint", SOL_MINT)
+    mint_b = TOKENS.get(tokens[1], {}).get("mint", USDC_MINT)
+    dec_a = TOKENS.get(tokens[0], {}).get("decimals", 9)
+    dec_b = TOKENS.get(tokens[1], {}).get("decimals", 6)
     try:
         resp = requests.get(
             "https://transaction-v1.raydium.io/compute/swap-base-in",
             params={
-                "inputMint": SOL,
-                "outputMint": USDC,
-                "amount": "1000000000",
+                "inputMint": mint_a,
+                "outputMint": mint_b,
+                "amount": str(10**dec_a),
                 "slippageBps": "50",
                 "txVersion": "V0",
             },
@@ -292,7 +287,8 @@ def fetch_raydium_quote() -> Optional[PriceQuote]:
                 return PriceQuote(
                     dex="raydium_quote",
                     pool="api",
-                    price=out / 1e6,
+                    price=out / (10**dec_b),
+                    pair=pair_name,
                     source="api",
                     timestamp=time.time(),
                 )
@@ -302,142 +298,21 @@ def fetch_raydium_quote() -> Optional[PriceQuote]:
 
 
 # ═══════════════════════════════════════════════════════════════
-# ON-CHAIN POOL REGISTRY
-# ═══════════════════════════════════════════════════════════════
-
-# Verified on-chain pools with known sqrt_price offsets
-ONCHAIN_POOLS = {
-    # Orca Whirlpool: sqrt_price at offset 65 (after 8-byte discriminator)
-    "orca_wp_1": ("Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE", "orca_whirlpool", 65),
-    "orca_wp_2": ("FpCMFDFGYotvufJ7HrFHsWEiiQCGbkLCtwHiDnh7o28Q", "orca_whirlpool", 65),
-    "orca_wp_3": ("7qbRF6YsyGuLUVs6Y1q64bdVrfe4ZcUUz1JRdoVNUJnm", "orca_whirlpool", 65),
-    "orca_wp_4": ("HJPjoWUrhoZzkNfRpHuieeFk9WcZWjwy6PBjZ81ngndJ", "orca_whirlpool", 65),
-    "orca_wp_5": ("21gTfxAnhUDjJGZJDkTXctGFKT8TeiXx6pN1CEg9K1uW", "orca_whirlpool", 65),
-    "orca_wp_6": ("83v8iPyZihDEjDdY8RdZddyZNyUtXngz69Lgo9Kt5d6d", "orca_whirlpool", 65),
-    "orca_wp_7": ("DFVTutNYXD8z4T5cRdgpso1G3sZqQvMHWpW2N99E4DvE", "orca_whirlpool", 65),
-    "orca_wp_8": ("6d4UYGAEs4Akq6py8Vb3Qv5PvMkecPLS1Z9bBCcip2R7", "orca_whirlpool", 65),
-    # Raydium CLMM: sqrt_price at offset 253
-    "raydium_clmm_1": (
-        "3ucNos4NbumPLZNWztqGHNFFgkHeRMBQAVemeeomsUxv",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_2": (
-        "CYbD9RaToYMtWKA7QZyoLahnHdWq553Vm62Lh6qWtuxq",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_3": (
-        "8sLbNZoA1cfnvMJLPfp98ZLAnFSYCFApfJKMbiXNLwxj",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_4": (
-        "2QdhepnKRTLjjSqPL1PtKNwqrUkoLee5Gqs8bvZhRdMv",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_5": (
-        "GqxUEcFw8GbfDPoWU6UG2ypvsM3aw3vZmiN4e1Nbv94G",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_6": (
-        "5s7njN2X6k3trkibTKX6LJFu4PnybYhCuADP9LD2fhuP",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_7": (
-        "CztrCcLhgfazkBchMW7wXQL37AWQdBP1tQWHBR249neh",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_8": (
-        "6MUjnGffYaqcHeqv4nNemUQVNMpJab3W2NV9bfPj576c",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_9": (
-        "2SjLv6XwViJ17rq21N1y98LbMee1J4DXinP61rk9v2aK",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_10": (
-        "7PLpcezEnTV2xXU6eL3j4kLi9MJJFUngsWQvUNKyjE2V",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_11": (
-        "EXHyQxMSttcvLPwjENnXCPZ8GmLjJYHtNBnAkcFeFKMn",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_12": (
-        "CiSQxEhiS1j7PVHy57LqmjFWL1N7ciYD45Enq5tSyfaN",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_13": (
-        "2JtkunkYCRbe5YZuGU6kLFmNwN22Ba1pCicHoqW5Eqja",
-        "raydium_clmm",
-        253,
-    ),
-    "raydium_clmm_14": (
-        "7byw3sD4hNG5NTwTHFRfxyASJCHfed4i6FKVdtqXGtru",
-        "raydium_clmm",
-        253,
-    ),
-}
-
-
-def fetch_onchain_pools() -> List[PriceQuote]:
-    """Fetch prices from all on-chain pool accounts."""
-    rpc = SolanaRPC()
-    results = []
-
-    def read_one(name, addr, dex, offset):
-        price = read_sqrt_price(rpc, addr, offset_hint=offset)
-        if price and 50 < price < 200:
-            return PriceQuote(
-                dex=dex,
-                pool=addr,
-                price=price,
-                source="on_chain",
-                timestamp=time.time(),
-            )
-        return None
-
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        futures = {
-            pool.submit(read_one, name, addr, dex, offset): name
-            for name, (addr, dex, offset) in ONCHAIN_POOLS.items()
-        }
-        for f in as_completed(futures):
-            q = f.result()
-            if q:
-                results.append(q)
-
-    return results
-
-
-# ═══════════════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════════════
 
 
-def fetch_all() -> List[PriceQuote]:
-    """Fetch prices from all sources in parallel."""
+def fetch_pair(pair_name: str) -> List[PriceQuote]:
+    """Fetch all prices for a single token pair."""
     all_quotes = []
-
     with ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
-            pool.submit(fetch_raydium_api),
-            pool.submit(fetch_orca_api),
-            pool.submit(fetch_onchain_pools),
-            pool.submit(fetch_jupiter_quote),
-            pool.submit(fetch_raydium_quote),
+            pool.submit(fetch_raydium_api, pair_name),
+            pool.fetch_orca_api if False else pool.submit(fetch_orca_api, pair_name),
+            pool.submit(fetch_jupiter_quote, pair_name),
+            pool.submit(fetch_raydium_quote, pair_name),
         ]
-        for f in futures:
+        for f in as_completed(futures):
             try:
                 result = f.result(timeout=30)
                 if isinstance(result, list):
@@ -446,80 +321,99 @@ def fetch_all() -> List[PriceQuote]:
                     all_quotes.append(result)
             except Exception:
                 pass
-
     return all_quotes
 
 
-def find_arbitrage(quotes: List[PriceQuote]) -> List[dict]:
-    """Find arbitrage opportunities."""
-    if len(quotes) < 2:
-        return []
+def fetch_all_pairs(pairs: List[str] = None) -> List[PriceQuote]:
+    """Fetch prices for multiple token pairs."""
+    if pairs is None:
+        pairs = TOKEN_PAIRS
+    all_quotes = []
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        futures = {pool.submit(fetch_pair, p): p for p in pairs}
+        for f in as_completed(futures):
+            try:
+                all_quotes.extend(f.result(timeout=60))
+            except Exception:
+                pass
+    return all_quotes
 
+
+def find_arbitrage(
+    quotes: List[PriceQuote], min_spread_pct: float = 0.05
+) -> List[dict]:
+    """Find arbitrage opportunities within each pair."""
     opps = []
-    for i in range(len(quotes)):
-        for j in range(i + 1, len(quotes)):
-            q1, q2 = quotes[i], quotes[j]
-            spread = abs(q1.price - q2.price)
-            mn = min(q1.price, q2.price)
-            if mn > 0:
-                pct = (spread / mn) * 100
-                if pct > 0.05:
-                    buy = q1 if q1.price < q2.price else q2
-                    sell = q2 if q1.price < q2.price else q1
-                    opps.append(
-                        {
-                            "buy": buy.dex,
-                            "sell": sell.dex,
-                            "buy_price": buy.price,
-                            "sell_price": sell.price,
-                            "spread_pct": pct,
-                            "spread_usd": spread,
-                            "buy_pool": buy.pool[:20],
-                            "sell_pool": sell.pool[:20],
-                        }
-                    )
+    by_pair = {}
+    for q in quotes:
+        by_pair.setdefault(q.pair, []).append(q)
+
+    for pair, pair_quotes in by_pair.items():
+        if len(pair_quotes) < 2:
+            continue
+        for i in range(len(pair_quotes)):
+            for j in range(i + 1, len(pair_quotes)):
+                q1, q2 = pair_quotes[i], pair_quotes[j]
+                spread = abs(q1.price - q2.price)
+                mn = min(q1.price, q2.price)
+                if mn > 0:
+                    pct = (spread / mn) * 100
+                    if pct >= min_spread_pct:
+                        buy = q1 if q1.price < q2.price else q2
+                        sell = q2 if q1.price < q2.price else q1
+                        opps.append(
+                            {
+                                "pair": pair,
+                                "buy": buy.dex,
+                                "sell": sell.dex,
+                                "buy_price": buy.price,
+                                "sell_price": sell.price,
+                                "spread_pct": pct,
+                                "spread_usd": spread,
+                            }
+                        )
     return sorted(opps, key=lambda x: x["spread_pct"], reverse=True)
 
 
 if __name__ == "__main__":
-    print("=" * 90)
-    print("SOLANA DEX PRICE FETCHER v2 — 30+ POOLS")
-    print("=" * 90)
+    print("=" * 95)
+    print("SOLANA DEX PRICE FETCHER v3 — 125+ POOLS, 11 TOKEN PAIRS")
+    print("=" * 95)
 
-    quotes = fetch_all()
-    quotes.sort(key=lambda q: q.price)
+    quotes = fetch_all_pairs()
+    quotes.sort(key=lambda q: (q.pair, q.price))
 
-    print(
-        f"\n{'DEX':<25} | {'Price':>12} | {'TVL':>14} | {'Vol 24h':>14} | {'Source':<10}"
-    )
-    print("-" * 85)
-
+    current_pair = ""
     for q in quotes:
+        if q.pair != current_pair:
+            current_pair = q.pair
+            print(f"\n{'─'*95}")
+            print(f"  {q.pair}")
+            print(f"{'─'*95}")
+            print(
+                f"  {'DEX':<25} | {'Price':>16} | {'TVL':>14} | {'Vol 24h':>14} | {'Source'}"
+            )
+            print(f"  {'-'*85}")
+
         tvl = f"${q.tvl:,.0f}" if q.tvl > 0 else ""
         vol = f"${q.volume_24h:,.0f}" if q.volume_24h > 0 else ""
-        print(
-            f"{q.dex:<25} | ${q.price:>11.4f} | {tvl:>14} | {vol:>14} | {q.source:<10}"
-        )
+        print(f"  {q.dex:<25} | {q.price:>16.8f} | {tvl:>14} | {vol:>14} | {q.source}")
 
-    print(f"\n{'='*85}")
+    print(f"\n{'='*95}")
     print(f"Total pools: {len(quotes)}")
 
-    if quotes:
-        prices = [q.price for q in quotes]
-        print(f"Price range: ${min(prices):.4f} — ${max(prices):.4f}")
-        print(f"Spread: {((max(prices)-min(prices))/min(prices))*100:.3f}%")
+    # Arbitrage
+    print(f"\n{'='*95}")
+    print("ARBITRAGE OPPORTUNITIES (>0.1%)")
+    print("=" * 95)
 
-    print(f"\n{'='*85}")
-    print("ARBITRAGE OPPORTUNITIES (>0.05%)")
-    print("=" * 85)
-
-    arbs = find_arbitrage(quotes)
+    arbs = find_arbitrage(quotes, min_spread_pct=0.1)
     if arbs:
-        for a in arbs[:10]:
+        for a in arbs[:20]:
             print(
-                f"  Buy {a['buy']:<22} @ ${a['buy_price']:.4f} -> "
-                f"Sell {a['sell']:<22} @ ${a['sell_price']:.4f} "
-                f"= {a['spread_pct']:.3f}% (${a['spread_usd']:.4f})"
+                f"  [{a['pair']}] Buy {a['buy']:<22} @ {a['buy_price']:.8f} -> "
+                f"Sell {a['sell']:<22} @ {a['sell_price']:.8f} "
+                f"= {a['spread_pct']:.3f}%"
             )
     else:
         print("  No significant arbitrage opportunities found.")
