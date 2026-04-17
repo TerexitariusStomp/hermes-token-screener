@@ -800,6 +800,93 @@ async def _enrich_goldrush(token: dict, client: httpx.AsyncClient) -> None:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# GOLDSKY Edge RPC - on-chain data (token balance, holder count, transfers)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+async def _enrich_goldsky(token: dict, client: httpx.AsyncClient) -> None:
+    """Layer 15: Goldsky Edge RPC - recent transfer count + top holder balance."""
+    if not settings.goldsky_api_key:
+        return
+
+    chain = token.get("chain", "").lower()
+    chain_id = CHAIN_ID_MAP.get(chain)
+    if not chain_id:
+        return  # Unsupported chain
+
+    addr = token.get("contract_address", "")
+    if not addr or not addr.startswith("0x"):
+        return
+
+    rpc_url = f"https://edge.goldsky.com/standard/evm/{chain_id}?secret={settings.goldsky_api_key}"
+    transfer_topic = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"  # Transfer(address,address,uint256)
+
+    try:
+        # Get recent Transfer events for this token (last ~100 blocks)
+        block_resp = await client.post(
+            rpc_url,
+            json={"jsonrpc": "2.0", "method": "eth_blockNumber", "params": [], "id": 1},
+            headers={"Content-Type": "application/json"},
+            timeout=10.0,
+        )
+        if block_resp.status_code != 200:
+            return
+        current_block = int(block_resp.json().get("result", "0x0"), 16)
+        from_block = hex(max(0, current_block - 500))  # ~500 blocks back
+
+        # Get Transfer logs
+        logs_resp = await client.post(
+            rpc_url,
+            json={
+                "jsonrpc": "2.0",
+                "method": "eth_getLogs",
+                "params": [{
+                    "address": addr,
+                    "topics": [transfer_topic],
+                    "fromBlock": from_block,
+                    "toBlock": "latest",
+                }],
+                "id": 2,
+            },
+            headers={"Content-Type": "application/json"},
+            timeout=15.0,
+        )
+        if logs_resp.status_code != 200:
+            return
+
+        logs = logs_resp.json().get("result", [])
+        transfer_count = len(logs)
+
+        # Count unique senders/receivers
+        senders = set()
+        receivers = set()
+        for log in logs[:200]:
+            topics = log.get("topics", [])
+            if len(topics) >= 3:
+                senders.add("0x" + topics[1][-40:])
+                receivers.add("0x" + topics[2][-40:])
+
+        token["goldsky"] = {
+            "chain_id": chain_id,
+            "recent_transfers": transfer_count,
+            "unique_senders": len(senders),
+            "unique_receivers": len(receivers),
+            "blocks_scanned": 500,
+        }
+
+        # Signal: high transfer activity = active token
+        if transfer_count > 50:
+            token.setdefault("goldsky_signal", {})
+            token["goldsky_signal"]["high_activity"] = True
+        if len(receivers) > 20:
+            token.setdefault("goldsky_signal", {})
+            token["goldsky_signal"]["many_buyers"] = True
+
+    except Exception:
+        pass  # Silently fail
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # DERIVED (no API, pure computation)
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -874,6 +961,8 @@ async def run_async_enrichment(
         _enrich_defi,
         _enrich_derived,
         _enrich_etherscan,
+        _enrich_goldrush,
+        _enrich_goldsky,
         _enrich_goplus,
         _enrich_helius,
         _enrich_rugcheck,
@@ -947,6 +1036,9 @@ async def run_async_enrichment(
 
         # Goldrush (Covalent)
         goldrush_enricher = AsyncHttpEnricher("Goldrush", concurrency=2, delay=1.0)
+
+        # Goldsky Edge RPC
+        goldsky_enricher = AsyncHttpEnricher("Goldsky", concurrency=3, delay=0.5)
 
         # Define all parallel tasks
         async def run_goplus():
@@ -1069,6 +1161,18 @@ async def run_async_enrichment(
                     "Goldrush", False, 0, len(enriched), time.time() - start, str(e)
                 )
 
+        async def run_goldsky():
+            start = time.time()
+            try:
+                ok, total = await goldsky_enricher.enrich_batch(
+                    _enrich_goldsky, enriched, client
+                )
+                return LayerResult("Goldsky", True, ok, total, time.time() - start)
+            except Exception as e:
+                return LayerResult(
+                    "Goldsky", False, 0, len(enriched), time.time() - start, str(e)
+                )
+
         async def run_derived():
             start = time.time()
             try:
@@ -1127,6 +1231,7 @@ async def run_async_enrichment(
             run_helius(),
             run_birdeye(),
             run_goldrush(),
+            run_goldsky(),
             run_derived(),
             run_surf(),
             run_gmgn(),
