@@ -43,27 +43,6 @@
       "buyer_wallets": []
     },
     {
-      "token_address": "So11111111111111111111111111111111111111112",
-      "chain": "solana",
-      "symbol": "WSOL",
-      "buyer_count": 5,
-      "total_buy_usd": 738.11215,
-      "avg_buy_usd": 147.62243,
-      "top_buyer_score": 28.0,
-      "fdv": 0,
-      "score": 0,
-      "volume_h24": 0,
-      "volume_h1": 0,
-      "price_change_h1": null,
-      "price_change_h6": null,
-      "age_hours": null,
-      "dex_url": "https://dexscreener.com/solana/So11111111111111111111111111111111111111112",
-      "positives": [],
-      "gmgn_smart_wallets": 0,
-      "mcap_tier": "< $50K",
-      "buyer_wallets": []
-    },
-    {
       "token_address": "0xe6a56b5fce37732cb143c2d51817b5db57b64444",
       "chain": "BNB",
       "symbol": "\u5929\u624d",
@@ -316,5 +295,5 @@
       "buyer_wallets": []
     }
   ],
-  "generated_at_iso": "2026-04-17T04:48:56.393963+00:00"
+  "generated_at_iso": "2026-04-17T05:03:33.538871+00:00"
 }

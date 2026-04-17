@@ -682,6 +682,7 @@ def export_smart_money():
     conn.row_factory = sqlite3.Row
     try:
         # ── Export SM tokens enriched with pipeline data ──
+        BLOCKED_SM_SYMBOLS = {"wsol", "weth", "usdc", "usdt", "dai", "busd", "wbtc", "steth"}
         sm_token_rows = conn.execute("""
             SELECT t.token_address, t.chain, t.symbol, t.buyer_count,
                    t.total_buy_usd, t.avg_buy_usd, t.top_buyer_score,
@@ -703,6 +704,10 @@ def export_smart_money():
             fdv = dex_data.get("fdv") or enriched.get("fdv") or enriched.get("market_cap") or 0
             score = enriched.get("score", 0) or r["sm_score"] or 0
             symbol = dex_data.get("symbol") or enriched.get("symbol") or r["symbol"] or ""
+
+            # Filter out wrapped/stable tokens
+            if symbol.lower().strip() in BLOCKED_SM_SYMBOLS:
+                continue
 
             try:
                 wallet_list = json.loads(r["discovery_wallets"] or "[]")
@@ -769,17 +774,36 @@ def export_smart_money():
             LIMIT 200
         """).fetchall()
 
+        # Load enriched token data for FDV lookup
+        token_fdv = {}
+        for t in tokens if "tokens" in dir() else []:
+            addr = t.get("token_address") or t.get("contract_address", "")
+            if addr:
+                token_fdv[addr] = t.get("fdv", 0)
+
         wallets = []
         for w in sm_wallet_rows:
             w_addr = w["wallet_address"]
-            # Get wallet details from tracked_wallets if available
+            # Get full wallet details from tracked_wallets
             tw = conn.execute(
-                "SELECT total_profit, win_rate, avg_roi, total_trades, wallet_tags, avg_hold_hours "
+                "SELECT total_profit, win_rate, avg_roi, total_trades, wallet_tags, "
+                "avg_hold_hours, insider_flag, copy_trade_flag, realized_pnl, "
+                "unrealized_pnl, buy_count, sell_count, rug_history_count, "
+                "trading_pattern, first_seen_at, last_active_at "
                 "FROM tracked_wallets WHERE address = ?", (w_addr,)
             ).fetchone()
 
+            # Get SM tokens this wallet bought with FDV
+            bought = conn.execute("""
+                SELECT p.token_address, p.token_symbol FROM smart_money_purchases p
+                WHERE p.wallet_address = ? AND p.side = 'buy'
+                GROUP BY p.token_address
+            """, (w_addr,)).fetchall()
+            held_symbols = [r[1] for r in bought if r[1]]
+            held_fdvs = [token_fdv.get(r[0], 0) for r in bought]
+            avg_fdv = sum(held_fdvs) / len(held_fdvs) if held_fdvs else 0
+
             chain = normalize_chain(w["chain"] or "")
-            symbols = (w["sm_symbols"] or "").split(",")[:10]
             wallets.append({
                 "address": w_addr,
                 "chain": chain,
@@ -790,8 +814,15 @@ def export_smart_money():
                 "total_trades": tw["total_trades"] if tw else 0,
                 "wallet_tags": tw["wallet_tags"] if tw else "",
                 "avg_hold_hours": tw["avg_hold_hours"] if tw else 0,
+                "insider_flag": tw["insider_flag"] if tw else 0,
+                "copy_trade_flag": tw["copy_trade_flag"] if tw else 0,
+                "realized_pnl": tw["realized_pnl"] if tw else 0,
+                "rug_history_count": tw["rug_history_count"] if tw else 0,
+                "trading_pattern": tw["trading_pattern"] if tw else "",
                 "sm_tokens_held": w["sm_token_count"] or 0,
-                "sm_tokens": symbols,
+                "top_tokens": held_symbols[:10],
+                "avg_fdv": round(avg_fdv),
+                "mcap_tier": mcap_tier_label(avg_fdv),
             })
 
             # Sort by composite: score * sm_tokens_held

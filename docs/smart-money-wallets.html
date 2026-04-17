@@ -38,14 +38,15 @@
   <th data-sort="address">Wallet <span class="sort-arrow"></span></th>
   <th data-sort="chain">Chain <span class="sort-arrow"></span></th>
   <th data-sort="wallet_score">Score <span class="sort-arrow"></span></th>
-  <th data-sort="sm_tokens_held">SM Tokens <span class="sort-arrow"></span></th>
-  <th data-sort="total_profit">Profit <span class="sort-arrow"></span></th>
-  <th data-sort="win_rate">Win <span class="sort-arrow"></span></th>
+  <th data-sort="sm_tokens_held">🧬 Top <span class="sort-arrow"></span></th>
+  <th data-sort="avg_fdv">Avg FDV <span class="sort-arrow"></span></th>
+  <th>MCap</th>
+  <th data-sort="total_profit">PnL <span class="sort-arrow"></span></th>
   <th data-sort="avg_roi">ROI <span class="sort-arrow"></span></th>
+  <th data-sort="win_rate">Win <span class="sort-arrow"></span></th>
   <th data-sort="total_trades">Trades <span class="sort-arrow"></span></th>
-  <th data-sort="avg_hold_hours">Hold <span class="sort-arrow"></span></th>
   <th>Tags</th>
-  <th>SM Tokens</th>
+  <th>Top Tokens</th>
 </tr></thead>
 <tbody id="tbody"></tbody>
 </table></div>
@@ -76,20 +77,22 @@ function renderTable(wallets){
       const cls=t.trim() in{sniper:1,insider:1}?"tag-r":t.trim()==="smart"?"tag-g":"";
       return`<span class="tag ${cls}">${t.trim()}</span>`;
     }).join("");
-    const sm_tokens=(w.sm_tokens||[]).slice(0,6).map(t=>`<span class="tag tag-g">${t}</span>`).join(" ");
+    if(w.insider_flag) tags+='<span class="tag tag-y">INSIDER</span>';
+    const top_tokens=(w.top_tokens||[]).slice(0,6).map(t=>`<span class="tag tag-g">${t}</span>`).join(" ");
     tbody.innerHTML+=`<tr>
   <td>${i+1}</td>
   <td class="mono"><a href="${block_url(w.address,w.chain)}" target="_blank">${trunc(w.address)}</a></td>
   <td><span class="badge ${chain_cls(w.chain||"")}">${chain_label(w.chain)}</span></td>
   <td class="sc ${sc_cls}">${score.toFixed(0)}</td>
   <td class="sc ${w.sm_tokens_held>=3?"sc-h":w.sm_tokens_held>=2?"sc-m":"sc-l"}">${w.sm_tokens_held||0}</td>
+  <td>${fmt_usd(w.avg_fdv)}</td>
+  <td><span class="tag tag-y">${w.mcap_tier||"\u2014"}</span></td>
   <td class="${profit_cls}">${fmt_usd(profit)}</td>
-  <td>${w.win_rate!=null?(w.win_rate*100).toFixed(1)+"%":"\u2014"}</td>
   <td class="${pct_cls(w.avg_roi)}">${fmt_pct(w.avg_roi)}</td>
+  <td>${w.win_rate!=null?(w.win_rate*100).toFixed(1)+"%":"\u2014"}</td>
   <td>${w.total_trades||0}</td>
-  <td>${w.avg_hold_hours?(w.avg_hold_hours).toFixed(1)+"h":"\u2014"}</td>
   <td>${tags}</td>
-  <td>${sm_tokens}</td>
+  <td>${top_tokens}</td>
 </tr>`;
   });
 }
