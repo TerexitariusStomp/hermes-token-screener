@@ -228,6 +228,22 @@ STOPWORDS = {
     "gmgn",
     "raydium",
     "pumpfun",
+    # Fiat/stablecoin exclusions - not tradeable tokens
+    "usd",
+    "usdt",
+    "usdc",
+    "dai",
+    "busd",
+    "tusd",
+    "eur",
+    "gbp",
+    "jpy",
+    "cny",
+    "btc",
+    "eth",
+    "sol",
+    "bnb",
+    "xrp",
 }
 
 

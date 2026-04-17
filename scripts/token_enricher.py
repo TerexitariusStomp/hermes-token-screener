@@ -78,11 +78,21 @@ start_metrics_server()
 # ══════════════════════════════════════════════════════════════════════════════
 
 
-def score_token(token: dict) -> tuple[float, list[str], list[str]]:
+def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
     dex = token.get("dex", {})
     score = 0.0
     positives = []
     negatives = []
+
+    # ── SYMBOL BLOCKLIST: fiat/stablecoins are not tradeable tokens ──
+    BLOCKED_SYMBOLS = {
+        "usd", "usdt", "usdc", "dai", "busd", "tusd", "eur", "gbp",
+        "jpy", "cny", "btc", "eth", "sol", "bnb", "xrp", "wsol",
+        "weth", "wbtc", "steth", "cbeth", "sui", "matic",
+    }
+    symbol = (dex.get("symbol") or token.get("symbol") or "").lower().strip()
+    if symbol in BLOCKED_SYMBOLS:
+        return 0, [], [f"BLOCKED: {symbol.upper()} is not a tradeable token"]
 
     # ── DISQUALIFIERS (return 0 immediately) ──
     if token.get("gmgn_honeypot"):
