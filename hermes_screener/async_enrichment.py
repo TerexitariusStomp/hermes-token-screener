@@ -1096,29 +1096,8 @@ async def run_async_enrichment(
 
     Returns (enriched_tokens, layer_results).
     """
-    # Import sync enrichers for CLI-based layers
+    # All enricher symbols are defined in this module — no import needed.
     import sys
-
-    from hermes_screener.async_enrichment import (
-        AsyncDexscreenerEnricher,
-        AsyncHttpEnricher,
-        LayerResult,
-        _enrich_birdeye,
-        _enrich_bitquery,
-        _enrich_coingecko,
-        _enrich_defi,
-        _enrich_derived,
-        _enrich_etherscan,
-        _enrich_goldrush,
-        _enrich_goldsky,
-        _enrich_goplus,
-        _enrich_helius,
-        _enrich_rugcheck,
-        _enrich_solscan,
-        _enrich_zerion,
-        _make_client,
-        _run_cli_enricher,
-    )
 
     sys.path.insert(0, str(settings.hermes_home / "scripts"))
     # These will be imported lazily to avoid circular imports
