@@ -7,11 +7,6 @@ from hermes_screener.types.template_types import TemplateSuggestion
 
 import yaml
 
-try:
-    from tools.registry import registry
-except ImportError:
-    registry = None
-
 
 class DSPOptimizer:
     def __init__(self):
@@ -254,20 +249,4 @@ def dspy_optimize_tool(tool_name: str, task_id: str | None = None) -> dict:
     return optimizer.optimize_tool(tool_name, task_id)
 
 
-# Register the tool (only if Hermes registry is available)
-if registry is not None:
-    registry.register(
-        name="dspy_optimizer",
-        toolset="optimization",
-        schema={
-            "type": "object",
-            "properties": {
-                "tool_name": {
-                    "type": "string",
-                    "description": "Name of the tool or skill to optimize",
-                }
-            },
-            "required": ["tool_name"],
-        },
-        handler=lambda args, **kw: dspy_optimize_tool(**args, task_id=kw.get("task_id")),
-    )
+

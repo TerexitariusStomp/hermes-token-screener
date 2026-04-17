@@ -30,15 +30,9 @@ sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Import existing enrichment modules
-try:
-    from hermes_screener.logging import get_logger
+from hermes_screener.logging import get_logger
 
-    log = get_logger("token_integration")
-except ImportError:
-    import logging
-
-    logging.basicConfig(level=logging.INFO)
-    log = logging.getLogger("token_integration")
+log = get_logger("token_integration")
 
 # Configuration
 CALL_CHANNELS_DB = Path.home() / ".hermes" / "call_channels.db"
