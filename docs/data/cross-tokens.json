@@ -138,7 +138,7 @@
     "tg_channel_quality": 0.81,
     "tg_first_mention_hours_ago": 368.2,
     "tg_last_mention_minutes_ago": 20.0,
-    "wallet_count": 37,
+    "wallet_count": 34,
     "holding_wallets": [
       "8mxU68RBQmLcEN1AzzScC2eym2Kxg3WaGSjJPnh2Ctu8",
       "3jkDdP5Y3F78fzGBS6E4tYocEmzyU9q2wgTa49w2HxtF",
@@ -291,18 +291,18 @@
     "tg_channel_quality": 0.33,
     "tg_first_mention_hours_ago": 72.9,
     "tg_last_mention_minutes_ago": 20.0,
-    "wallet_count": 16,
+    "wallet_count": 13,
     "holding_wallets": [
       "9qhkWvC7K2wtsn3H8sbEWAGv82LD12uKxmyN7YdmxS8D",
       "95rwF14CWBfCgbWbiME5HKC2fc7iXrycVvodVXSnwzzV",
       "Ew5rWyoonD9MYuArCpoc2D65HDyhzqa9P8B5aeDzaCuq",
       "E6ic8e94V5hsrdyFrgxkdcNL3qFkHEdBFCfFT7Teg74W",
-      "87v4fB1RVHwfkTx2vtF6Bes8QbegMVbzczJEpb6ipp5C",
       "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
-      "JApBGtbBtsNosE1Z5CiyUkTMhAxATqH1NAuJJenHUceR",
-      "DtvmxrTACskMG2W8a6KXgSemUfvyNVeQTgfpJoGvMVKx",
+      "87v4fB1RVHwfkTx2vtF6Bes8QbegMVbzczJEpb6ipp5C",
+      "83HBKbzrLazwQrNQpWvRZNGKxigKFcHvaCnFALHLdvEM",
       "CLKyaAHCk8AWkNbfPfoUexmmrs8LrtS1jBKWSbdoG8Dt",
-      "Ap1ctYVBvdbDphaSpn97d9PVbkArC4YnZxPJRYrD4so1"
+      "Ap1ctYVBvdbDphaSpn97d9PVbkArC4YnZxPJRYrD4so1",
+      "5sAmbApNwQZxHidauscmq1PPPjfcZQk2za85DEtXvmZn"
     ],
     "mcap_tier": "< $50K"
   }

@@ -25,28 +25,20 @@ Usage:
 Output: ~/.hermes/data/token_screener/top100.json
 """
 
-import json
-import time
-import sqlite3
-import subprocess
-import math
-import shutil
 import argparse
-import os
-import sys
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
-from datetime import datetime, timedelta
-
-import requests
 import asyncio
-
-from hermes_screener.config import settings
-from hermes_screener.logging import get_logger, log_duration
-from hermes_screener.metrics import metrics, start_metrics_server
+import json
+import sqlite3
+import sys
+import time
+from datetime import datetime
+from pathlib import Path
 
 # Import async enrichment
 from hermes_screener.async_enrichment import run_async_enrichment
+from hermes_screener.config import settings
+from hermes_screener.logging import get_logger
+from hermes_screener.metrics import start_metrics_server
 
 # ── Config (from centralized settings) ───────────────────────────────────────
 DB_PATH = settings.db_path
@@ -86,7 +78,7 @@ start_metrics_server()
 # ══════════════════════════════════════════════════════════════════════════════
 
 
-def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
+def score_token(token: dict) -> tuple[float, list[str], list[str]]:
     dex = token.get("dex", {})
     score = 0.0
     positives = []
@@ -119,7 +111,15 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
 
     # ── 1. FDV/VOLUME RATIO (0-25) ──
     # Low FDV + high volume = high opportunity
-    if fdv > 0 and vol_h24 > 0:
+    # ZERO VOLUME = dead token, heavily penalize
+    if vol_h24 <= 0:
+        # Dead token - no trading activity
+        score -= 20
+        negatives.append("no volume")
+        # Still allow minimal score if very fresh (< 2h) and has FDV
+        if fdv > 0 and age_hours is not None and age_hours < 2:
+            score += 3
+    elif fdv > 0:
         vol_fdv_ratio = vol_h24 / fdv
         if vol_fdv_ratio > 2:
             fdv_vol_score = 25  # FDV $100K, vol $200K+
@@ -135,15 +135,18 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
             fdv_vol_score = 5
         score += fdv_vol_score
     elif fdv > 0:
-        # Low FDV alone is good
+        # FDV but no volume data - minor points only
         if fdv < 50_000:
-            score += 12
+            score += 5
         elif fdv < 200_000:
-            score += 9
-        elif fdv < 1_000_000:
-            score += 6
-        elif fdv < 5_000_000:
             score += 3
+        else:
+            score += 1
+
+    # ── STALE DATA PENALTY: no price changes = dead ──
+    if pc_h1 is None and pc_h6 is None and pc_h24 is None:
+        score *= 0.3
+        negatives.append("stale data")
 
     # ── 2. CHANNELS + MENTIONS (0-20) ──
     # More channels mentioning = more legitimate discovery
@@ -282,6 +285,27 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
 
     if token.get("rugcheck_freeze_renounced") is False:
         score *= 0.5
+
+    # ── BONDING CURVE DETECTION ──
+    dex_name = (dex.get("dex") or "").lower()
+    liq = dex.get("liquidity_usd") or 0
+    on_bonding_curve = False
+
+    # Pump.fun tokens that haven't graduated to PumpSwap
+    if dex_name in ("pumpfun", "pump.fun"):
+        on_bonding_curve = True
+    # Low liquidity + young = likely still on bonding curve
+    elif fdv > 0 and liq > 0 and age_hours is not None and age_hours < 24:
+        liq_ratio = liq / fdv
+        if liq_ratio < 0.02:  # Less than 2% liquidity ratio
+            on_bonding_curve = True
+
+    if on_bonding_curve:
+        score *= 0.5
+        negatives.append("on bonding curve")
+
+    if token.get("rugcheck_freeze_renounced") is False:
+        score *= 0.5
         negatives.append("freeze not renounced")
 
     if token.get("gmgn_burn_status") == "burn":
@@ -353,7 +377,7 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
 # ══════════════════════════════════════════════════════════════════════════════
 
 
-def get_candidates() -> List[dict]:
+def get_candidates() -> list[dict]:
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
@@ -404,7 +428,7 @@ class EnricherResult:
             "elapsed": elapsed,
         }
 
-    def summary(self) -> List[str]:
+    def summary(self) -> list[str]:
         """Generate summary lines."""
         lines = []
         total_elapsed = time.time() - self.start_time
@@ -428,7 +452,7 @@ class EnricherResult:
 class SocialSignalEnricher:
     """Social signal enrichment for tokens using existing Telegram data."""
 
-    def enrich_batch(self, tokens: List[dict]) -> Tuple[int, int]:
+    def enrich_batch(self, tokens: list[dict]) -> tuple[int, int]:
         """
         Enrich tokens with social signals from existing data.
 
@@ -637,7 +661,6 @@ def run_enricher():
 
 
 def main():
-    import argparse
 
     parser = argparse.ArgumentParser(description="Token enrichment pipeline")
     parser.add_argument(

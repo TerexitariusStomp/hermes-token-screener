@@ -12,14 +12,12 @@ Usage:
 Output: central_contracts.db (telegram_contract_calls + telegram_contracts_unique)
 """
 
-import re
 import asyncio
-import time
 import json
+import re
 import sqlite3
 import sys
-from pathlib import Path
-from typing import List, Tuple, Set
+import time
 
 try:
     from telethon import TelegramClient
@@ -29,8 +27,8 @@ except ImportError:
     sys.exit(1)
 
 from hermes_screener.config import settings
-from hermes_screener.logging import get_logger, log_duration
-from hermes_screener.metrics import metrics, start_metrics_server
+from hermes_screener.logging import get_logger
+from hermes_screener.metrics import start_metrics_server
 
 # ── Config (from centralized settings + scraper-specific defaults) ───────────
 SESSION_PATH = settings.session_path
@@ -52,13 +50,14 @@ start_metrics_server()
 # ── Address Extraction (inlined) ────────────────────────────────────────────
 EVM_PATTERN = re.compile(r"0x[a-fA-F0-9]{40}")
 SOLANA_PATTERN = re.compile(r"[1-9A-HJ-NP-Za-km-z]{32,44}")
+XRPL_PATTERN = re.compile(r"r[1-9A-HJ-NP-Za-km-z]{24,34}")
 DEX_LINK_PATTERN = re.compile(
     r"(?:dexscreener\.com|gmgn\.ai|raydium\.io|pump\.fun)/[^\s)]+"
 )
 PUMP_FUN_RE = re.compile(r"/([a-fA-F0-9]+)")
 
 
-def extract_addresses(text: str) -> List[Tuple[str, str, str]]:
+def extract_addresses(text: str) -> list[tuple[str, str, str]]:
     """
     Extract token addresses from text.
     Returns list of (original, normalized_address, source_hint) tuples.
@@ -100,6 +99,12 @@ def extract_addresses(text: str) -> List[Tuple[str, str, str]]:
             if match not in seen:
                 results.append((match, match, "solana_raw"))
                 seen.add(match)
+
+    # 4. XRPL addresses (r-prefixed, 25-35 chars)
+    for match in XRPL_PATTERN.findall(text):
+        if match not in seen:
+            results.append((match, match, "xrpl_raw"))
+            seen.add(match)
 
     return results
 
@@ -311,7 +316,13 @@ async def poll_dialog(
             max_id_seen = msg.id
 
         for orig, normalized, source in extract_addresses(msg.text):
-            chain = "solana" if not normalized.startswith("0x") else "ethereum"
+            chain = (
+                "solana"
+                if not normalized.startswith("0x") and not normalized.startswith("r")
+                else "xrpl"
+                if normalized.startswith("r")
+                else "ethereum"
+            )
             inserted = insert_extraction(
                 conn,
                 channel_id=str(chat_id),

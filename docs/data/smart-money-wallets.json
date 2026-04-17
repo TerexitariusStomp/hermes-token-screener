@@ -22,11 +22,11 @@
       "address": "3oe7aYLUw2Pkbm7QMAhAjn5WbzaoG9tigkrX1mAecr1P",
       "chain": "solana",
       "wallet_score": 24.0,
-      "total_profit": 214.84546805546495,
+      "total_profit": 1032.5778793319905,
       "win_rate": 1.0,
-      "avg_roi": 0.02099137099869825,
-      "total_trades": 33,
-      "wallet_tags": "TOP99,smart_degen",
+      "avg_roi": 0.6105776889740927,
+      "total_trades": 8,
+      "wallet_tags": "TOP90,smart_degen",
       "avg_hold_hours": null,
       "sm_tokens_held": 1,
       "sm_tokens": [
@@ -37,11 +37,11 @@
       "address": "hnu5iBK8UoHb51UFsH1RYTUAYdrhjHvV5YMTf9T1CYN",
       "chain": "solana",
       "wallet_score": 12.0,
-      "total_profit": 3007.942910902185,
+      "total_profit": 2362.5904358188254,
       "win_rate": 1.0,
-      "avg_roi": 0.07266523083890708,
-      "total_trades": 82,
-      "wallet_tags": "smart_degen,TOP14",
+      "avg_roi": 0.05241879243396491,
+      "total_trades": 130,
+      "wallet_tags": "TOP37,TOP169,smart_degen",
       "avg_hold_hours": null,
       "sm_tokens_held": 2,
       "sm_tokens": [
@@ -831,11 +831,11 @@
       "address": "CqF3gUDojKuVdd6zBk2GZBTG84aAQ2b7tYeeyS18Sd2Z",
       "chain": "solana",
       "wallet_score": 0,
-      "total_profit": 1236.843531048407,
-      "win_rate": 1.0,
-      "avg_roi": 0.09853930678085418,
-      "total_trades": 41,
-      "wallet_tags": "TOP61,smart_degen",
+      "total_profit": 1948.3628122322527,
+      "win_rate": 0.5,
+      "avg_roi": 0.0666785192228162,
+      "total_trades": 159,
+      "wallet_tags": "TOP39,TOP58,smart_degen",
       "avg_hold_hours": null,
       "sm_tokens_held": 1,
       "sm_tokens": [
@@ -906,12 +906,12 @@
       "address": "Ha3jPXVWz2VoESCEEH8YP8StcYF7p2A2hadUEd6bqu4w",
       "chain": "solana",
       "wallet_score": 0,
-      "total_profit": 0,
-      "win_rate": 0,
-      "avg_roi": 0,
-      "total_trades": 0,
-      "wallet_tags": "",
-      "avg_hold_hours": 0,
+      "total_profit": -46.23682643221353,
+      "win_rate": 0.0,
+      "avg_roi": 0.0,
+      "total_trades": 77,
+      "wallet_tags": "fresh_wallet,TOP69,smart_degen",
+      "avg_hold_hours": null,
       "sm_tokens_held": 1,
       "sm_tokens": [
         "pigeon"
@@ -933,5 +933,5 @@
       ]
     }
   ],
-  "generated_at_iso": "2026-04-17T04:01:25.704240+00:00"
+  "generated_at_iso": "2026-04-17T04:25:15.599499+00:00"
 }
