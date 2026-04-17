@@ -94,7 +94,6 @@ class Settings(BaseSettings):
     goldrush_api_key: str = Field(default="")
     bitquery_api_key: str = Field(default="")
     goldsky_api_key: str = Field(default="")
-    subquery_api_key: str = Field(default="")
     telegram_bot_token: str = Field(default="")
     telegram_chat_id: str = Field(default="")
 
