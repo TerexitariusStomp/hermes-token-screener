@@ -91,6 +91,10 @@ class Settings(BaseSettings):
     coinstats_api_key: str = Field(default="")
     quicknode_key: str = Field(default="")
     zerion_api_key: str = Field(default="")
+    goldrush_api_key: str = Field(default="")
+    bitquery_api_key: str = Field(default="")
+    goldsky_api_key: str = Field(default="")
+    subquery_api_key: str = Field(default="")
     telegram_bot_token: str = Field(default="")
     telegram_chat_id: str = Field(default="")
 

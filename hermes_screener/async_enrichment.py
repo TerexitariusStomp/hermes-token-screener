@@ -726,6 +726,80 @@ async def _run_cli_enricher(
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# GOLDRUSH (Covalent) - wallet balances, token holders, chain data
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CHAIN_ID_MAP = {
+    "ethereum": 1,
+    "eth": 1,
+    "base": 8453,
+    "bsc": 56,
+    "bnb": 56,
+    "arbitrum": 42161,
+    "polygon": 137,
+    "avalanche": 43114,
+    "optimism": 10,
+    "solana": None,  # Goldrush doesn't support Solana
+}
+
+
+async def _enrich_goldrush(token: dict, client: httpx.AsyncClient) -> None:
+    """Layer 14: Goldrush (Covalent) - token holder count and top holders."""
+    if not settings.goldrush_api_key:
+        return
+
+    chain = token.get("chain", "").lower()
+    chain_id = CHAIN_ID_MAP.get(chain)
+    if not chain_id:
+        return  # Unsupported chain (includes Solana)
+
+    addr = token.get("contract_address", "")
+    if not addr or not addr.startswith("0x"):
+        return
+
+    try:
+        # Get token holders (paginated, first page)
+        resp = await client.get(
+            f"https://api.covalenthq.com/v1/{chain_id}/tokens/{addr}/token_holders/",
+            params={"page-size": "10"},
+            headers={"Authorization": f"Bearer {settings.goldrush_api_key}"},
+            timeout=20.0,
+        )
+
+        if resp.status_code != 200:
+            return
+
+        data = resp.json()
+        if data.get("error"):
+            return
+
+        holder_data = data.get("data", {})
+        total_holders = holder_data.get("pagination", {}).get("total_count", 0)
+        top_holders = holder_data.get("items", [])
+
+        token["goldrush"] = {
+            "total_holders": total_holders,
+            "top_holders": [
+                {
+                    "address": h.get("address", ""),
+                    "balance": h.get("balance", "0"),
+                    "share_pct": h.get("share", 0),
+                }
+                for h in top_holders[:5]
+            ],
+            "chain_id": chain_id,
+        }
+
+        # Boost score for high holder count
+        if total_holders > 1000:
+            token.setdefault("goldrush_signal", {})
+            token["goldrush_signal"]["holders_1k_plus"] = True
+
+    except Exception:
+        pass  # Silently fail
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # DERIVED (no API, pure computation)
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -871,6 +945,9 @@ async def run_async_enrichment(
         # Birdeye
         birdeye_enricher = AsyncHttpEnricher("Birdeye", concurrency=2, delay=0.5)
 
+        # Goldrush (Covalent)
+        goldrush_enricher = AsyncHttpEnricher("Goldrush", concurrency=2, delay=1.0)
+
         # Define all parallel tasks
         async def run_goplus():
             start = time.time()
@@ -980,6 +1057,18 @@ async def run_async_enrichment(
                     "Birdeye", False, 0, len(enriched), time.time() - start, str(e)
                 )
 
+        async def run_goldrush():
+            start = time.time()
+            try:
+                ok, total = await goldrush_enricher.enrich_batch(
+                    _enrich_goldrush, enriched, client
+                )
+                return LayerResult("Goldrush", True, ok, total, time.time() - start)
+            except Exception as e:
+                return LayerResult(
+                    "Goldrush", False, 0, len(enriched), time.time() - start, str(e)
+                )
+
         async def run_derived():
             start = time.time()
             try:
@@ -1037,6 +1126,7 @@ async def run_async_enrichment(
             run_solscan(),
             run_helius(),
             run_birdeye(),
+            run_goldrush(),
             run_derived(),
             run_surf(),
             run_gmgn(),
