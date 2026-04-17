@@ -81,7 +81,6 @@ signal.signal(signal.SIGTERM, _signal_handler)
 signal.signal(signal.SIGINT, _signal_handler)
 
 acquire_lock()
-# === END SINGLE INSTANCE LOCK ===
 
 logging.basicConfig(
     level=logging.INFO,
@@ -1749,62 +1748,6 @@ class DexAggregatorTrader:
 
         return {}
 
-    def add_liquidity_quote(
-        self, token_a: str, token_b: str, amount_a: str, chain: str = "base"
-    ) -> Dict:
-        """Get quote for adding liquidity."""
-        pool_info = self.get_pool_info(token_a, token_b, chain)
-        if not pool_info:
-            return {}
-
-        # Calculate required amount of token_b based on pool ratio
-        # This is simplified - actual implementation would use pool reserves
-        return {
-            "pool": pool_info.get("address"),
-            "liquidity": pool_info.get("liquidity"),
-            "apr": pool_info.get("apr"),
-            "estimated_lp_tokens": "0",  # Would calculate based on pool
-            "price_impact": 0,
-        }
-
-    def add_liquidity(
-        self,
-        token_a: str,
-        token_b: str,
-        amount_a: str,
-        amount_b: str,
-        chain: str = "base",
-    ) -> bool:
-        """Add liquidity to a pool."""
-        logger.info(
-            f"Adding liquidity: {amount_a} {token_a} + {amount_b} {token_b} on {chain}"
-        )
-
-        # Get pool info
-        pool_info = self.get_pool_info(token_a, token_b, chain)
-        if not pool_info:
-            logger.error("Pool not found")
-            return False
-
-        # In production, this would:
-        # 1. Approve tokens
-        # 2. Call router.addLiquidity()
-        # 3. Return LP tokens
-
-        logger.info(f"Pool: {pool_info.get('address')}, APR: {pool_info.get('apr')}%")
-        return True
-
-    def remove_liquidity(self, lp_token: str, amount: str, chain: str = "base") -> bool:
-        """Remove liquidity from a pool."""
-        logger.info(f"Removing liquidity: {amount} LP tokens on {chain}")
-
-        # In production, this would:
-        # 1. Approve LP token
-        # 2. Call router.removeLiquidity()
-        # 3. Receive token_a and token_b
-
-        return True
-
     # ==================== LIMIT ORDERS ====================
 
     def create_limit_order(
@@ -2823,7 +2766,6 @@ class DexAggregatorTrader:
                             apr > 10 and liquidity > 100000
                         ):  # 10% APR and $100k+ liquidity
                             logger.info("Good liquidity opportunity found!")
-                            # Could add liquidity here
 
                 # ==================== LIMIT ORDERS ====================
                 # Check if we should place limit orders for existing positions

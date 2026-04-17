@@ -916,7 +916,7 @@ class CallChannelTracker:
             """,
                 (
                     token.get("name", "unknown"),
-                    token.get("address", ""),  # Now we have addresses!
+                    token.get("address", ""),
                     token.get("chain", ""),
                     token.get("first_cap", token.get("market_cap", "")),
                     token.get("ath_cap", ""),
