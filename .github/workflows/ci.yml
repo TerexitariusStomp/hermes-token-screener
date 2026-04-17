@@ -16,7 +16,7 @@ jobs:
           python-version: "3.12"
       - run: pip install ruff black mypy
       - run: ruff check hermes_screener/ tests/
-      - run: black --check hermes_screener/ tests/
+      - run: black --check --fast hermes_screener/ tests/
 
   test:
     runs-on: ubuntu-latest
