@@ -11,12 +11,15 @@ import json
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Any
+from typing import Union
 
 from hermes_screener.config import settings
 
 # Cached node binary path
 _NODE_BIN: str | None = None
+
+
+JsonValue = Union[dict[str, "JsonValue"], list["JsonValue"], str, int, float, bool, None]
 
 
 def find_node() -> str:
@@ -45,7 +48,7 @@ def gmgn_cmd(
     *,
     gmgn_cli: str | None = None,
     timeout: int = 30,
-) -> Any | None:
+) -> JsonValue:
     """Run gmgn-cli with the given args and return parsed JSON output.
 
     Uses settings.gmgn_cli and settings.gmgn_api_key from the centralized

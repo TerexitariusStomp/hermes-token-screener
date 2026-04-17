@@ -24,7 +24,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import TypedDict
 from urllib import request as urllib_request
 
 from .registry import (
@@ -33,6 +33,51 @@ from .registry import (
     AgentRole,
     RoutingStrategy,
 )
+
+
+# ── TypedDicts for structured return types ─────────────────────────────────
+
+
+class ClassificationResult(TypedDict, total=False):
+    primary: str
+    all_matches: list[str]
+    method: str
+    confidence: float
+    keywords: list[str]
+    complexity: str
+
+
+class AssignmentEntry(TypedDict):
+    subtask_id: str
+    subtask: str
+    category: str
+    agent_id: str | None
+    agent_name: str | None
+    agent_role: str | None
+    status: str
+
+
+class RouteResult(TypedDict):
+    classification: ClassificationResult
+    subtasks: int
+    assignments: list[AssignmentEntry]
+    is_decomposed: bool
+    routed_at: str
+
+
+class TaskLogEntry(TypedDict, total=False):
+    classification: ClassificationResult
+    subtasks: int
+    assignments: list[AssignmentEntry]
+    is_decomposed: bool
+    routed_at: str
+
+
+class DelegationState(TypedDict):
+    registry_stats: dict[str, object]
+    recent_tasks: int
+    active_tasks: int
+    task_log_path: str
 
 # ── Constants ──────────────────────────────────────────────────────────────
 
@@ -325,7 +370,7 @@ class TaskClassifier:
                 scores[category] = score
         return sorted(scores, key=scores.get, reverse=True)
 
-    def classify_llm(self, text: str) -> dict[str, Any]:
+    def classify_llm(self, text: str) -> ClassificationResult:
         """Use LLM to classify the task and extract key parameters."""
         prompt = textwrap.dedent(
             f"""\
@@ -347,11 +392,11 @@ class TaskClassifier:
                 logger.warning("LLM classify_llm returned non-JSON response; falling back to empty result")
         return {}
 
-    def classify(self, text: str) -> dict[str, Any]:
+    def classify(self, text: str) -> ClassificationResult:
         """Hybrid classification: keyword first, LLM optional for enrichment."""
         kw_results = self.classify_keyword(text)
         primary = kw_results[0] if kw_results else TaskCategory.GENERAL
-        result: dict[str, Any] = {
+        result: ClassificationResult = {
             "primary": primary.value,
             "all_matches": [c.value for c in kw_results],
             "method": "keyword",
@@ -379,7 +424,7 @@ class TaskDecomposer:
     def __init__(self):
         self.classifier = TaskClassifier()
 
-    def should_decompose(self, text: str, classification: dict[str, Any]) -> bool:
+    def should_decompose(self, text: str, classification: ClassificationResult) -> bool:
         """Decide whether a task should be broken into sub-tasks."""
         complexity = classification.get("complexity", "").lower()
         if complexity == "high":
@@ -475,7 +520,7 @@ class DelegationRouter:
         self.registry = registry or AgentRegistry()
         self.classifier = TaskClassifier()
         self.decomposer = TaskDecomposer()
-        self._task_log: list[dict[str, Any]] = []
+        self._task_log: list[TaskLogEntry] = []
         self._load_task_log()
 
     def _load_task_log(self) -> None:
@@ -496,14 +541,14 @@ class DelegationRouter:
                 indent=2,
             )
 
-    def classify_task(self, text: str) -> dict[str, Any]:
+    def classify_task(self, text: str) -> ClassificationResult:
         """Classify a task into categories without routing it."""
         return self.classifier.classify(text)
 
     def select_agent_for_task(
         self,
         text: str,
-        classification: dict[str, Any] | None = None,
+        classification: ClassificationResult | None = None,
     ) -> AgentEntry | None:
         """Find the best agent for a task based on classification and routing."""
         if classification is None:
@@ -530,7 +575,7 @@ class DelegationRouter:
         task_text: str,
         dry_run: bool = False,
         on_assign: Callable[[SubTask, AgentEntry], None] | None = None,
-    ) -> dict[str, Any]:
+    ) -> RouteResult:
         """Route a task to the best available agent(s).
 
         Args:
@@ -592,11 +637,11 @@ class DelegationRouter:
         self._save_task_log()
         return result
 
-    def get_task_log(self, limit: int = 20) -> list[dict[str, Any]]:
+    def get_task_log(self, limit: int = 20) -> list[TaskLogEntry]:
         """Get recent task routing history."""
         return self._task_log[-limit:]
 
-    def get_delegation_state(self) -> dict[str, Any]:
+    def get_delegation_state(self) -> DelegationState:
         """Return a summary of the current delegation system state."""
         active_tasks = sum(
             1

@@ -19,7 +19,17 @@ import json
 import sqlite3
 import time
 from pathlib import Path
-from typing import Any
+from typing import TypedDict, Union
+
+JsonValue = Union[dict[str, "JsonValue"], list["JsonValue"], str, int, float, bool, None]
+
+
+class WalletEnrichResult(TypedDict):
+    tokens_scanned: int
+    holders_found: int
+    unique_wallets: int
+    elapsed: float
+
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
@@ -72,7 +82,7 @@ async def _find_node() -> str:
     return "node"
 
 
-async def _gmgn_cmd_async(args: list, node_bin: str) -> Any:
+async def _gmgn_cmd_async(args: list[str], node_bin: str) -> JsonValue:
     """Run GMGN CLI asynchronously."""
     try:
         proc = await asyncio.create_subprocess_exec(
@@ -96,7 +106,7 @@ async def _fetch_holders_batch(
     address: str,
     order_by: str,
     direction: str,
-) -> list[dict]:
+) -> list[dict[str, object]]:
     """Fetch one batch of holders with a specific sort order."""
     data = await _gmgn_cmd_async(
         [
@@ -126,7 +136,7 @@ async def _fetch_all_holders_for_token(
     chain: str,
     address: str,
     limit: int = 1000,
-) -> list[dict]:
+) -> list[dict[str, object]]:
     """Fetch up to `limit` holders for a token using parallel sort-order calls."""
     gmgn_chain = CHAIN_MAP.get(chain.lower())
     if not gmgn_chain:
@@ -160,11 +170,11 @@ async def _fetch_all_holders_for_token(
 
 async def enrich_wallets_async(
     conn: sqlite3.Connection,
-    tokens: list[dict],
+    tokens: list[dict[str, object]],
     min_token_score: float = 30,
     max_concurrent_tokens: int = 3,
     dry_run: bool = False,
-) -> dict[str, Any]:
+) -> WalletEnrichResult:
     """
     Enrich wallets from top-scoring tokens using async parallel fetching.
 
@@ -199,7 +209,7 @@ async def enrich_wallets_async(
     log.info(f"eligible_tokens={len(eligible)}")
 
     now = time.time()
-    wallet_appearances: dict[str, list[dict]] = {}
+    wallet_appearances: dict[str, list[dict[str, object]]] = {}
     tokens_scanned = 0
     holders_found = 0
     semaphore = asyncio.Semaphore(max_concurrent_tokens)
@@ -393,11 +403,11 @@ async def enrich_wallets_async(
 
 def enrich_wallets_async_sync(
     conn: sqlite3.Connection,
-    tokens: list[dict],
+    tokens: list[dict[str, object]],
     min_token_score: float = 30,
     max_concurrent_tokens: int = 3,
     dry_run: bool = False,
-) -> dict[str, Any]:
+) -> WalletEnrichResult:
     """Synchronous wrapper for enrich_wallets_async()."""
     return asyncio.run(
         enrich_wallets_async(

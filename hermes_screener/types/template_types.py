@@ -1,12 +1,26 @@
-from typing import TypedDict, List, Dict, Any
+from typing import TypedDict
+
+
+class TemplateExample(TypedDict, total=False):
+    input: str
+    output: str
+    score: float
+    label: str
+
+
+class TemplateVariant(TypedDict, total=False):
+    content: str
+    version: int
+    score: float
+    source: str
 
 
 class TemplateSuggestion(TypedDict):
     template: str
     score: float
     rationale: str
-    examples: List[Dict[str, Any]]
-    metrics: Dict[str, float]
+    examples: list[TemplateExample]
+    metrics: dict[str, float]
 
 
 class TemplateMetadata(TypedDict, total=False):
@@ -22,5 +36,5 @@ class TemplateMetadata(TypedDict, total=False):
 class TemplateEntry(TypedDict):
     content: str
     metadata: TemplateMetadata
-    scores: List[Dict[str, float]]
-    variants: List[Dict[str, Any]]
+    scores: list[dict[str, float]]
+    variants: list[TemplateVariant]

@@ -20,7 +20,16 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import TypedDict
+
+
+class RegistryStats(TypedDict):
+    total_agents: int
+    status_breakdown: dict[str, int]
+    role_breakdown: dict[str, int]
+    total_tasks_processed: int
+    overall_success_rate: str
+    registry_path: str
 
 # ── Constants ──────────────────────────────────────────────────────────────
 

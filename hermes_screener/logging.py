@@ -23,10 +23,10 @@ import time
 from collections.abc import Iterator
 from contextlib import contextmanager
 from functools import lru_cache
-#PW|from typing import Any, Callable
+from typing import Any
 
 import structlog
-from structlog.types import EventDict
+from structlog.types import EventDict, Processor
 
 from hermes_screener.config import settings
 
@@ -73,7 +73,7 @@ def _setup_stdlib_logging() -> None:
 
 def _configure_structlog() -> None:
     """Configure structlog with JSON or Rich renderer."""
-    shared_processors: list[Any] = [
+    shared_processors: list[Processor] = [
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.add_log_level,
         structlog.stdlib.add_logger_name,
@@ -86,7 +86,7 @@ def _configure_structlog() -> None:
 
     if settings.log_json:
         # Production: JSON lines (parseable by jq, Loki, ELK)
-        renderer: Any = structlog.processors.JSONRenderer(ensure_ascii=False)
+        renderer: Processor = structlog.processors.JSONRenderer(ensure_ascii=False)
     else:
         # Development: Rich console with colors
         renderer = structlog.dev.ConsoleRenderer(colors=True)
