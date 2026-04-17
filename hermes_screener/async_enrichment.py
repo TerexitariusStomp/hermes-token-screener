@@ -1004,9 +1004,15 @@ async def _enrich_bitquery(token: dict, client: httpx.AsyncClient) -> None:
                 {
                     "time": t.get("Block", {}).get("Time", ""),
                     "dex": t.get("Trade", {}).get("Dex", {}).get("ProtocolName", ""),
-                    "buy_symbol": t.get("Trade", {}).get("Buy", {}).get("Currency", {}).get("Symbol", ""),
+                    "buy_symbol": t.get("Trade", {})
+                    .get("Buy", {})
+                    .get("Currency", {})
+                    .get("Symbol", ""),
                     "buy_amount": t.get("Trade", {}).get("Buy", {}).get("Amount", 0),
-                    "sell_symbol": t.get("Trade", {}).get("Sell", {}).get("Currency", {}).get("Symbol", ""),
+                    "sell_symbol": t.get("Trade", {})
+                    .get("Sell", {})
+                    .get("Currency", {})
+                    .get("Symbol", ""),
                     "sell_amount": t.get("Trade", {}).get("Sell", {}).get("Amount", 0),
                     "hash": t.get("Transaction", {}).get("Hash", "")[:20],
                 }
