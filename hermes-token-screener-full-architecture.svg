@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1900 1500" role="img" aria-label="Hermes Token Screener full codebase architecture diagram">
+        <defs>
+          <marker id="arrow-slate" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+          </marker>
+          <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee" />
+          </marker>
+          <marker id="arrow-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#34d399" />
+          </marker>
+          <marker id="arrow-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa" />
+          </marker>
+          <marker id="arrow-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fbbf24" />
+          </marker>
+          <marker id="arrow-rose" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fb7185" />
+          </marker>
+          <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fb923c" />
+          </marker>
+
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+
+          <style>
+            .t-name { fill: #ffffff; font-size: 12px; font-weight: 600; text-anchor: middle; }
+            .t-sub { fill: #94a3b8; font-size: 9px; text-anchor: middle; }
+            .t-anno { fill: #cbd5e1; font-size: 8px; text-anchor: middle; }
+            .t-tiny { fill: #94a3b8; font-size: 7px; text-anchor: middle; }
+            .t-phase { fill: #475569; font-size: 9px; font-weight: 600; text-anchor: middle; letter-spacing: 0.06em; }
+            .t-boundary { fill: #fbbf24; font-size: 9px; font-weight: 600; }
+            .t-boundary-rose { fill: #fb7185; font-size: 8px; font-weight: 600; }
+          </style>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- Top phase labels -->
+        <text x="100" y="35" class="t-phase">EXTERNAL SIGNALS</text>
+        <text x="445" y="35" class="t-phase">DISCOVERY</text>
+        <text x="935" y="35" class="t-phase">ENRICH + SCORE</text>
+        <text x="1500" y="35" class="t-phase">INTELLIGENCE + FEEDBACK</text>
+        <text x="935" y="620" class="t-phase">CORE MODULES + STATE</text>
+        <text x="1500" y="620" class="t-phase">TRADING EXECUTION</text>
+        <text x="995" y="1048" class="t-phase">DELIVERY + OPERATIONS</text>
+
+        <!-- Boundaries -->
+        <rect x="190" y="60" width="1660" height="1240" rx="12" fill="rgba(251, 191, 36, 0.05)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="8,4"/>
+        <text x="204" y="78" class="t-boundary">Hermes Runtime Boundary (repo + ~/.hermes data + scheduled jobs)</text>
+
+        <rect x="230" y="110" width="430" height="420" rx="10" fill="rgba(6, 78, 59, 0.05)" stroke="#34d399" stroke-width="1" stroke-dasharray="6,4"/>
+        <text x="244" y="128" fill="#34d399" font-size="9" font-weight="600">Discovery scripts</text>
+
+        <rect x="690" y="110" width="490" height="470" rx="10" fill="rgba(6, 78, 59, 0.05)" stroke="#34d399" stroke-width="1" stroke-dasharray="6,4"/>
+        <text x="704" y="128" fill="#34d399" font-size="9" font-weight="600">Enrichment + reranking pipeline</text>
+
+        <rect x="1240" y="110" width="520" height="430" rx="10" fill="rgba(6, 78, 59, 0.05)" stroke="#34d399" stroke-width="1" stroke-dasharray="6,4"/>
+        <text x="1254" y="128" fill="#34d399" font-size="9" font-weight="600">Intelligence + copytrade loop</text>
+
+        <rect x="690" y="560" width="490" height="460" rx="10" fill="rgba(76, 29, 149, 0.05)" stroke="#a78bfa" stroke-width="1" stroke-dasharray="6,4"/>
+        <text x="704" y="578" fill="#a78bfa" font-size="9" font-weight="600">Core modules + persistent state</text>
+
+        <rect x="1240" y="560" width="520" height="470" rx="10" fill="rgba(120, 53, 15, 0.05)" stroke="#fbbf24" stroke-width="1" stroke-dasharray="6,4"/>
+        <text x="1254" y="578" fill="#fbbf24" font-size="9" font-weight="600">Trade decisioning + execution</text>
+
+        <rect x="230" y="1030" width="1530" height="240" rx="10" fill="rgba(8, 51, 68, 0.05)" stroke="#22d3ee" stroke-width="1" stroke-dasharray="6,4"/>
+        <text x="244" y="1048" fill="#22d3ee" font-size="9" font-weight="600">Presentation, export, CI/CD, container runtime, cron</text>
+
+        <rect x="1498" y="850" width="244" height="92" rx="8" fill="transparent" stroke="#fb7185" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="1508" y="864" class="t-boundary-rose">Secrets boundary</text>
+
+        <!-- Arrows (drawn before boxes so they stay behind components) -->
+        <line x1="180" y1="158" x2="260" y2="163" stroke="#22d3ee" stroke-width="1.4" marker-end="url(#arrow-cyan)"/>
+        <line x1="180" y1="233" x2="260" y2="238" stroke="#22d3ee" stroke-width="1.4" marker-end="url(#arrow-cyan)"/>
+        <line x1="180" y1="308" x2="260" y2="313" stroke="#22d3ee" stroke-width="1.4" marker-end="url(#arrow-cyan)"/>
+        <line x1="180" y1="383" x2="260" y2="463" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow-emerald)"/>
+        <line x1="180" y1="458" x2="1290" y2="180" stroke="#64748b" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow-slate)"/>
+        <line x1="180" y1="533" x2="1290" y2="811" stroke="#fbbf24" stroke-width="1.2" marker-end="url(#arrow-amber)"/>
+
+        <line x1="430" y1="163" x2="460" y2="292" stroke="#a78bfa" stroke-width="1.3" marker-end="url(#arrow-violet)"/>
+        <line x1="430" y1="238" x2="460" y2="300" stroke="#a78bfa" stroke-width="1.3" marker-end="url(#arrow-violet)"/>
+        <line x1="430" y1="313" x2="460" y2="308" stroke="#a78bfa" stroke-width="1.3" marker-end="url(#arrow-violet)"/>
+        <line x1="430" y1="388" x2="460" y2="318" stroke="#a78bfa" stroke-width="1.3" marker-end="url(#arrow-violet)"/>
+        <line x1="430" y1="463" x2="460" y2="330" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow-violet)"/>
+
+        <line x1="640" y1="292" x2="730" y2="165" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrow-amber)"/>
+        <line x1="920" y1="165" x2="940" y2="165" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrow-amber)"/>
+        <line x1="1050" y1="195" x2="1050" y2="220" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrow-amber)"/>
+        <line x1="945" y1="308" x2="945" y2="330" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
+
+        <line x1="820" y1="386" x2="820" y2="410" stroke="#fb923c" stroke-width="1.4" marker-end="url(#arrow-orange)"/>
+        <line x1="1070" y1="386" x2="1070" y2="410" stroke="#fb923c" stroke-width="1.4" marker-end="url(#arrow-orange)"/>
+        <line x1="835" y1="474" x2="835" y2="740" stroke="#a78bfa" stroke-width="1.3" marker-end="url(#arrow-violet)"/>
+        <line x1="900" y1="474" x2="1035" y2="740" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arrow-violet)"/>
+        <line x1="1055" y1="474" x2="1120" y2="386" stroke="#fb923c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow-orange)"/>
+        <line x1="1055" y1="474" x2="1055" y2="820" stroke="#a78bfa" stroke-width="1.3" marker-end="url(#arrow-violet)"/>
+
+        <line x1="1625" y1="210" x2="1625" y2="230" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow-emerald)"/>
+        <line x1="1500" y1="260" x2="1515" y2="260" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow-emerald)"/>
+        <line x1="1625" y1="310" x2="1625" y2="290" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow-emerald)"/>
+        <line x1="1160" y1="442" x2="1515" y2="260" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrow-emerald)"/>
+
+        <path d="M 940 775 C 1120 730, 1220 260, 1290 180" fill="none" stroke="#34d399" stroke-width="1.1" stroke-dasharray="5,4" marker-end="url(#arrow-emerald)"/>
+        <line x1="1395" y1="210" x2="1060" y2="740" stroke="#a78bfa" stroke-width="1.1" marker-end="url(#arrow-violet)"/>
+        <path d="M 1290 180 C 1180 180, 900 180, 640 255" fill="none" stroke="#fb923c" stroke-width="1.2" stroke-dasharray="6,4" marker-end="url(#arrow-orange)"/>
+
+        <line x1="835" y1="600" x2="835" y2="195" stroke="#64748b" stroke-width="0.9" stroke-dasharray="4,4" marker-end="url(#arrow-slate)"/>
+        <line x1="835" y1="600" x2="835" y2="410" stroke="#64748b" stroke-width="0.9" stroke-dasharray="4,4" marker-end="url(#arrow-slate)"/>
+        <line x1="1055" y1="600" x2="1395" y2="210" stroke="#64748b" stroke-width="0.9" stroke-dasharray="4,4" marker-end="url(#arrow-slate)"/>
+        <line x1="835" y1="718" x2="1290" y2="731" stroke="#64748b" stroke-width="0.9" stroke-dasharray="4,4" marker-end="url(#arrow-slate)"/>
+
+        <line x1="1160" y1="358" x2="1290" y2="731" stroke="#fb923c" stroke-width="1.3" marker-end="url(#arrow-orange)"/>
+        <line x1="1160" y1="853" x2="1290" y2="731" stroke="#a78bfa" stroke-width="1.3" marker-end="url(#arrow-violet)"/>
+
+        <line x1="1500" y1="731" x2="1515" y2="731" stroke="#fb7185" stroke-width="1.4" marker-end="url(#arrow-rose)"/>
+        <path d="M 1625 762 C 1600 800, 1470 810, 1500 811" fill="none" stroke="#fb7185" stroke-width="1.2" marker-end="url(#arrow-rose)"/>
+        <line x1="1500" y1="811" x2="1515" y2="811" stroke="#fbbf24" stroke-width="1.3" marker-end="url(#arrow-amber)"/>
+        <line x1="1395" y1="842" x2="1395" y2="975" stroke="#fbbf24" stroke-width="1.3" marker-end="url(#arrow-amber)"/>
+        <line x1="1625" y1="842" x2="1625" y2="975" stroke="#fbbf24" stroke-width="1.3" marker-end="url(#arrow-amber)"/>
+        <line x1="1395" y1="922" x2="1500" y2="975" stroke="#fbbf24" stroke-width="1.1" marker-end="url(#arrow-amber)"/>
+
+        <line x1="1515" y1="891" x2="1500" y2="731" stroke="#fb7185" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow-rose)"/>
+        <line x1="1625" y1="891" x2="1625" y2="731" stroke="#fb7185" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow-rose)"/>
+        <line x1="1515" y1="891" x2="1500" y2="811" stroke="#fb7185" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow-rose)"/>
+        <line x1="1625" y1="891" x2="1625" y2="811" stroke="#fb7185" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow-rose)"/>
+        <line x1="1515" y1="891" x2="1500" y2="891" stroke="#fb7185" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow-rose)"/>
+        <path d="M 1625 891 C 1625 450, 1490 300, 1395 210" fill="none" stroke="#fb7185" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow-rose)"/>
+
+        <line x1="1515" y1="731" x2="1160" y2="933" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arrow-violet)"/>
+        <line x1="1395" y1="762" x2="1160" y2="933" stroke="#a78bfa" stroke-width="1.2" marker-end="url(#arrow-violet)"/>
+
+        <line x1="730" y1="853" x2="560" y2="1117" stroke="#22d3ee" stroke-width="1.2" marker-end="url(#arrow-cyan)"/>
+        <line x1="835" y1="775" x2="500" y2="1117" stroke="#22d3ee" stroke-width="1.0" marker-end="url(#arrow-cyan)"/>
+        <line x1="945" y1="886" x2="700" y2="1117" stroke="#22d3ee" stroke-width="1.0" marker-end="url(#arrow-cyan)"/>
+        <line x1="820" y1="1117" x2="840" y2="1117" stroke="#22d3ee" stroke-width="1.3" marker-end="url(#arrow-cyan)"/>
+        <line x1="1070" y1="1117" x2="1090" y2="1117" stroke="#22d3ee" stroke-width="1.3" marker-end="url(#arrow-cyan)"/>
+        <path d="M 1650 1080 C 1650 900, 620 900, 345 191" fill="none" stroke="#64748b" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow-slate)"/>
+
+        <!-- External components -->
+        <g>
+          <rect x="20" y="130" width="160" height="56" rx="6" fill="#0f172a"/>
+          <rect x="20" y="130" width="160" height="56" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+          <text x="100" y="152" class="t-name">Telegram channels</text>
+          <text x="100" y="168" class="t-sub">contract call traffic</text>
+        </g>
+
+        <g>
+          <rect x="20" y="205" width="160" height="56" rx="6" fill="#0f172a"/>
+          <rect x="20" y="205" width="160" height="56" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+          <text x="100" y="227" class="t-name">Dexscreener APIs</text>
+          <text x="100" y="243" class="t-sub">boosted + profiles</text>
+        </g>
+
+        <g>
+          <rect x="20" y="280" width="160" height="56" rx="6" fill="#0f172a"/>
+          <rect x="20" y="280" width="160" height="56" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+          <text x="100" y="302" class="t-name">GMGN / PumpPortal</text>
+          <text x="100" y="318" class="t-sub">harvest + signals</text>
+        </g>
+
+        <g>
+          <rect x="20" y="355" width="160" height="56" rx="6" fill="#0f172a"/>
+          <rect x="20" y="355" width="160" height="56" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+          <text x="100" y="377" class="t-name">X/Twitter + websites</text>
+          <text x="100" y="393" class="t-sub">trend &amp; content signals</text>
+        </g>
+
+        <g>
+          <rect x="20" y="430" width="160" height="56" rx="6" fill="#0f172a"/>
+          <rect x="20" y="430" width="160" height="56" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+          <text x="100" y="452" class="t-name">Webhooks + RPCs</text>
+          <text x="100" y="468" class="t-sub">Alchemy/Helius/Ankr</text>
+        </g>
+
+        <g>
+          <rect x="20" y="505" width="160" height="56" rx="6" fill="#0f172a"/>
+          <rect x="20" y="505" width="160" height="56" rx="6" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+          <text x="100" y="527" class="t-name">DEX APIs / protocols</text>
+          <text x="100" y="543" class="t-sub">Jupiter/Kyber/Odos...</text>
+        </g>
+
+        <!-- Discovery -->
+        <g>
+          <rect x="260" y="135" width="170" height="56" rx="6" fill="#0f172a"/>
+          <rect x="260" y="135" width="170" height="56" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="345" y="157" class="t-name">telegram_scraper.py</text>
+          <text x="345" y="173" class="t-sub">cron: */10m</text>
+        </g>
+
+        <g>
+          <rect x="260" y="210" width="170" height="56" rx="6" fill="#0f172a"/>
+          <rect x="260" y="210" width="170" height="56" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="345" y="232" class="t-name">token_discovery*.py</text>
+          <text x="345" y="248" class="t-sub">simple / enhanced / base</text>
+        </g>
+
+        <g>
+          <rect x="260" y="285" width="170" height="56" rx="6" fill="#0f172a"/>
+          <rect x="260" y="285" width="170" height="56" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="345" y="307" class="t-name">gmgn_harvester.py</text>
+          <text x="345" y="323" class="t-sub">pumpportal_harvester.py</text>
+        </g>
+
+        <g>
+          <rect x="260" y="360" width="170" height="56" rx="6" fill="#0f172a"/>
+          <rect x="260" y="360" width="170" height="56" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="345" y="382" class="t-name">token_integration.py</text>
+          <text x="345" y="398" class="t-sub">token_lifecycle.py</text>
+        </g>
+
+        <g>
+          <rect x="260" y="435" width="170" height="56" rx="6" fill="#0f172a"/>
+          <rect x="260" y="435" width="170" height="56" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="345" y="457" class="t-name">trending_keywords.py</text>
+          <text x="345" y="473" class="t-sub">weekly channel discovery</text>
+        </g>
+
+        <g>
+          <rect x="460" y="255" width="180" height="74" rx="6" fill="#0f172a"/>
+          <rect x="460" y="255" width="180" height="74" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="550" y="281" class="t-name">central_contracts.db</text>
+          <text x="550" y="297" class="t-sub">+ settings.db</text>
+          <text x="550" y="313" class="t-tiny">dedup / mentions / channels</text>
+        </g>
+
+        <!-- Enrichment and scoring -->
+        <g>
+          <rect x="730" y="135" width="190" height="60" rx="6" fill="#0f172a"/>
+          <rect x="730" y="135" width="190" height="60" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="825" y="158" class="t-name">token_enricher.py</text>
+          <text x="825" y="174" class="t-sub">phase-1 orchestrator</text>
+        </g>
+
+        <g>
+          <rect x="940" y="135" width="220" height="60" rx="6" fill="#0f172a"/>
+          <rect x="940" y="135" width="220" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1050" y="158" class="t-name">async_enrichment.py</text>
+          <text x="1050" y="174" class="t-sub">parallel layer fan-out</text>
+        </g>
+
+        <g>
+          <rect x="730" y="220" width="430" height="88" rx="8" fill="#0f172a"/>
+          <rect x="730" y="220" width="430" height="88" rx="8" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="945" y="242" class="t-name">Enrichment Layers (required + optional)</text>
+          <text x="945" y="258" class="t-sub">Dexscreener, GoPlus, RugCheck, Etherscan, De.Fi, CoinGecko, Zerion</text>
+          <text x="945" y="272" class="t-sub">Solscan, Helius, Birdeye, Goldrush, Goldsky, Bitquery, Surf, GMGN, Derived</text>
+          <text x="945" y="288" class="t-tiny">Errors are isolated per layer; pipeline continues</text>
+        </g>
+
+        <g>
+          <rect x="730" y="330" width="430" height="56" rx="6" fill="#0f172a"/>
+          <rect x="730" y="330" width="430" height="56" rx="6" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1.5"/>
+          <text x="945" y="352" class="t-name">Phase Artifact Bus</text>
+          <text x="945" y="368" class="t-sub">top100.json · phase1_initial · phase3_smartmoney · phase4_social</text>
+        </g>
+
+        <g>
+          <rect x="730" y="410" width="210" height="64" rx="6" fill="#0f172a"/>
+          <rect x="730" y="410" width="210" height="64" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="835" y="435" class="t-name">wallet_tracker.py</text>
+          <text x="835" y="451" class="t-sub">+ async_wallets.py</text>
+        </g>
+
+        <g>
+          <rect x="950" y="410" width="210" height="64" rx="6" fill="#0f172a"/>
+          <rect x="950" y="410" width="210" height="64" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1055" y="435" class="t-name">cross_scoring*.py</text>
+          <text x="1055" y="451" class="t-sub">enhanced cross rerank</text>
+        </g>
+
+        <!-- Intelligence -->
+        <g>
+          <rect x="1290" y="150" width="210" height="60" rx="6" fill="#0f172a"/>
+          <rect x="1290" y="150" width="210" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1395" y="173" class="t-name">copytrade_monitor.py</text>
+          <text x="1395" y="189" class="t-sub">wallet-led token discovery</text>
+        </g>
+
+        <g>
+          <rect x="1515" y="150" width="220" height="60" rx="6" fill="#0f172a"/>
+          <rect x="1515" y="150" width="220" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1625" y="173" class="t-name">keyword_discovery.py</text>
+          <text x="1625" y="189" class="t-sub">TF-IDF + Dex search</text>
+        </g>
+
+        <g>
+          <rect x="1290" y="230" width="210" height="60" rx="6" fill="#0f172a"/>
+          <rect x="1290" y="230" width="210" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1395" y="253" class="t-name">website_intelligence.py</text>
+          <text x="1395" y="269" class="t-sub">local LLM website scoring</text>
+        </g>
+
+        <g>
+          <rect x="1515" y="230" width="220" height="60" rx="6" fill="#0f172a"/>
+          <rect x="1515" y="230" width="220" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1625" y="253" class="t-name">social_enhancement.py</text>
+          <text x="1625" y="269" class="t-sub">phase-4 final rerank</text>
+        </g>
+
+        <g>
+          <rect x="1290" y="310" width="210" height="60" rx="6" fill="#0f172a"/>
+          <rect x="1290" y="310" width="210" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1395" y="333" class="t-name">smart_money_*.py</text>
+          <text x="1395" y="349" class="t-sub">research + monitor logic</text>
+        </g>
+
+        <g>
+          <rect x="1515" y="310" width="220" height="60" rx="6" fill="#0f172a"/>
+          <rect x="1515" y="310" width="220" height="60" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1625" y="333" class="t-name">twitter/combined analysis</text>
+          <text x="1625" y="349" class="t-sub">x-signal enrichers</text>
+        </g>
+
+        <g>
+          <rect x="1290" y="390" width="445" height="58" rx="6" fill="#0f172a"/>
+          <rect x="1290" y="390" width="445" height="58" rx="6" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1.5"/>
+          <text x="1512" y="412" class="t-name">Feedback Loop</text>
+          <text x="1512" y="428" class="t-sub">new copytrade tokens/wallets are reinjected into contracts DB and artifact bus</text>
+        </g>
+
+        <!-- Core modules + state -->
+        <g>
+          <rect x="730" y="600" width="210" height="56" rx="6" fill="#0f172a"/>
+          <rect x="730" y="600" width="210" height="56" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="835" y="621" class="t-name">config/logging/metrics</text>
+          <text x="835" y="637" class="t-sub">hermes_screener/*.py</text>
+        </g>
+
+        <g>
+          <rect x="950" y="600" width="210" height="56" rx="6" fill="#0f172a"/>
+          <rect x="950" y="600" width="210" height="56" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1055" y="621" class="t-name">agents registry/router</text>
+          <text x="1055" y="637" class="t-sub">dynamic delegation layer</text>
+        </g>
+
+        <g>
+          <rect x="730" y="662" width="430" height="56" rx="6" fill="#0f172a"/>
+          <rect x="730" y="662" width="430" height="56" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="945" y="684" class="t-name">models + memory + prompt tools</text>
+          <text x="945" y="700" class="t-sub">gemma4_loader · compression_pipeline · vector_store · dspy_optimizer · template_manager</text>
+        </g>
+
+        <g>
+          <rect x="730" y="740" width="210" height="70" rx="6" fill="#0f172a"/>
+          <rect x="730" y="740" width="210" height="70" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="835" y="766" class="t-name">wallet_tracker.db</text>
+          <text x="835" y="782" class="t-sub">tracked_wallets + entries</text>
+          <text x="835" y="796" class="t-tiny">pattern flags + scores</text>
+        </g>
+
+        <g>
+          <rect x="950" y="740" width="210" height="70" rx="6" fill="#0f172a"/>
+          <rect x="950" y="740" width="210" height="70" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="1055" y="766" class="t-name">copytrade_discoveries.db</text>
+          <text x="1055" y="782" class="t-sub">wallet-discovered tokens</text>
+          <text x="1055" y="796" class="t-tiny">webhook/poll events</text>
+        </g>
+
+        <g>
+          <rect x="730" y="820" width="430" height="66" rx="6" fill="#0f172a"/>
+          <rect x="730" y="820" width="430" height="66" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="945" y="845" class="t-name">Token Outputs</text>
+          <text x="945" y="861" class="t-sub">top100.json + top100_phase1_initial + phase3_smartmoney + phase4_social</text>
+        </g>
+
+        <g>
+          <rect x="730" y="900" width="430" height="66" rx="6" fill="#0f172a"/>
+          <rect x="730" y="900" width="430" height="66" rx="6" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="945" y="925" class="t-name">Trade State</text>
+          <text x="945" y="941" class="t-sub">active_positions.json · trade_decisions.json · trade_monitor_log.json · market_history.json</text>
+        </g>
+
+        <!-- Trading -->
+        <g>
+          <rect x="1290" y="700" width="210" height="62" rx="6" fill="#0f172a"/>
+          <rect x="1290" y="700" width="210" height="62" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+          <text x="1395" y="724" class="t-name">ai_trading_brain.py</text>
+          <text x="1395" y="740" class="t-sub">LLM buy/hold/sell decisions</text>
+        </g>
+
+        <g>
+          <rect x="1515" y="700" width="220" height="62" rx="6" fill="#0f172a"/>
+          <rect x="1515" y="700" width="220" height="62" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+          <text x="1625" y="724" class="t-name">trade_monitor.py</text>
+          <text x="1625" y="740" class="t-sub">decay + TP/SL lifecycle</text>
+        </g>
+
+        <g>
+          <rect x="1290" y="780" width="210" height="62" rx="6" fill="#0f172a"/>
+          <rect x="1290" y="780" width="210" height="62" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="1395" y="804" class="t-name">dex_aggregator_trader.py</text>
+          <text x="1395" y="820" class="t-sub">multi-aggregator routing</text>
+        </g>
+
+        <g>
+          <rect x="1515" y="780" width="220" height="62" rx="6" fill="#0f172a"/>
+          <rect x="1515" y="780" width="220" height="62" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1625" y="804" class="t-name">contract_executor.py</text>
+          <text x="1625" y="820" class="t-sub">protocol_registry.py ABIs</text>
+        </g>
+
+        <g>
+          <rect x="1290" y="860" width="210" height="62" rx="6" fill="#0f172a"/>
+          <rect x="1290" y="860" width="210" height="62" rx="6" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="1395" y="884" class="t-name">solana_adapter.py</text>
+          <text x="1395" y="900" class="t-sub">direct Solana tx build</text>
+        </g>
+
+        <g>
+          <rect x="1515" y="860" width="220" height="62" rx="6" fill="#0f172a"/>
+          <rect x="1515" y="860" width="220" height="62" rx="6" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1.5"/>
+          <text x="1625" y="884" class="t-name">Secrets / Key Material</text>
+          <text x="1625" y="900" class="t-sub">~/.hermes/.env + wallets</text>
+        </g>
+
+        <g>
+          <rect x="1290" y="940" width="445" height="70" rx="6" fill="#0f172a"/>
+          <rect x="1290" y="940" width="445" height="70" rx="6" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="1512" y="966" class="t-name">On-chain Execution Surface</text>
+          <text x="1512" y="982" class="t-sub">EVM swaps + Solana routes via Jupiter/Kyber/Odos/Uni-style protocol paths</text>
+          <text x="1512" y="996" class="t-tiny">API quote path + direct contract/program submission</text>
+        </g>
+
+        <!-- Delivery + Ops -->
+        <g>
+          <rect x="260" y="1080" width="300" height="74" rx="8" fill="#0f172a"/>
+          <rect x="260" y="1080" width="300" height="74" rx="8" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+          <text x="410" y="1106" class="t-name">FastAPI Dashboard</text>
+          <text x="410" y="1122" class="t-sub">hermes_screener/dashboard/app.py</text>
+          <text x="410" y="1138" class="t-tiny">tokens · wallets · cross views · chart APIs</text>
+        </g>
+
+        <g>
+          <rect x="580" y="1080" width="240" height="74" rx="8" fill="#0f172a"/>
+          <rect x="580" y="1080" width="240" height="74" rx="8" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1.5"/>
+          <text x="700" y="1106" class="t-name">export_github_pages.py</text>
+          <text x="700" y="1122" class="t-sub">normalize + publish JSON</text>
+          <text x="700" y="1138" class="t-tiny">tokens/wallets/cross snapshots</text>
+        </g>
+
+        <g>
+          <rect x="840" y="1080" width="230" height="74" rx="8" fill="#0f172a"/>
+          <rect x="840" y="1080" width="230" height="74" rx="8" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1.5"/>
+          <text x="955" y="1106" class="t-name">docs/data + docs/*.html</text>
+          <text x="955" y="1122" class="t-sub">static site artifact</text>
+          <text x="955" y="1138" class="t-tiny">GitHub Pages payload</text>
+        </g>
+
+        <g>
+          <rect x="1090" y="1080" width="250" height="74" rx="8" fill="#0f172a"/>
+          <rect x="1090" y="1080" width="250" height="74" rx="8" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="1215" y="1106" class="t-name">pages.yml deploy</text>
+          <text x="1215" y="1122" class="t-sub">upload + deploy-pages</text>
+          <text x="1215" y="1138" class="t-tiny">main branch publish</text>
+        </g>
+
+        <g>
+          <rect x="1360" y="1080" width="180" height="74" rx="8" fill="#0f172a"/>
+          <rect x="1360" y="1080" width="180" height="74" rx="8" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="1450" y="1106" class="t-name">CI workflow</text>
+          <text x="1450" y="1122" class="t-sub">ruff/black/pytest/mypy</text>
+          <text x="1450" y="1138" class="t-tiny">tests/* + lint gates</text>
+        </g>
+
+        <g>
+          <rect x="1560" y="1080" width="180" height="74" rx="8" fill="#0f172a"/>
+          <rect x="1560" y="1080" width="180" height="74" rx="8" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="1650" y="1106" class="t-name">Docker + cron</text>
+          <text x="1650" y="1122" class="t-sub">Dockerfile/compose</text>
+          <text x="1650" y="1138" class="t-tiny">scheduled pipeline runs</text>
+        </g>
+
+        <!-- Legend (outside all boundary boxes) -->
+        <rect x="240" y="1335" width="1420" height="120" rx="10" fill="rgba(15, 23, 42, 0.7)" stroke="#1e293b" stroke-width="1"/>
+        <text x="258" y="1354" fill="white" font-size="10" font-weight="600">Legend</text>
+
+        <rect x="258" y="1364" width="16" height="10" rx="2" fill="rgba(8, 51, 68, 0.4)" stroke="#22d3ee" stroke-width="1"/>
+        <text x="280" y="1372" fill="#94a3b8" font-size="8">Frontend / UI / API surface</text>
+
+        <rect x="458" y="1364" width="16" height="10" rx="2" fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" stroke-width="1"/>
+        <text x="480" y="1372" fill="#94a3b8" font-size="8">Backend script/module</text>
+
+        <rect x="648" y="1364" width="16" height="10" rx="2" fill="rgba(76, 29, 149, 0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="670" y="1372" fill="#94a3b8" font-size="8">Database / persisted state</text>
+
+        <rect x="868" y="1364" width="16" height="10" rx="2" fill="rgba(120, 53, 15, 0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="890" y="1372" fill="#94a3b8" font-size="8">Cloud/API/infra/deploy</text>
+
+        <rect x="1078" y="1364" width="16" height="10" rx="2" fill="rgba(136, 19, 55, 0.4)" stroke="#fb7185" stroke-width="1"/>
+        <text x="1100" y="1372" fill="#94a3b8" font-size="8">Security / keys / trading control</text>
+
+        <rect x="1338" y="1364" width="16" height="10" rx="2" fill="rgba(251, 146, 60, 0.3)" stroke="#fb923c" stroke-width="1"/>
+        <text x="1360" y="1372" fill="#94a3b8" font-size="8">Message bus / phase artifacts</text>
+
+        <rect x="1548" y="1364" width="16" height="10" rx="2" fill="rgba(30, 41, 59, 0.5)" stroke="#94a3b8" stroke-width="1"/>
+        <text x="1570" y="1372" fill="#94a3b8" font-size="8">External systems</text>
+
+        <line x1="258" y1="1390" x2="274" y2="1390" stroke="#fb7185" stroke-width="1.2" stroke-dasharray="4,4"/>
+        <text x="280" y="1393" fill="#94a3b8" font-size="8">Dashed rose line: secret/auth/security flow</text>
+
+        <line x1="548" y1="1390" x2="564" y2="1390" stroke="#fb923c" stroke-width="1.2" stroke-dasharray="5,4"/>
+        <text x="570" y="1393" fill="#94a3b8" font-size="8">Dashed orange line: feedback/reinjection loop</text>
+
+        <line x1="878" y1="1390" x2="894" y2="1390" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4,4"/>
+        <text x="900" y="1393" fill="#94a3b8" font-size="8">Dashed slate line: support/runtime dependency</text>
+
+        <line x1="1188" y1="1390" x2="1204" y2="1390" stroke="#22d3ee" stroke-width="1.2"/>
+        <text x="1210" y="1393" fill="#94a3b8" font-size="8">Solid cyan line: dashboard/export delivery path</text>
+      </svg>

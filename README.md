@@ -29,7 +29,7 @@ git push
 
 ## Architecture
 
-<img src="architecture-v3.png" alt="Hermes Token Screener Architecture" width="100%"/>
+<img src="hermes-token-screener-full-architecture.svg" alt="Hermes Token Screener Full Codebase Architecture" width="100%"/>
 
 ## Scripts
 
