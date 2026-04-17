@@ -68,7 +68,7 @@ function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)
 function chain_cls(c){c=(c||"").toLowerCase();return["solana","sol","base","ethereum","eth","bsc","bnb","arbitrum","polygon","polygon-pos","avalanche","sui","optimism"].includes(c)?"chain-"+c:""}
 function chain_label(c){return{solana:"Solana",sol:"Solana",base:"Base",ethereum:"Ethereum",eth:"Ethereum",bsc:"BNB Chain",bnb:"BNB Chain",arbitrum:"Arbitrum",polygon:"Polygon","polygon-pos":"Polygon",avalanche:"Avalanche",sui:"Sui",optimism:"Optimism"}[(c||"").toLowerCase()]||c||"Unknown"}
 function block_url(addr,chain){chain=(chain||"").toLowerCase();if(chain==="solana"||chain==="sol")return"https://solscan.io/account/"+addr;if(chain==="base")return"https://basescan.org/address/"+addr;if(chain==="bsc"||chain==="bnb")return"https://bscscan.com/address/"+addr;return"https://etherscan.io/address/"+addr}
-function time_ago(ts){if(!ts)return"\u2014";const d=Date.now()/1000-ts;if(d<60)return Math.floor(d)+"s ago";if(d<3600)return Math.floor(d/60)+"m ago";if(d<86400)return Math.floor(d/3600)+"h ago";return Math.floor(d/86400)+"d ago"}
+function fmt_date(ts){if(!ts)return"\u2014";const d=new Date(ts*1000);return d.toISOString().slice(0,16).replace("T"," ")}
 
 let ALL_PURCHASES=[], sortKey="timestamp", sortDir=-1;
 
@@ -90,7 +90,7 @@ function renderTable(purchases){
     }).join("");
     tbody.innerHTML+=`<tr>
   <td>${i+1}</td>
-  <td>${time_ago(p.timestamp)}</td>
+  <td>${fmt_date(p.timestamp)}</td>
   <td><span class="badge ${chain_cls(p.chain||"")}">${chain_label(p.chain)}</span></td>
   <td><strong>${p.symbol||"???"}</strong></td>
   <td class="pos">${fmt_usd(p.amount_usd)}</td>
