@@ -98,7 +98,7 @@ def load_phase_input(path: Path) -> List[dict]:
     if not path.exists():
         return []
     with open(path) as f:
-        return json.load(f).get("tokens", [])
+        data = json.load(f); return data.get("tokens", data.get("top_tokens", []))
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -551,7 +551,7 @@ def run_social_enhancement(
     # ── Re-score tokens with social ──
     tokens = rescore_tokens_with_social(tokens, tg_signals, tw_signals)
     log.info("tokens_rescored_with_social",
-             top5=[(t["symbol"], t.get("score", 0), t.get("social_score", 0)) for t in tokens[:5]])
+             top5=[(t.get("symbol", t.get("contract_address", "?")), t.get("score", 0), t.get("social_score", 0)) for t in tokens[:5]])
 
     # ── Save Phase 4 output ──
     if not dry_run:
@@ -619,7 +619,7 @@ def run_social_enhancement(
         "twitter_signals": len(tw_signals),
         "elapsed": round(elapsed, 1),
         "top_tokens": [
-            {"symbol": t["symbol"], "score": t["score"],
+            {"symbol": t.get("symbol", t.get("contract_address", "?")), "score": t["score"],
              "smartmoney": t.get("_smartmoney_score", 0),
              "social": t.get("social_score", 0)}
             for t in tokens[:10]

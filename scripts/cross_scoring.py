@@ -53,7 +53,7 @@ def load_tokens() -> List[dict]:
         return []
     with open(OUTPUT_PATH) as f:
         data = json.load(f)
-    return data.get("tokens", [])
+    return data.get("tokens", data.get("top_tokens", []))
 
 
 def load_wallets(min_score: float = 30) -> List[dict]:

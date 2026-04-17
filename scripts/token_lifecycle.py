@@ -71,7 +71,8 @@ def _save_lifecycle(address: str, data: dict):
 def _load_current_tokens() -> List[dict]:
     if TOP_TOKENS_PATH.exists():
         with open(TOP_TOKENS_PATH) as f:
-            return json.load(f).get("tokens", [])
+            data = json.load(f)
+        return data.get("tokens", data.get("top_tokens", []))
     return []
 
 
