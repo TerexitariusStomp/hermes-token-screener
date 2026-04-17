@@ -663,6 +663,74 @@ class SolanaProgramAdapter:
             logger.error(f"PumpSwap build error: {e}")
         return None
 
+    # ==================== SMART ROUTING ====================
+
+    def smart_route(
+        self,
+        input_mint: str,
+        output_mint: str,
+        amount: int,
+        slippage_bps: int = 50,
+        swap_type: str = "buy_small",
+    ) -> Optional[Dict]:
+        """Smart routing across all Solana DEXs.
+
+        Uses Jupiter as primary aggregator (routes through 20+ DEXs),
+        falls back to direct DEX APIs if Jupiter fails.
+
+        swap_type: buy_large, buy_small, buy_memecoin, sell_large, sell_small, stable_swap
+        """
+        priority = DEX_ROUTING_PRIORITY.get(swap_type, ["jupiter", "raydium"])
+
+        for dex in priority:
+            try:
+                if dex == "jupiter":
+                    quote = self.jupiter_quote(
+                        input_mint, output_mint, amount, slippage_bps
+                    )
+                    if quote and quote.get("outAmount"):
+                        return {"dex": "jupiter", "quote": quote, "route": swap_type}
+                elif dex == "raydium":
+                    quote = self.raydium_cpmm_quote(
+                        input_mint, output_mint, amount, slippage_bps
+                    )
+                    if quote and quote.get("outputAmount"):
+                        return {"dex": "raydium", "quote": quote, "route": swap_type}
+                elif dex == "orca":
+                    quote = self.orca_quote(
+                        input_mint, output_mint, amount, slippage_bps
+                    )
+                    if quote and quote.get("pool"):
+                        return {"dex": "orca", "quote": quote, "route": swap_type}
+                elif dex == "meteora":
+                    quote = self.meteora_quote(
+                        input_mint, output_mint, amount, slippage_bps
+                    )
+                    if quote and quote.get("pool"):
+                        return {"dex": "meteora", "quote": quote, "route": swap_type}
+                elif dex == "pumpswap":
+                    quote = self.pumpswap_quote(
+                        input_mint, output_mint, amount, slippage_bps
+                    )
+                    if quote and quote.get("pool"):
+                        return {"dex": "pumpswap", "quote": quote, "route": swap_type}
+            except Exception as e:
+                logger.debug(f"Smart route {dex} failed: {e}")
+                continue
+
+        return None
+
+    def get_dex_info(self, dex_key: str) -> Dict:
+        """Get info about a Solana DEX from the registry."""
+        return SOLANA_DEX_REGISTRY.get(dex_key, {})
+
+    def list_dexs_by_tvl(self, min_tvl: float = 0) -> list:
+        """List all Solana DEXs sorted by TVL."""
+        dexs = [
+            (k, v) for k, v in SOLANA_DEX_REGISTRY.items() if v.get("tvl", 0) >= min_tvl
+        ]
+        return sorted(dexs, key=lambda x: x[1].get("tvl", 0), reverse=True)
+
     # ==================== MULTI-DEX COMPARISON ====================
 
     def compare_quotes(
@@ -718,3 +786,353 @@ class SolanaProgramAdapter:
             }
 
         return quotes
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SOLANA DEX REGISTRY — All known Solana DEXs with addresses and types
+# ═══════════════════════════════════════════════════════════════════════════════
+
+SOLANA_DEX_REGISTRY = {
+    # === Tier 1: >$100M TVL ===
+    "raydium": {
+        "name": "Raydium AMM",
+        "address": "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
+        "type": "amm",
+        "tvl": 998709916,
+        "api": "https://transaction-v1.raydium.io",
+        "has_api": True,
+    },
+    "meteora": {
+        "name": "Meteora DLMM",
+        "address": "METvsvVRapdj9cFLzq4Tr43xK4tAjQfwX76z3n6mWQL",
+        "type": "dlmm",
+        "tvl": 305128844,
+        "api": "https://dlmm-api.meteora.ag",
+        "has_api": True,
+    },
+    "orca": {
+        "name": "Orca DEX",
+        "address": "orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE",
+        "type": "whirlpool",
+        "tvl": 264857438,
+        "api": "https://api.orca.so",
+        "has_api": True,
+    },
+    "pumpswap": {
+        "name": "PumpSwap",
+        "address": "pumpCmXqMfrsAkQ5r49WcJnRayYRqmXz6ae8H7H9Dfn",
+        "type": "bonding_curve",
+        "tvl": 210251963,
+        "api": "https://frontend-api.pump.fun",
+        "has_api": True,
+    },
+    "sanctum": {
+        "name": "Sanctum Infinity",
+        "address": "CLoUDKc4Ane7HeQcPpE3YHnznRxhMimJ4MyaUqyHFzAu",
+        "type": "lst_router",
+        "tvl": 179733132,
+        "has_api": False,
+    },
+    # === Tier 2: $10M-$100M TVL ===
+    "meteora_damm_v2": {
+        "name": "Meteora DAMM V2",
+        "address": "METvsvVRapdj9cFLzq4Tr43xK4tAjQfwX76z3n6mWQL",
+        "type": "amm",
+        "tvl": 36572381,
+        "has_api": False,
+    },
+    "meteora_damm_v1": {
+        "name": "Meteora DAMM V1",
+        "address": "METvsvVRapdj9cFLzq4Tr43xK4tAjQfwX76z3n6mWQL",
+        "type": "amm",
+        "tvl": 22390766,
+        "has_api": False,
+    },
+    "manifest": {
+        "name": "Manifest Trade",
+        "address": "",
+        "type": "orderbook",
+        "tvl": 18097288,
+        "has_api": False,
+    },
+    "serum": {
+        "name": "Serum",
+        "address": "476c5e26a75bd202a9683ffd34359c0cc15be0ff",
+        "type": "orderbook",
+        "tvl": 15533152,
+        "has_api": False,
+    },
+    "byreal": {
+        "name": "Byreal",
+        "address": "",
+        "type": "amm",
+        "tvl": 13810926,
+        "has_api": False,
+    },
+    "futarchy": {
+        "name": "Futarchy AMM",
+        "address": "METAwkXcqyXKy1AtsSgJ8JiUHwGCafnZL38n3vYmeta",
+        "type": "amm",
+        "tvl": 11987190,
+        "has_api": False,
+    },
+    # === Tier 3: $1M-$10M TVL ===
+    "doaar": {
+        "name": "DOOAR",
+        "address": "",
+        "type": "amm",
+        "tvl": 5110361,
+        "has_api": False,
+    },
+    "saber": {
+        "name": "Saber",
+        "address": "Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1",
+        "type": "stableswap",
+        "tvl": 4624734,
+        "has_api": False,
+    },
+    "phoenix": {
+        "name": "Phoenix Spot",
+        "address": "",
+        "type": "orderbook",
+        "tvl": 2180607,
+        "has_api": False,
+    },
+    "fluxbeam": {
+        "name": "FluxBeam",
+        "address": "",
+        "type": "amm",
+        "tvl": 2094698,
+        "has_api": False,
+    },
+    "openbook": {
+        "name": "OpenBook",
+        "address": "",
+        "type": "orderbook",
+        "tvl": 1046042,
+        "has_api": False,
+    },
+    # === Tier 4: $100K-$1M TVL ===
+    "atrix": {
+        "name": "Atrix",
+        "address": "",
+        "type": "amm",
+        "tvl": 991818,
+        "has_api": False,
+    },
+    "perena": {
+        "name": "Perena Dex",
+        "address": "",
+        "type": "amm",
+        "tvl": 867512,
+        "has_api": False,
+    },
+    "bonkswap": {
+        "name": "Bonkswap",
+        "address": "",
+        "type": "amm",
+        "tvl": 770903,
+        "has_api": False,
+    },
+    "defituna": {
+        "name": "DefiTuna AMM",
+        "address": "TUNAfXDZEdQizTMTh3uEvNvYqJmqFHZbEJt8joP4cyx",
+        "type": "amm",
+        "tvl": 601753,
+        "has_api": False,
+    },
+    "aldrin": {
+        "name": "Aldrin",
+        "address": "E5ndSkaB17Dm7CsD22dvcjfrYSDLCxFcMd6z8ddCk5wp",
+        "type": "amm",
+        "tvl": 461410,
+        "has_api": False,
+    },
+    "stabble": {
+        "name": "stabble Stableswap",
+        "address": "STBuyENwJ1GP4yNZCjwavn92wYLEY3t5S1kVS5kwyS1",
+        "type": "stableswap",
+        "tvl": 435412,
+        "has_api": False,
+    },
+    "invariant": {
+        "name": "Invariant",
+        "address": "",
+        "type": "amm",
+        "tvl": 312117,
+        "has_api": False,
+    },
+    "skate": {
+        "name": "Skate AMM",
+        "address": "",
+        "type": "amm",
+        "tvl": 249767,
+        "has_api": False,
+    },
+    "serum_swap": {
+        "name": "Serum Swap",
+        "address": "",
+        "type": "amm",
+        "tvl": 208154,
+        "has_api": False,
+    },
+    "crema": {
+        "name": "Crema Finance",
+        "address": "",
+        "type": "clmm",
+        "tvl": 126381,
+        "has_api": False,
+    },
+    "cropper": {
+        "name": "Cropper AMM",
+        "address": "DubwWZNWiNGMMeeQHPnMATNj77YZPZSAz2WVR5WjLJqz",
+        "type": "amm",
+        "tvl": 119876,
+        "has_api": False,
+    },
+    "saros": {
+        "name": "Saros DLMM",
+        "address": "SarosY6Vscao718M4A778z4CGtvcwcGef5M9MEH1LGL",
+        "type": "dlmm",
+        "tvl": 116058,
+        "has_api": False,
+    },
+    "deltatrade": {
+        "name": "DeltaTrade",
+        "address": "",
+        "type": "amm",
+        "tvl": 103550,
+        "has_api": False,
+    },
+    # === Tier 5: <$100K TVL ===
+    "1intro": {
+        "name": "1INTRO",
+        "address": "inTCqHJaLAETUxvRZ2kC45G2sThq9BFWVimfaQw7t6w",
+        "type": "amm",
+        "tvl": 79438,
+        "has_api": False,
+    },
+    "saros_amm": {
+        "name": "Saros AMM",
+        "address": "SarosY6Vscao718M4A778z4CGtvcwcGef5M9MEH1LGL",
+        "type": "amm",
+        "tvl": 76550,
+        "has_api": False,
+    },
+    "guacswap": {
+        "name": "GuacSwap",
+        "address": "AZsHEMXd36Bj1EMNXhowJajpUXzrKcK57wW4ZGXVa7yR",
+        "type": "amm",
+        "tvl": 65698,
+        "has_api": False,
+    },
+    "lifinity_v1": {
+        "name": "Lifinity V1",
+        "address": "LFNTYraetVioAPnGJht4yNg2aUZFXR776cMeN9VMjXp",
+        "type": "amm",
+        "tvl": 69780,
+        "has_api": False,
+    },
+    "lifinity_v2": {
+        "name": "Lifinity V2",
+        "address": "LFNTYraetVioAPnGJht4yNg2aUZFXR776cMeN9VMjXp",
+        "type": "clmm",
+        "tvl": 46431,
+        "has_api": False,
+    },
+    "penguin": {
+        "name": "Penguin",
+        "address": "",
+        "type": "amm",
+        "tvl": 22485,
+        "has_api": False,
+    },
+    "cykura": {
+        "name": "Cykura",
+        "address": "BRLsMczKuaR5w9vSubF4j8HwEGGprVAyyVgS4EX7DKEg",
+        "type": "clmm",
+        "tvl": 15797,
+        "has_api": False,
+    },
+    "sentre": {
+        "name": "Sentre",
+        "address": "SENBBKVCM7homnf5RX9zqpf1GFe935hnbU4uVzY1Y6M",
+        "type": "amm",
+        "tvl": 10293,
+        "has_api": False,
+    },
+    "goosefx": {
+        "name": "GooseFX V2",
+        "address": "GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD",
+        "type": "amm",
+        "tvl": 1975,
+        "has_api": False,
+    },
+    "swapio_clmm": {
+        "name": "Swap.io CLMM",
+        "address": "",
+        "type": "clmm",
+        "tvl": 2118,
+        "has_api": False,
+    },
+    "sega_swap": {
+        "name": "Sega Swap",
+        "address": "",
+        "type": "amm",
+        "tvl": 1810,
+        "has_api": False,
+    },
+    "dradex": {
+        "name": "Dradex",
+        "address": "",
+        "type": "orderbook",
+        "tvl": 1583,
+        "has_api": False,
+    },
+    "cropper_clmm": {
+        "name": "Cropper CLMM",
+        "address": "DubwWZNWiNGMMeeQHPnMATNj77YZPZSAz2WVR5WjLJqz",
+        "type": "clmm",
+        "tvl": 1288,
+        "has_api": False,
+    },
+    # === Not in DefiLlama but known ===
+    "goat_swap": {
+        "name": "Goat Swap",
+        "address": "",
+        "type": "amm",
+        "tvl": 963,
+        "has_api": False,
+    },
+    "beluga": {
+        "name": "Beluga Protocol",
+        "address": "",
+        "type": "amm",
+        "tvl": 302,
+        "has_api": False,
+    },
+    "spice": {
+        "name": "Spice",
+        "address": "",
+        "type": "amm",
+        "tvl": 168,
+        "has_api": False,
+    },
+    "orbit_finance": {
+        "name": "Orbit Finance",
+        "address": "",
+        "type": "amm",
+        "tvl": 0,
+        "has_api": False,
+    },
+}
+
+# Type-based routing priority: which DEX type to try first for each swap category
+DEX_ROUTING_PRIORITY = {
+    "buy_large": ["jupiter", "raydium", "orca", "meteora"],
+    "buy_small": ["jupiter", "pumpswap", "raydium"],
+    "buy_memecoin": ["pumpswap", "jupiter", "raydium"],
+    "sell_large": ["jupiter", "raydium", "orca", "meteora"],
+    "sell_small": ["jupiter", "raydium"],
+    "stable_swap": ["jupiter", "saber", "raydium"],
+}
