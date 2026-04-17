@@ -52,45 +52,7 @@ log = get_logger("wallet_tracker")
 start_metrics_server()
 
 # ── GMGN CLI (node resolution) ─────────────────────────────────────────────
-_NODE_BIN = None
-
-
-def find_node() -> str:
-    global _NODE_BIN
-    if _NODE_BIN:
-        return _NODE_BIN
-    node = shutil.which("node")
-    if node:
-        _NODE_BIN = node
-        return node
-    for c in [
-        str(Path.home() / ".local" / "bin" / "node"),
-        "/usr/local/bin/node",
-        "/usr/bin/node",
-    ]:
-        if Path(c).is_file():
-            _NODE_BIN = c
-            return c
-    _NODE_BIN = "node"
-    return "node"
-
-
-def gmgn_cmd(args: list) -> Optional[Any]:
-    """Run gmgn-cli and parse JSON."""
-    try:
-        env = {**os.environ, "GMGN_API_KEY": GMGN_API_KEY}
-        r = subprocess.run(
-            [find_node(), GMGN_CLI] + args,
-            capture_output=True,
-            text=True,
-            timeout=30,
-            env=env,
-        )
-        if r.returncode == 0 and r.stdout.strip():
-            return json.loads(r.stdout.strip())
-    except Exception:
-        pass
-    return None
+# find_node and gmgn_cmd are imported from hermes_screener.utils
 
 
 # ── Database ────────────────────────────────────────────────────────────────

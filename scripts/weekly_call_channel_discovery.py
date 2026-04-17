@@ -21,11 +21,13 @@ sys.path.insert(0, str(Path(__file__).parent))
 # Import the Telegram client
 from telethon import TelegramClient
 
+from hermes_screener.config import settings
+
 # Configuration
-SESSION_PATH = Path.home() / ".hermes" / ".telegram_session" / "hermes_user"
-TG_API_ID = int(os.getenv("TG_API_ID", "39533004"))
-TG_API_HASH = os.getenv("TG_API_HASH", "958e52889177eec2fa15e9e4e4c2cc4c")
-DB_PATH = Path.home() / ".hermes" / "call_channels.db"
+SESSION_PATH = settings.session_path
+TG_API_ID = settings.tg_api_id
+TG_API_HASH = settings.tg_api_hash
+DB_PATH = settings.db_path
 
 # Bot commands to execute - expanded for maximum token coverage
 BOT_COMMANDS = [

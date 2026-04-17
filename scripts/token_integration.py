@@ -23,6 +23,8 @@ from datetime import datetime
 from typing import Dict, List
 import requests
 
+from hermes_screener.config import settings
+
 # Add paths
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -278,9 +280,9 @@ class TokenIntegrationPipeline:
             from telethon import TelegramClient
 
             # Configuration
-            SESSION_PATH = Path.home() / ".hermes" / ".telegram_session" / "hermes_user"
-            TG_API_ID = int(os.getenv("TG_API_ID", "39533004"))
-            TG_API_HASH = os.getenv("TG_API_HASH", "958e52889177eec2fa15e9e4e4c2cc4c")
+            SESSION_PATH = settings.session_path
+            TG_API_ID = settings.tg_api_id
+            TG_API_HASH = settings.tg_api_hash
 
             # Create client
             client = TelegramClient(str(SESSION_PATH), TG_API_ID, TG_API_HASH)
