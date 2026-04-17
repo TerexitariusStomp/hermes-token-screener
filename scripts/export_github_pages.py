@@ -98,7 +98,9 @@ def export_tokens():
                 raw = json.load(f)
             # Check if it has the enriched format (contract_address field)
             tokens = raw.get("tokens") or raw.get("top_tokens") or []
-            if tokens and (tokens[0].get("contract_address") or tokens[0].get("address")):
+            if tokens and (
+                tokens[0].get("contract_address") or tokens[0].get("address")
+            ):
                 data = raw
                 print(f"Using enriched data from {src.name}")
                 break

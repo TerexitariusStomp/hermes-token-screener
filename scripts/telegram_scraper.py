@@ -42,7 +42,7 @@ STATE_FILE = settings.state_file
 MESSAGES_PER_DIALOG = 30
 MAX_DIALOGS_PER_CYCLE = 200
 MIN_CYCLE_INTERVAL = 60
-SESSION_SOURCE = 'tg_contract_scraper'
+SESSION_SOURCE = "tg_contract_scraper"
 INCLUDE_BOTS = False
 
 # ── Logging + Metrics ────────────────────────────────────────────────────────
@@ -50,12 +50,12 @@ log = get_logger("telegram_scraper")
 start_metrics_server()
 
 # ── Address Extraction (inlined) ────────────────────────────────────────────
-EVM_PATTERN = re.compile(r'0x[a-fA-F0-9]{40}')
-SOLANA_PATTERN = re.compile(r'[1-9A-HJ-NP-Za-km-z]{32,44}')
+EVM_PATTERN = re.compile(r"0x[a-fA-F0-9]{40}")
+SOLANA_PATTERN = re.compile(r"[1-9A-HJ-NP-Za-km-z]{32,44}")
 DEX_LINK_PATTERN = re.compile(
-    r'(?:dexscreener\.com|gmgn\.ai|raydium\.io|pump\.fun)/[^\s)]+'
+    r"(?:dexscreener\.com|gmgn\.ai|raydium\.io|pump\.fun)/[^\s)]+"
 )
-PUMP_FUN_RE = re.compile(r'/([a-fA-F0-9]+)')
+PUMP_FUN_RE = re.compile(r"/([a-fA-F0-9]+)")
 
 
 def extract_addresses(text: str) -> List[Tuple[str, str, str]]:
@@ -68,37 +68,37 @@ def extract_addresses(text: str) -> List[Tuple[str, str, str]]:
 
     # 1. Extract from DEX links first (higher confidence)
     for link in DEX_LINK_PATTERN.findall(text):
-        if 'dexscreener.com' in link:
+        if "dexscreener.com" in link:
             m = EVM_PATTERN.search(link)
             if m:
-                results.append((link, m.group(0).lower(), 'dexscreener_link'))
-        elif 'gmgn.ai' in link:
+                results.append((link, m.group(0).lower(), "dexscreener_link"))
+        elif "gmgn.ai" in link:
             m = EVM_PATTERN.search(link)
             if m:
-                results.append((link, m.group(0).lower(), 'gmgn_link'))
+                results.append((link, m.group(0).lower(), "gmgn_link"))
             else:
                 m = SOLANA_PATTERN.search(link)
                 if m:
-                    results.append((link, m.group(0), 'gmgn_link'))
-        elif 'pump.fun' in link:
+                    results.append((link, m.group(0), "gmgn_link"))
+        elif "pump.fun" in link:
             m = PUMP_FUN_RE.search(link)
             if m:
-                results.append((link, m.group(1), 'pump_fun_link'))
+                results.append((link, m.group(1), "pump_fun_link"))
 
     # 2. Raw EVM addresses
     seen = {r[1] for r in results}
     for match in EVM_PATTERN.findall(text):
         norm = match.lower()
         if norm not in seen:
-            results.append((match, norm, 'evm_raw'))
+            results.append((match, norm, "evm_raw"))
             seen.add(norm)
 
     # 3. Raw Solana addresses (base58, 32-44 chars)
-    base58_chars = set('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz')
+    base58_chars = set("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
     for match in SOLANA_PATTERN.findall(text):
         if len(match) >= 32 and all(c in base58_chars for c in match):
             if match not in seen:
-                results.append((match, match, 'solana_raw'))
+                results.append((match, match, "solana_raw"))
                 seen.add(match)
 
     return results
@@ -111,7 +111,7 @@ def load_state() -> dict:
             return json.loads(STATE_FILE.read_text())
         except Exception:
             pass
-    return {'last_seen_per_chat': {}, 'last_run': 0, 'known_dialogs': []}
+    return {"last_seen_per_chat": {}, "last_run": 0, "known_dialogs": []}
 
 
 def save_state(state: dict):
@@ -128,7 +128,8 @@ def get_db():
 
 
 def ensure_tables(conn):
-    conn.executescript("""
+    conn.executescript(
+        """
         CREATE TABLE IF NOT EXISTS telegram_contract_calls (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             channel_id TEXT NOT NULL,
@@ -162,30 +163,52 @@ def ensure_tables(conn):
         );
         CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_chain_addr
             ON telegram_contracts_unique(chain, contract_address);
-    """)
+    """
+    )
     conn.commit()
 
 
-def insert_extraction(conn, channel_id: str, message_id: int,
-                      chain: str, contract_address: str, raw_address: str,
-                      source: str, message_text: str, observed_at: float,
-                      dry_run: bool = False) -> bool:
+def insert_extraction(
+    conn,
+    channel_id: str,
+    message_id: int,
+    chain: str,
+    contract_address: str,
+    raw_address: str,
+    source: str,
+    message_text: str,
+    observed_at: float,
+    dry_run: bool = False,
+) -> bool:
     now = time.time()
     if dry_run:
         return True
 
     try:
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO telegram_contract_calls
                 (channel_id, message_id, chain, contract_address, raw_address,
                  address_source, message_text, observed_at, session_source, inserted_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (str(channel_id), message_id, chain, contract_address, raw_address,
-              source, message_text[:500] if message_text else '', observed_at,
-              SESSION_SOURCE, now))
+        """,
+            (
+                str(channel_id),
+                message_id,
+                chain,
+                contract_address,
+                raw_address,
+                source,
+                message_text[:500] if message_text else "",
+                observed_at,
+                SESSION_SOURCE,
+                now,
+            ),
+        )
 
         chan_str = str(channel_id)
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO telegram_contracts_unique
                 (chain, contract_address, first_seen_at, last_seen_at, mentions,
                  last_channel_id, last_message_id, last_raw_address, last_source,
@@ -210,9 +233,24 @@ def insert_extraction(conn, channel_id: str, message_id: int,
                     THEN channels_seen
                     ELSE channels_seen || ',' || ?
                 END
-        """, (chain, contract_address, now, now, chan_str, message_id,
-              raw_address, source, message_text[:500] if message_text else '',
-              chan_str, chan_str, chan_str, chan_str, chan_str))
+        """,
+            (
+                chain,
+                contract_address,
+                now,
+                now,
+                chan_str,
+                message_id,
+                raw_address,
+                source,
+                message_text[:500] if message_text else "",
+                chan_str,
+                chan_str,
+                chan_str,
+                chan_str,
+                chan_str,
+            ),
+        )
         return True
     except sqlite3.IntegrityError:
         return False
@@ -228,7 +266,9 @@ def create_client_with_retry(max_attempts=3):
             return TelegramClient(str(SESSION_PATH), TG_API_ID, TG_API_HASH)
         except sqlite3.OperationalError as e:
             if "database is locked" in str(e):
-                log.warning(f"SQLite lock on client creation (attempt {attempt}/{max_attempts})")
+                log.warning(
+                    f"SQLite lock on client creation (attempt {attempt}/{max_attempts})"
+                )
                 time.sleep(attempt * 2)
             else:
                 raise
@@ -247,9 +287,11 @@ async def get_all_dialogs(client) -> list:
     return dialogs
 
 
-async def poll_dialog(client, dialog, last_seen: dict, conn, dry_run: bool = False) -> int:
+async def poll_dialog(
+    client, dialog, last_seen: dict, conn, dry_run: bool = False
+) -> int:
     chat_id = dialog.id
-    chat_title = getattr(dialog.entity, 'title', None) or str(chat_id)
+    chat_title = getattr(dialog.entity, "title", None) or str(chat_id)
     last_id = last_seen.get(str(chat_id), 0)
 
     new_count = 0
@@ -269,7 +311,7 @@ async def poll_dialog(client, dialog, last_seen: dict, conn, dry_run: bool = Fal
             max_id_seen = msg.id
 
         for orig, normalized, source in extract_addresses(msg.text):
-            chain = 'solana' if not normalized.startswith('0x') else 'ethereum'
+            chain = "solana" if not normalized.startswith("0x") else "ethereum"
             inserted = insert_extraction(
                 conn,
                 channel_id=str(chat_id),
@@ -292,14 +334,16 @@ async def poll_dialog(client, dialog, last_seen: dict, conn, dry_run: bool = Fal
 
 async def run_scrape(max_dialogs: int = None, dry_run: bool = False):
     state = load_state()
-    last_seen = state.get('last_seen_per_chat', {})
+    last_seen = state.get("last_seen_per_chat", {})
 
     now = time.time()
-    last_run = state.get('last_run', 0)
+    last_run = state.get("last_run", 0)
     if not dry_run and now - last_run < MIN_CYCLE_INTERVAL:
         elapsed = now - last_run
-        log.info(f"Skipping - only {elapsed:.0f}s since last run (min {MIN_CYCLE_INTERVAL}s)")
-        return {'status': 'skipped', 'reason': 'rate_limit', 'elapsed': elapsed}
+        log.info(
+            f"Skipping - only {elapsed:.0f}s since last run (min {MIN_CYCLE_INTERVAL}s)"
+        )
+        return {"status": "skipped", "reason": "rate_limit", "elapsed": elapsed}
 
     log.info("Connecting to Telegram...")
     client = create_client_with_retry()
@@ -307,7 +351,7 @@ async def run_scrape(max_dialogs: int = None, dry_run: bool = False):
         await client.connect()
         if not await client.is_user_authorized():
             log.error("Session not authorized. Run telegram_user.py first.")
-            return {'status': 'error', 'reason': 'not_authorized'}
+            return {"status": "error", "reason": "not_authorized"}
 
         log.info("Fetching all dialogs...")
         dialogs = await get_all_dialogs(client)
@@ -326,11 +370,13 @@ async def run_scrape(max_dialogs: int = None, dry_run: bool = False):
 
         for i, dialog in enumerate(dialogs):
             try:
-                new_in_chat = await poll_dialog(client, dialog, last_seen, conn, dry_run)
+                new_in_chat = await poll_dialog(
+                    client, dialog, last_seen, conn, dry_run
+                )
                 total_new += new_in_chat
                 total_polls += 1
                 if new_in_chat > 0:
-                    chat_name = getattr(dialog.entity, 'title', None) or str(dialog.id)
+                    chat_name = getattr(dialog.entity, "title", None) or str(dialog.id)
                     chat_stats[chat_name] = new_in_chat
 
                 if (i + 1) % 10 == 0:
@@ -343,22 +389,26 @@ async def run_scrape(max_dialogs: int = None, dry_run: bool = False):
         conn.close()
 
         if not dry_run:
-            state['last_seen_per_chat'] = {k: v for k, v in last_seen.items() if v > 0}
-            state['last_run'] = now
-            state['known_dialogs'] = [d.id for d in dialogs]
+            state["last_seen_per_chat"] = {k: v for k, v in last_seen.items() if v > 0}
+            state["last_run"] = now
+            state["known_dialogs"] = [d.id for d in dialogs]
             save_state(state)
 
-        log.info(f"Cycle complete: {total_new} new contracts from {total_polls} dialogs")
+        log.info(
+            f"Cycle complete: {total_new} new contracts from {total_polls} dialogs"
+        )
         if chat_stats:
             top = sorted(chat_stats.items(), key=lambda x: -x[1])[:5]
             log.info(f"Top chats: {', '.join(f'{n}({c})' for n, c in top)}")
 
         return {
-            'status': 'ok',
-            'dialogs_polled': total_polls,
-            'new_contracts': total_new,
-            'top_chats': dict(list(sorted(chat_stats.items(), key=lambda x: -x[1]))[:10]),
-            'dry_run': dry_run,
+            "status": "ok",
+            "dialogs_polled": total_polls,
+            "new_contracts": total_new,
+            "top_chats": dict(
+                list(sorted(chat_stats.items(), key=lambda x: -x[1]))[:10]
+            ),
+            "dry_run": dry_run,
         }
 
     finally:
@@ -370,9 +420,10 @@ async def run_scrape(max_dialogs: int = None, dry_run: bool = False):
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description='Telegram contract address scraper')
-    parser.add_argument('--max-dialogs', type=int, default=None)
-    parser.add_argument('--dry-run', action='store_true')
+
+    parser = argparse.ArgumentParser(description="Telegram contract address scraper")
+    parser.add_argument("--max-dialogs", type=int, default=None)
+    parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
     log.info("=" * 60)
@@ -389,7 +440,7 @@ def main():
     try:
         result = loop.run_until_complete(run_scrape(args.max_dialogs, args.dry_run))
         log.info(f"Result: {json.dumps(result, indent=2)}")
-        return 0 if result.get('status') in ('ok', 'skipped') else 1
+        return 0 if result.get("status") in ("ok", "skipped") else 1
     except Exception as e:
         log.error(f"Fatal error: {e}", exc_info=True)
         return 1
@@ -397,5 +448,5 @@ def main():
         loop.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

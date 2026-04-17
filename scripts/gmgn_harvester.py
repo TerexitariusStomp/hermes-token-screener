@@ -20,16 +20,16 @@ from datetime import datetime, timezone
 from typing import List, Dict, Optional
 
 # ── Config ──────────────────────────────────────────────────────────────────
-DATA_DIR = Path.home() / '.hermes' / 'data'
-DB_PATH = DATA_DIR / 'central_contracts.db'
-GMGN_CLI = str(Path.home() / '.hermes' / 'scripts' / 'gmgn-cli')
-GMGN_API_KEY = os.environ.get('GMGN_API_KEY', '')
+DATA_DIR = Path.home() / ".hermes" / "data"
+DB_PATH = DATA_DIR / "central_contracts.db"
+GMGN_CLI = str(Path.home() / ".hermes" / "scripts" / "gmgn-cli")
+GMGN_API_KEY = os.environ.get("GMGN_API_KEY", "")
 
-CHAINS = ['sol', 'base', 'eth', 'bsc']  # GMGN multi-chain
-TRENCH_LIMIT = 30       # per category per chain
-TRENDING_LIMIT = 30     # per interval per chain
-TRENDING_INTERVALS = ['5m', '1h']
-TRENCH_FILTERS = ['smart-money', 'safe']
+CHAINS = ["sol", "base", "eth", "bsc"]  # GMGN multi-chain
+TRENCH_LIMIT = 30  # per category per chain
+TRENDING_LIMIT = 30  # per interval per chain
+TRENDING_INTERVALS = ["5m", "1h"]
+TRENCH_FILTERS = ["smart-money", "safe"]
 
 
 def gmgn_cmd(args: list) -> Optional[dict]:
@@ -37,10 +37,13 @@ def gmgn_cmd(args: list) -> Optional[dict]:
     try:
         env = {**os.environ}
         if GMGN_API_KEY:
-            env['GMGN_API_KEY'] = GMGN_API_KEY
+            env["GMGN_API_KEY"] = GMGN_API_KEY
         result = subprocess.run(
-            ['node', GMGN_CLI] + args,
-            capture_output=True, text=True, timeout=30, env=env
+            ["node", GMGN_CLI] + args,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            env=env,
         )
         if result.returncode == 0 and result.stdout.strip():
             return json.loads(result.stdout.strip())
@@ -56,22 +59,37 @@ def get_db():
     return conn
 
 
-def upsert_contract(conn, chain: str, address: str, source: str,
-                    channel_id: str, message_text: str = ''):
+def upsert_contract(
+    conn, chain: str, address: str, source: str, channel_id: str, message_text: str = ""
+):
     """Insert or update a contract in telegram_contracts_unique."""
     now = time.time()
     try:
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO telegram_contract_calls
             (channel_id, message_id, chain, contract_address, raw_address, address_source,
              message_text, observed_at, session_source, inserted_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (channel_id, 0, chain, address, address, source,
-              message_text, now, 'gmgn_harvester', now))
+        """,
+            (
+                channel_id,
+                0,
+                chain,
+                address,
+                address,
+                source,
+                message_text,
+                now,
+                "gmgn_harvester",
+                now,
+            ),
+        )
     except sqlite3.IntegrityError:
         pass  # duplicate (message_id, contract_address)
 
-    conn.execute("""
+    conn.execute(
+        """
         INSERT INTO telegram_contracts_unique (chain, contract_address, first_seen_at, last_seen_at,
             mentions, last_channel_id, last_message_id, last_raw_address, last_source, last_message_text,
             channel_count, channels_seen)
@@ -81,88 +99,122 @@ def upsert_contract(conn, chain: str, address: str, source: str,
             mentions = mentions + 1,
             last_source = excluded.last_source,
             last_message_text = excluded.last_message_text
-    """, (chain, address, now, now, channel_id, address, source, message_text,
-          json.dumps([channel_id])))
+    """,
+        (
+            chain,
+            address,
+            now,
+            now,
+            channel_id,
+            address,
+            source,
+            message_text,
+            json.dumps([channel_id]),
+        ),
+    )
 
 
 def harvest_trenches(chain: str) -> List[Dict]:
     """Harvest pump alerts from GMGN trenches."""
     tokens = []
-    
+
     for preset in TRENCH_FILTERS:
-        data = gmgn_cmd([
-            'market', 'trenches',
-            '--chain', chain,
-            '--type', 'new_creation', 'near_completion',
-            '--limit', str(TRENCH_LIMIT),
-            '--filter-preset', preset,
-            '--sort-by', 'smart_degen_count'
-        ])
-        
+        data = gmgn_cmd(
+            [
+                "market",
+                "trenches",
+                "--chain",
+                chain,
+                "--type",
+                "new_creation",
+                "near_completion",
+                "--limit",
+                str(TRENCH_LIMIT),
+                "--filter-preset",
+                preset,
+                "--sort-by",
+                "smart_degen_count",
+            ]
+        )
+
         if not data:
             continue
-        
-        for category in ['new_creation', 'near_completion', 'completed']:
+
+        for category in ["new_creation", "near_completion", "completed"]:
             for tok in data.get(category, []):
-                addr = tok.get('address', '')
+                addr = tok.get("address", "")
                 if not addr:
                     continue
-                tokens.append({
-                    'address': addr,
-                    'chain': chain,
-                    'name': tok.get('name', ''),
-                    'source': f'gmgn_trenches_{preset}',
-                    'smart_degen_count': tok.get('smart_degen_count', 0),
-                    'liquidity': tok.get('liquidity', 0),
-                    'market_cap': tok.get('market_cap', 0),
-                    'holder_count': tok.get('holder_count', 0),
-                    'launchpad': tok.get('launchpad', ''),
-                    'fund_from': tok.get('fund_from', ''),
-                    'has_social': tok.get('has_at_least_one_social', False),
-                    'is_honeypot': tok.get('is_honeypot', ''),
-                })
-        
+                tokens.append(
+                    {
+                        "address": addr,
+                        "chain": chain,
+                        "name": tok.get("name", ""),
+                        "source": f"gmgn_trenches_{preset}",
+                        "smart_degen_count": tok.get("smart_degen_count", 0),
+                        "liquidity": tok.get("liquidity", 0),
+                        "market_cap": tok.get("market_cap", 0),
+                        "holder_count": tok.get("holder_count", 0),
+                        "launchpad": tok.get("launchpad", ""),
+                        "fund_from": tok.get("fund_from", ""),
+                        "has_social": tok.get("has_at_least_one_social", False),
+                        "is_honeypot": tok.get("is_honeypot", ""),
+                    }
+                )
+
         time.sleep(1)  # rate limit
-    
+
     return tokens
 
 
 def harvest_trending(chain: str) -> List[Dict]:
     """Harvest featured signals from GMGN trending."""
     tokens = []
-    
+
     for interval in TRENDING_INTERVALS:
-        data = gmgn_cmd([
-            'market', 'trending',
-            '--chain', chain,
-            '--interval', interval,
-            '--limit', str(TRENDING_LIMIT),
-            '--order-by', 'volume',
-            '--filter', 'renounced', 'has_social', 'not_wash_trading'
-        ])
-        
-        if not data or not data.get('data'):
+        data = gmgn_cmd(
+            [
+                "market",
+                "trending",
+                "--chain",
+                chain,
+                "--interval",
+                interval,
+                "--limit",
+                str(TRENDING_LIMIT),
+                "--order-by",
+                "volume",
+                "--filter",
+                "renounced",
+                "has_social",
+                "not_wash_trading",
+            ]
+        )
+
+        if not data or not data.get("data"):
             continue
-        
-        for tok in data['data'].get('rank', []):
-            addr = tok.get('address', '')
+
+        for tok in data["data"].get("rank", []):
+            addr = tok.get("address", "")
             if not addr:
                 continue
-            tokens.append({
-                'address': addr,
-                'chain': chain,
-                'name': tok.get('name', ''),
-                'symbol': tok.get('symbol', ''),
-                'source': f'gmgn_trending_{interval}',
-                'volume': tok.get('volume', 0),
-                'liquidity': tok.get('liquidity', 0),
-                'market_cap': tok.get('market_cap', 0),
-                'holder_count': tok.get('holder_count', 0),
-                'price_change': tok.get('price_change_percent', 0),
-            })
-        
+            tokens.append(
+                {
+                    "address": addr,
+                    "chain": chain,
+                    "name": tok.get("name", ""),
+                    "symbol": tok.get("symbol", ""),
+                    "source": f"gmgn_trending_{interval}",
+                    "volume": tok.get("volume", 0),
+                    "liquidity": tok.get("liquidity", 0),
+                    "market_cap": tok.get("market_cap", 0),
+                    "holder_count": tok.get("holder_count", 0),
+                    "price_change": tok.get("price_change_percent", 0),
+                }
+            )
+
         time.sleep(1)
-    
+
     return tokens
 
 
@@ -170,36 +222,48 @@ def main():
     print(f"=== GMGN Harvester ===")
     print(f"Chains: {CHAINS}")
     print()
-    
+
     conn = get_db()
     total_new = 0
     total_seen = 0
-    
+
     for chain in CHAINS:
         # Trenches (pump alerts)
         print(f"[{chain}] Harvesting trenches (pump alerts)...")
         trench_tokens = harvest_trenches(chain)
         for tok in trench_tokens:
             msg = f"{tok['name']} | smart_degen={tok.get('smart_degen_count',0)} | liq={tok.get('liquidity',0):.0f} | mcap={tok.get('market_cap',0):.0f}"
-            upsert_contract(conn, chain, tok['address'], tok['source'],
-                          f"gmgn_trenches_{chain}", msg)
+            upsert_contract(
+                conn,
+                chain,
+                tok["address"],
+                tok["source"],
+                f"gmgn_trenches_{chain}",
+                msg,
+            )
             total_seen += 1
-        
+
         print(f"  -> {len(trench_tokens)} tokens from trenches")
-        
+
         # Trending (featured signals)
         print(f"[{chain}] Harvesting trending (featured signals)...")
         trending_tokens = harvest_trending(chain)
         for tok in trending_tokens:
             msg = f"{tok.get('symbol', tok['name'])} | vol={tok.get('volume',0):.0f} | liq={tok.get('liquidity',0):.0f} | chg={tok.get('price_change',0):.1f}%"
-            upsert_contract(conn, chain, tok['address'], tok['source'],
-                          f"gmgn_trending_{chain}", msg)
+            upsert_contract(
+                conn,
+                chain,
+                tok["address"],
+                tok["source"],
+                f"gmgn_trending_{chain}",
+                msg,
+            )
             total_seen += 1
-        
+
         print(f"  -> {len(trending_tokens)} tokens from trending")
-    
+
     conn.commit()
-    
+
     # Stats
     gmgn_count = conn.execute(
         "SELECT COUNT(*) FROM telegram_contracts_unique WHERE last_source LIKE 'gmgn_%'"
@@ -207,12 +271,12 @@ def main():
     total_count = conn.execute(
         "SELECT COUNT(*) FROM telegram_contracts_unique"
     ).fetchone()[0]
-    
+
     print(f"\nDone: {total_seen} tokens processed this run")
     print(f"DB: {gmgn_count} GMGN-sourced / {total_count} total contracts")
-    
+
     conn.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

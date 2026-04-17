@@ -23,15 +23,15 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 # ── Config ──────────────────────────────────────────────────────────────────
-DATA_DIR = Path.home() / '.hermes' / 'data'
-DB_PATH = DATA_DIR / 'central_contracts.db'
+DATA_DIR = Path.home() / ".hermes" / "data"
+DB_PATH = DATA_DIR / "central_contracts.db"
 
 API_KEY = "65564jad95mmwttnemvn4kv685bpumkn9t850avqcgu4gn1g8n7q6h3bc5x78dka6np2pd1m89n6yyja9x1muyhjcnj38tbd8nh6jra1a11k0dvu9x8k0uatd53n6djja9gn2mb7a4yku8gv5jwvkcxp5jpkg89t68ebta48x4new9b6dtqewu2edu3gdjj6rr3auk35x8kuf8"
 WS_URL = f"wss://pumpportal.fun/api/data?api-key={API_KEY}"
 
 RECONNECT_DELAY = 5
 MAX_RECONNECT = 12  # max consecutive reconnects before backoff
-BATCH_COMMIT = 20   # commit to DB every N tokens
+BATCH_COMMIT = 20  # commit to DB every N tokens
 
 
 class PumpPortalHarvester:
@@ -39,7 +39,13 @@ class PumpPortalHarvester:
         self.db_path = db_path
         self.conn = None
         self.running = True
-        self.stats = {'received': 0, 'new': 0, 'duplicates': 0, 'errors': 0, 'creators': 0}
+        self.stats = {
+            "received": 0,
+            "new": 0,
+            "duplicates": 0,
+            "errors": 0,
+            "creators": 0,
+        }
         self._creators = {}  # creator_wallet -> [token_names]
         self._buffer = []
         self._reconnect_count = 0
@@ -53,21 +59,21 @@ class PumpPortalHarvester:
 
     def _store_token(self, data: dict):
         """Store a new token and its creator wallet in the DB."""
-        mint = data.get('mint', '')
+        mint = data.get("mint", "")
         if not mint or len(mint) < 32:
             return
 
-        name = data.get('name', '')
-        symbol = data.get('symbol', '')
-        creator = data.get('traderPublicKey', '')
-        sol_amount = data.get('solAmount', 0)
-        market_cap_sol = data.get('marketCapSol', 0)
-        initial_buy = data.get('initialBuy', 0)
-        pool = data.get('pool', 'pump')
-        signature = data.get('signature', '')
+        name = data.get("name", "")
+        symbol = data.get("symbol", "")
+        creator = data.get("traderPublicKey", "")
+        sol_amount = data.get("solAmount", 0)
+        market_cap_sol = data.get("marketCapSol", 0)
+        initial_buy = data.get("initialBuy", 0)
+        pool = data.get("pool", "pump")
+        signature = data.get("signature", "")
 
         now = time.time()
-        chain = 'solana'
+        chain = "solana"
 
         msg_parts = []
         if name:
@@ -77,28 +83,42 @@ class PumpPortalHarvester:
         msg_parts.append(f"mcap_sol={market_cap_sol:.1f}")
         msg_parts.append(f"init_buy={initial_buy:.0f}")
         msg_parts.append(f"sol={sol_amount:.3f}")
-        message_text = ' | '.join(msg_parts)
+        message_text = " | ".join(msg_parts)
 
         conn = self._get_db()
 
         # Check if already exists
         existing = conn.execute(
             "SELECT 1 FROM telegram_contracts_unique WHERE chain=? AND contract_address=?",
-            (chain, mint)
+            (chain, mint),
         ).fetchone()
 
         try:
             # Insert call record
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT OR IGNORE INTO telegram_contract_calls
                 (channel_id, message_id, chain, contract_address, raw_address,
                  address_source, message_text, observed_at, session_source, inserted_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, ('pumpportal', 0, chain, mint, mint,
-                  'pumpportal_new_token', message_text, now, 'pumpportal_ws', now))
+            """,
+                (
+                    "pumpportal",
+                    0,
+                    chain,
+                    mint,
+                    mint,
+                    "pumpportal_new_token",
+                    message_text,
+                    now,
+                    "pumpportal_ws",
+                    now,
+                ),
+            )
 
             # Insert/update unique contract
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO telegram_contracts_unique
                 (chain, contract_address, first_seen_at, last_seen_at, mentions,
                  last_channel_id, last_message_id, last_raw_address, last_source,
@@ -109,20 +129,34 @@ class PumpPortalHarvester:
                     mentions = mentions + 1,
                     last_source = excluded.last_source,
                     last_message_text = excluded.last_message_text
-            """, (chain, mint, now, now, 'pumpportal', mint,
-                  'pumpportal_new_token', message_text, json.dumps(['pumpportal'])))
+            """,
+                (
+                    chain,
+                    mint,
+                    now,
+                    now,
+                    "pumpportal",
+                    mint,
+                    "pumpportal_new_token",
+                    message_text,
+                    json.dumps(["pumpportal"]),
+                ),
+            )
 
             # Track creator wallet
             if creator and len(creator) >= 32:
                 token_label = f"{symbol or name} ({mint[:8]}...)"
                 if creator not in self._creators:
                     self._creators[creator] = []
-                    self.stats['creators'] += 1
+                    self.stats["creators"] += 1
                 self._creators[creator].append(token_label)
 
                 # Store creator as a "wallet" contract entry (solana chain)
-                creator_msg = f"pumpfun_dev | tokens: {', '.join(self._creators[creator][:5])}"
-                conn.execute("""
+                creator_msg = (
+                    f"pumpfun_dev | tokens: {', '.join(self._creators[creator][:5])}"
+                )
+                conn.execute(
+                    """
                     INSERT INTO telegram_contracts_unique
                     (chain, contract_address, first_seen_at, last_seen_at, mentions,
                      last_channel_id, last_message_id, last_raw_address, last_source,
@@ -132,15 +166,26 @@ class PumpPortalHarvester:
                         last_seen_at = excluded.last_seen_at,
                         mentions = mentions + 1,
                         last_message_text = excluded.last_message_text
-                """, (chain, creator, now, now, 'pumpportal_creator', creator,
-                      'pumpportal_creator', creator_msg, json.dumps(['pumpportal'])))
+                """,
+                    (
+                        chain,
+                        creator,
+                        now,
+                        now,
+                        "pumpportal_creator",
+                        creator,
+                        "pumpportal_creator",
+                        creator_msg,
+                        json.dumps(["pumpportal"]),
+                    ),
+                )
 
             if existing:
-                self.stats['duplicates'] += 1
+                self.stats["duplicates"] += 1
             else:
-                self.stats['new'] += 1
+                self.stats["new"] += 1
         except Exception as e:
-            self.stats['errors'] += 1
+            self.stats["errors"] += 1
             print(f"  DB error: {e}")
 
     def _flush_buffer(self):
@@ -156,24 +201,26 @@ class PumpPortalHarvester:
             return
 
         # Skip subscription confirmations and pongs
-        if 'message' in data and 'mint' not in data:
+        if "message" in data and "mint" not in data:
             return
 
-        self.stats['received'] += 1
+        self.stats["received"] += 1
 
         # Store token creation events
-        if data.get('txType') == 'create' and data.get('mint'):
+        if data.get("txType") == "create" and data.get("mint"):
             self._store_token(data)
 
             # Periodic commit
-            if (self.stats['new'] + self.stats['duplicates']) % BATCH_COMMIT == 0:
+            if (self.stats["new"] + self.stats["duplicates"]) % BATCH_COMMIT == 0:
                 self._flush_buffer()
 
         # Log progress every 50 tokens
-        if self.stats['received'] % 50 == 0:
-            ts = datetime.now(timezone.utc).strftime('%H:%M:%S')
-            print(f"[{ts}] {self.stats['received']} received, "
-                  f"{self.stats['new']} new, {self.stats['duplicates']} dupes")
+        if self.stats["received"] % 50 == 0:
+            ts = datetime.now(timezone.utc).strftime("%H:%M:%S")
+            print(
+                f"[{ts}] {self.stats['received']} received, "
+                f"{self.stats['new']} new, {self.stats['duplicates']} dupes"
+            )
 
     async def run(self, max_duration: int = 0):
         """Main loop with auto-reconnect."""
@@ -192,15 +239,21 @@ class PumpPortalHarvester:
                 break
 
             try:
-                async with websockets.connect(WS_URL, ping_interval=20, ping_timeout=10) as ws:
+                async with websockets.connect(
+                    WS_URL, ping_interval=20, ping_timeout=10
+                ) as ws:
                     # Subscribe to new token creation
                     await ws.send(json.dumps({"method": "subscribeNewToken"}))
-                    
+
                     # Also subscribe to logs for pump.fun program
-                    await ws.send(json.dumps({
-                        "method": "subscribeLogs",
-                        "keys": ["6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P"]
-                    }))
+                    await ws.send(
+                        json.dumps(
+                            {
+                                "method": "subscribeLogs",
+                                "keys": ["6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P"],
+                            }
+                        )
+                    )
 
                     resp = await ws.recv()
                     confirm = json.loads(resp)
@@ -224,7 +277,9 @@ class PumpPortalHarvester:
             except Exception as e:
                 self._reconnect_count += 1
                 delay = min(RECONNECT_DELAY * self._reconnect_count, 60)
-                print(f"Connection error: {e} (reconnect #{self._reconnect_count} in {delay}s)")
+                print(
+                    f"Connection error: {e} (reconnect #{self._reconnect_count} in {delay}s)"
+                )
                 if self._reconnect_count > MAX_RECONNECT:
                     print("Max reconnects reached, stopping")
                     break
@@ -264,12 +319,12 @@ def show_stats():
     pp = conn.execute(
         "SELECT COUNT(*) FROM telegram_contracts_unique WHERE last_source LIKE '%pumpportal%'"
     ).fetchone()[0]
-    
+
     # Recent (last hour)
     one_hour_ago = time.time() - 3600
     recent = conn.execute(
         "SELECT COUNT(*) FROM telegram_contracts_unique WHERE last_source LIKE '%pumpportal%' AND last_seen_at > ?",
-        (one_hour_ago,)
+        (one_hour_ago,),
     ).fetchone()[0]
 
     print(f"DB total contracts: {total}")
@@ -277,12 +332,14 @@ def show_stats():
     print(f"  PumpPortal (last 1h): {recent}")
 
     # Sample recent
-    rows = conn.execute("""
+    rows = conn.execute(
+        """
         SELECT contract_address, last_message_text, last_seen_at
         FROM telegram_contracts_unique
         WHERE last_source LIKE '%pumpportal%'
         ORDER BY last_seen_at DESC LIMIT 5
-    """).fetchall()
+    """
+    ).fetchall()
     if rows:
         print(f"\nRecent pumpportal tokens:")
         for addr, msg, ts in rows:
@@ -294,12 +351,15 @@ def show_stats():
 
 async def main():
     import sys
+
     # Force unbuffered output for daemon mode
     sys.stdout.reconfigure(line_buffering=True)
     sys.stderr.reconfigure(line_buffering=True)
-    parser = argparse.ArgumentParser(description='PumpPortal WebSocket Harvester')
-    parser.add_argument('--test', type=int, default=0, help='Test for N seconds (0=forever)')
-    parser.add_argument('--count', action='store_true', help='Show DB stats')
+    parser = argparse.ArgumentParser(description="PumpPortal WebSocket Harvester")
+    parser.add_argument(
+        "--test", type=int, default=0, help="Test for N seconds (0=forever)"
+    )
+    parser.add_argument("--count", action="store_true", help="Show DB stats")
     args = parser.parse_args()
 
     if args.count:
@@ -316,5 +376,5 @@ async def main():
     await harvester.run(max_duration=args.test)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

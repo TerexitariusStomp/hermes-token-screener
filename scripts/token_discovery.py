@@ -24,7 +24,7 @@ from hermes_screener.logging import get_logger, log_duration
 from hermes_screener.metrics import metrics, start_metrics_server
 
 DB_PATH = settings.db_path
-DEFAULT_CHAINS = {'solana', 'ethereum', 'base', 'binance-smart-chain'}
+DEFAULT_CHAINS = {"solana", "ethereum", "base", "binance-smart-chain"}
 
 log = get_logger("token_discovery")
 start_metrics_server()
@@ -38,7 +38,8 @@ def get_db():
 
 
 def ensure_tables(conn):
-    conn.executescript("""
+    conn.executescript(
+        """
         CREATE TABLE IF NOT EXISTS telegram_contract_calls (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             channel_id TEXT NOT NULL,
@@ -72,23 +73,41 @@ def ensure_tables(conn):
         );
         CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_chain_addr
             ON telegram_contracts_unique(chain, contract_address);
-    """)
+    """
+    )
     conn.commit()
 
 
-def insert_discovery(conn, chain: str, address: str, source: str, description: str = '') -> bool:
+def insert_discovery(
+    conn, chain: str, address: str, source: str, description: str = ""
+) -> bool:
     now = time.time()
     chan_str = f"discovery:{source}"
     try:
         msg_id = int(now * 1000) + hash(address) % 10000
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO telegram_contract_calls
                 (channel_id, message_id, chain, contract_address, raw_address,
                  address_source, message_text, observed_at, session_source, inserted_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (chan_str, msg_id, chain, address, address, source, description[:500], now, 'token_discovery', now))
+        """,
+            (
+                chan_str,
+                msg_id,
+                chain,
+                address,
+                address,
+                source,
+                description[:500],
+                now,
+                "token_discovery",
+                now,
+            ),
+        )
 
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO telegram_contracts_unique
                 (chain, contract_address, first_seen_at, last_seen_at, mentions,
                  last_channel_id, last_message_id, last_raw_address, last_source,
@@ -104,8 +123,24 @@ def insert_discovery(conn, chain: str, address: str, source: str, description: s
                     WHEN channels_seen = '' OR channels_seen IS NULL THEN ?
                     WHEN ',' || channels_seen || ',' LIKE '%,' || ? || ',%'
                     THEN channels_seen ELSE channels_seen || ',' || ? END
-        """, (chain, address, now, now, chan_str, msg_id, address, source,
-              description[:500], chan_str, chan_str, chan_str, chan_str, chan_str))
+        """,
+            (
+                chain,
+                address,
+                now,
+                now,
+                chan_str,
+                msg_id,
+                address,
+                source,
+                description[:500],
+                chan_str,
+                chan_str,
+                chan_str,
+                chan_str,
+                chan_str,
+            ),
+        )
         return True
     except sqlite3.IntegrityError:
         return False
@@ -115,23 +150,34 @@ def insert_discovery(conn, chain: str, address: str, source: str, description: s
 
 def fetch_dexscreener_boosted() -> List[Tuple[str, str, str]]:
     try:
-        r = requests.get('https://api.dexscreener.com/token-boosts/top/v1', timeout=15)
+        r = requests.get("https://api.dexscreener.com/token-boosts/top/v1", timeout=15)
         if r.status_code != 200:
             return []
-        return [(t.get('chainId', ''), t.get('tokenAddress', ''), 'dexscreener_boost')
-                for t in r.json() if t.get('chainId') and t.get('tokenAddress')]
+        return [
+            (t.get("chainId", ""), t.get("tokenAddress", ""), "dexscreener_boost")
+            for t in r.json()
+            if t.get("chainId") and t.get("tokenAddress")
+        ]
     except Exception:
         return []
 
 
 def fetch_dexscreener_profiles() -> List[Tuple[str, str, str]]:
     try:
-        r = requests.get('https://api.dexscreener.com/token-profiles/latest/v1', timeout=15)
+        r = requests.get(
+            "https://api.dexscreener.com/token-profiles/latest/v1", timeout=15
+        )
         if r.status_code != 200:
             return []
-        return [(t.get('chainId', ''), t.get('tokenAddress', ''),
-                 f"dexscreener_profile:{t.get('description', '')[:100]}")
-                for t in r.json() if t.get('chainId') and t.get('tokenAddress')]
+        return [
+            (
+                t.get("chainId", ""),
+                t.get("tokenAddress", ""),
+                f"dexscreener_profile:{t.get('description', '')[:100]}",
+            )
+            for t in r.json()
+            if t.get("chainId") and t.get("tokenAddress")
+        ]
     except Exception:
         return []
 
@@ -165,20 +211,27 @@ def run_discovery(chains: Set[str] = None):
 
     log.info(f"Total unique tokens after filter: {len(unique)}")
 
-    new_count = sum(1 for chain, addr, source in unique if insert_discovery(conn, chain, addr, source))
+    new_count = sum(
+        1
+        for chain, addr, source in unique
+        if insert_discovery(conn, chain, addr, source)
+    )
     conn.commit()
     conn.close()
 
     log.info(f"Inserted {new_count} new tokens into DB")
-    return {'status': 'ok', 'total_discovered': len(unique), 'new_inserted': new_count}
+    return {"status": "ok", "total_discovered": len(unique), "new_inserted": new_count}
 
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description='Token discovery from DEX platforms')
-    parser.add_argument('--chains', type=str, default=None, help='Comma-separated chains')
+
+    parser = argparse.ArgumentParser(description="Token discovery from DEX platforms")
+    parser.add_argument(
+        "--chains", type=str, default=None, help="Comma-separated chains"
+    )
     args = parser.parse_args()
-    chains = set(args.chains.split(',')) if args.chains else None
+    chains = set(args.chains.split(",")) if args.chains else None
 
     log.info("=" * 60)
     log.info("Token Discovery starting")
@@ -188,8 +241,8 @@ def main():
     result = run_discovery(chains)
     elapsed = time.time() - start
     log.info(f"Done in {elapsed:.1f}s: {json.dumps(result)}")
-    return 0 if result.get('status') == 'ok' else 1
+    return 0 if result.get("status") == "ok" else 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -39,16 +39,21 @@ TOP_TOKENS_PATH = settings.output_path
 
 # GeckoTerminal network mapping
 _GT_NETWORKS = {
-    "solana": "solana", "sol": "solana",
-    "ethereum": "eth", "eth": "eth",
+    "solana": "solana",
+    "sol": "solana",
+    "ethereum": "eth",
+    "eth": "eth",
     "base": "base",
-    "binance": "bsc", "bsc": "bsc", "binance-smart-chain": "bsc",
+    "binance": "bsc",
+    "bsc": "bsc",
+    "binance-smart-chain": "bsc",
 }
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DATA MODELS
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def _lifecycle_path(address: str) -> Path:
     return LIFECYCLE_DIR / f"{address}_lifecycle.json"
@@ -80,7 +85,10 @@ def _load_current_tokens() -> List[dict]:
 # OHLCV SNAPSHOT
 # ═══════════════════════════════════════════════════════════════════════════════
 
-async def _find_pool(chain: str, address: str, client: httpx.AsyncClient) -> Optional[str]:
+
+async def _find_pool(
+    chain: str, address: str, client: httpx.AsyncClient
+) -> Optional[str]:
     """Find top pool address for a token."""
     net = _GT_NETWORKS.get(chain.lower(), "solana")
     try:
@@ -99,8 +107,9 @@ async def _find_pool(chain: str, address: str, client: httpx.AsyncClient) -> Opt
     return None
 
 
-async def _fetch_ohlcv(chain: str, pool: str, timeframe: str, limit: int,
-                        client: httpx.AsyncClient) -> List[list]:
+async def _fetch_ohlcv(
+    chain: str, pool: str, timeframe: str, limit: int, client: httpx.AsyncClient
+) -> List[list]:
     """Fetch OHLCV candles from GeckoTerminal."""
     net = _GT_NETWORKS.get(chain.lower(), "solana")
     try:
@@ -110,7 +119,9 @@ async def _fetch_ohlcv(chain: str, pool: str, timeframe: str, limit: int,
             timeout=15,
         )
         if resp.status_code == 200:
-            return resp.json().get("data", {}).get("attributes", {}).get("ohlcv_list", [])
+            return (
+                resp.json().get("data", {}).get("attributes", {}).get("ohlcv_list", [])
+            )
     except Exception:
         pass
     return []
@@ -142,9 +153,17 @@ async def take_snapshot(token: dict, client: httpx.AsyncClient) -> dict:
         "candles_h1": candles_h1,
         "candles_m15": candles_m15,
         "candles_d1": candles_d1,
-        "candle_count": {"h1": len(candles_h1), "m15": len(candles_m15), "d1": len(candles_d1)},
-        "entry_price": candles_h1[0][4] if candles_h1 else None,  # close of first candle
-        "current_price": candles_h1[-1][4] if candles_h1 else None,  # close of last candle
+        "candle_count": {
+            "h1": len(candles_h1),
+            "m15": len(candles_m15),
+            "d1": len(candles_d1),
+        },
+        "entry_price": (
+            candles_h1[0][4] if candles_h1 else None
+        ),  # close of first candle
+        "current_price": (
+            candles_h1[-1][4] if candles_h1 else None
+        ),  # close of last candle
         "token_data": {
             "symbol": token.get("symbol"),
             "score": token.get("score"),
@@ -157,6 +176,7 @@ async def take_snapshot(token: dict, client: httpx.AsyncClient) -> dict:
 # ═══════════════════════════════════════════════════════════════════════════════
 # LIFECYCLE MANAGEMENT
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
     """
@@ -200,7 +220,9 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
                     "symbol": token.get("symbol"),
                     "status": "active",
                     "entry_time": now,
-                    "entry_time_iso": datetime.fromtimestamp(now, tz=timezone.utc).isoformat(),
+                    "entry_time_iso": datetime.fromtimestamp(
+                        now, tz=timezone.utc
+                    ).isoformat(),
                     "entry_score": token.get("score"),
                     "entry_fdv": token.get("fdv"),
                     "entry_price": snapshot.get("current_price"),
@@ -218,7 +240,9 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
 
             elif lifecycle.get("status") == "active":
                 # UPDATE: add periodic snapshot (every 4 hours)
-                last_snapshot = lifecycle["snapshots"][-1] if lifecycle.get("snapshots") else {}
+                last_snapshot = (
+                    lifecycle["snapshots"][-1] if lifecycle.get("snapshots") else {}
+                )
                 last_time = last_snapshot.get("timestamp", 0)
 
                 if now - last_time > 14400:  # 4 hours
@@ -227,7 +251,9 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
                     lifecycle["snapshot_count"] = len(lifecycle["snapshots"])
                     lifecycle["current_score"] = token.get("score")
                     lifecycle["current_fdv"] = token.get("fdv")
-                    lifecycle["days_tracked"] = round((now - lifecycle["entry_time"]) / 86400, 1)
+                    lifecycle["days_tracked"] = round(
+                        (now - lifecycle["entry_time"]) / 86400, 1
+                    )
 
                     # Calculate price change from entry
                     entry_price = lifecycle.get("entry_price")
@@ -250,8 +276,12 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
             addr = lifecycle.get("address", "")
             if addr not in current_addresses and lifecycle.get("status") == "active":
                 # EXITED: take final snapshot
-                log.info("token_exited", symbol=lifecycle.get("symbol"), address=addr[:12],
-                         days=lifecycle.get("days_tracked", 0))
+                log.info(
+                    "token_exited",
+                    symbol=lifecycle.get("symbol"),
+                    address=addr[:12],
+                    days=lifecycle.get("days_tracked", 0),
+                )
 
                 # Try to get final snapshot
                 token_data = {
@@ -263,15 +293,21 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
 
                 lifecycle["status"] = "exited"
                 lifecycle["exit_time"] = now
-                lifecycle["exit_time_iso"] = datetime.fromtimestamp(now, tz=timezone.utc).isoformat()
+                lifecycle["exit_time_iso"] = datetime.fromtimestamp(
+                    now, tz=timezone.utc
+                ).isoformat()
                 lifecycle["exit_score"] = lifecycle.get("current_score")
-                lifecycle["exit_price"] = final_snapshot.get("current_price") or lifecycle.get("current_price")
+                lifecycle["exit_price"] = final_snapshot.get(
+                    "current_price"
+                ) or lifecycle.get("current_price")
 
                 # Final price change
                 entry_price = lifecycle.get("entry_price")
                 exit_price = lifecycle.get("exit_price")
                 if entry_price and exit_price and entry_price > 0:
-                    lifecycle["price_change_pct"] = round(((exit_price - entry_price) / entry_price) * 100, 2)
+                    lifecycle["price_change_pct"] = round(
+                        ((exit_price - entry_price) / entry_price) * 100, 2
+                    )
 
                 lifecycle["final_snapshot"] = final_snapshot
                 lifecycle["snapshots"].append(final_snapshot)
@@ -282,13 +318,16 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
                 generate_comparison_chart(addr)
                 exited += 1
 
-    log.info("lifecycle_processed", new_entries=new_entries, updated=updated, exited=exited)
+    log.info(
+        "lifecycle_processed", new_entries=new_entries, updated=updated, exited=exited
+    )
     return {"new_entries": new_entries, "updated": updated, "exited": exited}
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CHART GENERATION
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def generate_lifecycle_chart(address: str) -> Optional[str]:
     """
@@ -298,7 +337,8 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
     """
     import pandas as pd
     import matplotlib
-    matplotlib.use('Agg')  # headless
+
+    matplotlib.use("Agg")  # headless
     import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
     from matplotlib.patches import FancyBboxPatch
@@ -357,93 +397,141 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
                 break
 
     # ── Create figure ──
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 8), gridspec_kw={'height_ratios': [3, 1]})
-    fig.patch.set_facecolor('#0a0e17')
-    ax1.set_facecolor('#0a0e17')
-    ax2.set_facecolor('#0a0e17')
+    fig, (ax1, ax2) = plt.subplots(
+        2, 1, figsize=(14, 8), gridspec_kw={"height_ratios": [3, 1]}
+    )
+    fig.patch.set_facecolor("#0a0e17")
+    ax1.set_facecolor("#0a0e17")
+    ax2.set_facecolor("#0a0e17")
 
     # ── Candlestick chart ──
     width = 0.6
     for i in range(len(dates)):
-        color = '#10b981' if closes[i] >= opens[i] else '#ef4444'
+        color = "#10b981" if closes[i] >= opens[i] else "#ef4444"
 
         # Body
         body_low = min(opens[i], closes[i])
         body_high = max(opens[i], closes[i])
         body_height = max(body_high - body_low, closes[i] * 0.001)  # min height
-        ax1.add_patch(plt.Rectangle((mdates.date2num(dates[i]) - width/2, body_low),
-                                     width, body_height, color=color, linewidth=0))
+        ax1.add_patch(
+            plt.Rectangle(
+                (mdates.date2num(dates[i]) - width / 2, body_low),
+                width,
+                body_height,
+                color=color,
+                linewidth=0,
+            )
+        )
 
         # Wicks
-        ax1.plot([mdates.date2num(dates[i]), mdates.date2num(dates[i])],
-                [lows[i], body_low], color=color, linewidth=0.8)
-        ax1.plot([mdates.date2num(dates[i]), mdates.date2num(dates[i])],
-                [body_high, highs[i]], color=color, linewidth=0.8)
+        ax1.plot(
+            [mdates.date2num(dates[i]), mdates.date2num(dates[i])],
+            [lows[i], body_low],
+            color=color,
+            linewidth=0.8,
+        )
+        ax1.plot(
+            [mdates.date2num(dates[i]), mdates.date2num(dates[i])],
+            [body_high, highs[i]],
+            color=color,
+            linewidth=0.8,
+        )
 
     # ── Entry/exit markers ──
     if entry_idx is not None:
-        ax1.annotate('ENTRY',
-                    xy=(mdates.date2num(dates[entry_idx]), lows[entry_idx]),
-                    xytext=(mdates.date2num(dates[entry_idx]), lows[entry_idx] * 0.92),
-                    fontsize=10, fontweight='bold', color='#06b6d4',
-                    ha='center',
-                    arrowprops=dict(arrowstyle='->', color='#06b6d4', lw=1.5))
+        ax1.annotate(
+            "ENTRY",
+            xy=(mdates.date2num(dates[entry_idx]), lows[entry_idx]),
+            xytext=(mdates.date2num(dates[entry_idx]), lows[entry_idx] * 0.92),
+            fontsize=10,
+            fontweight="bold",
+            color="#06b6d4",
+            ha="center",
+            arrowprops=dict(arrowstyle="->", color="#06b6d4", lw=1.5),
+        )
 
     if exit_idx is not None and status == "exited":
-        ax1.annotate('EXIT',
-                    xy=(mdates.date2num(dates[exit_idx]), highs[exit_idx]),
-                    xytext=(mdates.date2num(dates[exit_idx]), highs[exit_idx] * 1.08),
-                    fontsize=10, fontweight='bold', color='#ef4444',
-                    ha='center',
-                    arrowprops=dict(arrowstyle='->', color='#ef4444', lw=1.5))
+        ax1.annotate(
+            "EXIT",
+            xy=(mdates.date2num(dates[exit_idx]), highs[exit_idx]),
+            xytext=(mdates.date2num(dates[exit_idx]), highs[exit_idx] * 1.08),
+            fontsize=10,
+            fontweight="bold",
+            color="#ef4444",
+            ha="center",
+            arrowprops=dict(arrowstyle="->", color="#ef4444", lw=1.5),
+        )
 
     # ── Entry price line ──
     if entry_price:
-        ax1.axhline(y=entry_price, color='#06b6d4', linestyle='--', linewidth=0.8, alpha=0.5)
-        ax1.text(mdates.date2num(dates[0]), entry_price, f' Entry: ${entry_price:.8f}',
-                fontsize=7, color='#06b6d4', va='bottom')
+        ax1.axhline(
+            y=entry_price, color="#06b6d4", linestyle="--", linewidth=0.8, alpha=0.5
+        )
+        ax1.text(
+            mdates.date2num(dates[0]),
+            entry_price,
+            f" Entry: ${entry_price:.8f}",
+            fontsize=7,
+            color="#06b6d4",
+            va="bottom",
+        )
 
     # ── Volume bars ──
-    vol_colors = ['#10b98166' if closes[i] >= opens[i] else '#ef444466' for i in range(len(dates))]
+    vol_colors = [
+        "#10b98166" if closes[i] >= opens[i] else "#ef444466" for i in range(len(dates))
+    ]
     ax2.bar([mdates.date2num(d) for d in dates], volumes, width=width, color=vol_colors)
 
     # ── Styling ──
-    change_str = f"{'+' if (price_change or 0) > 0 else ''}{price_change}%" if price_change is not None else "—"
-    status_color = '#10b981' if status == "active" else '#ef4444'
+    change_str = (
+        f"{'+' if (price_change or 0) > 0 else ''}{price_change}%"
+        if price_change is not None
+        else "—"
+    )
+    status_color = "#10b981" if status == "active" else "#ef4444"
 
-    ax1.set_title(f"{symbol} — {status.upper()} | Entry: ${entry_price:.8f} | "
-                  f"{'Exit' if status=='exited' else 'Now'}: ${exit_price:.8f} | {change_str}",
-                  color='#e5e7eb', fontsize=12, fontweight='bold', pad=10)
-    ax1.set_ylabel('Price', color='#9ca3af', fontsize=9)
-    ax1.tick_params(colors='#9ca3af', labelsize=8)
-    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %H:%M'))
-    ax1.tick_params(axis='x', rotation=45)
+    ax1.set_title(
+        f"{symbol} — {status.upper()} | Entry: ${entry_price:.8f} | "
+        f"{'Exit' if status=='exited' else 'Now'}: ${exit_price:.8f} | {change_str}",
+        color="#e5e7eb",
+        fontsize=12,
+        fontweight="bold",
+        pad=10,
+    )
+    ax1.set_ylabel("Price", color="#9ca3af", fontsize=9)
+    ax1.tick_params(colors="#9ca3af", labelsize=8)
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H:%M"))
+    ax1.tick_params(axis="x", rotation=45)
     for spine in ax1.spines.values():
-        spine.set_color('#374151')
-    ax1.grid(True, alpha=0.1, color='#374151')
+        spine.set_color("#374151")
+    ax1.grid(True, alpha=0.1, color="#374151")
 
-    ax2.set_ylabel('Volume', color='#9ca3af', fontsize=9)
-    ax2.tick_params(colors='#9ca3af', labelsize=8)
-    ax2.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %H:%M'))
-    ax2.tick_params(axis='x', rotation=45)
+    ax2.set_ylabel("Volume", color="#9ca3af", fontsize=9)
+    ax2.tick_params(colors="#9ca3af", labelsize=8)
+    ax2.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H:%M"))
+    ax2.tick_params(axis="x", rotation=45)
     for spine in ax2.spines.values():
-        spine.set_color('#374151')
-    ax2.grid(True, alpha=0.1, color='#374151')
+        spine.set_color("#374151")
+    ax2.grid(True, alpha=0.1, color="#374151")
 
     # ── Footer info ──
     days = lifecycle.get("days_tracked", 0)
     snaps = lifecycle.get("snapshot_count", 0)
-    fig.text(0.02, 0.01,
-             f"Tracked {days}d | {snaps} snapshots | {len(all_candles)} candles | "
-             f"Entry: {lifecycle.get('entry_time_iso', '?')[:16]}",
-             color='#9ca3af', fontsize=7)
+    fig.text(
+        0.02,
+        0.01,
+        f"Tracked {days}d | {snaps} snapshots | {len(all_candles)} candles | "
+        f"Entry: {lifecycle.get('entry_time_iso', '?')[:16]}",
+        color="#9ca3af",
+        fontsize=7,
+    )
 
     plt.tight_layout()
 
     # Save PNG
     output_path = LIFECYCLE_DIR / f"{address}_lifecycle_chart.png"
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(str(output_path), dpi=150, facecolor='#0a0e17', bbox_inches='tight')
+    fig.savefig(str(output_path), dpi=150, facecolor="#0a0e17", bbox_inches="tight")
     plt.close(fig)
 
     log.info("lifecycle_chart_generated", symbol=symbol, path=str(output_path))
@@ -459,7 +547,8 @@ def generate_comparison_chart(address: str) -> Optional[str]:
     """
     import pandas as pd
     import matplotlib
-    matplotlib.use('Agg')
+
+    matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
 
@@ -482,54 +571,90 @@ def generate_comparison_chart(address: str) -> Optional[str]:
     if not entry_candles or not exit_candles:
         return None
 
-    def _plot_candles(ax, candles, title, color_bg='#0a0e17'):
+    def _plot_candles(ax, candles, title, color_bg="#0a0e17"):
         ax.set_facecolor(color_bg)
         dates = [datetime.fromtimestamp(c[0]) for c in candles]
         width = 0.6
         for i in range(len(dates)):
-            color = '#10b981' if candles[i][4] >= candles[i][1] else '#ef4444'
+            color = "#10b981" if candles[i][4] >= candles[i][1] else "#ef4444"
             body_low = min(candles[i][1], candles[i][4])
             body_high = max(candles[i][1], candles[i][4])
             body_height = max(body_high - body_low, candles[i][4] * 0.001)
-            ax.add_patch(plt.Rectangle((mdates.date2num(dates[i]) - width/2, body_low),
-                                        width, body_height, color=color, linewidth=0))
-            ax.plot([mdates.date2num(dates[i]), mdates.date2num(dates[i])],
-                   [candles[i][3], body_low], color=color, linewidth=0.7)
-            ax.plot([mdates.date2num(dates[i]), mdates.date2num(dates[i])],
-                   [body_high, candles[i][2]], color=color, linewidth=0.7)
-        ax.set_title(title, color='#e5e7eb', fontsize=11, fontweight='bold')
-        ax.tick_params(colors='#9ca3af', labelsize=7)
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+            ax.add_patch(
+                plt.Rectangle(
+                    (mdates.date2num(dates[i]) - width / 2, body_low),
+                    width,
+                    body_height,
+                    color=color,
+                    linewidth=0,
+                )
+            )
+            ax.plot(
+                [mdates.date2num(dates[i]), mdates.date2num(dates[i])],
+                [candles[i][3], body_low],
+                color=color,
+                linewidth=0.7,
+            )
+            ax.plot(
+                [mdates.date2num(dates[i]), mdates.date2num(dates[i])],
+                [body_high, candles[i][2]],
+                color=color,
+                linewidth=0.7,
+            )
+        ax.set_title(title, color="#e5e7eb", fontsize=11, fontweight="bold")
+        ax.tick_params(colors="#9ca3af", labelsize=7)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d"))
         for spine in ax.spines.values():
-            spine.set_color('#374151')
-        ax.grid(True, alpha=0.1, color='#374151')
+            spine.set_color("#374151")
+        ax.grid(True, alpha=0.1, color="#374151")
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-    fig.patch.set_facecolor('#0a0e17')
+    fig.patch.set_facecolor("#0a0e17")
 
     entry_price = lifecycle.get("entry_price")
     exit_price = lifecycle.get("exit_price") or lifecycle.get("current_price")
     change = lifecycle.get("price_change_pct")
-    change_str = f"{'+' if (change or 0) > 0 else ''}{change}%" if change is not None else "—"
+    change_str = (
+        f"{'+' if (change or 0) > 0 else ''}{change}%" if change is not None else "—"
+    )
 
-    _plot_candles(ax1, entry_candles,
-                 f"ENTRY: ${entry_price:.8f}" if entry_price else "Entry Snapshot")
-    _plot_candles(ax2, exit_candles,
-                 f"{'EXIT' if status=='exited' else 'NOW'}: ${exit_price:.8f} ({change_str})"
-                 if exit_price else "Exit Snapshot")
+    _plot_candles(
+        ax1,
+        entry_candles,
+        f"ENTRY: ${entry_price:.8f}" if entry_price else "Entry Snapshot",
+    )
+    _plot_candles(
+        ax2,
+        exit_candles,
+        (
+            f"{'EXIT' if status=='exited' else 'NOW'}: ${exit_price:.8f} ({change_str})"
+            if exit_price
+            else "Exit Snapshot"
+        ),
+    )
 
-    fig.suptitle(f"{symbol} Lifecycle Comparison — {status.upper()}",
-                color='#e5e7eb', fontsize=14, fontweight='bold')
-    fig.text(0.5, 0.02, f"Tracked {lifecycle.get('days_tracked', 0)} days | "
-             f"Entry: {lifecycle.get('entry_time_iso', '?')[:10]} | "
-             f"{'Exit: ' + str(lifecycle.get('exit_time_iso', '?'))[:10] if status=='exited' else 'Still active'}",
-             ha='center', color='#9ca3af', fontsize=9)
+    fig.suptitle(
+        f"{symbol} Lifecycle Comparison — {status.upper()}",
+        color="#e5e7eb",
+        fontsize=14,
+        fontweight="bold",
+    )
+    fig.text(
+        0.5,
+        0.02,
+        f"Tracked {lifecycle.get('days_tracked', 0)} days | "
+        f"Entry: {lifecycle.get('entry_time_iso', '?')[:10]} | "
+        f"{'Exit: ' + str(lifecycle.get('exit_time_iso', '?'))[:10] if status=='exited' else 'Still active'}",
+        ha="center",
+        color="#9ca3af",
+        fontsize=9,
+    )
 
     plt.tight_layout(rect=[0, 0.04, 1, 0.95])
 
     output_path = LIFECYCLE_DIR / f"{address}_comparison_chart.png"
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(str(output_path), dpi=150, facecolor='#0a0e17', bbox_inches='tight')
+    fig.savefig(str(output_path), dpi=150, facecolor="#0a0e17", bbox_inches="tight")
     plt.close(fig)
 
     log.info("comparison_chart_generated", symbol=symbol, path=str(output_path))
@@ -539,6 +664,7 @@ def generate_comparison_chart(address: str) -> Optional[str]:
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def run_lifecycle() -> Dict[str, Any]:
     """Run the lifecycle tracking pipeline (sync wrapper)."""
@@ -554,9 +680,14 @@ def run_lifecycle() -> Dict[str, Any]:
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="Token lifecycle tracker")
-    parser.add_argument("--chart", type=str, help="Generate lifecycle chart for address")
-    parser.add_argument("--snapshot", action="store_true", help="Force snapshot all tokens")
+    parser.add_argument(
+        "--chart", type=str, help="Generate lifecycle chart for address"
+    )
+    parser.add_argument(
+        "--snapshot", action="store_true", help="Force snapshot all tokens"
+    )
     args = parser.parse_args()
 
     if args.chart:
@@ -574,4 +705,5 @@ def main():
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

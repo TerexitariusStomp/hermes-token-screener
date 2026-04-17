@@ -29,6 +29,7 @@ log = get_logger("enhanced_cross_scoring")
 # ENHANCED SCORING WITH FULL DATA UTILIZATION
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def compute_enhanced_token_score(
     token: dict,
     smart_wallet_count: int,
@@ -42,7 +43,7 @@ def compute_enhanced_token_score(
 ) -> float:
     """
     Compute enhanced token score using ALL available enriched data.
-    
+
     Weights (sum = 100):
       Smart Money Presence   25  (GMGN smart wallets + cross-scoring)
       Holder Distribution    15  (Helius/Birdeye holder counts + RugCheck concentration)
@@ -57,7 +58,7 @@ def compute_enhanced_token_score(
     negatives = token.get("negatives") or []
     age = token.get("age_hours") or 0
     vol24 = token.get("volume_h24") or 0
-    
+
     # Critical negatives that should exclude tokens
     if "POSSIBLE RUG" in negatives:
         return 0.0
@@ -67,7 +68,7 @@ def compute_enhanced_token_score(
         return 0.0
     if "ONLY SELLS" in negatives:
         return 0.0
-    
+
     score = 0.0
 
     # ═══════════════════════════════════════════════════════════════════════════
@@ -77,13 +78,13 @@ def compute_enhanced_token_score(
         # Normalize wallet count (more = better)
         wallet_ratio = min(smart_wallet_count / max(max_smart_wallets * 0.5, 1), 1.0)
         wallet_score = wallet_ratio * 10
-        
+
         # Reduce smart wallet score for old tokens (stuck wallets)
         if age > 72:
             wallet_score *= 0.5
         elif age > 168:
             wallet_score *= 0.3
-        
+
         score += wallet_score
 
         # Average quality of wallets holding this token
@@ -117,22 +118,22 @@ def compute_enhanced_token_score(
     # 2. HOLDER DISTRIBUTION (0-15 points) - NEW from Helius/Birdeye
     # ═══════════════════════════════════════════════════════════════════════════
     holder_count = 0
-    
+
     # Get holder count from GMGN (most reliable)
     gmgn_holder_count = token.get("gmgn_holder_count", 0) or 0
     if gmgn_holder_count > 0:
         holder_count = gmgn_holder_count
-    
+
     # Fallback to Helius
     helius = token.get("helius", {})
     if not holder_count and helius and helius.get("holder_count"):
         holder_count = helius.get("holder_count", 0)
-    
+
     # Fallback to Birdeye
     birdeye = token.get("birdeye", {})
     if not holder_count and birdeye and birdeye.get("holder_count"):
         holder_count = birdeye.get("holder_count", 0)
-    
+
     # Score based on holder count
     if holder_count > 0:
         if holder_count >= 10_000:
@@ -147,7 +148,7 @@ def compute_enhanced_token_score(
             score += 2  # Concentrated
         else:
             score += 1  # Very concentrated
-    
+
     # Holder concentration (from RugCheck)
     rugcheck = token.get("rugcheck", {})
     top_holders_pct = rugcheck.get("top_holders_pct", 0) or 0
@@ -162,7 +163,7 @@ def compute_enhanced_token_score(
             score += 1  # Concentrated
         else:
             score -= 2  # Highly concentrated
-    
+
     # Insider percentage (from RugCheck)
     insider_percentage = rugcheck.get("insider_percentage", 0) or 0
     if insider_percentage > 0:
@@ -180,29 +181,29 @@ def compute_enhanced_token_score(
     # ═══════════════════════════════════════════════════════════════════════════
     # Get liquidity from GMGN (most reliable)
     gmgn_liquidity = token.get("gmgn_liquidity", 0) or 0
-    
+
     # Fallback to Birdeye
     if not gmgn_liquidity and birdeye and birdeye.get("liquidity"):
         gmgn_liquidity = birdeye.get("liquidity", 0)
-    
+
     # Get FDV for ratio calculation
     fdv = token.get("fdv") or 0
-    
+
     # Score based on liquidity
     if gmgn_liquidity > 0:
         if gmgn_liquidity >= 5_000_000:
             score += 10  # Very high liquidity
         elif gmgn_liquidity >= 1_000_000:
-            score += 8   # High liquidity
+            score += 8  # High liquidity
         elif gmgn_liquidity >= 500_000:
-            score += 6   # Good liquidity
+            score += 6  # Good liquidity
         elif gmgn_liquidity >= 100_000:
-            score += 4   # Acceptable liquidity
+            score += 4  # Acceptable liquidity
         elif gmgn_liquidity >= 50_000:
-            score += 2   # Low liquidity
+            score += 2  # Low liquidity
         else:
-            score += 1   # Very low liquidity
-    
+            score += 1  # Very low liquidity
+
     # Liquidity/FDV ratio (from derived)
     derived = token.get("derived", {})
     liq_fdv_ratio = derived.get("liq_fdv_ratio", 0) or 0
@@ -215,7 +216,7 @@ def compute_enhanced_token_score(
             score += 1  # Moderate
         else:
             score -= 1  # Low
-    
+
     # LP lock status (from RugCheck)
     lp_locked = rugcheck.get("lp_locked", False)
     if lp_locked:
@@ -236,7 +237,7 @@ def compute_enhanced_token_score(
         score += 2
     elif channel_count >= 1:
         score += 1
-    
+
     # Social score (from SocialSignalEnricher)
     social_score = token.get("social_score", 0) or 0
     if social_score > 0:
@@ -248,7 +249,7 @@ def compute_enhanced_token_score(
             score += 2  # Moderate social activity
         else:
             score += 1  # Low social activity
-    
+
     # Mention velocity (from SocialSignalEnricher)
     mention_velocity = token.get("mention_velocity", 0) or 0
     if mention_velocity > 0:
@@ -258,7 +259,7 @@ def compute_enhanced_token_score(
             score += 2  # High velocity
         elif mention_velocity >= 1:
             score += 1  # Moderate velocity
-    
+
     # Social momentum (from SocialSignalEnricher)
     social_momentum = token.get("social_momentum", "")
     if social_momentum == "very_high":
@@ -273,7 +274,7 @@ def compute_enhanced_token_score(
     # ═══════════════════════════════════════════════════════════════════════════
     vol24 = token.get("volume_h24") or 0
     vol1h = token.get("volume_h1") or 0
-    
+
     if fdv > 0:
         # FDV in sweet spot: 10K-10M = good, <1K or >100M = risky
         if 10_000 <= fdv <= 10_000_000:
@@ -348,7 +349,7 @@ def compute_enhanced_token_score(
         score += 2
     elif goplus_honeypot is None:
         score += 1
-    
+
     # RugCheck score
     rugcheck_score = rugcheck.get("score", 0) or 0
     if rugcheck_score > 0:
@@ -358,7 +359,7 @@ def compute_enhanced_token_score(
             score += 1  # Moderate risk
         else:
             score -= 2  # High risk
-    
+
     # De.Fi security
     defi = token.get("defi", {})
     if defi:
@@ -412,7 +413,7 @@ def compute_enhanced_token_score(
         "HAS MINT AUTHORITY": 6,
         "no txns in 6h": 4,
     }
-    
+
     for neg in negatives:
         for pattern, penalty in negative_penalties.items():
             if pattern.lower() in neg.lower():

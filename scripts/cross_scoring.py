@@ -46,6 +46,7 @@ PHASE3_OUTPUT = DATA_DIR / "token_screener" / "top100_phase3_smartmoney.json"
 # DATA LOADING
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def load_tokens() -> List[dict]:
     """Load current token scores from top100.json."""
     if not OUTPUT_PATH.exists():
@@ -62,7 +63,7 @@ def load_wallets(min_score: float = 30) -> List[dict]:
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
         "SELECT * FROM tracked_wallets WHERE wallet_score >= ? ORDER BY wallet_score DESC",
-        (min_score,)
+        (min_score,),
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
@@ -88,6 +89,7 @@ def load_wallet_token_map() -> Dict[str, List[dict]]:
 # ═══════════════════════════════════════════════════════════════════════════════
 # PHASE 2: RE-SCORE TOKENS (based on smart money presence)
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def _compute_token_composite_score(
     token: dict,
@@ -290,7 +292,7 @@ def rescore_tokens(
     max_smart_wallets = max((len(ws) for ws in token_wallets.values()), default=1)
     max_score_sum = max(
         (sum(w.get("wallet_score", 0) for w in ws) for ws in token_wallets.values()),
-        default=1
+        default=1,
     )
 
     # Re-score each token
@@ -303,7 +305,9 @@ def rescore_tokens(
         smart_avg_roi = sum(w.get("avg_roi", 0) or 0 for w in tw) / max(smart_count, 1)
         smart_total_profit = sum(w.get("total_profit", 0) or 0 for w in tw)
         insider_count = sum(1 for w in tw if w.get("insider_flag"))
-        sniper_count = sum(1 for w in tw if "sniper" in (w.get("wallet_tags") or "").lower())
+        sniper_count = sum(
+            1 for w in tw if "sniper" in (w.get("wallet_tags") or "").lower()
+        )
 
         new_score = compute_enhanced_token_score(
             token=token,
@@ -320,7 +324,9 @@ def rescore_tokens(
         token["_original_score"] = token.get("score", 0)
         token["score"] = new_score
         token["smart_wallet_count"] = smart_count
-        token["smart_wallet_avg_score"] = round(smart_score_sum / max(smart_count, 1), 1)
+        token["smart_wallet_avg_score"] = round(
+            smart_score_sum / max(smart_count, 1), 1
+        )
         token["insider_count"] = insider_count
         token["sniper_count"] = sniper_count
 
@@ -342,6 +348,7 @@ def rescore_tokens(
 # ═══════════════════════════════════════════════════════════════════════════════
 # PHASE 3: RE-SCORE WALLETS (based on token portfolio quality)
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def _compute_wallet_composite_score(
     wallet: dict,
@@ -491,8 +498,7 @@ def rescore_wallets(
         top_tokens = [e for e in entries if e["token_address"] in token_by_addr]
         top_count = len(top_tokens)
         avg_score = sum(
-            token_by_addr[e["token_address"]].get("score", 0)
-            for e in top_tokens
+            token_by_addr[e["token_address"]].get("score", 0) for e in top_tokens
         ) / max(top_count, 1)
         wallet_top_token_counts.append(top_count)
         wallet_avg_token_scores.append(avg_score)
@@ -527,6 +533,7 @@ def rescore_wallets(
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN PIPELINE
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def run_cross_scoring(
     min_wallet_score: float = 30,
@@ -563,11 +570,17 @@ def run_cross_scoring(
 
         # Phase 2: Re-score tokens
         tokens = rescore_tokens(tokens, wallets, wallet_token_map)
-        log.info("tokens_rescored", top5=[(t.get("symbol", "?"), t.get("score", 0)) for t in tokens[:5]])
+        log.info(
+            "tokens_rescored",
+            top5=[(t.get("symbol", "?"), t.get("score", 0)) for t in tokens[:5]],
+        )
 
         # Phase 3: Re-score wallets
         wallets = rescore_wallets(wallets, tokens, wallet_token_map)
-        log.info("wallets_rescored", top5=[(w["address"][:12], w["wallet_score"]) for w in wallets[:5]])
+        log.info(
+            "wallets_rescored",
+            top5=[(w["address"][:12], w["wallet_score"]) for w in wallets[:5]],
+        )
 
     # Write output
     _write_output(tokens[:top_n])
@@ -603,7 +616,10 @@ def run_cross_scoring(
         ],
     }
 
-    log.info("cross_scoring_done", **{k: v for k, v in result.items() if k != "top_tokens" and k != "top_wallets"})
+    log.info(
+        "cross_scoring_done",
+        **{k: v for k, v in result.items() if k != "top_tokens" and k != "top_wallets"},
+    )
 
     return result
 
@@ -636,14 +652,22 @@ def _write_output(tokens: List[dict]) -> None:
     with open(OUTPUT_PATH, "w") as f:
         json.dump(output, f, indent=2, default=str)
 
-    log.info("output_written", phase3=str(PHASE3_OUTPUT), latest=str(OUTPUT_PATH), tokens=len(clean_tokens))
+    log.info(
+        "output_written",
+        phase3=str(PHASE3_OUTPUT),
+        latest=str(OUTPUT_PATH),
+        tokens=len(clean_tokens),
+    )
 
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="Cross-scoring pipeline")
     parser.add_argument("--min-wallet-score", type=float, default=30)
-    parser.add_argument("--iterations", type=int, default=1, help="Feedback loop iterations")
+    parser.add_argument(
+        "--iterations", type=int, default=1, help="Feedback loop iterations"
+    )
     parser.add_argument("--top-n", type=int, default=100)
     args = parser.parse_args()
 

@@ -45,17 +45,17 @@ start_metrics_server()
 # ═══════════════════════════════════════════════════════════════════════════════
 
 MARKET_CAP_TIERS: List[Tuple[float, float, str]] = [
-    (0,          50_000,       "micro"),       # < $50K
-    (50_000,     100_000,      "tiny"),        # $50K - $100K
-    (100_000,    250_000,      "small_low"),   # $100K - $250K
-    (250_000,    500_000,      "small_mid"),   # $250K - $500K
-    (500_000,    750_000,      "small_high"),  # $500K - $750K
-    (750_000,    1_000_000,    "mid_low"),     # $750K - $1M
-    (1_000_000,  5_000_000,    "mid"),         # $1M - $5M
-    (5_000_000,  10_000_000,   "mid_high"),    # $5M - $10M
-    (10_000_000, 50_000_000,   "large_low"),   # $10M - $50M
-    (50_000_000, 100_000_000,  "large_high"),  # $50M - $100M
-    (100_000_000, float("inf"), "mega"),       # $100M+
+    (0, 50_000, "micro"),  # < $50K
+    (50_000, 100_000, "tiny"),  # $50K - $100K
+    (100_000, 250_000, "small_low"),  # $100K - $250K
+    (250_000, 500_000, "small_mid"),  # $250K - $500K
+    (500_000, 750_000, "small_high"),  # $500K - $750K
+    (750_000, 1_000_000, "mid_low"),  # $750K - $1M
+    (1_000_000, 5_000_000, "mid"),  # $1M - $5M
+    (5_000_000, 10_000_000, "mid_high"),  # $5M - $10M
+    (10_000_000, 50_000_000, "large_low"),  # $10M - $50M
+    (50_000_000, 100_000_000, "large_high"),  # $50M - $100M
+    (100_000_000, float("inf"), "mega"),  # $100M+
 ]
 
 
@@ -94,6 +94,7 @@ def classify_tokens(tokens: List[dict]) -> Dict[str, List[dict]]:
 # TOKEN PRUNING (tiered)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str, int]:
     """
     Prune contracts by market cap tier.
@@ -110,12 +111,14 @@ def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str
     c = conn.cursor()
 
     # Load all contracts with scores
-    c.execute("""
+    c.execute(
+        """
         SELECT tcu.chain, tcu.contract_address, tcu.channel_count,
                COALESCE(tcu.last_seen_at, 0) as last_seen
         FROM telegram_contracts_unique tcu
         ORDER BY tcu.channel_count DESC
-    """)
+    """
+    )
     contracts = c.fetchall()
 
     # Load top100.json for enrichment data (scores, FDV)
@@ -135,15 +138,17 @@ def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str
         score = enrichment.get("score", 0) or 0
         _, _, tier_name = get_tier(mcap)
 
-        all_tokens.append({
-            "chain": chain,
-            "address": addr,
-            "channels": channels,
-            "last_seen": last_seen,
-            "market_cap": mcap,
-            "score": score,
-            "tier": tier_name,
-        })
+        all_tokens.append(
+            {
+                "chain": chain,
+                "address": addr,
+                "channels": channels,
+                "last_seen": last_seen,
+                "market_cap": mcap,
+                "score": score,
+                "tier": tier_name,
+            }
+        )
 
     # Group by tier
     tiered: Dict[str, List[dict]] = {}
@@ -175,25 +180,36 @@ def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str
             for t in to_remove:
                 c.execute(
                     "DELETE FROM telegram_contracts_unique WHERE contract_address = ?",
-                    (t["address"],)
+                    (t["address"],),
                 )
                 c.execute(
                     "DELETE FROM telegram_contract_calls WHERE contract_address = ?",
-                    (t["address"],)
+                    (t["address"],),
                 )
 
         removed[tier_name] = len(to_remove)
         if len(to_remove) > 0:
-            log.info("tier_pruned", tier=tier_name, kept=len(to_keep),
-                     removed=len(to_remove), total=len(tier_tokens))
+            log.info(
+                "tier_pruned",
+                tier=tier_name,
+                kept=len(to_keep),
+                removed=len(to_remove),
+                total=len(tier_tokens),
+            )
 
     if not dry_run:
         conn.commit()
 
     conn.close()
 
-    log.info("contracts_pruned", before=total_before, kept=total_kept,
-             removed=sum(removed.values()), tiers=len(tiered), dry_run=dry_run)
+    log.info(
+        "contracts_pruned",
+        before=total_before,
+        kept=total_kept,
+        removed=sum(removed.values()),
+        tiers=len(tiered),
+        dry_run=dry_run,
+    )
 
     return removed
 
@@ -201,6 +217,7 @@ def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str
 # ═══════════════════════════════════════════════════════════════════════════════
 # WALLET PRUNING (tiered by source token market cap)
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def prune_wallets_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str, int]:
     """
@@ -261,25 +278,41 @@ def prune_wallets_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str, 
 
         if to_remove and not dry_run:
             for w in to_remove:
-                c.execute("DELETE FROM tracked_wallets WHERE address = ?", (w["address"],))
-                c.execute("DELETE FROM wallet_token_entries WHERE wallet_address = ?", (w["address"],))
+                c.execute(
+                    "DELETE FROM tracked_wallets WHERE address = ?", (w["address"],)
+                )
+                c.execute(
+                    "DELETE FROM wallet_token_entries WHERE wallet_address = ?",
+                    (w["address"],),
+                )
 
         removed[tier_name] = len(to_remove)
         if len(to_remove) > 0:
-            log.info("wallet_tier_pruned", tier=tier_name, kept=len(to_keep), removed=len(to_remove))
+            log.info(
+                "wallet_tier_pruned",
+                tier=tier_name,
+                kept=len(to_keep),
+                removed=len(to_remove),
+            )
 
     if not dry_run:
         conn.commit()
 
     conn.close()
 
-    log.info("wallets_pruned", removed=sum(removed.values()), tiers=len(wallet_tiers), dry_run=dry_run)
+    log.info(
+        "wallets_pruned",
+        removed=sum(removed.values()),
+        tiers=len(wallet_tiers),
+        dry_run=dry_run,
+    )
     return removed
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # ORPHAN CLEANUP
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def clean_orphans(dry_run: bool = False) -> int:
     """Remove wallet token entries for tokens no longer in the contracts DB."""
@@ -299,7 +332,9 @@ def clean_orphans(dry_run: bool = False) -> int:
 
     if orphans and not dry_run:
         for addr in set(orphans):
-            c2.execute("DELETE FROM wallet_token_entries WHERE token_address = ?", (addr,))
+            c2.execute(
+                "DELETE FROM wallet_token_entries WHERE token_address = ?", (addr,)
+            )
         conn_wallets.commit()
 
     conn_wallets.close()
@@ -313,6 +348,7 @@ def clean_orphans(dry_run: bool = False) -> int:
 # ═══════════════════════════════════════════════════════════════════════════════
 # TIER SUMMARY REPORT
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def report_tiers():
     """Print current tier distribution."""
@@ -338,13 +374,23 @@ def report_tiers():
 
     log.info("=" * 65)
     log.info("TIER DISTRIBUTION")
-    log.info(f"Contracts: {total_contracts} | Wallets: {total_wallets} | Scored tokens: {len(scored)}")
+    log.info(
+        f"Contracts: {total_contracts} | Wallets: {total_wallets} | Scored tokens: {len(scored)}"
+    )
     log.info("-" * 65)
 
     for low, high, name in MARKET_CAP_TIERS:
         count = len(tiers.get(name, []))
         if count > 0 or name in ("micro", "tiny", "small_low"):
-            label = f"${low/1000:.0f}K-${high/1000:.0f}K" if high < 1_000_000 else f"${low/1_000_000:.0f}M-${high/1_000_000:.0f}M" if high < float("inf") else f"${low/1_000_000:.0f}M+"
+            label = (
+                f"${low/1000:.0f}K-${high/1000:.0f}K"
+                if high < 1_000_000
+                else (
+                    f"${low/1_000_000:.0f}M-${high/1_000_000:.0f}M"
+                    if high < float("inf")
+                    else f"${low/1_000_000:.0f}M+"
+                )
+            )
             log.info(f"  {name:<12} ({label:>14}): {count:>4} tokens")
     log.info("=" * 65)
 
@@ -353,13 +399,23 @@ def report_tiers():
 # MAIN
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="Tiered DB maintenance")
-    parser.add_argument("--max-per-tier", type=int, default=1000,
-                        help="Max tokens per market cap tier (default: 1000)")
-    parser.add_argument("--max-wallets-per-tier", type=int, default=500,
-                        help="Max wallets per market cap tier (default: 500)")
+    parser.add_argument(
+        "--max-per-tier",
+        type=int,
+        default=1000,
+        help="Max tokens per market cap tier (default: 1000)",
+    )
+    parser.add_argument(
+        "--max-wallets-per-tier",
+        type=int,
+        default=500,
+        help="Max wallets per market cap tier (default: 500)",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 

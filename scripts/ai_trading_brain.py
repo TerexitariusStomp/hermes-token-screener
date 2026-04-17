@@ -36,8 +36,12 @@ from hermes_screener.metrics import metrics
 log = get_logger("ai_trading_brain")
 
 TOP_TOKENS_PATH = settings.output_path
-TRADE_LOG_PATH = settings.hermes_home / "data" / "token_screener" / "trade_decisions.json"
-POSITIONS_PATH = settings.hermes_home / "data" / "token_screener" / "active_positions.json"
+TRADE_LOG_PATH = (
+    settings.hermes_home / "data" / "token_screener" / "trade_decisions.json"
+)
+POSITIONS_PATH = (
+    settings.hermes_home / "data" / "token_screener" / "active_positions.json"
+)
 
 # Bonsai-8B endpoint
 BONSAI_URL = "http://localhost:8082/v1/chat/completions"
@@ -48,12 +52,13 @@ BONSAI_MODEL = "Bonsai-8B.gguf"
 # ═══════════════════════════════════════════════════════════════════════════════
 
 MAX_POSITION_PCT = 5.0  # max % of portfolio per trade (safety cap only)
-MIN_POSITIONS = 1       # always maintain at least this many open positions
+MIN_POSITIONS = 1  # always maintain at least this many open positions
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # AI DECISION MAKING
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def call_bonsai(system: str, prompt: str, max_tokens: int = 150) -> Optional[str]:
     """Call Bonsai-8B for trading analysis."""
@@ -72,7 +77,12 @@ def call_bonsai(system: str, prompt: str, max_tokens: int = 150) -> Optional[str
             timeout=45,
         )
         if resp.status_code == 200:
-            return resp.json().get("choices", [{}])[0].get("message", {}).get("content", "")
+            return (
+                resp.json()
+                .get("choices", [{}])[0]
+                .get("message", {})
+                .get("content", "")
+            )
     except Exception as e:
         log.error("bonsai_call_failed", error=str(e))
     return None
@@ -133,7 +143,8 @@ Current market context: BTC trending, Solana active, memecoin season."""
 
     # Parse JSON from response
     import re
-    json_match = re.search(r'\{[^{}]*\}', response, re.DOTALL)
+
+    json_match = re.search(r"\{[^{}]*\}", response, re.DOTALL)
     if json_match:
         try:
             return json.loads(json_match.group())
@@ -146,6 +157,7 @@ Current market context: BTC trending, Solana active, memecoin season."""
 # ═══════════════════════════════════════════════════════════════════════════════
 # TRADE FILTERING
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
     """Rank tokens for AI review. No filtering — AI decides what's tradeable."""
@@ -172,6 +184,7 @@ def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
 # POSITION MANAGEMENT
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def load_positions() -> List[dict]:
     """Load current active positions."""
     if POSITIONS_PATH.exists():
@@ -184,7 +197,12 @@ def save_positions(positions: List[dict]):
     """Save active positions."""
     POSITIONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(POSITIONS_PATH, "w") as f:
-        json.dump({"positions": positions, "updated_at": time.time()}, f, indent=2, default=str)
+        json.dump(
+            {"positions": positions, "updated_at": time.time()},
+            f,
+            indent=2,
+            default=str,
+        )
 
 
 def log_decision(decision: dict):
@@ -212,6 +230,7 @@ def log_decision(decision: dict):
 # ═══════════════════════════════════════════════════════════════════════════════
 # TRADE EXECUTION
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def execute_trade(token: dict, decision: dict, dry_run: bool = False) -> dict:
     """
@@ -242,7 +261,12 @@ def execute_trade(token: dict, decision: dict, dry_run: bool = False) -> dict:
 
     if dry_run:
         result["status"] = "dry_run"
-        log.info("trade_simulated", symbol=symbol, action=action, confidence=decision.get("confidence"))
+        log.info(
+            "trade_simulated",
+            symbol=symbol,
+            action=action,
+            confidence=decision.get("confidence"),
+        )
         return result
 
     # Execute via trading_bot subprocess
@@ -251,10 +275,14 @@ def execute_trade(token: dict, decision: dict, dry_run: bool = False) -> dict:
         cmd = [
             sys.executable,
             str(settings.hermes_home / "scripts" / "trading_bot.py"),
-            "--chain", chain,
-            "--action", "buy",
-            "--token", addr,
-            "--amount-pct", str(position_pct),
+            "--chain",
+            chain,
+            "--action",
+            "buy",
+            "--token",
+            addr,
+            "--amount-pct",
+            str(position_pct),
         ]
 
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
@@ -282,6 +310,7 @@ def execute_trade(token: dict, decision: dict, dry_run: bool = False) -> dict:
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN PIPELINE
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def run_trading_brain(
     execute: bool = False,
@@ -328,8 +357,12 @@ def run_trading_brain(
             log.info("already_holding", symbol=symbol)
             continue
 
-        log.info("analyzing", symbol=symbol, score=token.get("score"),
-                 smart=token.get("smart_wallet_count", token.get("gmgn_smart_wallets", 0)))
+        log.info(
+            "analyzing",
+            symbol=symbol,
+            score=token.get("score"),
+            smart=token.get("smart_wallet_count", token.get("gmgn_smart_wallets", 0)),
+        )
 
         decision = analyze_token_with_ai(token)
 
@@ -343,16 +376,26 @@ def run_trading_brain(
             log_decision(decision)
             decisions.append(decision)
 
-            if decision.get("decision") == "buy" and decision.get("confidence", 0) >= 70:
+            if (
+                decision.get("decision") == "buy"
+                and decision.get("confidence", 0) >= 70
+            ):
                 buy_signals += 1
 
     # Ensure minimum positions are maintained
     current_active = len([p for p in positions if p.get("status") == "active"])
     if current_active < MIN_POSITIONS and tradeable:
         needed = MIN_POSITIONS - current_active
-        log.info("enforcing_min_positions", current=current_active, target=MIN_POSITIONS, needed=needed)
+        log.info(
+            "enforcing_min_positions",
+            current=current_active,
+            target=MIN_POSITIONS,
+            needed=needed,
+        )
         # Force buy the best available token (highest score)
-        forced_buys = sorted(tradeable, key=lambda t: t.get("score", 0), reverse=True)[:needed]
+        forced_buys = sorted(tradeable, key=lambda t: t.get("score", 0), reverse=True)[
+            :needed
+        ]
         for token in forced_buys:
             forced_decision = {
                 "decision": "buy",
@@ -374,29 +417,42 @@ def run_trading_brain(
     # Execute buy orders
     executed = []
     if execute and buy_signals > 0:
-        buy_decisions = [d for d in decisions if d.get("decision") == "buy" and d.get("confidence", 0) >= 70]
+        buy_decisions = [
+            d
+            for d in decisions
+            if d.get("decision") == "buy" and d.get("confidence", 0) >= 70
+        ]
         buy_decisions.sort(key=lambda d: d.get("confidence", 0), reverse=True)
 
         for decision in buy_decisions[:max_trades]:
-            token = next((t for t in tradeable if t.get("contract_address") == decision.get("address")), None)
+            token = next(
+                (
+                    t
+                    for t in tradeable
+                    if t.get("contract_address") == decision.get("address")
+                ),
+                None,
+            )
             if token:
                 result = execute_trade(token, decision, dry_run=dry_run)
                 executed.append(result)
 
                 if result["status"] == "executed" and not dry_run:
-                    positions.append({
-                        "symbol": decision["symbol"],
-                        "address": decision["address"],
-                        "chain": decision["chain"],
-                        "entry_price": token.get("fdv"),  # approximate
-                        "position_pct": decision.get("position_pct", 1.0),
-                        "stop_loss_pct": decision.get("stop_loss_pct", 15),
-                        "take_profit_pct": decision.get("take_profit_pct", 100),
-                        "status": "active",
-                        "entry_time": time.time(),
-                        "ai_confidence": decision.get("confidence"),
-                        "ai_reason": decision.get("reason"),
-                    })
+                    positions.append(
+                        {
+                            "symbol": decision["symbol"],
+                            "address": decision["address"],
+                            "chain": decision["chain"],
+                            "entry_price": token.get("fdv"),  # approximate
+                            "position_pct": decision.get("position_pct", 1.0),
+                            "stop_loss_pct": decision.get("stop_loss_pct", 15),
+                            "take_profit_pct": decision.get("take_profit_pct", 100),
+                            "status": "active",
+                            "entry_time": time.time(),
+                            "ai_confidence": decision.get("confidence"),
+                            "ai_reason": decision.get("reason"),
+                        }
+                    )
 
     if executed and not dry_run:
         save_positions(positions)
@@ -411,22 +467,34 @@ def run_trading_brain(
         "executed": len(executed),
         "active_positions": len([p for p in positions if p.get("status") == "active"]),
         "top_decisions": [
-            {"symbol": d["symbol"], "decision": d.get("decision"),
-             "confidence": d.get("confidence"), "reason": d.get("reason", "")[:80]}
+            {
+                "symbol": d["symbol"],
+                "decision": d.get("decision"),
+                "confidence": d.get("confidence"),
+                "reason": d.get("reason", "")[:80],
+            }
             for d in decisions[:5]
         ],
         "elapsed": round(elapsed, 1),
     }
 
-    log.info("trading_brain_done", **{k: v for k, v in result.items() if k != "top_decisions"})
+    log.info(
+        "trading_brain_done",
+        **{k: v for k, v in result.items() if k != "top_decisions"},
+    )
     return result
 
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="AI Trading Brain")
-    parser.add_argument("--execute", action="store_true", help="Execute approved trades")
-    parser.add_argument("--dry-run", action="store_true", default=True, help="Simulate only")
+    parser.add_argument(
+        "--execute", action="store_true", help="Execute approved trades"
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", default=True, help="Simulate only"
+    )
     parser.add_argument("--max-trades", type=int, default=3)
     args = parser.parse_args()
 

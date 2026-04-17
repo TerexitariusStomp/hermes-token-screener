@@ -15,10 +15,10 @@ import sqlite3
 import time
 from pathlib import Path
 
-DATA = Path.home() / '.hermes' / 'data'
-DB_PATH = DATA / 'central_contracts.db'
-TOP10_DB = DATA / 'top10_tokens.db'
-SCREENER_DIR = DATA / 'token_screener'
+DATA = Path.home() / ".hermes" / "data"
+DB_PATH = DATA / "central_contracts.db"
+TOP10_DB = DATA / "top10_tokens.db"
+SCREENER_DIR = DATA / "token_screener"
 
 
 def cleanup_contracts_db():
@@ -31,13 +31,16 @@ def cleanup_contracts_db():
     # Tokens from GMGN trenches that have been in DB for 1h+ with no liquidity
     # (new tokens get a grace period)
     one_hour_ago = time.time() - 3600
-    dead = db.execute("""
+    dead = db.execute(
+        """
         SELECT chain, contract_address, last_source, last_message_text
         FROM telegram_contracts_unique
         WHERE last_source LIKE 'gmgn_%'
         AND last_seen_at < ?
         AND (last_message_text LIKE '%liq=0%' OR last_message_text LIKE '%mcap=0.0%')
-    """, (one_hour_ago,)).fetchall()
+    """,
+        (one_hour_ago,),
+    ).fetchall()
 
     if not dead:
         print(f"  contracts_db: no dead GMGN tokens")
@@ -46,11 +49,19 @@ def cleanup_contracts_db():
 
     print(f"  contracts_db: removing {len(dead)} dead GMGN tokens")
     for chain, addr, src, msg in dead:
-        db.execute("DELETE FROM telegram_contract_calls WHERE chain=? AND contract_address=?", (chain, addr))
-        db.execute("DELETE FROM telegram_contracts_unique WHERE chain=? AND contract_address=?", (chain, addr))
+        db.execute(
+            "DELETE FROM telegram_contract_calls WHERE chain=? AND contract_address=?",
+            (chain, addr),
+        )
+        db.execute(
+            "DELETE FROM telegram_contracts_unique WHERE chain=? AND contract_address=?",
+            (chain, addr),
+        )
 
     db.commit()
-    remaining_gmgn = db.execute("SELECT COUNT(*) FROM telegram_contracts_unique WHERE last_source LIKE 'gmgn_%'").fetchone()[0]
+    remaining_gmgn = db.execute(
+        "SELECT COUNT(*) FROM telegram_contracts_unique WHERE last_source LIKE 'gmgn_%'"
+    ).fetchone()[0]
     print(f"  contracts_db: {remaining_gmgn} GMGN tokens remaining")
     db.close()
     return len(dead)
@@ -65,17 +76,17 @@ def cleanup_top10_db():
     db = sqlite3.connect(str(TOP10_DB))
 
     # Backfill liquidity from top100.json if available
-    top100_path = DATA / 'token_screener' / 'top100.json'
+    top100_path = DATA / "token_screener" / "top100.json"
     if top100_path.exists():
         top100 = json.loads(top100_path.read_text())
-        for tok in top100.get('tokens', []):
-            sym = tok.get('symbol', '').upper()
-            fdv = tok.get('fdv') or 0
-            vol = tok.get('volume_h24') or 0
+        for tok in top100.get("tokens", []):
+            sym = tok.get("symbol", "").upper()
+            fdv = tok.get("fdv") or 0
+            vol = tok.get("volume_h24") or 0
             if sym and fdv > 0:
                 db.execute(
                     "UPDATE current_top10 SET fdv = ?, volume_h24 = ? WHERE UPPER(symbol) = ?",
-                    (fdv, vol, sym)
+                    (fdv, vol, sym),
                 )
         db.commit()
 
@@ -92,16 +103,23 @@ def cleanup_top10_db():
 
     print(f"  top10: removing {bad_syms}")
 
-    placeholders = ','.join('?' * len(bad_syms))
+    placeholders = ",".join("?" * len(bad_syms))
 
     # current_top10
-    db.execute(f"DELETE FROM current_top10 WHERE UPPER(symbol) IN ({placeholders})", bad_syms)
+    db.execute(
+        f"DELETE FROM current_top10 WHERE UPPER(symbol) IN ({placeholders})", bad_syms
+    )
 
     # daily_metrics (active)
-    db.execute(f"DELETE FROM daily_metrics WHERE UPPER(symbol) IN ({placeholders})", bad_syms)
+    db.execute(
+        f"DELETE FROM daily_metrics WHERE UPPER(symbol) IN ({placeholders})", bad_syms
+    )
 
     # telegram_metrics_history (active tracking)
-    db.execute(f"DELETE FROM telegram_metrics_history WHERE UPPER(symbol) IN ({placeholders})", bad_syms)
+    db.execute(
+        f"DELETE FROM telegram_metrics_history WHERE UPPER(symbol) IN ({placeholders})",
+        bad_syms,
+    )
 
     db.commit()
 
@@ -125,20 +143,29 @@ def cleanup_json(filename: str):
 
     data = json.loads(path.read_text())
     before = len(data)
-    cleaned = [t for t in data if (t.get('fdv') or 0) > 0 or (t.get('screener_score') or 0) > 0]
+    cleaned = [
+        t for t in data if (t.get("fdv") or 0) > 0 or (t.get("screener_score") or 0) > 0
+    ]
 
     # For twitter analysis, check if twitter_followers > 0 OR twitter_search_score > 0
-    if 'profile' in str(data[0]) if data else False:
-        cleaned = [t for t in data
-                   if (t.get('profile', {}).get('followers', 0) > 0
-                       or t.get('ticker_search', {}).get('tweets_found', 0) > 0
-                       or (t.get('fdv') or 0) > 0)]
+    if "profile" in str(data[0]) if data else False:
+        cleaned = [
+            t
+            for t in data
+            if (
+                t.get("profile", {}).get("followers", 0) > 0
+                or t.get("ticker_search", {}).get("tweets_found", 0) > 0
+                or (t.get("fdv") or 0) > 0
+            )
+        ]
 
     # For combined, check telegram_members > 0 OR twitter_followers > 0
-    if 'telegram_members' in str(data[0]) if data else False:
-        cleaned = [t for t in data
-                   if (t.get('telegram_members', 0) > 0
-                       or t.get('twitter_followers', 0) > 0)]
+    if "telegram_members" in str(data[0]) if data else False:
+        cleaned = [
+            t
+            for t in data
+            if (t.get("telegram_members", 0) > 0 or t.get("twitter_followers", 0) > 0)
+        ]
 
     removed = before - len(cleaned)
     if removed > 0:
@@ -155,11 +182,11 @@ def main():
 
     total += cleanup_contracts_db()
     total += cleanup_top10_db()
-    total += cleanup_json('twitter_token_analysis.json')
-    total += cleanup_json('combined_token_analysis.json')
+    total += cleanup_json("twitter_token_analysis.json")
+    total += cleanup_json("combined_token_analysis.json")
 
     print(f"\nTotal tokens removed: {total}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

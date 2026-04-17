@@ -313,7 +313,7 @@ def collect_twitter_texts(symbols: list[str], max_per_symbol: int = 5) -> list[s
                     if isinstance(data, list)
                     else data.get("results", data.get("tweets", []))
                 )
-                for tweet in (tweets if isinstance(tweets, list) else []):
+                for tweet in tweets if isinstance(tweets, list) else []:
                     if isinstance(tweet, dict):
                         text = tweet.get("text", tweet.get("content", ""))
                     elif isinstance(tweet, str):
