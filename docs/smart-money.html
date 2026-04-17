@@ -13,6 +13,7 @@
   <a href="cross-wallets.html">Wallets×Tokens</a>
   <a href="tiered.html">Market Cap Tiers</a>
   <a href="smart-money.html" class="active">SM Tokens</a>
+  <a href="smart-money-wallets.html">SM Wallets</a>
   <a href="smart-money-feed.html">SM Feed</a>
   <a href="columns.html">Guide</a>
   <a href="https://github.com/TerexitariusStomp/hermes-token-screener">GitHub</a>
@@ -51,9 +52,12 @@
   <th data-sort="buyer_count">Buyers <span class="sort-arrow"></span></th>
   <th data-sort="total_buy_usd">Total USD <span class="sort-arrow"></span></th>
   <th data-sort="avg_buy_usd">Avg USD <span class="sort-arrow"></span></th>
-  <th data-sort="top_buyer_score">Top Score <span class="sort-arrow"></span></th>
   <th data-sort="fdv">FDV <span class="sort-arrow"></span></th>
+  <th data-sort="volume_h24">Vol24h <span class="sort-arrow"></span></th>
+  <th data-sort="price_change_h1">1h <span class="sort-arrow"></span></th>
+  <th data-sort="price_change_h6">6h <span class="sort-arrow"></span></th>
   <th data-sort="score">Score <span class="sort-arrow"></span></th>
+  <th data-sort="top_buyer_score">Top Buyer <span class="sort-arrow"></span></th>
   <th>MCap</th>
   <th>Wallets</th>
 </tr></thead>
@@ -66,6 +70,8 @@ function fmt_usd(v){if(!v)return"\u2014";v=parseFloat(v);if(v>=1e9)return"$"+(v/
 function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)+"..."+a.slice(-n)}
 function chain_cls(c){c=(c||"").toLowerCase();return["solana","sol","base","ethereum","eth","bsc","bnb","arbitrum","polygon","polygon-pos","avalanche","sui","optimism"].includes(c)?"chain-"+c:""}
 function chain_label(c){return{solana:"Solana",sol:"Solana",base:"Base",ethereum:"Ethereum",eth:"Ethereum",bsc:"BNB Chain",bnb:"BNB Chain",arbitrum:"Arbitrum",polygon:"Polygon","polygon-pos":"Polygon",avalanche:"Avalanche",sui:"Sui",optimism:"Optimism"}[(c||"").toLowerCase()]||c||"Unknown"}
+function fmt_pct(v){if(v==null)return"\u2014";return(v>0?"+":"")+parseFloat(v).toFixed(1)+"%"}
+function pct_cls(v){if(v==null)return"";return v>0?"pos":v<0?"neg":""}
 function block_url(addr,chain){chain=(chain||"").toLowerCase();if(chain==="solana"||chain==="sol")return"https://solscan.io/account/"+addr;if(chain==="base")return"https://basescan.org/address/"+addr;if(chain==="bsc"||chain==="bnb")return"https://bscscan.com/address/"+addr;return"https://etherscan.io/address/"+addr}
 function time_ago(ts){if(!ts)return"\u2014";const d=Date.now()-ts*1000;if(d<60000)return Math.floor(d/1000)+"s ago";if(d<3600000)return Math.floor(d/60000)+"m ago";if(d<86400000)return Math.floor(d/3600000)+"h ago";return Math.floor(d/86400000)+"d ago"}
 
@@ -92,9 +98,12 @@ function renderTable(tokens){
   <td class="sc ${t.buyer_count>=3?"sc-h":t.buyer_count>=2?"sc-m":"sc-l"}">${t.buyer_count}</td>
   <td>${fmt_usd(t.total_buy_usd)}</td>
   <td>${fmt_usd(t.avg_buy_usd)}</td>
-  <td>${(t.top_buyer_score||0).toFixed(0)}</td>
   <td>${fmt_usd(t.fdv)}</td>
+  <td>${fmt_usd(t.volume_h24)}</td>
+  <td class="${pct_cls(t.price_change_h1)}">${fmt_pct(t.price_change_h1)}</td>
+  <td class="${pct_cls(t.price_change_h6)}">${fmt_pct(t.price_change_h6)}</td>
   <td class="sc ${sc_cls}">${(t.score||0).toFixed(1)}</td>
+  <td>${(t.top_buyer_score||0).toFixed(0)}</td>
   <td><span class="tag tag-y">${t.mcap_tier||"\u2014"}</span></td>
   <td class="mono" style="font-size:.65rem">${wallets}</td>
 </tr>`;
