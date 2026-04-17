@@ -22,12 +22,11 @@ import json
 import time
 import sqlite3
 import sys
-from pathlib import Path
 from typing import Dict, List, Tuple
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
-from hermes_screener.metrics import metrics, start_metrics_server
+from hermes_screener.metrics import start_metrics_server
 
 DB_PATH = settings.db_path
 WALLETS_DB = settings.wallets_db_path

@@ -20,7 +20,7 @@ import sys
 import os
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Set, Tuple, Optional
+from typing import Dict, List
 import requests
 
 # Add paths
@@ -29,7 +29,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Import existing enrichment modules
 try:
-    from hermes_screener.config import settings
     from hermes_screener.logging import get_logger
 
     log = get_logger("token_integration")

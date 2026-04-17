@@ -16,7 +16,6 @@ import asyncio
 import json
 import sqlite3
 import signal
-import sys
 import time
 import argparse
 from pathlib import Path

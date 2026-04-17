@@ -19,42 +19,24 @@ Usage:
 """
 
 import json
-import os
 import sqlite3
-import subprocess
 import time
-from pathlib import Path
+
+from hermes_screener.config import settings
+from hermes_screener.utils import gmgn_cmd  # noqa: F401 – shared helper
 
 # ── Config ──────────────────────────────────────────────────────────────────
-DATA_DIR = Path.home() / ".hermes" / "data"
-WALLETS_DB = DATA_DIR / "wallet_tracker.db"
-CONTRACTS_DB = DATA_DIR / "central_contracts.db"
-GMGN_CLI = str(Path.home() / ".hermes" / "node" / "bin" / "gmgn-cli")
-GMGN_API_KEY = os.environ.get("GMGN_API_KEY", "")
+DATA_DIR = settings.db_path.parent
+WALLETS_DB = settings.wallets_db_path
+CONTRACTS_DB = settings.db_path
+GMGN_CLI = str(settings.gmgn_cli)
 
 CHAINS = ["sol", "base", "bsc"]
 SMART_MONEY_LIMIT = 100  # per chain per run
 MIN_WALLET_SCORE = 40  # only track wallets with score >= this
 
 
-def gmgn_cmd(args: list) -> dict | None:
-    """Run gmgn-cli and return parsed JSON."""
-    try:
-        env = {**os.environ}
-        if GMGN_API_KEY:
-            env["GMGN_API_KEY"] = GMGN_API_KEY
-        result = subprocess.run(
-            ["node", GMGN_CLI] + args,
-            capture_output=True,
-            text=True,
-            timeout=30,
-            env=env,
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            return json.loads(result.stdout.strip())
-    except Exception as e:
-        print(f"  gmgn-cli error: {e}")
-    return None
+# gmgn_cmd is imported from hermes_screener.utils
 
 
 def get_wallets_db():

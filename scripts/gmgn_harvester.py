@@ -11,19 +11,18 @@ Inserts into telegram_contracts_unique in central_contracts.db
 """
 
 import json
-import os
 import sqlite3
-import subprocess
 import time
-from pathlib import Path
-from datetime import datetime, timezone
-from typing import List, Dict, Optional
+from typing import List, Dict
+
+from hermes_screener.config import settings
+from hermes_screener.contract_db import open_sqlite_rw
+from hermes_screener.utils import gmgn_cmd  # noqa: F401 – re-exported for callers
 
 # ── Config ──────────────────────────────────────────────────────────────────
-DATA_DIR = Path.home() / ".hermes" / "data"
-DB_PATH = DATA_DIR / "central_contracts.db"
-GMGN_CLI = str(Path.home() / ".hermes" / "scripts" / "gmgn-cli")
-GMGN_API_KEY = os.environ.get("GMGN_API_KEY", "")
+DATA_DIR = settings.db_path.parent
+DB_PATH = settings.db_path
+GMGN_CLI = str(settings.gmgn_cli)
 
 CHAINS = ["sol", "base", "eth", "bsc"]  # GMGN multi-chain
 TRENCH_LIMIT = 30  # per category per chain
@@ -32,31 +31,11 @@ TRENDING_INTERVALS = ["5m", "1h"]
 TRENCH_FILTERS = ["smart-money", "safe"]
 
 
-def gmgn_cmd(args: list) -> Optional[dict]:
-    """Run gmgn-cli and return parsed JSON."""
-    try:
-        env = {**os.environ}
-        if GMGN_API_KEY:
-            env["GMGN_API_KEY"] = GMGN_API_KEY
-        result = subprocess.run(
-            ["node", GMGN_CLI] + args,
-            capture_output=True,
-            text=True,
-            timeout=30,
-            env=env,
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            return json.loads(result.stdout.strip())
-    except Exception as e:
-        print(f"  gmgn-cli error: {e}")
-    return None
+# gmgn_cmd is imported from hermes_screener.utils
 
 
 def get_db():
-    conn = sqlite3.connect(str(DB_PATH), timeout=30)
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA busy_timeout=30000")
-    return conn
+    return open_sqlite_rw(DB_PATH)
 
 
 def upsert_contract(

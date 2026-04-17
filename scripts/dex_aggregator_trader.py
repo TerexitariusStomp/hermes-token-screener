@@ -9,10 +9,8 @@ import sys
 import json
 import time
 import logging
-import subprocess
-from datetime import datetime, timezone
 from decimal import Decimal
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import requests
 from dotenv import load_dotenv
@@ -27,7 +25,6 @@ LOCKFILE = "/tmp/dex_aggregator_trader.lock"
 
 def acquire_lock():
     """Acquire exclusive lock via PID-based lockfile. Exit if another instance is running."""
-    import signal
 
     if os.path.exists(LOCKFILE):
         try:
@@ -96,7 +93,7 @@ logger = logging.getLogger(__name__)
 # Import contract executor (direct on-chain calls)
 try:
     from contract_executor import ContractExecutor
-    from protocol_registry import PROTOCOL_REGISTRY, TOKEN_REGISTRY, NATIVE_ETH
+    from protocol_registry import NATIVE_ETH
 
     HAS_CONTRACT_EXECUTOR = True
 except ImportError:
@@ -105,7 +102,7 @@ except ImportError:
 
 # Import Solana program adapter
 try:
-    from solana_adapter import SolanaProgramAdapter, TOKENS as SOLANA_TOKENS
+    from solana_adapter import SolanaProgramAdapter
 
     HAS_SOLANA_ADAPTER = True
 except ImportError:
@@ -2340,7 +2337,6 @@ class DexAggregatorTrader:
             return False
 
         try:
-            from solders.pubkey import Pubkey
 
             wallet = str(self.solana_keypair.pubkey())
 

@@ -15,13 +15,14 @@ import json
 import time
 import sqlite3
 import sys
+from typing import List, Set, Tuple
+
 import requests
-from pathlib import Path
-from typing import List, Tuple, Set
 
 from hermes_screener.config import settings
-from hermes_screener.logging import get_logger, log_duration
-from hermes_screener.metrics import metrics, start_metrics_server
+from hermes_screener.contract_db import ensure_telegram_contract_tables, open_sqlite_rw
+from hermes_screener.logging import get_logger
+from hermes_screener.metrics import start_metrics_server
 
 DB_PATH = settings.db_path
 DEFAULT_CHAINS = {"solana", "ethereum", "base", "binance-smart-chain"}
@@ -31,51 +32,11 @@ start_metrics_server()
 
 
 def get_db():
-    conn = sqlite3.connect(str(DB_PATH), timeout=30)
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA busy_timeout=30000")
-    return conn
+    return open_sqlite_rw(DB_PATH)
 
 
 def ensure_tables(conn):
-    conn.executescript(
-        """
-        CREATE TABLE IF NOT EXISTS telegram_contract_calls (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            channel_id TEXT NOT NULL,
-            message_id INTEGER NOT NULL,
-            chain TEXT,
-            contract_address TEXT NOT NULL,
-            raw_address TEXT,
-            address_source TEXT,
-            message_text TEXT,
-            observed_at REAL,
-            session_source TEXT,
-            inserted_at REAL NOT NULL
-        );
-        CREATE UNIQUE INDEX IF NOT EXISTS idx_calls_msg_contract
-            ON telegram_contract_calls(message_id, contract_address);
-
-        CREATE TABLE IF NOT EXISTS telegram_contracts_unique (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            chain TEXT NOT NULL,
-            contract_address TEXT NOT NULL,
-            first_seen_at REAL NOT NULL,
-            last_seen_at REAL NOT NULL,
-            mentions INTEGER NOT NULL,
-            last_channel_id TEXT,
-            last_message_id INTEGER,
-            last_raw_address TEXT,
-            last_source TEXT,
-            last_message_text TEXT,
-            channel_count INTEGER NOT NULL DEFAULT 0,
-            channels_seen TEXT DEFAULT ''
-        );
-        CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_chain_addr
-            ON telegram_contracts_unique(chain, contract_address);
-    """
-    )
-    conn.commit()
+    ensure_telegram_contract_tables(conn)
 
 
 def insert_discovery(

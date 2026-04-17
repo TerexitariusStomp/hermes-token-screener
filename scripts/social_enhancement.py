@@ -36,9 +36,6 @@ Usage:
 from __future__ import annotations
 
 import json
-import math
-import os
-import re
 import sqlite3
 import subprocess
 import sys
@@ -49,12 +46,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
-from hermes_screener.metrics import metrics
 from hermes_screener.keyword_discovery import (
     run_keyword_discovery,
     save_discovered_tokens,
 )
-from hermes_screener.website_intelligence import run_website_analysis
 
 log = get_logger("social_enhancement")
 
@@ -779,9 +774,7 @@ def run_full_pipeline(
 
     # Phase 3: Cross-scoring (smart money)
     sys.path.insert(0, str(settings.hermes_home / "scripts"))
-    from cross_scoring import run_cross_scoring, save_phase_output as save_p3
-    from cross_scoring import load_tokens, load_wallets, load_wallet_token_map
-    from cross_scoring import rescore_tokens, rescore_wallets
+    from cross_scoring import run_cross_scoring
 
     phase3_result = run_cross_scoring(
         min_wallet_score=min_wallet_score,

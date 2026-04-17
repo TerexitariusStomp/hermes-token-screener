@@ -76,7 +76,7 @@ logger = logging.getLogger(__name__)
 # Import contract executor (direct on-chain calls)
 try:
     from .contract_executor import ContractExecutor
-    from .protocol_registry import NATIVE_ETH, PROTOCOL_REGISTRY, TOKEN_REGISTRY
+    from .protocol_registry import NATIVE_ETH
 
     HAS_CONTRACT_EXECUTOR = True
 except ImportError:
@@ -85,7 +85,6 @@ except ImportError:
 
 # Import Solana program adapter
 try:
-    from solana_adapter import TOKENS as SOLANA_TOKENS
     from solana_adapter import SolanaProgramAdapter
 
     HAS_SOLANA_ADAPTER = True

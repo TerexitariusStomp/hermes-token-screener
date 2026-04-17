@@ -10,8 +10,8 @@ import os
 import json
 import re
 from pathlib import Path
-from datetime import datetime, timedelta
-from typing import Dict, List, Tuple, Optional
+from datetime import datetime
+from typing import Dict, List, Optional
 import sqlite3
 import requests
 
@@ -20,8 +20,6 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 # Import the Telegram client
 from telethon import TelegramClient
-from telethon.tl.functions.messages import ImportChatInviteRequest
-from telethon.tl.types import Channel, Chat, User
 
 # Configuration
 SESSION_PATH = Path.home() / ".hermes" / ".telegram_session" / "hermes_user"

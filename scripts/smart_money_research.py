@@ -31,8 +31,8 @@ from typing import List, Dict, Any
 sys.path.insert(0, str(Path(__file__).parent))
 
 from hermes_screener.config import settings
-from hermes_screener.logging import get_logger, log_duration
-from hermes_screener.metrics import metrics, start_metrics_server
+from hermes_screener.logging import get_logger
+from hermes_screener.metrics import start_metrics_server
 
 DB_PATH = settings.db_path
 WALLETS_DB = settings.wallets_db_path

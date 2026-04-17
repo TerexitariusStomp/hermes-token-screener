@@ -5,7 +5,6 @@ Test Solscan API with different endpoints.
 
 import asyncio
 import httpx
-import json
 import os
 from pathlib import Path
 

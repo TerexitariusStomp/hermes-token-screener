@@ -13,14 +13,7 @@ This module enhances the token scoring to fully utilize all enriched data:
 
 from __future__ import annotations
 
-import json
-import sqlite3
-import sys
-import time
-from pathlib import Path
-from typing import Any, Dict, List, Tuple
 
-from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 
 log = get_logger("enhanced_cross_scoring")

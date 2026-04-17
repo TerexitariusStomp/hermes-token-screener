@@ -12,8 +12,7 @@ import json
 import sqlite3
 import re
 from pathlib import Path
-from datetime import datetime, timezone
-from typing import Dict, List
+from typing import Dict
 
 DATA_DIR = Path.home() / ".hermes" / "data" / "token_screener"
 TWITTER_JSON = DATA_DIR / "twitter_token_analysis.json"

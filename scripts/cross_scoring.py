@@ -20,12 +20,10 @@ import json
 import sqlite3
 import sys
 import time
-from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
-from hermes_screener.metrics import metrics
 
 # Import enhanced scoring
 from enhanced_cross_scoring import compute_enhanced_token_score

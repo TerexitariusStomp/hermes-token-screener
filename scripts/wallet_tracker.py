@@ -26,8 +26,9 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 
 from hermes_screener.config import settings
-from hermes_screener.logging import get_logger, log_duration
-from hermes_screener.metrics import metrics, start_metrics_server
+from hermes_screener.logging import get_logger
+from hermes_screener.metrics import start_metrics_server
+from hermes_screener.utils import find_node, gmgn_cmd
 
 # ── Config (from centralized settings) ───────────────────────────────────────
 DB_PATH = settings.db_path
@@ -235,7 +236,7 @@ def score_wallet_v3(
     insider_flag: int,  # 1 = insider (good - they know things)
     copy_trade_flag: int,  # 1 = copy trader (bad - always late)
     rug_history_count: int,  # count of rugged tokens (terrible)
-    trading_pattern="",  # deprecated - kept for schema compat
+    trading_pattern="",  # placeholder for future pattern inference
     tokens_profitable: int = 0,  # tokens with positive PnL
     tokens_total: int = 0,  # total tokens scanned
     # DeFi sophistication (from Zerion)

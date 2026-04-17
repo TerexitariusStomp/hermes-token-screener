@@ -20,18 +20,15 @@ Usage:
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
 import time
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import requests
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
-from hermes_screener.metrics import metrics
 
 log = get_logger("ai_trading_brain")
 
@@ -162,6 +159,11 @@ Current market context: BTC trending, Solana active, memecoin season."""
 def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
     """Rank tokens for AI review. No filtering — AI decides what's tradeable."""
     ranked = []
+    for t in tokens:
+        # Skip obvious honeypots only (safety)
+        if t.get("goplus_is_honeypot"):
+            continue
+        ranked.append(t)
     for t in tokens:
         score = t.get("score", 0) or 0
         fdv = t.get("fdv", 0) or 0

@@ -79,6 +79,11 @@ def _pct_cls(v):
     return "pos" if v > 0 else "neg" if v < 0 else ""
 
 
+def _score_cls(score):
+    score = score or 0
+    return "sc-h" if score >= 70 else "sc-m" if score >= 40 else "sc-l"
+
+
 def _time_ago(ts):
     if not ts:
         return "—"
@@ -417,7 +422,7 @@ async def index():
     rows = ""
     for i, t in enumerate(tokens, 1):
         score = t.get("score", 0) or 0
-        sc_cls = "sc-h" if score >= 70 else "sc-m" if score >= 40 else "sc-l"
+        sc_cls = _score_cls(score)
         p1h = _pct_cls(t.get("price_change_h1"))
         p6h = _pct_cls(t.get("price_change_h6"))
         tags = "".join(
@@ -483,7 +488,7 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
     rows_html = ""
     for i, w in enumerate(wallets_list, 1):
         score = w.get("wallet_score", 0) or 0
-        sc_cls = "sc-h" if score >= 70 else "sc-m" if score >= 40 else "sc-l"
+        sc_cls = _score_cls(score)
         profit = w.get("total_profit")
         profit_cls = (
             "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
@@ -1000,7 +1005,7 @@ async def cross_tokens():
     rows = ""
     for i, t in enumerate(tokens[:100], 1):
         score = t.get("score", 0) or 0
-        sc_cls = "sc-h" if score >= 70 else "sc-m" if score >= 40 else "sc-l"
+        sc_cls = _score_cls(score)
         wc = t.get("wallet_count", 0)
         wc_cls = "sc-h" if wc >= 10 else "sc-m" if wc >= 5 else "sc-l"
         p1h = _pct_cls(t.get("price_change_h1"))
@@ -1056,7 +1061,7 @@ async def cross_wallets():
     rows = ""
     for i, w in enumerate(wallets[:100], 1):
         score = w.get("wallet_score", 0) or 0
-        sc_cls = "sc-h" if score >= 70 else "sc-m" if score >= 40 else "sc-l"
+        sc_cls = _score_cls(score)
         tc = w.get("top_token_count", 0)
         tc_cls = "sc-h" if tc >= 10 else "sc-m" if tc >= 5 else "sc-l"
         addr = w.get("address", "")

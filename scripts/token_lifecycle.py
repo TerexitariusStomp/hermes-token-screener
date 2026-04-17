@@ -30,7 +30,6 @@ import httpx
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
-from hermes_screener.metrics import metrics
 
 log = get_logger("token_lifecycle")
 
@@ -335,14 +334,11 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
 
     Returns path to the generated PNG file.
     """
-    import pandas as pd
     import matplotlib
 
     matplotlib.use("Agg")  # headless
     import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
-    from matplotlib.patches import FancyBboxPatch
-    import numpy as np
 
     lifecycle = _load_lifecycle(address)
     if not lifecycle:
@@ -545,7 +541,6 @@ def generate_comparison_chart(address: str) -> Optional[str]:
     Left panel: chart from entry snapshot
     Right panel: chart from exit snapshot (or latest if still active)
     """
-    import pandas as pd
     import matplotlib
 
     matplotlib.use("Agg")

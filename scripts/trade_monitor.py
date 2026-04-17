@@ -21,7 +21,6 @@ Usage:
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
 import time
@@ -33,7 +32,6 @@ import requests
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
-from hermes_screener.metrics import metrics
 
 log = get_logger("trade_monitor")
 

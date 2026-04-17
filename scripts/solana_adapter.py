@@ -8,20 +8,16 @@ NOT:     API (route) → API (build tx) → sign → send
 """
 
 import os
-import json
-import time
 import base64
 import logging
-from typing import Dict, Optional, List, Tuple
-from dataclasses import dataclass
+from typing import Dict, Optional, Tuple
 
 import requests
 from solders.keypair import Keypair
 from solders.pubkey import Pubkey
 from solders.transaction import VersionedTransaction
-from solders.message import MessageV0, to_bytes_versioned
-from solders.instruction import Instruction, AccountMeta, CompiledInstruction
-from solders.hash import Hash
+from solders.message import MessageV0
+from solders.instruction import Instruction, AccountMeta
 from solana.rpc.api import Client
 from solana.rpc.types import TxOpts
 
@@ -134,7 +130,6 @@ class SolanaProgramAdapter:
 
     def _get_ata(self, owner: Pubkey, mint: Pubkey) -> Pubkey:
         """Derive associated token account address."""
-        from solders.pubkey import Pubkey as PK
 
         # ATA = find_program_address([owner, TOKEN_PROGRAM, mint], ASSOCIATED_TOKEN_PROGRAM)
         seeds = [bytes(owner), bytes(TOKEN_PROGRAM), bytes(mint)]

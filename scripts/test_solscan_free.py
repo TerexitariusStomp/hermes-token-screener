@@ -5,7 +5,6 @@ Test Solscan free tier endpoints.
 
 import asyncio
 import httpx
-import json
 
 
 async def test_solscan_free_tier():

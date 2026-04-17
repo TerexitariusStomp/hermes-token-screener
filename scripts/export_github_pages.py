@@ -163,7 +163,6 @@ def export_tokens():
         ] if bad in str(negs))
 
         # Volume multiplier: $100K=1x, $1M=2x, $10M=3x (linear in log)
-        import math
         vol_mult = min(vol / 500000, 3.0)  # $500K=1x, cap at 3x  # normalize so $1M = 1.0
 
         # Penalty for no price data
@@ -371,7 +370,6 @@ def export_cross_tokens():
             conn.close()
 
     # Prioritize: high score + high volume + wallet count + no negative signals
-    import math
     def cross_token_sort(t):
         score = t.get("score", 0) or 0
         vol = t.get("volume_h24", 0) or 0

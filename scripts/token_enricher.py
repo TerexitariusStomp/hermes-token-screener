@@ -33,7 +33,6 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
 
 # Import async enrichment
 from hermes_screener.async_enrichment import run_async_enrichment

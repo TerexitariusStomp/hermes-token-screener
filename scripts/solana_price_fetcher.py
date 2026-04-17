@@ -4,13 +4,11 @@ Solana On-Chain Price Fetcher v3
 Fetches prices from 125+ Solana DEX pools across 11 token pairs.
 For arbitrage: compares prices across all sources to find spreads.
 """
-import struct
 import base64
 import requests
-import json
 import time
 from dataclasses import dataclass
-from typing import Optional, List, Tuple, Dict
+from typing import Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 SOLANA_RPC = "https://api.mainnet-beta.solana.com"
@@ -308,7 +306,7 @@ def fetch_pair(pair_name: str) -> List[PriceQuote]:
     with ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
             pool.submit(fetch_raydium_api, pair_name),
-            pool.fetch_orca_api if False else pool.submit(fetch_orca_api, pair_name),
+            pool.submit(fetch_orca_api, pair_name),
             pool.submit(fetch_jupiter_quote, pair_name),
             pool.submit(fetch_raydium_quote, pair_name),
         ]

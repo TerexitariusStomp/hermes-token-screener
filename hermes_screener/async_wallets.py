@@ -177,11 +177,6 @@ async def enrich_wallets_async(
     """
     import sys
 
-    from hermes_screener.async_wallets import (
-        _fetch_all_holders_for_token,
-        _find_node,
-    )
-
     sys.path.insert(0, str(settings.hermes_home / "scripts"))
     from wallet_tracker import (
         detect_copy_traders,

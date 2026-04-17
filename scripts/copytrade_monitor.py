@@ -23,14 +23,10 @@ Usage:
 from __future__ import annotations
 
 import json
-import os
 import sqlite3
-import subprocess
 import sys
 import time
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 import requests
 
@@ -401,7 +397,7 @@ def setup_quicknode_webhook(wallets: List[dict], webhook_url: str = "") -> Optio
                 json={
                     "name": "hermes-wallet-transfers",
                     "destination_id": dest_id,
-                    "expression": f'({" || ".join([f"tx_from == \\"{a}\\" || tx_to == \\"{a}\\"" for a in addresses[:5]])})',
+                    "expression": "(" + " || ".join([f"tx_from == '{a}' || tx_to == '{a}'" for a in addresses[:5]]) + ")",
                     "network": "ethereum-mainnet",
                 },
                 headers={"x-api-key": api_key, "Content-Type": "application/json"},

@@ -10,38 +10,21 @@ Enrichment strategy:
 """
 
 import json
-import os
 import sqlite3
-import subprocess
 import time
 import urllib.request
-from pathlib import Path
 
-DATA_DIR = Path.home() / ".hermes" / "data"
-DB_PATH = DATA_DIR / "central_contracts.db"
-GMGN_CLI = str(Path.home() / ".hermes" / "scripts" / "gmgn-cli")
-GMGN_API_KEY = os.environ.get("GMGN_API_KEY", "")
-OUTPUT_PATH = DATA_DIR / "token_screener" / "pumpfun_dev_wallets.json"
+from hermes_screener.config import settings
+from hermes_screener.utils import gmgn_cmd  # noqa: F401 – shared helper
+
+DATA_DIR = settings.db_path.parent
+DB_PATH = settings.db_path
+GMGN_CLI = str(settings.gmgn_cli)
+OUTPUT_PATH = DATA_DIR.parent / "token_screener" / "pumpfun_dev_wallets.json"
 SOLANA_RPC = "https://api.mainnet-beta.solana.com"
 
 
-def gmgn_cmd(args: list) -> dict | None:
-    try:
-        env = {**os.environ}
-        if GMGN_API_KEY:
-            env["GMGN_API_KEY"] = GMGN_API_KEY
-        result = subprocess.run(
-            ["node", GMGN_CLI] + args,
-            capture_output=True,
-            text=True,
-            timeout=30,
-            env=env,
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            return json.loads(result.stdout.strip())
-    except:
-        pass
-    return None
+# gmgn_cmd is imported from hermes_screener.utils
 
 
 def get_sol_balance(wallet: str) -> float:

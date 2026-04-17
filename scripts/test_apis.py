@@ -5,7 +5,6 @@ Test API integrations for Solscan, Helius, and Birdeye.
 
 import asyncio
 import httpx
-import json
 import os
 from pathlib import Path
 

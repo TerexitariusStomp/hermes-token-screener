@@ -20,12 +20,7 @@ import os
 import time
 from pathlib import Path
 
-try:
-    import numpy as np
 
-    HAS_NUMPY = True
-except ImportError:
-    HAS_NUMPY = False
 
 
 # ── Compression Profiles ───────────────────────────────────────────────
