@@ -889,6 +889,145 @@ async def _enrich_goldsky(token: dict, client: httpx.AsyncClient) -> None:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# BITQUERY - DEX trades (point-optimized, cached)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+_bitquery_cache: dict = {}  # addr -> (data, timestamp)
+BITQUERY_CACHE_TTL = 3600  # 1 hour - avoid re-querying same tokens
+BITQUERY_POINTS_EXHAUSTED = False  # circuit breaker - stop after first 402
+
+
+async def _enrich_bitquery(token: dict, client: httpx.AsyncClient) -> None:
+    """
+    Layer 16: Bitquery - recent DEX trades for EVM tokens.
+
+    POINT-SAVING MEASURES (free tier = 1000 pts, streaming = 40 pts/min):
+    - Uses real-time DB only (5 pts/query) — never streaming or archive
+    - Strict LIMIT 10 (free tier max rows)
+    - 1-hour cache TTL — never re-query same token
+    - Circuit breaker — stops all queries after first 402 (points exhausted)
+    - Only queries EVM chains (Solana archive queries are expensive)
+    - Filters by time (last 24h) to reduce scan scope
+    """
+    global BITQUERY_POINTS_EXHAUSTED
+
+    if not settings.bitquery_api_key:
+        return
+
+    # Circuit breaker: skip all if points exhausted
+    if BITQUERY_POINTS_EXHAUSTED:
+        return
+
+    chain = token.get("chain", "").lower()
+    if chain in ("solana", "sol", ""):
+        return  # Skip Solana (archive queries are expensive on Bitquery)
+
+    addr = token.get("contract_address", "")
+    if not addr or not addr.startswith("0x"):
+        return
+
+    # Cache check: 1-hour TTL
+    now = time.time()
+    if addr in _bitquery_cache:
+        cached_data, cached_at = _bitquery_cache[addr]
+        if now - cached_at < BITQUERY_CACHE_TTL:
+            token["bitquery"] = cached_data
+            return
+
+    # Map chain to Bitquery network name
+    network_map = {
+        "ethereum": "ethereum",
+        "eth": "ethereum",
+        "base": "base",
+        "bsc": "bsc",
+        "bnb": "bsc",
+        "arbitrum": "arbitrum",
+        "polygon": "matic",
+        "avalanche": "avalanche",
+    }
+    network = network_map.get(chain)
+    if not network:
+        return
+
+    try:
+        # Real-time DB query — 5 points per query (cheapest option)
+        # LIMIT 10 — free tier max rows
+        # Time filter — last 24h only (reduces scan scope = fewer points)
+        query = """query ($network: evm_network, $token: String!, $limit: Int!) {
+          EVM(network: $network, dataset: realtime) {
+            DEXTrades(
+              where: {Trade: {Buy: {Currency: {SmartContract: {is: $token}}}}}
+              limit: {count: $limit}
+              orderBy: {descending: Block_Time}
+              time: {since: "-24h"}
+            ) {
+              Block { Time }
+              Trade {
+                Buy { Amount Price Currency { Symbol } }
+                Sell { Amount Price Currency { Symbol } }
+                Dex { ProtocolName }
+              }
+              Transaction { Hash }
+            }
+          }
+        }"""
+
+        variables = {"network": network, "token": addr, "limit": 10}
+
+        resp = await client.post(
+            "https://graphql.bitquery.io/",
+            json={"query": query, "variables": variables},
+            headers={
+                "Authorization": f"Bearer {settings.bitquery_api_key}",
+                "Content-Type": "application/json",
+            },
+            timeout=15.0,
+        )
+
+        if resp.status_code == 402:
+            # Points exhausted — activate circuit breaker
+            BITQUERY_POINTS_EXHAUSTED = True
+            return
+
+        if resp.status_code != 200:
+            return
+
+        data = resp.json()
+        if "errors" in data:
+            return
+
+        trades = data.get("data", {}).get("EVM", {}).get("DEXTrades", [])
+
+        result = {
+            "recent_trades": len(trades),
+            "trades": [
+                {
+                    "time": t.get("Block", {}).get("Time", ""),
+                    "dex": t.get("Trade", {}).get("Dex", {}).get("ProtocolName", ""),
+                    "buy_symbol": t.get("Trade", {}).get("Buy", {}).get("Currency", {}).get("Symbol", ""),
+                    "buy_amount": t.get("Trade", {}).get("Buy", {}).get("Amount", 0),
+                    "sell_symbol": t.get("Trade", {}).get("Sell", {}).get("Currency", {}).get("Symbol", ""),
+                    "sell_amount": t.get("Trade", {}).get("Sell", {}).get("Amount", 0),
+                    "hash": t.get("Transaction", {}).get("Hash", "")[:20],
+                }
+                for t in trades[:5]
+            ],
+        }
+
+        # Cache the result
+        _bitquery_cache[addr] = (result, now)
+        token["bitquery"] = result
+
+        # Signal: active DEX trading
+        if len(trades) > 5:
+            token.setdefault("bitquery_signal", {})
+            token["bitquery_signal"]["active_trading"] = True
+
+    except Exception:
+        pass  # Silently fail
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # DERIVED (no API, pure computation)
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -959,6 +1098,7 @@ async def run_async_enrichment(
         AsyncHttpEnricher,
         LayerResult,
         _enrich_birdeye,
+        _enrich_bitquery,
         _enrich_coingecko,
         _enrich_defi,
         _enrich_derived,
@@ -1041,6 +1181,9 @@ async def run_async_enrichment(
 
         # Goldsky Edge RPC
         goldsky_enricher = AsyncHttpEnricher("Goldsky", concurrency=3, delay=0.5)
+
+        # Bitquery (point-optimized, aggressive caching)
+        bitquery_enricher = AsyncHttpEnricher("Bitquery", concurrency=1, delay=2.0)
 
         # Define all parallel tasks
         async def run_goplus():
@@ -1175,6 +1318,18 @@ async def run_async_enrichment(
                     "Goldsky", False, 0, len(enriched), time.time() - start, str(e)
                 )
 
+        async def run_bitquery():
+            start = time.time()
+            try:
+                ok, total = await bitquery_enricher.enrich_batch(
+                    _enrich_bitquery, enriched, client
+                )
+                return LayerResult("Bitquery", True, ok, total, time.time() - start)
+            except Exception as e:
+                return LayerResult(
+                    "Bitquery", False, 0, len(enriched), time.time() - start, str(e)
+                )
+
         async def run_derived():
             start = time.time()
             try:
@@ -1234,6 +1389,7 @@ async def run_async_enrichment(
             run_birdeye(),
             run_goldrush(),
             run_goldsky(),
+            run_bitquery(),
             run_derived(),
             run_surf(),
             run_gmgn(),
