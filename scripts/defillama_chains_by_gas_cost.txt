@@ -1,0 +1,63 @@
+# DeFiLlama Blockchains Sorted by Gas Cost (USD per TX)
+# Generated: 2026-04-17
+# Source: Live RPC queries + known estimates
+# Gas cost = eth_gasPrice * 21000 * native_token_price (for EVM chains)
+
+Rank | Chain            | Gas (gwei) | Cost/TX (USD) | Token | Notes
+-----|------------------|------------|---------------|-------|------------------------
+1    | xDai             | 0.0        | FREE          | xDAI  | Free gas (validators pay)
+2    | Mantle           | 0.02       | ~FREE         | MNT   | < $0.000001
+3    | Berachain        | 0.0        | FREE          | BERA  | Free gas
+4    | Flare            | 0.0        | FREE          | FLR   | Free gas
+5    | Scroll           | 0.0001     | $0.000004     | ETH   | L2
+6    | Avalanche        | 0.0253     | $0.000013     | AVAX  |
+7    | X Layer          | 0.02       | $0.000019     | OKB   | L2
+8    | Harmony          | 100.0      | $0.000021     | ONE   |
+9    | Moonriver        | 0.3125     | $0.000033     | MOVR  |
+10   | Optimism         | 0.001      | $0.000034     | ETH   | L2
+11   | Blast            | 0.001      | $0.000034     | ETH   | L2
+12   | Mode             | 0.001      | $0.000034     | ETH   | L2
+13   | BOB              | 0.001      | $0.000034     | ETH   | L2
+14   | Unichain         | 0.0015     | $0.000050     | ETH   | L2
+15   | Manta            | 0.003      | $0.000101     | ETH   | L2
+16   | Moonbeam         | 31.25      | $0.000131     | GLMR  |
+17   | Base             | 0.006      | $0.000202     | ETH   | L2
+18   | Binance          | 0.05       | $0.000315     | BNB   |
+19   | Polygon          | 30.0       | $0.000441     | MATIC |
+20   | Celo             | 52.5       | $0.000551     | CELO  |
+21   | Sonic            | 55.0       | $0.000577     | S     |
+22   | Cronos           | 378.75     | $0.000636     | CRO   |
+23   | Solana           | N/A        | $0.000650     | SOL   | ~5000 lamports base
+24   | Arbitrum         | 0.02       | $0.000672     | ETH   | L2
+25   | Klaytn           | 250.0      | $0.000787     | KLAY  | estimated
+26   | Astar            | 779.37     | $0.000818     | ASTR  |
+27   | Plume Mainnet    | 1000.0     | $0.001050     | PLUME |
+28   | Fantom           | 20.0       | $0.001260     | FTM   | estimated
+29   | Linea            | 0.0419     | $0.001408     | ETH   | L2
+30   | zkSync Era       | 0.0452     | $0.001520     | ETH   | L2
+31   | CORE             | 60.0       | $0.001890     | CORE  |
+32   | Aurora           | 0.07       | $0.002352     | ETH   |
+33   | Hyperliquid L1   | ~0.002     | $0.003360     | ETH   | EVM sidechain
+34   | Pulse            | 1882831.0  | $0.003954     | PLS   | High gwei, low token price
+35   | Tron             | N/A        | $0.014000     | TRX   | Energy/bandwidth system
+36   | Sei              | ~1.0       | $0.016000     | SEI   | estimated
+37   | Monad            | ~2.0       | $0.032000     | MONAD | testnet estimate
+38   | Metis            | 17.14      | $0.018000     | METIS |
+39   | Ethereum         | 2.7        | $0.090720     | ETH   | L1 mainnet
+
+# Non-EVM chains (gas model differs):
+# - Sui: Object-centric gas model, ~0.001 SUI ($0.004)
+# - Cardano: UTXO fees, ~0.17-0.20 ADA ($0.08-0.10)
+# - TON: ~0.005-0.01 TON ($0.03-0.06)
+# - Near: ~0.0001 NEAR ($0.00004) - very cheap
+# - Algorand: 0.001 ALGO ($0.0002)
+# - Aptos: ~0.0001 APT ($0.0001)
+
+# Summary:
+# - 4 chains with FREE gas (xDai, Mantle, Berachain, Flare)
+# - 20 chains with gas < $0.001/tx
+# - 32 chains with gas < $0.01/tx
+# - 7 chains with gas > $0.01/tx
+# - Cheapest L1s: Avalanche ($0.000013), Harmony ($0.000021)
+# - Cheapest L2s: Scroll ($0.000004), Optimism/Blast/Mode ($0.000034)
+# - Most expensive: Ethereum L1 ($0.0907/tx)
