@@ -63,7 +63,7 @@ function fmt_usd(v){if(!v)return"\u2014";v=parseFloat(v);if(v>=1e9)return"$"+(v/
 function trunc(a,n){n=n||8;if(!a||a.length<=n*2)return a||"";return a.slice(0,n)+"..."+a.slice(-n)}
 function chain_cls(c){c=(c||"").toLowerCase();return["solana","sol","base","ethereum","eth","bsc","bnb","arbitrum","polygon","polygon-pos","avalanche","sui","optimism"].includes(c)?"chain-"+c:""}
 function chain_label(c){return{solana:"Solana",sol:"Solana",base:"Base",ethereum:"Ethereum",eth:"Ethereum",bsc:"BNB Chain",bnb:"BNB Chain",arbitrum:"Arbitrum",polygon:"Polygon","polygon-pos":"Polygon",avalanche:"Avalanche",sui:"Sui",optimism:"Optimism"}[(c||"").toLowerCase()]||c||"Unknown"}
-function block_url(addr,chain){chain=(chain||"").toLowerCase();if(chain==="solana"||chain==="sol")return"https://solscan.io/account/"+addr;if(chain==="base")return"https://basescan.org/address/"+addr;if(chain==="bsc"||chain==="bnb")return"https://bscscan.com/address/"+addr;if(chain==="arbitrum")return"https://arbiscan.io/address/"+addr;if(chain==="polygon"||chain==="polygon-pos")return"https://polygonscan.com/address/"+addr;if(chain==="avalanche")return"https://snowtrace.io/address/"+addr;if(chain==="optimism")return"https://optimistic.etherscan.io/address/"+addr;return"https://etherscan.io/address/"+addr}
+function block_url(addr,chain){return "https://app.zerion.io/"+addr+"/overview"}
 
 let ALL_WALLETS=[], sortKey="wallet_score", sortDir=-1;
 

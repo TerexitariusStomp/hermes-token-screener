@@ -82,13 +82,13 @@ DOCS_DATA = Path(__file__).parent.parent / "docs" / "data"
 
 def export_tokens():
     """Export top100.json for GitHub Pages."""
-    # Prefer the enriched phase files over the raw top100.json
+    # Prefer the latest top100.json over stale phase files
     data_dir = settings.output_path.parent
     candidates = [
+        settings.output_path,
         data_dir / "top100_phase4_social.json",
         data_dir / "top100_phase3_smartmoney.json",
         data_dir / "top100_phase1_initial.json",
-        settings.output_path,
     ]
 
     data = None
@@ -98,7 +98,7 @@ def export_tokens():
                 raw = json.load(f)
             # Check if it has the enriched format (contract_address field)
             tokens = raw.get("tokens") or raw.get("top_tokens") or []
-            if tokens and tokens[0].get("contract_address"):
+            if tokens and (tokens[0].get("contract_address") or tokens[0].get("address")):
                 data = raw
                 print(f"Using enriched data from {src.name}")
                 break
@@ -120,6 +120,9 @@ def export_tokens():
         token["chain"] = normalize_chain(
             token.get("chain", ""), token.get("dex_url", "")
         )
+        # Normalize address field names
+        if "contract_address" not in token and "address" in token:
+            token["contract_address"] = token["address"]
         for key in list(token.keys()):
             if isinstance(token[key], set):
                 token[key] = list(token[key])

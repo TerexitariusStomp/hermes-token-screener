@@ -38,7 +38,11 @@ def _load_top100() -> dict[str, Any]:
     if not path.exists():
         return {"tokens": [], "generated_at_iso": "Never", "total_candidates": 0}
     with open(path) as f:
-        return json.load(f)  # type: ignore[no-any-return]
+        data = json.load(f)
+    # Normalize: support both "tokens" and "top_tokens" keys
+    if "tokens" not in data and "top_tokens" in data:
+        data["tokens"] = data["top_tokens"]
+    return data
 
 
 def _get_wallet_db():
@@ -100,6 +104,11 @@ def _explorer(chain, addr):
     if chain == "base":
         return f"https://basescan.org/address/{addr}"
     return f"https://etherscan.io/address/{addr}"
+
+
+def _wallet_link(addr):
+    """All wallet links go to Zerion portfolio view."""
+    return f"https://app.zerion.io/{addr}/overview"
 
 
 def _chain_cls(chain):
@@ -658,7 +667,7 @@ async def wallet_detail(address: str):
 <h1>Wallet Detail</h1>
 <div class="sub">
   <span class="badge {_chain_cls(w.get('chain',''))}">{w.get('chain','')}</span>
-  <a href="{_explorer(w.get('chain','sol'), address)}" target="_blank">{address}</a>
+  <a href="{_wallet_link(address)}" target="_blank">{address}</a>
 </div>
 <div class="grid">
   <div class="card">
