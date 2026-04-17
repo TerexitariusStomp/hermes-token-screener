@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base DEX ETH/USDC Prices</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a1a;color:#e0e0e0;font-family:'JetBrains Mono',monospace;padding:20px}
+.header{text-align:center;margin-bottom:30px}
+.header h1{color:#00ff88;font-size:1.8em}
+.header .ts{color:#888;font-size:0.9em}
+.stats{display:flex;justify-content:center;gap:20px;margin-bottom:30px;flex-wrap:wrap}
+.stat{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:8px;padding:15px 25px;text-align:center;min-width:150px}
+.stat .val{font-size:1.8em;color:#00ff88;font-weight:bold}
+.stat .label{color:#888;font-size:0.8em;margin-top:5px}
+.spread{border-color:#ffaa00}
+.spread .val{color:#ffaa00}
+table{width:100%;border-collapse:collapse;background:#1a1a2e;border-radius:8px;overflow:hidden}
+th{background:#2a2a4a;padding:12px;text-align:left;font-size:0.85em;color:#aaa}
+td{padding:10px 12px;border-bottom:1px solid #1f1f3a}
+tr:hover{background:#252545}
+.mono{font-size:0.8em}
+.mono a{color:#6688cc;text-decoration:none}
+.badge{background:#2a2a4a;padding:2px 8px;border-radius:4px;font-size:0.8em}
+.footer{text-align:center;color:#555;font-size:0.8em;margin-top:20px}
+</style></head><body>
+<div class="header">
+    <h1>Base DEX ETH/USDC Live Prices</h1>
+    <div class="ts">Updated: 2026-04-17T05:17:35Z | Sources: 8 on-chain + API</div>
+</div>
+<div class="stats">
+    <div class="stat"><div class="val">$2,322.53</div><div class="label">MEAN PRICE</div></div>
+    <div class="stat"><div class="val">$2,322.92</div><div class="label">MEDIAN</div></div>
+    <div class="stat spread"><div class="val">0.650%</div><div class="label">SPREAD</div></div>
+    <div class="stat"><div class="val">$15.03</div><div class="label">MAX DEVIATION</div></div>
+</div>
+<table><thead><tr><th>Source</th><th>Price</th><th>Type</th><th>Pool / Oracle</th><th>Δ Mean</th></tr></thead>
+<tbody><tr>
+            <td>SushiSwap V2</td>
+            <td style="color:#00ff88;font-weight:bold">$2,312.01</td>
+            <td><span class="badge">v2-amm</span></td>
+            <td class="mono"><a href="https://basescan.org/address/0x6BDED42c6DA8FBf0d2bA55B2fa120C5e0c8D7891" target="_blank">0x6BDED42c...8D7891</a></td>
+            <td>-0.453%</td>
+        </tr>
+<tr>
+            <td>SushiSwap V3</td>
+            <td style="color:#00ff88;font-weight:bold">$2,322.10</td>
+            <td><span class="badge">v3-amm</span></td>
+            <td class="mono"><a href="https://basescan.org/address/0x57713f7716e0b0f65ec116912f834e49805480d2" target="_blank">0x57713f77...5480d2</a></td>
+            <td>-0.019%</td>
+        </tr>
+<tr>
+            <td>Uniswap V3</td>
+            <td style="color:#00ff88;font-weight:bold">$2,322.21</td>
+            <td><span class="badge">v3-amm</span></td>
+            <td class="mono"><a href="https://basescan.org/address/0xd0b53d9277642d899df5c87a3966a349a798f224" target="_blank">0xd0b53d92...98f224</a></td>
+            <td>-0.014%</td>
+        </tr>
+<tr>
+            <td>Chainlink Oracle</td>
+            <td style="color:#00ff88;font-weight:bold">$2,322.69</td>
+            <td><span class="badge">oracle</span></td>
+            <td class="mono">—</td>
+            <td>+0.007%</td>
+        </tr>
+<tr>
+            <td>PancakeSwap V3</td>
+            <td style="color:#00ff88;font-weight:bold">$2,322.92</td>
+            <td><span class="badge">v3-amm</span></td>
+            <td class="mono"><a href="https://basescan.org/address/0x72ab388e2e2f6facef59e3c3fa2c4e29011c2d38" target="_blank">0x72ab388e...1c2d38</a></td>
+            <td>+0.017%</td>
+        </tr>
+<tr>
+            <td>Aerodrome Vol</td>
+            <td style="color:#00ff88;font-weight:bold">$2,325.10</td>
+            <td><span class="badge">v2-amm</span></td>
+            <td class="mono"><a href="https://basescan.org/address/0xcdac0d6c6c59727a65f871236188350531885c43" target="_blank">0xcdac0d6c...885c43</a></td>
+            <td>+0.111%</td>
+        </tr>
+<tr>
+            <td>Uniswap V2</td>
+            <td style="color:#00ff88;font-weight:bold">$2,326.15</td>
+            <td><span class="badge">v2-amm</span></td>
+            <td class="mono"><a href="https://basescan.org/address/0x88a43bbdf9d098eec7bceda4e2494615dfd9bb9c" target="_blank">0x88a43bbd...d9bb9c</a></td>
+            <td>+0.156%</td>
+        </tr>
+<tr>
+            <td>PancakeSwap V2</td>
+            <td style="color:#00ff88;font-weight:bold">$2,327.04</td>
+            <td><span class="badge">v2-amm</span></td>
+            <td class="mono"><a href="https://basescan.org/address/0x79474223aedd0339780bacce75abda0be84dcbf9" target="_blank">0x79474223...4dcbf9</a></td>
+            <td>+0.194%</td>
+        </tr>
+</tbody></table>
+<div class="footer">Read directly from Base L2 via 3 RPCs — no DEX API keys required.</div>
+</body></html>
