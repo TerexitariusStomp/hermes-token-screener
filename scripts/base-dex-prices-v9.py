@@ -192,11 +192,15 @@ def fetch_onchain_v3():
     return results
 
 
+BLOCKED_DEXES = {"iziswap"}  # Dead DEX: 1 pool, $95k liq, stale pricing
+
 def deduplicate_dexscreener(sources):
     """Keep only the highest-liquidity pool per DEX from Dexscreener."""
     best = {}
     for s in sources:
         if s["type"] != "dexscreener":
+            continue
+        if s["dex"].lower() in BLOCKED_DEXES:
             continue
         key = s["dex"]
         if key not in best or s["liq"] > best[key]["liq"]:
