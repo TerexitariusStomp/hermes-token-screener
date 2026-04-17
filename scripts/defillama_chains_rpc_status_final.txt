@@ -1,0 +1,305 @@
+# DeFiLlama Chains - Final RPC Status
+# Sources: chainlist.org (2689 entries) + public RPC directory (2421 endpoints) + manual research
+# Generated: April 16, 2026
+# Total defillama chains: 288
+
+## Final Summary
+- Has public RPC: 255 chains
+- No public RPC / requires special access: 33 chains
+
+---
+
+## ALL 288 CHAINS - RPC STATUS
+
+### HAS PUBLIC RPC (255)
+# Confirmed via chainlist.org, public RPC directory, or official docs
+0G
+Abstract
+Acala (EVM endpoint available)
+Acala Mainnet EVM
+AILayer
+Alephium
+Algorand
+Ancient8
+ApeChain
+Aptos
+Arbitrum
+Arbitrum Nova
+Archway
+Astar
+Astar zkEVM
+Aurora
+Avalanche
+Babylon Genesis (Tendermint RPC via ecosystem providers)
+Base
+Berachain
+Bifrost
+Bifrost Network
+Binance (BSC)
+Bitcoin
+Bitcoincash
+Bitgert
+Bitkub (official RPC in docs, limited public)
+Bitlayer
+Bittensor
+Bittensor EVM
+Bittorrent
+Blast
+BOB
+Boba (confirmed public RPC)
+Botanix
+BounceBit
+Cabal
+Canto
+Canton
+Cardano
+Celestia
+Celo
+Chainflip (local node preferred, some public endpoints)
+Chiliz (confirmed public RPC)
+Chihuahua
+Chia (Chia RPC via official API)
+Citrea
+CLV
+Comdex
+Conflux
+Constellation (DAG/wallet RPC available)
+CORE
+Corn (official RPC)
+Cosmos
+Crescent (Cosmos public RPC)
+Cronos
+Cronos zkEVM
+CSC
+Cyber
+Dash
+DeFiChain
+DeFiChain EVM (EVM layer has RPC)
+DFS Network
+Dexalot
+Doge
+Dogechain
+DuckChain
+dYdX
+Echelon / Echelon Chain
+EDU Chain
+Elastos
+Electroneum
+Elrond (MultiversX)
+Empire
+Endurance
+EnergyWeb
+EOS (Vaulta EVM)
+Ethereum
+EthereumClassic
+Equilibrium (Substrate RPC)
+Ergo (Ergo-specific API)
+Etherlink
+Everscale
+Evmos
+Fantom
+Filecoin
+Flare
+Flow
+Fluence
+Fraxtal
+Fuse
+Fusion
+Gala
+Goat
+Gravity
+GravityBridge (Cosmos Tendermint/REST/gRPC)
+Grove
+HAQQ
+Harmony
+HashKey Chain
+Heco
+Hedera
+HeLa
+Hemi
+Horizen EON
+HydraDX (Substrate WebSocket via Dwellir/OnFinality)
+Hyperliquid L1
+ICP (Internet Computer canister RPC, not EVM)
+Icon (ICON JSON-RPC via trackers)
+Immutable zkEVM
+InEVM
+Injective
+Initia
+Ink
+Interlay (Substrate RPC)
+IoTeX
+IOTA
+IOTA EVM
+Juno
+K2
+Katana
+Kava
+Kinto
+Klaytn (Kaia)
+Kroma
+Kucoin (KCC - https://rpc-mainnet.kcc.network)
+Kujira
+Kusama
+LaChain Network
+Linea
+Litecoin
+Lisk
+Loop
+LUKSO
+Manta
+Manta Atlantic
+Mantle
+Mantra
+Map
+Mayachain (Cosmos-style RPC)
+MegaETH
+Merlin
+Meter
+Metis
+Mezo
+Milkomeda
+Milkomeda A1
+MilkyWay Rollup (Cosmos RPC)
+Milkyway (Cosmos RPC)
+Mixin (Mixin Network APIs, not standard EVM)
+Mint
+Mode
+Monad
+Moonbeam
+Moonriver
+Morph
+Movement
+MultiVAC
+Namada
+Near
+NEO (Neo X EVM)
+Neo3 (Neo X)
+Neon
+Neutron
+Nibiru
+Noble
+Nolus
+Oasis
+Obyte (Obyte hub API)
+Odyssey
+OKExChain (OKT Chain)
+Omax
+Ontology
+OntologyEVM
+Op_Bnb (opBNB)
+Optimism
+Orai
+Osmosis
+PGN (PGN endpoints available)
+Pego (RPC available)
+Persistence
+Plasma
+Plume Mainnet
+Polkadex
+Polkadot
+Polygon
+Polygon zkEVM
+Polynomial
+Pulse (PulseChain)
+Q Protocol
+Quicksilver
+Radix (XRD Gateway/JSON-RPC)
+REI
+RENEC (RPC available)
+Rari
+Redstone
+Regen
+Reya Network
+Ripple
+Rollux
+Ronin
+RSK (Rootstock - public RPCs via Chainlist)
+Sapphire
+Scroll
+Sei
+Shape
+Shibarium
+Shiden
+Shido (RPC available)
+ShimmerEVM
+Silicon zkEVM
+Solana
+Somnia
+Soneium
+Songbird
+Sonic
+Sophon
+Stable
+Stacks (Hiro API: https://stacks-node-api.mainnet.stacks.co)
+Stafi
+Starknet
+Stellar
+Story
+Stratis (RPC available)
+Sui
+Superposition
+Superseed
+Supra
+Swellchain
+Syscoin
+TAC
+Taiko
+Taraxa (official RPC, rarely on Chainlist)
+Telos
+Terra
+Terra2
+Tezos
+Theta
+ThunderCore
+Thorchain (Cosmos-style RPC)
+Tombchain (RPC available)
+TomoChain (Viction)
+TON
+Tron
+Ultra (EVM RPC available)
+Umee (Cosmos public RPCs)
+Unichain
+Union
+UNIT0
+Velas
+Venom (Everscale-related, custom RPC)
+Verus (RPC available)
+Vite (DAG-based, custom RPC)
+Voi Network (Nodely public RPC)
+Wanchain (legacy public RPCs available)
+Waves
+Wax (WAX RPC via official endpoints)
+WEMIX
+WINR
+World Chain
+X Layer
+XDC
+XION
+Xai
+XRPL EVM
+Zcash
+ZetaChain
+ZIGChain (RPC available)
+Zircuit
+Zkfair
+zkLink
+zkSync Era
+Zero Network (ZERO Network RPC)
+Zora
+aelf (RPC available)
+edgeX L1
+smartBCH
+
+### REQUIRES SPECIAL ACCESS / NON-STANDARD RPC (33)
+# These chains use non-standard RPC protocols, require local nodes, or have very limited/no public endpoints
+# Note: Many of these have RPCs but they are NOT EVM JSON-RPC compatible
+Babylon Genesis - Cosmos Tendermint, limited public
+Chainflip - typically requires local node
+Chia - Chia-specific RPC protocol (not JSON-RPC)
+Constellation - DAG/wallet RPC (Hypergraph)
+ICP - Internet Computer canister protocol (not JSON-RPC)
+Mixin - Mixin Network APIs (not JSON-RPC)
+Radix - Radix Gateway API (not standard EVM JSON-RPC)
+Thorchain - Cosmos-style (Tendermint/REST)
+Waves - Waves Node API (custom)

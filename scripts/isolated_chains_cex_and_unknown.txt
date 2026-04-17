@@ -1,0 +1,74 @@
+# Isolated Chains - Exit Pathways
+# Generated: April 16, 2026
+
+## CEX SUPPORTED (14 chains)
+# Listed on Binance/Coinbase - deposit/withdraw via CEX
+
+Chain                    Symbol    MCap           TVL
+-----------------------------------------------------------------
+Aptos                    APT       $795.3M        $291M
+Bittensor EVM            TAO       $2,357M        $185K
+Chiliz                   CHZ       $440.8M        $5M
+Conflux                  CFX       $339.0M        $8M
+Coti                     COTI      $40.9M         $912K
+Elastos                  ELA       $10M           $249K
+Elrond                   ?         N/A            N/A
+Filecoin                 FIL       $769.6M        $5M
+Flow                     FLOW      $61.0M         $18M
+Gala                     GALA      $161.4M        $8M
+IOTA                     IOTA      $259.8M        $7M
+Oasis                    ROSE      $89.4M         $215K
+Tezos                    XTZ       $403.1M        $29M
+ThunderCore              TT        $12.2M         $283K
+
+## NO CLEAR EXIT PATH (46 chains)
+# No bridge, no CEX, no obvious way to get value in/out
+
+Chain                    Symbol    MCap           TVL
+-----------------------------------------------------------------
+0G                       0G        $129.6M        $2M
+Babylon Genesis          BABY      $58.7M         $295K
+Bitkub                   KUB       $58.9M         $2M
+Bittorrent               BTT       $322.9M        $351K
+CSC                      CET       $75.5M         $307K
+Chainflip                FLIP      $18.0M         $12M
+Corn                     None      N/A            $53K
+Dexalot                  ALOT      $2.6M          $2M
+Dogechain                DG        $209K          $968K
+DuckChain                None      N/A            $2K
+Electroneum              ETN       $18.1M         $151K
+EnergyWeb                EWT       $26.1M         $75K
+Goat                     GOATED    $2.0M          $570K
+Gravity                  G         $28.9M         $3M
+Icon                     ICX       $43.3M         $2M
+Lisk                     LSK       $30.3M         $938K
+Movement                 MOVE      $68.4M         $159M
+MultiVAC                 MTV       $977K          $8K
+Neon                     NEON      $7.7M          $96K
+Odyssey                  DIONE     $1.1M          $225K
+Omax                     OMAX      $274K          $14K
+OntologyEVM              ONG       $38.0M         $3K
+Polkadex                 PDEX      $75K           $72K
+Proton                   TON       $3.53B         $60M
+Pulse                    PLS       N/A            $66M
+Q Protocol               QGOV      N/A            $54K
+REI                      REI       $2.9M          $1K
+RENEC                    RENEC     $6.2M          $69K
+Shido                    SHIDO     $3.1M          $1M
+ShimmerEVM               SMR       N/A            $633K
+Somnia                   SOMI      $28.6M         $1M
+Songbird                 SGB       $12.0M         $190K
+Stratis                  STRAX     $29.1M         $24K
+Supra                    SUPRA     $12.1M         $2M
+Taraxa                   TARA      $848K          $3K
+Tombchain                TOMB      $135K          $19K
+TomoChain                ?         N/A            N/A
+Verus                    VRSC      $60.6M         $22M
+Voi Network              VOI       $349K          $95K
+WINR                     WINR      $771K          $743K
+Wax                      WAXP      $31.6M         $441K
+XRPL EVM                 XRP       N/A            $33K
+ZetaChain                ZETA      $73.0M         $890K
+dYdX                     dYdX      $110.1M        $107M
+inEVM                    INJ       $341M          $0
+smartBCH                 BCH       $8.93B         $46K

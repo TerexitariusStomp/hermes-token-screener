@@ -232,6 +232,14 @@ PROTOCOL_REGISTRY = {
             "type": "swap",
             "native_wrap": "0x4200000000000000000000000000000000000006",
         },
+        "aerodrome": {
+            "name": "Aerodrome",
+            "router": "0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43",
+            "slipstream_router": "0xBE6D8f0d052B198284E6d4899895F6401831199B",
+            "abi": SUSHI_ROUTER_ABI,
+            "type": "swap",
+            "native_wrap": "0x4200000000000000000000000000000000000006",
+        },
         "sushiswap": {
             "name": "SushiSwap",
             "router": "0x0389879e0156033202C44BF784ac18fC02edeE4f",

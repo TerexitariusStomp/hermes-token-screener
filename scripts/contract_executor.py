@@ -38,7 +38,16 @@ except:
 # RPC endpoints per chain
 CHAIN_RPCS = {
     "ethereum": ["https://eth.llamarpc.com", "https://rpc.ankr.com/eth"],
-    "base": ["https://base.llamarpc.com", "https://base.drpc.org"],
+    "base": [
+        "https://base.llamarpc.com",
+        "https://base.drpc.org",
+        "https://mainnet.base.org",
+        "https://1rpc.io/base",
+        "https://base.meowrpc.com",
+        f"https://base-mainnet.g.alchemy.com/v2/{os.environ.get('ALCHEMY_API_KEY', 'DbRpGYbLsNo-hOI40cfh8')}",
+        f"https://bold-proportionate-dinghy.base-mainnet.quiknode.pro/{os.environ.get('QUICKNODE_KEY', 'QN_9a2d68943d664e7bb3a3966791bfb4b3')}",
+        "https://rpc.ankr.com/base/0e8c5d238f6a82f29d32988cccc7094b7435463936045a913be32563e16b5792",
+    ],
     "arbitrum": ["https://arb1.arbitrum.io/rpc", "https://rpc.ankr.com/arbitrum"],
     "optimism": ["https://mainnet.optimism.io", "https://rpc.ankr.com/optimism"],
     "polygon": ["https://polygon-rpc.com", "https://rpc.ankr.com/polygon"],

@@ -158,11 +158,15 @@ class DexAggregatorTrader:
                     if self.solana_keypair:
                         logger.info(f"Solana Wallet: {self.solana_keypair.pubkey()}")
                     
+                    # Set Helius RPC for Solana
+                    self.solana_rpc = os.environ.get("SOLANA_RPC_URL", 
+                        f"https://mainnet.helius-rpc.com/?api-key={os.environ.get('HELIUS_API_KEY', 'bb6ff3e9-e38d-4362-9e7a-669a00d497a8')}")
+                    
                     # Initialize Solana program adapter
                     if HAS_SOLANA_ADAPTER:
                         try:
                             self.solana_adapter = SolanaProgramAdapter(
-                                rpc_url=os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com"),
+                                rpc_url=self.solana_rpc,
                                 private_key=solana_pk
                             )
                             logger.info("Solana program adapter initialized (direct program mode)")
@@ -192,9 +196,11 @@ class DexAggregatorTrader:
     def get_web3(self) -> Optional[Web3]:
         """Get Web3 connection."""
         rpcs = [
-            "https://mainnet.base.org",
+            f"https://base-mainnet.g.alchemy.com/v2/{os.environ.get('ALCHEMY_API_KEY', 'DbRpGYbLsNo-hOI40cfh8')}",
             "https://base.llamarpc.com",
             "https://base.drpc.org",
+            "https://mainnet.base.org",
+            f"https://bold-proportionate-dinghy.base-mainnet.quiknode.pro/{os.environ.get('QUICKNODE_KEY', 'QN_9a2d68943d664e7bb3a3966791bfb4b3')}",
         ]
         for rpc in rpcs:
             try:
@@ -553,15 +559,12 @@ class DexAggregatorTrader:
     # ==================== BALANCE CHECKS ====================
     
     def get_token_address(self, symbol: str, chain: str) -> Optional[str]:
-        """Get token address from symbol."""
-        # Top tokens mapping
-        TOP_TOKENS = {
+        """Get token address from symbol. Uses screener's top100.json for Base tokens."""
+        # Utility/static tokens (always needed, not from screener)
+        STATIC_TOKENS = {
             "base": {
-                "ANDY": "0x029Eb076D2E9E5b2dDc1aB7BDe2D5d3b4b1bfAA0",
-                "BRETT": "0x532f27101965dd16442E59d40670FaF5eBB142E4",
-                "DEGEN": "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed",
-                "TOSHI": "0xAC1Bd2486aAf3B5C0fc3Fd868558b082a531B2B4",
                 "USDC": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "WETH": "0x4200000000000000000000000000000000000006",
             },
             "solana": {
                 "BONK": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
@@ -573,9 +576,16 @@ class DexAggregatorTrader:
             }
         }
         
-        chain_tokens = TOP_TOKENS.get(chain, {})
-        if symbol.upper() in chain_tokens:
-            return chain_tokens[symbol.upper()]
+        # Check static first (fast, no IO)
+        chain_static = STATIC_TOKENS.get(chain, {})
+        if symbol.upper() in chain_static:
+            return chain_static[symbol.upper()]
+        
+        # For Base: load from screener
+        if chain == "base":
+            screener_tokens = self._load_screener_tokens()
+            if symbol.upper() in screener_tokens:
+                return screener_tokens[symbol.upper()]
         
         # Return the symbol itself if it looks like an address
         if chain == "base" and symbol.startswith("0x") and len(symbol) == 42:
@@ -586,16 +596,30 @@ class DexAggregatorTrader:
         return None
     
     def get_balance(self, chain: str) -> Decimal:
-        """Get native balance."""
-        if chain == "base" and self.w3 and self.evm_account:
-            try:
-                bal = self.w3.eth.get_balance(self.evm_account.address)
-                return Decimal(bal) / Decimal(1e18)
-            except Exception as e:
-                logger.error(f"Balance error: {e}")
+        """Get native balance with RPC rotation."""
+        if chain == "base" and self.evm_account:
+            rpcs = [
+                "https://mainnet.base.org",
+                "https://base.llamarpc.com", 
+                "https://base.drpc.org",
+                "https://1rpc.io/base",
+                "https://base.meowrpc.com",
+                f"https://base-mainnet.g.alchemy.com/v2/{os.environ.get('ALCHEMY_API_KEY', 'DbRpGYbLsNo-hOI40cfh8')}",
+                f"https://bold-proportionate-dinghy.base-mainnet.quiknode.pro/{os.environ.get('QUICKNODE_KEY', 'QN_9a2d68943d664e7bb3a3966791bfb4b3')}",
+                "https://rpc.ankr.com/base/0e8c5d238f6a82f29d32988cccc7094b7435463936045a913be32563e16b5792",
+            ]
+            for rpc_url in rpcs:
+                try:
+                    w3 = Web3(Web3.HTTPProvider(rpc_url, request_kwargs={"timeout": 10}))
+                    bal = w3.eth.get_balance(self.evm_account.address)
+                    return Decimal(bal) / Decimal(1e18)
+                except Exception:
+                    continue
+            logger.error("All Base RPCs failed for balance check")
         elif chain == "solana" and self.solana_keypair:
             try:
-                rpc = os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com")
+                rpc = getattr(self, 'solana_rpc', os.environ.get("SOLANA_RPC_URL",
+                    f"https://mainnet.helius-rpc.com/?api-key={os.environ.get('HELIUS_API_KEY', 'bb6ff3e9-e38d-4362-9e7a-669a00d497a8')}"))
                 resp = requests.post(rpc, json={
                     "jsonrpc": "2.0", "id": 1, "method": "getBalance",
                     "params": [str(self.solana_keypair.pubkey())]
@@ -609,78 +633,501 @@ class DexAggregatorTrader:
         return Decimal("0")
     
     def get_token_balance(self, token_address: str, chain: str = "base") -> Decimal:
-        """Get ERC20 token balance on EVM chain."""
-        if chain != "base" or not self.w3 or not self.evm_account:
+        """Get ERC20 token balance on EVM chain with RPC rotation."""
+        if chain != "base" or not self.evm_account:
             return Decimal("0")
-        try:
-            # Standard ERC20 balanceOf
-            abi = [{"inputs":[{"name":"account","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-                   {"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"stateMutability":"view","type":"function"}]
-            contract = self.w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=abi)
-            raw = contract.functions.balanceOf(self.evm_account.address).call()
+        
+        rpcs = [
+            "https://mainnet.base.org",
+            "https://base.llamarpc.com",
+            "https://base.drpc.org",
+            "https://1rpc.io/base",
+            "https://base.meowrpc.com",
+            f"https://base-mainnet.g.alchemy.com/v2/{os.environ.get('ALCHEMY_API_KEY', 'DbRpGYbLsNo-hOI40cfh8')}",
+            f"https://bold-proportionate-dinghy.base-mainnet.quiknode.pro/{os.environ.get('QUICKNODE_KEY', 'QN_9a2d68943d664e7bb3a3966791bfb4b3')}",
+            "https://rpc.ankr.com/base/0e8c5d238f6a82f29d32988cccc7094b7435463936045a913be32563e16b5792",
+        ]
+        
+        # Standard ERC20 balanceOf + decimals ABI
+        abi = [{"inputs":[{"name":"account","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+               {"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"stateMutability":"view","type":"function"}]
+        
+        for rpc_url in rpcs:
             try:
-                decimals = contract.functions.decimals().call()
-            except:
-                decimals = 18
-            return Decimal(raw) / Decimal(10 ** decimals)
-        except Exception as e:
-            logger.error(f"Token balance error for {token_address}: {e}")
-            return Decimal("0")
+                w3 = Web3(Web3.HTTPProvider(rpc_url, request_kwargs={"timeout": 10}))
+                if not w3.is_connected():
+                    continue
+                contract = w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=abi)
+                raw = contract.functions.balanceOf(self.evm_account.address).call()
+                try:
+                    decimals = contract.functions.decimals().call()
+                except:
+                    decimals = 18
+                return Decimal(raw) / Decimal(10 ** decimals)
+            except Exception:
+                continue
+        
+        logger.error(f"All RPCs failed for token balance: {token_address}")
+        return Decimal("0")
     
-    def get_all_holdings(self) -> Dict:
-        """Get all token holdings on Base - used for capital reallocation."""
-        holdings = {}
-        # Known tokens to check
-        tokens = {
+    def _load_screener_tokens(self) -> Dict[str, str]:
+        """Load top-scoring Base tokens from the screener's top100.json."""
+        screener_path = os.path.expanduser("~/.hermes/data/token_screener/top100.json")
+        tokens = {}
+        try:
+            with open(screener_path, "r") as f:
+                data = json.load(f)
+            for t in data.get("tokens", []):
+                if t.get("chain") != "base":
+                    continue
+                addr = t.get("contract_address", "")
+                sym = t.get("symbol", "UNKNOWN")
+                score = t.get("score", 0)
+                if addr and score >= 20:  # Only tokens with decent screener score
+                    tokens[sym] = addr
+            logger.info(f"Loaded {len(tokens)} Base tokens from screener (top100.json)")
+        except Exception as e:
+            logger.warning(f"Failed to load screener tokens: {e}")
+        return tokens
+
+    def _discover_wallet_tokens(self) -> Dict[str, str]:
+        """Discover Base tokens the wallet actually holds by checking known token list + on-chain."""
+        tokens = {}
+        # Expanded list of popular Base tokens to check (updated regularly from Dexscreener)
+        # This is NOT for trading decisions - just for discovering what we already hold
+        KNOWN_BASE_TOKENS = {
             "BRETT": "0x532f27101965dd16442E59d40670FaF5eBB142E4",
             "DEGEN": "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed",
             "TOSHI": "0xAC1Bd2486aAf3B5C0fc3Fd868558b082a531B2B4",
             "HIGHER": "0x0578d8A44db98B23BF096A382e016e29a5Ce0ffe",
             "NORMIE": "0x7F12d13B34F5F4f0a9449c16Bcd42f0da47AF200",
             "TYBG": "0x0d97F261b1e88845184f678e2d1e7a98D9FD38dE",
-            "CHOMP": "0x88368d9e28f5dF553b6B5Ccc4DB6eF8E9dDd54B4",
-            "BRETT2": "0x9a26f5433671751c3276a065f57e5a02d2817973",
+            "ANDY": "0x029Eb076D2E9E5b2dDc1aB7BDe2D5d3b4b1bfAA0",
+            "BRIAN": "0x22af33fe49fd1fa80c7149773dde5890d3c76f3b",
+            "BALD": "0x27D2DECb4bFC9C76F0309b8E88dec3a601Fe25a8",
+            "ROCKY": "0x2Da56AcB9Ea78330f947bD57C54119Debda7AF71",
+            "BOGE": "0x4F36ce48c4938e3e45cEB63e1A516c9e9D6f3d1e",
+            "CHOMP": "0x6AE52E06c40068C7F804A9f4BB2B8C2e5B629199",
         }
-        for name, addr in tokens.items():
+        for sym, addr in KNOWN_BASE_TOKENS.items():
+            bal = self.get_token_balance(addr, "base")
+            if bal > Decimal("0.001"):
+                tokens[sym] = addr
+        if tokens:
+            logger.info(f"Discovered {len(tokens)} held Base tokens: {', '.join(tokens.keys())}")
+        return tokens
+
+    def get_all_holdings(self) -> Dict:
+        """Get all token holdings on Base - checks screener tokens + wallet discovery + WETH."""
+        holdings = {}
+        
+        # 1. Tokens from screener pipeline (highest priority - scored)
+        screener_tokens = self._load_screener_tokens()
+        
+        # 2. Tokens the wallet actually holds (discovery scan)
+        wallet_tokens = self._discover_wallet_tokens()
+        
+        # Merge: screener takes priority for naming, wallet fills gaps
+        all_tokens = {**wallet_tokens, **screener_tokens}
+        
+        for name, addr in all_tokens.items():
             bal = self.get_token_balance(addr, "base")
             if bal > Decimal("0.001"):
                 holdings[name] = {"address": addr, "balance": bal}
         
-        # Also check WETH
+        # Always check WETH (needed for unwrapping)
         weth_bal = self.get_token_balance("0x4200000000000000000000000000000000000006", "base")
         if weth_bal > Decimal("0.00001"):
             holdings["WETH"] = {"address": "0x4200000000000000000000000000000000000006", "balance": weth_bal}
         
         return holdings
     
-    def sell_token_for_eth(self, token_name: str, token_address: str, sell_pct: float = 0.3) -> bool:
-        """Sell a portion of a token holding to free up ETH for gas and trading."""
-        token_bal = self.get_token_balance(token_address, "base")
+    def _unwrap_weth(self, amount: Decimal) -> bool:
+        """Unwrap WETH to ETH on Base."""
+        if not self.w3 or not self.evm_account:
+            return False
+        try:
+            weth_addr = Web3.to_checksum_address("0x4200000000000000000000000000000000000006")
+            weth_abi = [{"inputs":[{"name":"wad","type":"uint256"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},
+                        {"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
+            contract = self.w3.eth.contract(address=weth_addr, abi=weth_abi)
+            amount_wei = int(amount * Decimal(10**18))
+            tx = contract.functions.withdraw(amount_wei).build_transaction({
+                "from": self.evm_account.address,
+                "nonce": self.w3.eth.get_transaction_count(self.evm_account.address, "pending"),
+                "gas": 35000,
+                "maxFeePerGas": self.w3.eth.gas_price,
+                "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
+                "chainId": 8453,
+            })
+            signed = self.evm_account.sign_transaction(tx)
+            tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
+            logger.info(f"WETH unwrap tx sent: {tx_hash.hex()}")
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=60)
+            if receipt.status == 1:
+                logger.info(f"WETH unwrap confirmed: {tx_hash.hex()}")
+                return True
+            else:
+                logger.error(f"WETH unwrap failed: {tx_hash.hex()}")
+                return False
+        except Exception as e:
+            logger.error(f"WETH unwrap error: {e}")
+            return False
+
+    def _sell_via_kyberswap(self, token_name: str, token_address: str, sell_amount: Decimal) -> bool:
+        """Fallback sell via KyberSwap when Odos fails."""
+        try:
+            amount_wei = str(int(sell_amount * Decimal(10**18)))
+            weth = "0x4200000000000000000000000000000000000006"
+            
+            # Get KyberSwap quote
+            quote_url = f"https://aggregator-api.kyberswap.com/base/api/v1/routes"
+            quote_resp = requests.post(quote_url, json={
+                "tokenIn": token_address,
+                "tokenOut": weth,
+                "amountIn": amount_wei,
+                "saveGas": False,
+                "slippageTolerance": 500,  # 5%
+            }, timeout=15)
+            
+            if quote_resp.status_code != 200:
+                logger.error(f"KyberSwap quote failed: {quote_resp.status_code}")
+                return False
+            
+            route_data = quote_resp.json().get("data", {})
+            router_address = route_data.get("routerAddress")
+            
+            # Approve KyberSwap router
+            if router_address and not self._erc20_approve_if_needed(token_address, router_address, int(amount_wei)):
+                logger.error(f"Failed to approve {token_name} for KyberSwap")
+                return False
+            
+            # Build swap transaction
+            build_resp = requests.post(
+                "https://aggregator-api.kyberswap.com/base/api/v1/route/build",
+                json={"routeSummary": route_data.get("routeSummary")},
+                timeout=15
+            )
+            
+            if build_resp.status_code != 200:
+                logger.error(f"KyberSwap build failed: {build_resp.status_code}")
+                return False
+            
+            tx_data = build_resp.json().get("data", {})
+            
+            tx = {
+                "from": self.evm_account.address,
+                "to": Web3.to_checksum_address(tx_data.get("routerAddress", router_address)),
+                "data": tx_data.get("data"),
+                "value": int(tx_data.get("amountIn", 0)),
+                "gas": int(tx_data.get("gas", 300000)),
+                "maxFeePerGas": self.w3.eth.gas_price,
+                "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
+                "nonce": self.w3.eth.get_transaction_count(self.evm_account.address, "pending"),
+                "chainId": 8453,
+            }
+            
+            signed = self.evm_account.sign_transaction(tx)
+            tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
+            logger.info(f"KyberSwap sell sent: {tx_hash.hex()}")
+            
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
+            if receipt.status == 1:
+                logger.info(f"KyberSwap sell confirmed: {token_name} -> WETH | tx: {tx_hash.hex()}")
+                return True
+            else:
+                logger.error(f"KyberSwap sell failed: {tx_hash.hex()}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"KyberSwap sell error: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
+
+    def _erc20_approve_if_needed(self, token_address: str, spender: str, amount_wei: int) -> bool:
+        """Approve ERC20 token spending if allowance is insufficient. Returns True on success."""
+        if not self.w3 or not self.evm_account:
+            return False
+        try:
+            erc20_abi = [
+                {"inputs":[{"name":"owner","type":"address"},{"name":"spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+                {"inputs":[{"name":"spender","type":"address"},{"name":"amount","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
+            ]
+            token_contract = self.w3.eth.contract(
+                address=Web3.to_checksum_address(token_address),
+                abi=erc20_abi
+            )
+            current_allowance = token_contract.functions.allowance(
+                self.evm_account.address,
+                Web3.to_checksum_address(spender)
+            ).call()
+            if current_allowance >= amount_wei:
+                logger.info(f"Allowance sufficient: {current_allowance} >= {amount_wei}")
+                return True
+            # Approve max uint256
+            MAX_UINT256 = 2**256 - 1
+            tx = token_contract.functions.approve(
+                Web3.to_checksum_address(spender),
+                MAX_UINT256
+            ).build_transaction({
+                "from": self.evm_account.address,
+                "nonce": self.w3.eth.get_transaction_count(self.evm_account.address, "pending"),
+                "gas": 60000,
+                "maxFeePerGas": self.w3.eth.gas_price,
+                "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
+                "chainId": 8453,
+            })
+            signed = self.evm_account.sign_transaction(tx)
+            tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
+            logger.info(f"Approve tx sent: {tx_hash.hex()}")
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=60)
+            if receipt.status == 1:
+                logger.info(f"Approve confirmed: {tx_hash.hex()}")
+                return True
+            else:
+                logger.error(f"Approve failed: {tx_hash.hex()}")
+                return False
+        except Exception as e:
+            logger.error(f"Approve error: {e}")
+            return False
+
+    def _direct_cheap_sell(self, token_address: str, amount_wei: int) -> Optional[str]:
+        """Try direct on-chain swaps through cheapest AMM routers. Skips simulation to save gas.
+        Uses actual router addresses from protocol_registry."""
+        if not self.w3 or not self.evm_account:
+            return None
+        
+        weth = "0x4200000000000000000000000000000000000006"
+        addr = self.evm_account.address
+        deadline = int(time.time()) + 300
+        cheap_gas = {"maxFeePerGas": 10000000, "maxPriorityFeePerGas": 100000, "chainId": 8453}
+        
+        # ERC20 approve
+        erc20_abi = [{"inputs":[{"name":"spender","type":"address"},{"name":"amount","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},
+                     {"inputs":[{"name":"owner","type":"address"},{"name":"spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
+        token_contract = self.w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=erc20_abi)
+        
+        def ensure_allowance(spender: str):
+            current = token_contract.functions.allowance(addr, Web3.to_checksum_address(spender)).call()
+            if current < amount_wei:
+                approve_tx = token_contract.functions.approve(
+                    Web3.to_checksum_address(spender), 2**256 - 1
+                ).build_transaction({"from": addr, "nonce": self.w3.eth.get_transaction_count(addr, "pending"), "gas": 50000, **cheap_gas})
+                signed = self.evm_account.sign_transaction(approve_tx)
+                txh = self.w3.eth.send_raw_transaction(signed.raw_transaction)
+                receipt = self.w3.eth.wait_for_transaction_receipt(txh, timeout=60)
+                if receipt.status != 1:
+                    raise Exception(f"Approve failed: {txh.hex()}")
+        
+        def send_and_confirm(name: str, tx: dict) -> Optional[str]:
+            signed = self.evm_account.sign_transaction(tx)
+            tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
+            logger.info(f"{name} sell tx sent: {tx_hash.hex()}")
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
+            if receipt.status == 1 and receipt.gasUsed > 50000:
+                logger.info(f"{name} sell CONFIRMED: {tx_hash.hex()} (gas: {receipt.gasUsed})")
+                return tx_hash.hex()
+            elif receipt.status == 1:
+                logger.warning(f"{name} tx succeeded but gas too low ({receipt.gasUsed}) - likely approve only, not swap")
+            else:
+                logger.warning(f"{name} sell reverted: {tx_hash.hex()} (gas: {receipt.gasUsed})")
+            return None
+        
+        # Load router addresses from contract_executor's protocol registry
+        try:
+            from protocol_registry import PROTOCOL_REGISTRY
+            base_protocols = PROTOCOL_REGISTRY.get("base", {})
+        except:
+            base_protocols = {}
+        
+        # SushiSwap RouteProcessor4 (processRoute)
+        sushi_cfg = base_protocols.get("sushiswap", {})
+        sushi_router = sushi_cfg.get("router", "0x6BDED42c6DA8FBf0d2bA55B2fa120C5e0c8D7891")
+        sushi_abi = [{"inputs":[{"name":"tokenIn","type":"address"},{"name":"amountIn","type":"uint256"},{"name":"tokenOut","type":"address"},{"name":"amountOutMin","type":"uint256"},{"name":"to","type":"address"},{"name":"route","type":"bytes"}],"name":"processRoute","outputs":[{"name":"amountOut","type":"uint256"}],"stateMutability":"payable","type":"function"}]
+        try:
+            ensure_allowance(sushi_router)
+            router = self.w3.eth.contract(address=Web3.to_checksum_address(sushi_router), abi=sushi_abi)
+            tx = router.functions.processRoute(
+                Web3.to_checksum_address(token_address), amount_wei,
+                Web3.to_checksum_address(weth), 0,
+                Web3.to_checksum_address(addr), b""
+            ).build_transaction({"from": addr, "nonce": self.w3.eth.get_transaction_count(addr, "pending"), "gas": 300000, **cheap_gas})
+            result = send_and_confirm("SushiSwap", tx)
+            if result: return result
+        except Exception as e:
+            logger.warning(f"SushiSwap sell failed: {str(e)[:120]}")
+        
+        # PancakeSwap V2 (swapExactTokensForTokens)
+        pancake_cfg = base_protocols.get("pancakeswap", {})
+        pancake_v2 = pancake_cfg.get("router", "0x678Aa4bF4E210cf2166753e054d5b7c31cc7fa86")
+        V2_ABI = [{"inputs":[{"name":"amountIn","type":"uint256"},{"name":"amountOutMin","type":"uint256"},{"name":"path","type":"address[]"},{"name":"to","type":"address"},{"name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokens","outputs":[{"name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"}]
+        try:
+            ensure_allowance(pancake_v2)
+            router = self.w3.eth.contract(address=Web3.to_checksum_address(pancake_v2), abi=V2_ABI)
+            tx = router.functions.swapExactTokensForTokens(
+                amount_wei, 0,
+                [Web3.to_checksum_address(token_address), Web3.to_checksum_address(weth)],
+                Web3.to_checksum_address(addr), deadline
+            ).build_transaction({"from": addr, "nonce": self.w3.eth.get_transaction_count(addr, "pending"), "gas": 200000, **cheap_gas})
+            result = send_and_confirm("PancakeV2", tx)
+            if result: return result
+        except Exception as e:
+            logger.warning(f"PancakeV2 sell failed: {str(e)[:100]}")
+        
+        # Aerodrome swapExactTokensForETH - raw calldata with correct selector
+        # Selector 0x18a13086 for swapExactTokensForETH(uint256,uint256,(address,address,bool)[],address,uint256)
+        aero_router_addr = "0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43"
+        try:
+            ensure_allowance(aero_router_addr)
+            deadline_ts = int(time.time()) + 1200
+            
+            # Build calldata: selector(4) + 5*32 bytes fixed + dynamic array
+            sel = bytes.fromhex("18a13086")
+            # Fixed params
+            amount_enc = amount_wei.to_bytes(32, 'big')
+            min_out_enc = (0).to_bytes(32, 'big')
+            array_offset = (5 * 32).to_bytes(32, 'big')  # 0xa0
+            to_enc = bytes.fromhex(addr[2:].lower().zfill(64))
+            deadline_enc = deadline_ts.to_bytes(32, 'big')
+            # Dynamic: Route[] with 1 element, 3 fields each
+            array_len = (1).to_bytes(32, 'big')
+            from_enc = bytes.fromhex(token_address[2:].lower().zfill(64))
+            weth_enc = bytes.fromhex(weth[2:].lower().zfill(64))
+            stable_enc = (0).to_bytes(32, 'big')
+            
+            calldata = sel + amount_enc + min_out_enc + array_offset + to_enc + deadline_enc + array_len + from_enc + weth_enc + stable_enc
+            
+            nonce = self.w3.eth.get_transaction_count(addr, "pending")
+            tx = {
+                "from": addr,
+                "to": Web3.to_checksum_address(aero_router_addr),
+                "data": calldata,
+                "value": 0,
+                "gas": 300000,
+                "nonce": nonce,
+                **cheap_gas
+            }
+            result = send_and_confirm("Aerodrome", tx)
+            if result: return result
+        except Exception as e:
+            logger.warning(f"Aerodrome swap failed: {str(e)[:120]}")
+        
+        # Try Aerodrome via processRoute (SushiRouteProcessor-compatible interface)
+        sushi_router = sushi_cfg.get("router", "0x0389879e0156033202C44BF784ac18fC02edeE4f")
+        try:
+            ensure_allowance(sushi_router)
+            router = self.w3.eth.contract(address=Web3.to_checksum_address(sushi_router), abi=sushi_abi)
+            # Build actual route: encode pool address for auto-routing
+            # SushiSwap processRoute needs route bytes for non-standard tokens
+            tx = router.functions.processRoute(
+                Web3.to_checksum_address(token_address), amount_wei,
+                Web3.to_checksum_address(weth), 0,
+                Web3.to_checksum_address(addr), b""
+            ).build_transaction({"from": addr, "nonce": self.w3.eth.get_transaction_count(addr, "pending"), "gas": 300000, **cheap_gas})
+            result = send_and_confirm("SushiSwap", tx)
+            if result: return result
+        except Exception as e:
+            logger.warning(f"SushiSwap sell failed: {str(e)[:120]}")
+        
+        # PancakeSwap V3 / Uniswap V3 (exactInputSingle)
+        V3_ABI = [{"inputs":[{"components":[{"name":"tokenIn","type":"address"},{"name":"tokenOut","type":"address"},{"name":"fee","type":"uint24"},{"name":"recipient","type":"address"},{"name":"deadline","type":"uint256"},{"name":"amountIn","type":"uint256"},{"name":"amountOutMinimum","type":"uint256"},{"name":"sqrtPriceLimitX96","type":"uint160"}],"name":"params","type":"tuple"}],"name":"exactInputSingle","outputs":[{"name":"amountOut","type":"uint256"}],"stateMutability":"payable","type":"function"}]
+        for fee in [500, 2500, 3000, 10000]:
+            try:
+                ensure_allowance(pancake_cfg.get("v3_router", "0x13f4EA83D0bd40E75C8222255bc855a974568Dd4"))
+                router = self.w3.eth.contract(address=Web3.to_checksum_address(pancake_cfg.get("v3_router", "0x13f4EA83D0bd40E75C8222255bc855a974568Dd4")), abi=V3_ABI)
+                params = (Web3.to_checksum_address(token_address), Web3.to_checksum_address(weth), fee, Web3.to_checksum_address(addr), deadline, amount_wei, 0, 0)
+                tx = router.functions.exactInputSingle(params).build_transaction({"from": addr, "nonce": self.w3.eth.get_transaction_count(addr, "pending"), "gas": 250000, **cheap_gas})
+                result = send_and_confirm(f"PancakeV3-{fee}", tx)
+                if result: return result
+            except Exception as e:
+                logger.warning(f"PancakeV3-{fee} sell failed: {str(e)[:100]}")
+        
+        # Uniswap V3 (exactInputSingle) - multiple fee tiers
+        uni_cfg = base_protocols.get("uniswap_v3", {})
+        uni_router = uni_cfg.get("router", "0x2626664c2603336E57B271c5C0b26F421741e481")
+        for fee in [100, 500, 3000, 10000]:
+            try:
+                ensure_allowance(uni_router)
+                router = self.w3.eth.contract(address=Web3.to_checksum_address(uni_router), abi=V3_ABI)
+                params = (Web3.to_checksum_address(token_address), Web3.to_checksum_address(weth), fee, Web3.to_checksum_address(addr), deadline, amount_wei, 0, 0)
+                tx = router.functions.exactInputSingle(params).build_transaction({"from": addr, "nonce": self.w3.eth.get_transaction_count(addr, "pending"), "gas": 250000, **cheap_gas})
+                result = send_and_confirm(f"UniV3-{fee}", tx)
+                if result: return result
+            except Exception as e:
+                logger.warning(f"UniV3-{fee} sell failed: {str(e)[:100]}")
+        
+        return None
+
+    def sell_token_for_eth(self, token_name: str, token_address: str, sell_pct: float = 0.3, known_balance: Decimal = None) -> bool:
+        """Sell a portion of a token holding to free up ETH for gas and trading.
+        
+        Priority: Direct on-chain AMM swaps (cheapest gas) -> Aggregator APIs (last resort)
+        """
+        if known_balance and known_balance > Decimal("0"):
+            token_bal = known_balance
+        else:
+            token_bal = self.get_token_balance(token_address, "base")
         if token_bal <= Decimal("0"):
             logger.warning(f"No {token_name} balance to sell")
             return False
         
         sell_amount = token_bal * Decimal(str(sell_pct))
         logger.info(f"SELLING {sell_amount:.4f} {token_name} ({sell_pct*100:.0f}% of {token_bal:.4f}) to free up ETH")
+        amount_wei = int(sell_amount * Decimal(10**18))
+        weth = "0x4200000000000000000000000000000000000006"
         
-        # Use Odos to sell token -> WETH (then unwrap or use directly for gas)
+        # 1. Try direct on-chain AMM swaps (cheapest gas, no API overhead)
+        result = self._direct_cheap_sell(token_address, amount_wei)
+        if result:
+            return True
+        
+        # 2. Last resort: aggregator APIs (higher gas due to complex routing)
+        logger.warning(f"All direct swaps failed for {token_name}, trying aggregators")
+        for agg_name, agg_func in [("KyberSwap", self._sell_via_kyberswap), ("Odos", self._sell_via_odos)]:
+            try:
+                if agg_func(token_name, token_address, sell_amount):
+                    return True
+            except Exception as e:
+                logger.warning(f"{agg_name} sell failed: {e}")
+        
+        logger.error(f"All routes failed to sell {token_name}")
+        return False
+    
+    def _sell_via_odos(self, token_name: str, token_address: str, sell_amount: Decimal) -> bool:
+        """Sell via Odos API (higher gas, last resort)."""
         try:
             amount_wei = str(int(sell_amount * Decimal(10**18)))
+            weth = "0x4200000000000000000000000000000000000006"
             
             # Get quote from Odos
             quote_resp = requests.post("https://api.odos.xyz/sor/quote/v2", json={
                 "chainId": 8453,
-                "inputTokens": [{"tokenAddress": token_address, "amount": amount_wei}],
+                "inputTokens": [{"tokenAddress": token_address, "amount": str(amount_wei)}],
                 "outputTokens": [{"tokenAddress": "0x4200000000000000000000000000000000000006", "proportion": 1}],
                 "userAddr": self.evm_account.address,
                 "slippageLimitPercent": 5,
             }, timeout=15)
             
             if quote_resp.status_code != 200:
-                logger.error(f"Odos sell quote failed: {quote_resp.status_code}")
-                return False
+                try:
+                    err_body = quote_resp.json()
+                    logger.error(f"Odos sell quote failed: {quote_resp.status_code} - {err_body.get('detail', err_body.get('message', quote_resp.text[:200]))}")
+                except:
+                    logger.error(f"Odos sell quote failed: {quote_resp.status_code} - {quote_resp.text[:200]}")
+                # Try KyberSwap as fallback
+                return self._sell_via_kyberswap(token_name, token_address, sell_amount)
             
             quote = quote_resp.json()
+            
+            # Approve Odos router to spend token before assembling
+            odos_router = quote.get("transaction", {}).get("to", "0x19960B582773B319a29d7e1f9D7057D0C643396C")
+            if not self._erc20_approve_if_needed(token_address, odos_router, int(amount_wei)):
+                logger.error(f"Failed to approve {token_name} for Odos router")
+                return False
+            
+            # Wait for approve to mine before swapping
+            time.sleep(3)
             
             # Assemble transaction
             assemble_resp = requests.post("https://api.odos.xyz/sor/assemble", json={
@@ -694,16 +1141,17 @@ class DexAggregatorTrader:
                 return False
             
             tx_data = assemble_resp.json().get("transaction", {})
+            logger.info(f"Odos tx data: to={tx_data.get('to')}, value={tx_data.get('value')}, gas={tx_data.get('gas')}")
             
             tx = {
                 "from": self.evm_account.address,
                 "to": Web3.to_checksum_address(tx_data.get("to")),
                 "data": tx_data.get("data"),
-                "value": int(tx_data.get("value", 0)),
+                "value": 0,  # Selling ERC20, no ETH value needed
                 "gas": int(tx_data.get("gas", 300000)),
-                "maxFeePerGas": self.w3.eth.gas_price,
-                "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
-                "nonce": self.w3.eth.get_transaction_count(self.evm_account.address, "pending"),
+                "maxFeePerGas": 10000000,  # 0.01 gwei for Base L2
+                "maxPriorityFeePerGas": 100000,
+                "nonce": self.w3.eth.get_transaction_count(self.evm_account.address, "latest"),
                 "chainId": 8453,
             }
             
@@ -1378,15 +1826,21 @@ class DexAggregatorTrader:
                 
                 # ==================== FREE UP ETH FROM TOKEN HOLDINGS ====================
                 # If ETH is too low to trade but we have token holdings, sell some to get ETH
-                if base_bal < Decimal("0.0003") and holdings:
-                    # Find the best token to sell (prefer ones not in active positions)
+                # Trigger sell if ETH < 0.0005 (~$1) — need gas buffer for multiple trades
+                if base_bal < Decimal("0.0005") and holdings:
                     for tok_name, tok_info in holdings.items():
                         if tok_name == "WETH":
-                            continue  # Don't sell WETH to get ETH
+                            # Unwrap WETH to ETH
+                            if tok_info["balance"] > Decimal("0.00001"):
+                                logger.info(f"Unwrapping {tok_info['balance']:.6f} WETH to ETH")
+                                self._unwrap_weth(tok_info["balance"])
+                                time.sleep(2)
+                                base_bal = self.get_balance("base")
+                            continue
                         if tok_name in active_positions:
                             continue  # Don't sell active positions
                         logger.info(f"ETH low ({base_bal:.6f}), selling some {tok_name} to free up capital")
-                        sold = self.sell_token_for_eth(tok_name, tok_info["address"], sell_pct=0.3)
+                        sold = self.sell_token_for_eth(tok_name, tok_info["address"], sell_pct=0.5, known_balance=tok_info["balance"])
                         if sold:
                             time.sleep(3)  # Wait for state to update
                             base_bal = self.get_balance("base")
@@ -1399,7 +1853,7 @@ class DexAggregatorTrader:
                         chain = position.get("chain", "base")
                         if chain == "base":
                             token_addr = self.get_token_address(token, "base")
-                            if token_addr and base_bal > Decimal("0.0001"):
+                            if token_addr and base_bal > Decimal("0.000005"):
                                 logger.info(f"Rotating: selling {token} to chase faster movers")
                                 sold = self.sell_token_for_eth(token, token_addr, sell_pct=1.0)
                                 if sold:
@@ -1409,8 +1863,17 @@ class DexAggregatorTrader:
                 
                 # ==================== SIGNAL-BASED TRADING ====================
                 try:
-                    from signal_providers import aggregate_signals
+                    from signal_providers import aggregate_signals, ScreenerPipelineProvider
                     signals = aggregate_signals()
+                    
+                    # Also add screener tokens directly (bypass merge which loses details)
+                    screener_sigs = ScreenerPipelineProvider().fetch()
+                    for ss in screener_sigs:
+                        if ss["action"] == "BUY" and ss["confidence"] >= 0.5 and ss.get("token_address"):
+                            # Check not already in signals
+                            if not any(s.get("token") == ss["token"] for s in signals):
+                                signals.append(ss)
+                    
                     logger.info(f"Signals: {len(signals)}")
                     
                     for signal in signals:
@@ -1418,15 +1881,19 @@ class DexAggregatorTrader:
                         action = signal.get("action", "?")
                         conf = signal.get("confidence", 0)
                         chain = signal.get("chain", "base")
+                        src = signal.get("source", "?")
+                        logger.info(f"  Signal: {token} {action} conf={conf:.2f} chain={chain} src={src}")
                         
                         # Only trade on high-confidence BUY signals
-                        if action == "BUY" and conf >= 0.7:
+                        # Screener tokens already filtered, use lower threshold for them
+                        min_conf = 0.5 if signal.get("source") == "Screener" else 0.7
+                        if action == "BUY" and conf >= min_conf:
                             # Use token_address from signal if available (Dexscreener, SmartMoney)
                             token_addr = signal.get("token_address") or self.get_token_address(token, chain)
                             
                             traded = False
                             
-                            if chain == "base" and base_bal > Decimal("0.0001"):
+                            if chain == "base" and base_bal > Decimal("0.00001"):
                                 # Trade 50% of ETH balance
                                 trade_amount = float(base_bal) * 0.5
                                 
@@ -1448,7 +1915,7 @@ class DexAggregatorTrader:
                                 else:
                                     logger.warning(f"Trade too small: {trade_amount:.6f} ETH")
                             
-                            elif chain == "solana" and sol_bal > Decimal("0.05"):
+                            elif chain == "solana" and sol_bal > Decimal("0.005"):
                                 # Trade 50% of SOL balance
                                 trade_amount = float(sol_bal) * 0.5
                                 
@@ -1472,10 +1939,10 @@ class DexAggregatorTrader:
                                     logger.warning(f"Trade too small: {trade_amount:.6f} SOL")
                             
                             if not traded:
-                                if chain == "base" and base_bal <= Decimal("0.0001"):
-                                    logger.warning(f"Insufficient Base balance ({base_bal:.6f} ETH) for {token} - need >0.0001 ETH")
-                                elif chain == "solana" and sol_bal <= Decimal("0.05"):
-                                    logger.warning(f"Insufficient Solana balance ({sol_bal:.6f} SOL) for {token} - need >0.05 SOL")
+                                if chain == "base" and base_bal <= Decimal("0.00001"):
+                                    logger.warning(f"Insufficient Base balance ({base_bal:.8f} ETH) for {token} - need >0.00001 ETH")
+                                elif chain == "solana" and sol_bal <= Decimal("0.003"):
+                                    logger.warning(f"Insufficient Solana balance ({sol_bal:.6f} SOL) for {token} - need >0.003 SOL")
                         
                         elif action == "BUY" and conf < 0.7:
                             logger.debug(f"Skipping {token}: confidence {conf:.2f} < 0.70 threshold")
@@ -1486,14 +1953,14 @@ class DexAggregatorTrader:
                     traceback.print_exc()
                 
                 # Log funding status if no trades were possible
-                if base_bal < Decimal("0.0001") and sol_bal < Decimal("0.05"):
-                    logger.warning(f"LOW FUNDS - cannot trade on either chain. Base: {base_bal:.6f} ETH, Solana: {sol_bal:.6f} SOL")
-                elif base_bal < Decimal("0.0001") and not holdings:
-                    logger.info(f"Base balance low ({base_bal:.6f} ETH) and no token holdings to sell")
+                if base_bal < Decimal("0.000005") and sol_bal < Decimal("0.003"):
+                    logger.warning(f"LOW FUNDS - cannot trade on either chain. Base: {base_bal:.8f} ETH, Solana: {sol_bal:.6f} SOL")
+                elif base_bal < Decimal("0.000005") and not holdings:
+                    logger.info(f"Base balance low ({base_bal:.8f} ETH) and no token holdings to sell")
                 
                 # ==================== BRIDGING OPPORTUNITIES ====================
                 # Check if we should bridge between chains
-                if base_bal > Decimal("0.001") and sol_bal < Decimal("0.01"):
+                if base_bal > Decimal("0.0001") and sol_bal < Decimal("0.003"):
                     # More ETH than SOL - consider bridging
                     logger.info("Checking bridging opportunities: Base -> Solana")
                     bridge_amount = str(int(float(base_bal) * 0.3 * 1e18))  # 30% of ETH
@@ -1501,7 +1968,7 @@ class DexAggregatorTrader:
                     if bridge_quote:
                         logger.info(f"Bridge quote available: {bridge_quote.get('estimate', {}).get('toAmount', 'N/A')}")
                 
-                elif sol_bal > Decimal("0.05") and base_bal < Decimal("0.0005"):
+                elif sol_bal > Decimal("0.003") and base_bal < Decimal("0.00005"):
                     # More SOL than ETH - consider bridging
                     logger.info("Checking bridging opportunities: Solana -> Base")
                     bridge_amount = str(int(float(sol_bal) * 0.3 * 1e9))  # 30% of SOL
@@ -1511,7 +1978,7 @@ class DexAggregatorTrader:
                 
                 # ==================== LIQUIDITY POOLING ====================
                 # Check for liquidity pooling opportunities when we have idle capital
-                if base_bal > Decimal("0.002") and not active_positions:
+                if base_bal > Decimal("0.0002") and not active_positions:
                     # More than 0.002 ETH and no active positions - consider liquidity
                     logger.info("Checking liquidity pooling opportunities")
                     
@@ -1554,7 +2021,8 @@ class DexAggregatorTrader:
                 
                 # ==================== DCA STRATEGIES ====================
                 # Check for DCA opportunities (regular purchases of established tokens)
-                dca_tokens = ["BRETT", "DEGEN", "TOSHI"]  # Base tokens to DCA
+                screener_tokens = self._load_screener_tokens()
+                dca_tokens = list(screener_tokens.keys())[:3]  # Top 3 screener tokens for DCA
                 if base_bal > Decimal("0.001") and not dca_schedules:
                     # Start DCA if we have funds and no active DCA
                     for token in dca_tokens:

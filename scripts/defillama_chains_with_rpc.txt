@@ -1,0 +1,292 @@
+# DeFiLlama chains with confirmed public RPCs
+# 288 chains
+# Generated: April 16, 2026
+
+0G
+AILayer
+Abstract
+Acala
+Alephium
+Algorand
+Ancient8
+ApeChain
+Aptos
+Arbitrum
+Arbitrum Nova
+Archway
+Astar
+Astar zkEVM
+Aurora
+Avalanche
+BOB
+BSquared
+Babylon Genesis
+BandChain
+Base
+Berachain
+Bifrost
+Bifrost Network
+Binance
+Bitcoin
+Bitcoincash
+Bitgert
+Bitkub
+Bitlayer
+Bittensor
+Bittensor EVM
+Bittorrent
+Blast
+Boba
+Botanix
+BounceBit
+CLV
+CORE
+CSC
+Cabal
+Canto
+Canton
+Cardano
+Celestia
+Celo
+Chainflip
+Chia
+Chihuahua
+Chiliz
+Citrea
+Comdex
+Conflux
+Constellation
+Corn
+Cosmos
+Coti
+Crescent
+Cronos
+Cronos zkEVM
+Cyber
+DFS Network
+Dash
+DeFiChain EVM
+DefiChain
+Dexalot
+Doge
+Dogechain
+DuckChain
+EDU Chain
+EOS
+Echelon
+Echelon Chain
+Eclipse
+Elastos
+Electroneum
+Elrond
+Empire
+Endurance
+EnergyWeb
+Equilibrium
+Ergo
+Ethereum
+EthereumClassic
+Etherlink
+Everscale
+Evmos
+Fantom
+Filecoin
+Flare
+Flow
+Fluence
+Fraxtal
+Fuse
+Fusion
+Gala
+Goat
+Gravity
+GravityBridge
+Grove
+HAQQ
+Harmony
+HashKey Chain
+HeLa
+Heco
+Hedera
+Hemi
+Horizen EON
+HydraDX
+Hyperliquid L1
+ICP
+IOTA
+IOTA EVM
+Icon
+Immutable zkEVM
+Initia
+Injective
+Ink
+Interlay
+IoTeX
+Juno
+K2
+Katana
+Kava
+Kinto
+Klaytn
+Kroma
+Kucoin
+Kujira
+Kusama
+LUKSO
+LaChain Network
+Linea
+Lisk
+Litecoin
+Loop
+Manta
+Manta Atlantic
+Mantle
+Mantra
+Map
+Mayachain
+MegaETH
+Merlin
+Meter
+Metis
+Mezo
+Migaloo
+Milkomeda
+Milkomeda A1
+MilkyWay Rollup
+Milkyway
+Mint
+Mixin
+Mode
+Monad
+Moonbeam
+Moonriver
+Morph
+Movement
+MultiVAC
+NEO
+Namada
+Near
+Neo3
+Neon
+Neutron
+Nibiru
+Noble
+Nolus
+OKExChain
+Oasis
+Obyte
+Odyssey
+Omax
+Ontology
+OntologyEVM
+Op_Bnb
+Optimism
+Orai
+Osmosis
+PGN
+Pego
+Perennial
+Persistence
+Plasma
+Plume Mainnet
+Polkadex
+Polkadot
+Polygon
+Polygon zkEVM
+Polynomial
+Proton
+Pulse
+Q Protocol
+Quicksilver
+REI
+RENEC
+RSK
+Radix
+Rari
+Redstone
+Regen
+Reya Network
+Ripple
+Rollux
+Ronin
+Sapphire
+Scroll
+Sei
+Shape
+Shibarium
+Shiden
+Shido
+ShimmerEVM
+Silicon zkEVM
+Solana
+Somnia
+Soneium
+Songbird
+Sonic
+Sophon
+Stable
+Stacks
+Stafi
+Starknet
+Stellar
+Story
+Stratis
+Sui
+Superposition
+Superseed
+Supra
+Swan
+Swellchain
+Syscoin
+TAC
+TON
+Taiko
+Taraxa
+Telos
+Terra
+Terra2
+Tezos
+Theta
+Thorchain
+ThunderCore
+Titan
+Tombchain
+TomoChain
+Tron
+UNIT0
+Ultra
+Umee
+Unichain
+Union
+Velas
+Venom
+Verus
+Vite
+Voi Network
+WEMIX
+WINR
+Wanchain
+Waves
+Wax
+World Chain
+X Layer
+XDC
+XION
+XRPL EVM
+Xai
+ZIGChain
+Zcash
+Zero Network
+ZetaChain
+Zircuit
+Zkfair
+Zora
+aelf
+dYdX
+edgeX L1
+inEVM
+re.al
+smartBCH
+xDai
+zkLink
+zkSync Era

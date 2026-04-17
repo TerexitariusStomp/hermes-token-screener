@@ -1,0 +1,93 @@
+# Removed Blockchains and Their Protocols
+# 27 chains removed
+# Generated: April 16, 2026
+
+## Acala — TVL $6.5M — 6 protocol(s)
+  - Acala Liquid Staking (Liquid Staking) — $2.8M
+  - Acala LCDOT (Liquid Staking) — $2.8M
+  - Starlay Finance (Lending) — $308K
+  - Acala Euphrates (Yield) — $304K
+  - Fufuture V2 (Options) — $124K
+  - Taiga Acala (Synthetics) — $111K
+
+## BandChain — TVL $8.0M — 1 protocol(s)
+  - Stride (Liquid Staking) — $8.0M
+
+## Cabal — TVL $2.5M — 1 protocol(s)
+  - Cabal (Governance Incentives) — $2.5M
+
+## Celestia — TVL $8.0M — 1 protocol(s)
+  - Stride (Liquid Staking) — $8.0M
+
+## Chia — TVL $129K — 1 protocol(s)
+  - Circuit (CDP) — $129K
+
+## Cosmos — TVL $12.8M — 2 protocol(s)
+  - Stride (Liquid Staking) — $8.0M
+  - Stafi (Liquid Staking) — $4.8M
+
+## Echelon — TVL $2.2M — 1 protocol(s)
+  - Guru Network Classic (Yield) — $2.2M
+
+## Echelon Chain — TVL $31.0M — 1 protocol(s)
+  - Echelon Market (Lending) — $31.0M
+
+## Equilibrium — TVL $1.1M — 1 protocol(s)
+  - Equilibrium Lending (Lending) — $1.1M
+
+## Fluence — TVL $3.4M — 1 protocol(s)
+  - Parasail (Restaking) — $3.4M
+
+## Grove — TVL $135K — 1 protocol(s)
+  - GroveCoin (Farm) — $135K
+
+## HAQQ — TVL $8.0M — 1 protocol(s)
+  - Stride (Liquid Staking) — $8.0M
+
+## K2 — TVL $29.5M — 2 protocol(s)
+  - OpenGDP Shared Security (Restaking) — $28.9M
+  - AirPuff (Leveraged Farming) — $647K
+
+## Kusama — TVL $24.7M — 1 protocol(s)
+  - Ankr (Liquid Staking) — $24.7M
+
+## LaChain Network — TVL $33.3M — 1 protocol(s)
+  - Capyfi (Lending) — $33.3M
+
+## MilkyWay Rollup — TVL $2.5M — 1 protocol(s)
+  - MilkyWay Liquid Staking (Liquid Staking) — $2.5M
+
+## Milkyway — TVL $2.7M — 2 protocol(s)
+  - MilkyWay Liquid Staking (Liquid Staking) — $2.5M
+  - Milkyway Restaking (Restaking) — $245K
+
+## Namada — TVL $1.5M — 1 protocol(s)
+  - Namada Shielded Pools (Privacy) — $1.5M
+
+## Nolus — TVL $732K — 1 protocol(s)
+  - Nolus Protocol (Lending) — $732K
+
+## Ontology — TVL $5.5M — 1 protocol(s)
+  - Wing Finance (Lending) — $5.5M
+
+## PGN — TVL $533.6M — 1 protocol(s)
+  - Optimism Bridge (Canonical Bridge) — $533.6M
+
+## Perennial — TVL $237K — 1 protocol(s)
+  - Perennial V2 (Derivatives) — $237K
+
+## Quicksilver — TVL $130K — 1 protocol(s)
+  - Quicksilver Protocol (Liquid Staking) — $130K
+
+## Stafi — TVL $4.8M — 1 protocol(s)
+  - Stafi (Liquid Staking) — $4.8M
+
+## Swan — TVL $3.4M — 1 protocol(s)
+  - Parasail (Restaking) — $3.4M
+
+## Umee — TVL $286K — 1 protocol(s)
+  - Umee (Lending) — $286K
+
+## Union — TVL $769K — 1 protocol(s)
+  - Escher (Liquid Staking) — $769K
+

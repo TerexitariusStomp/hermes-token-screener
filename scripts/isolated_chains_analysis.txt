@@ -1,0 +1,141 @@
+# Isolated Chains - Exit Pathways Analysis
+# 121 chains with no DeFiLlama bridge protocol
+# Generated: April 16, 2026
+
+## L2s WITH CANONICAL BRIDGE TO ETHEREUM (31)
+# These CAN get value in/out via their canonical bridge
+  Ancient8
+  ApeChain
+  Bitlayer
+  Cronos zkEVM
+  Cyber
+  EDU Chain
+  Etherlink
+  HashKey Chain
+  Immutable zkEVM
+  Katana
+  Kinto
+  MegaETH
+  Morph
+  Plume Mainnet
+  Polygon zkEVM
+  Rari
+  Redstone
+  Reya Network
+  Rollux
+  Shape
+  Soneium
+  Sophon
+  Stable
+  Superposition
+  Superseed
+  TAC
+  World Chain
+  Xai
+  Zero Network
+  Zircuit
+  Zora
+
+## COSMOS SDK CHAINS WITH IBC (18)
+# These can bridge via IBC to Osmosis/Cosmos Hub and out
+  Archway
+  Chihuahua
+  Comdex
+  HydraDX
+  Injective
+  Juno
+  Mantra
+  Migaloo
+  Neutron
+  Nibiru
+  Noble
+  Orai
+  Osmosis
+  Persistence
+  Stratis
+  Terra2
+  XION
+  ZIGChain
+
+## POLKADOT PARACHAINS WITH XCM (5)
+# These can bridge via XCM to Polkadot relay chain
+  Astar
+  Bifrost
+  Bifrost Network
+  CLV
+  Manta Atlantic
+
+## TOKENS NATIVE ON OTHER CHAINS (8)
+# Native token exists as wrapped asset on Ethereum/BSC
+  Bitcoincash
+  Electroneum
+  Fusion
+  IOTA EVM
+  Icon
+  TomoChain
+  Vite
+  Wax
+
+## CEX SUPPORT (17)
+# Token listed on major CEXes (Binance/Coinbase) - deposit/withdraw
+  Aptos
+  Bittensor EVM
+  Chiliz
+  Conflux
+  Coti
+  Elastos
+  Elrond
+  Filecoin
+  Flow
+  Gala
+  IOTA
+  Oasis
+  Tezos
+  ThunderCore
+  Velas
+  Wanchain
+  aelf
+
+## NO CLEAR EXIT PATH (41)
+# These chains have no obvious way to bridge value in/out
+  0G
+  Babylon Genesis
+  Bitkub
+  Bittorrent
+  CSC
+  Chainflip
+  Corn
+  Dexalot
+  Dogechain
+  DuckChain
+  EnergyWeb
+  Goat
+  Gravity
+  Lisk
+  Movement
+  MultiVAC
+  Neon
+  Odyssey
+  Omax
+  OntologyEVM
+  Polkadex
+  Proton
+  Pulse
+  Q Protocol
+  REI
+  RENEC
+  Shido
+  ShimmerEVM
+  Somnia
+  Songbird
+  Supra
+  Taraxa
+  Tombchain
+  Verus
+  Voi Network
+  WINR
+  XRPL EVM
+  ZetaChain
+  dYdX
+  inEVM
+  smartBCH
