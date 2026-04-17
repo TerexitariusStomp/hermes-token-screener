@@ -127,6 +127,8 @@ def export_tokens():
             token["contract_address"] = token["address"]
         # Flatten dex sub-object to top level for frontend
         dex = token.get("dex", {})
+        chain_norm = token.get("chain", "unknown")
+        addr = token.get("contract_address", "")
         if dex:
             token["fdv"] = token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
             token["symbol"] = token.get("symbol") or dex.get("symbol") or ""
@@ -137,6 +139,9 @@ def export_tokens():
             token["price_change_h6"] = dex.get("price_change_h6")
             token["age_hours"] = dex.get("age_hours")
             token["dex_name"] = dex.get("dex", "")
+        # Always set dex_url - use Dexscreener
+        if not token.get("dex_url") and addr and chain_norm != "unknown":
+            token["dex_url"] = f"https://dexscreener.com/{chain_norm.lower()}/{addr}"
         for key in list(token.keys()):
             if isinstance(token[key], set):
                 token[key] = list(token[key])
@@ -248,29 +253,48 @@ def export_wallets():
 
 def export_cross_tokens():
     """Export tokens ranked by wallet count for GitHub Pages."""
-    # Load tokens from enriched data source
+    # Load tokens from enriched data source - use file with most tokens
     data_dir = settings.output_path.parent
     candidates = [
+        data_dir / "top100.json",
         data_dir / "top100_phase4_social.json",
         data_dir / "top100_phase3_smartmoney.json",
         data_dir / "top100_phase1_initial.json",
-        settings.output_path,
     ]
 
     tokens = []
+    best_count = 0
     for src in candidates:
         if src.exists():
             with open(src) as f:
                 raw = json.load(f)
             candidate_tokens = raw.get("tokens") or raw.get("top_tokens") or []
-            if candidate_tokens and candidate_tokens[0].get("contract_address"):
-                tokens = candidate_tokens
-                print(f"Cross-tokens: using {src.name}")
-                break
+            valid = [t for t in candidate_tokens if t.get("contract_address")]
+            if len(valid) > best_count:
+                tokens = valid
+                best_count = len(valid)
 
     if not tokens:
         print("No enriched token data, skipping cross-tokens")
         return
+    print(f"Cross-tokens: using {best_count} enriched tokens")
+
+    # Flatten dex sub-objects for all tokens
+    for token in tokens:
+        dex = token.get("dex", {})
+        chain = normalize_chain(token.get("chain", ""), token.get("dex_url", ""))
+        addr = token.get("contract_address", "")
+        if dex:
+            token["symbol"] = token.get("symbol") or dex.get("symbol") or ""
+            token["fdv"] = token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
+            token["volume_h24"] = dex.get("volume_h24", 0) or 0
+            token["volume_h1"] = dex.get("volume_h1", 0) or 0
+            token["price_change_h1"] = dex.get("price_change_h1")
+            token["price_change_h6"] = dex.get("price_change_h6")
+            token["age_hours"] = dex.get("age_hours")
+        if not token.get("dex_url") and addr and chain != "unknown":
+            token["dex_url"] = f"https://dexscreener.com/{chain.lower()}/{addr}"
+        token["chain"] = chain
 
     # Get wallet holdings
     db_path = settings.wallets_db_path
@@ -335,29 +359,43 @@ def export_cross_tokens():
 
 def export_cross_wallets():
     """Export wallets ranked by top token count for GitHub Pages."""
-    # Load tokens from enriched data source
+    # Load tokens from enriched data source - use file with most tokens
     data_dir = settings.output_path.parent
     candidates = [
+        data_dir / "top100.json",
         data_dir / "top100_phase4_social.json",
         data_dir / "top100_phase3_smartmoney.json",
         data_dir / "top100_phase1_initial.json",
-        settings.output_path,
     ]
 
     tokens = []
+    best_count = 0
     for src in candidates:
         if src.exists():
             with open(src) as f:
                 raw = json.load(f)
             candidate_tokens = raw.get("tokens") or raw.get("top_tokens") or []
-            if candidate_tokens and candidate_tokens[0].get("contract_address"):
-                tokens = candidate_tokens
-                print(f"Cross-wallets: using {src.name}")
-                break
+            valid = [t for t in candidate_tokens if t.get("contract_address")]
+            if len(valid) > best_count:
+                tokens = valid
+                best_count = len(valid)
 
     if not tokens:
         print("No enriched token data, skipping cross-wallets")
         return
+    print(f"Cross-wallets: using {best_count} enriched tokens")
+
+    # Flatten dex sub-objects for symbol lookup
+    for token in tokens:
+        dex = token.get("dex", {})
+        chain = normalize_chain(token.get("chain", ""), token.get("dex_url", ""))
+        addr = token.get("contract_address", "")
+        if dex and not token.get("symbol"):
+            token["symbol"] = dex.get("symbol") or ""
+            token["fdv"] = dex.get("fdv") or dex.get("market_cap") or 0
+        if not token.get("dex_url") and addr and chain != "unknown":
+            token["dex_url"] = f"https://dexscreener.com/{chain.lower()}/{addr}"
+        token["chain"] = chain
 
     top_token_addrs = {
         t.get("contract_address", "") for t in tokens if t.get("contract_address")
