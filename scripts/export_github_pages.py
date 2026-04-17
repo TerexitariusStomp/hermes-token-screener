@@ -146,25 +146,33 @@ def export_tokens():
         for key in list(token.keys()):
             if isinstance(token[key], set):
                 token[key] = list(token[key])
-
-        # Quality filter: skip low-quality tokens
-        score = token.get("score", 0) or 0
-        negs = token.get("negatives", [])
-        vol = token.get("volume_h24", 0) or 0
-        pc_h1 = token.get("price_change_h1")
-        has_bad_signal = any(
-            n in str(negs) for n in [
-                "DEAD", "death spiral", "ONLY SELLS", "on bonding curve",
-                "HEAVY SELLS", "stagnant volume", "no volume",
-                "decline h1", "declining h6", "collapsed h24", "down h24",
-                "steep decline",
-            ]
-        )
-        # Minimum thresholds: score>=15, vol>=50000, has recent price data
-        if score < 15 or has_bad_signal or vol < 100000 or pc_h1 is None:
-            continue
         clean_tokens.append(token)
+    # Prioritize: high score + high volume + no negative signals = top
+    def token_sort_key(t):
+        score = t.get("score", 0) or 0
+        vol = t.get("volume_h24", 0) or 0
+        negs = t.get("negatives", [])
+        pc_h1 = t.get("price_change_h1")
 
+        # Penalty count from negative signals
+        bad_signals = sum(1 for bad in [
+            "DEAD", "death spiral", "ONLY SELLS", "on bonding curve",
+            "HEAVY SELLS", "stagnant volume", "no volume",
+            "decline h1", "declining h6", "collapsed h24", "down h24",
+            "steep decline", "CRASH",
+        ] if bad in str(negs))
+
+        # Volume multiplier: $100K=1x, $1M=2x, $10M=3x (linear in log)
+        import math
+        vol_mult = min(vol / 500000, 3.0)  # $500K=1x, cap at 3x  # normalize so $1M = 1.0
+
+        # Penalty for no price data
+        stale_mult = 0.3 if pc_h1 is None else 1.0
+
+        # Composite: heavily weight volume alongside score
+        return score * vol_mult * stale_mult / (1 + bad_signals * 2)
+
+    clean_tokens.sort(key=token_sort_key, reverse=True)
     data["tokens"] = clean_tokens
 
     dst = DOCS_DATA / "tokens.json"
@@ -317,21 +325,6 @@ def export_cross_tokens():
             token["dex_url"] = f"https://dexscreener.com/{chain.lower()}/{addr}"
         token["chain"] = chain
 
-    # Quality filter for cross-tokens
-    tokens = [
-        t for t in tokens
-        if (t.get("score", 0) or 0) >= 15
-        and (t.get("volume_h24", 0) or 0) >= 100000
-        and t.get("price_change_h1") is not None
-        and not any(
-            n in str(t.get("negatives", [])) for n in [
-                "DEAD", "death spiral", "ONLY SELLS", "on bonding curve",
-                "HEAVY SELLS", "stagnant volume", "no volume",
-                "decline h1", "declining h6", "collapsed h24", "down h24",
-                "steep decline",
-            ]
-        )
-    ]
 
     # Get wallet holdings
     db_path = settings.wallets_db_path
@@ -377,10 +370,24 @@ def export_cross_tokens():
         finally:
             conn.close()
 
-    # Sort by wallet_count, then score
-    tokens.sort(
-        key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True
-    )
+    # Prioritize: high score + high volume + wallet count + no negative signals
+    import math
+    def cross_token_sort(t):
+        score = t.get("score", 0) or 0
+        vol = t.get("volume_h24", 0) or 0
+        wallets = t.get("wallet_count", 0)
+        negs = t.get("negatives", [])
+        pc_h1 = t.get("price_change_h1")
+        bad_signals = sum(1 for bad in [
+            "DEAD", "death spiral", "ONLY SELLS", "on bonding curve",
+            "HEAVY SELLS", "stagnant volume", "no volume",
+            "decline h1", "declining h6", "collapsed h24", "down h24",
+            "steep decline", "CRASH",
+        ] if bad in str(negs))
+        vol_mult = min(vol / 500000, 3.0)  # $500K=1x, cap at 3x
+        stale_mult = 0.3 if pc_h1 is None else 1.0
+        return score * vol_mult * stale_mult * (1 + wallets * 0.3) / (1 + bad_signals * 2)
+    tokens.sort(key=cross_token_sort, reverse=True)
 
     # Convert sets to lists
     for t in tokens:
@@ -433,22 +440,6 @@ def export_cross_wallets():
         if not token.get("dex_url") and addr and chain != "unknown":
             token["dex_url"] = f"https://dexscreener.com/{chain.lower()}/{addr}"
         token["chain"] = chain
-
-    # Quality filter for cross-wallets
-    tokens = [
-        t for t in tokens
-        if (t.get("score", 0) or 0) >= 15
-        and (t.get("volume_h24", 0) or 0) >= 100000
-        and t.get("price_change_h1") is not None
-        and not any(
-            n in str(t.get("negatives", [])) for n in [
-                "DEAD", "death spiral", "ONLY SELLS", "on bonding curve",
-                "HEAVY SELLS", "stagnant volume", "no volume",
-                "decline h1", "declining h6", "collapsed h24", "down h24",
-                "steep decline",
-            ]
-        )
-    ]
 
     top_token_addrs = {
         t.get("contract_address", "") for t in tokens if t.get("contract_address")
