@@ -56,14 +56,30 @@ fi
 
 # Step 4: Install Python dependencies
 echo "[4/7] Installing Python dependencies..."
-pip install -e ".[all]" > /dev/null 2>&1
+PIP_LOG=$(mktemp /tmp/hermes-install-pip.XXXXXX.log)
+if ! python3 -m pip install -e ".[all]" > "$PIP_LOG" 2>&1; then
+    if grep -q "externally-managed-environment" "$PIP_LOG"; then
+        echo -e "  ${YELLOW}!${NC} PEP 668 environment detected, retrying with --break-system-packages..."
+        if ! python3 -m pip install --break-system-packages --ignore-installed -e ".[all]" > "$PIP_LOG" 2>&1; then
+            echo -e "  ${RED}✗${NC} Python dependency installation failed"
+            tail -40 "$PIP_LOG"
+            exit 1
+        fi
+    else
+        echo -e "  ${RED}✗${NC} Python dependency installation failed"
+        tail -40 "$PIP_LOG"
+        exit 1
+    fi
+fi
 echo -e "  ${GREEN}✓${NC} Python packages installed"
 
 # Step 5: Create directories
 echo "[5/7] Creating directories..."
+mkdir -p ~/.hermes/data
 mkdir -p ~/.hermes/data/token_screener
 mkdir -p ~/.hermes/logs
 mkdir -p ~/.hermes/scripts
+mkdir -p ~/.hermes/.telegram_session
 echo -e "  ${GREEN}✓${NC} Directories created at ~/.hermes/"
 
 # Step 6: Set up environment file
@@ -78,17 +94,56 @@ fi
 
 # Step 7: Initialize databases
 echo "[7/7] Initializing databases..."
-python3 -c "
-import sqlite3
-from hermes_screener.utils import ensure_tables
+if python3 - <<'PY'
 import os
+import sqlite3
 
-db_path = os.path.expanduser('~/.hermes/data/central_contracts.db')
-conn = sqlite3.connect(db_path)
-ensure_tables(conn)
+DB_PATH = os.path.expanduser('~/.hermes/data/central_contracts.db')
+conn = sqlite3.connect(DB_PATH)
+conn.executescript('''
+CREATE TABLE IF NOT EXISTS telegram_contract_calls (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    channel_id TEXT NOT NULL,
+    message_id INTEGER NOT NULL,
+    chain TEXT,
+    contract_address TEXT NOT NULL,
+    raw_address TEXT,
+    address_source TEXT,
+    message_text TEXT,
+    observed_at REAL,
+    session_source TEXT,
+    inserted_at REAL NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_calls_msg_contract
+    ON telegram_contract_calls(message_id, contract_address);
+
+CREATE TABLE IF NOT EXISTS telegram_contracts_unique (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chain TEXT NOT NULL,
+    contract_address TEXT NOT NULL,
+    first_seen_at REAL NOT NULL,
+    last_seen_at REAL NOT NULL,
+    mentions INTEGER NOT NULL,
+    last_channel_id TEXT,
+    last_message_id INTEGER,
+    last_raw_address TEXT,
+    last_source TEXT,
+    last_message_text TEXT,
+    channel_count INTEGER NOT NULL DEFAULT 0,
+    channels_seen TEXT DEFAULT ''
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_chain_addr
+    ON telegram_contracts_unique(chain, contract_address);
+''')
+conn.commit()
 conn.close()
 print('  ✓ Contracts database initialized')
-" 2>/dev/null || echo -e "  ${YELLOW}!${NC} Database initialization skipped (will auto-create on first run)"
+PY
+then
+    :
+else
+    echo -e "  ${YELLOW}!${NC} Database initialization skipped (will auto-create on first run)"
+fi
 
 echo ""
 echo "============================================"
@@ -99,12 +154,12 @@ echo "Next steps:"
 echo "  1. Edit ~/.hermes/.env and add your API keys"
 echo ""
 echo "  2. Test the pipeline:"
-echo "     python3 scripts/discovery/telegram_scraper.py --dry-run"
-echo "     python3 scripts/discovery/token_discovery.py"
-echo "     python3 scripts/enrichment/token_enricher.py --max-tokens 10"
+echo "     python3 scripts/telegram_scraper.py --dry-run --max-dialogs 5"
+echo "     python3 scripts/token_discovery.py"
+echo "     python3 scripts/token_enricher.py --max-tokens 10"
 echo ""
 echo "  3. Set up cron jobs (see README.md)"
 echo ""
 echo "  4. Start the dashboard:"
-echo "     python3 -m hermes_screener.cli dashboard"
+echo "     uvicorn hermes_screener.dashboard.app:app --host 0.0.0.0 --port 8080"
 echo ""

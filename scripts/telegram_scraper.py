@@ -361,7 +361,7 @@ async def run_scrape(max_dialogs: int = None, dry_run: bool = False):
     try:
         await client.connect()
         if not await client.is_user_authorized():
-            log.error("Session not authorized. Run telegram_user.py first.")
+            log.error("Session not authorized. Authenticate your Telegram session first (Telethon login required).")
             return {"status": "error", "reason": "not_authorized"}
 
         log.info("Fetching all dialogs...")

@@ -617,6 +617,7 @@ def run_enricher():
 
     # Save output
     output = {
+        "status": "ok",
         "generated_at": datetime.utcnow().isoformat(),
         "total_candidates": len(candidates),
         "enriched": len(enriched),

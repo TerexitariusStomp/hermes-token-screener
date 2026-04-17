@@ -149,7 +149,14 @@ class Settings(BaseSettings):
 
     def ensure_dirs(self) -> None:
         """Create required directories (idempotent)."""
-        for d in [self.log_dir, self.output_path.parent, self.db_path.parent]:
+        required_dirs = [
+            self.log_dir,
+            self.output_path.parent,
+            self.db_path.parent,
+            self.session_path.parent,
+            self.state_file.parent,
+        ]
+        for d in required_dirs:
             d.mkdir(parents=True, exist_ok=True)
 
     def api_key_masked(self, field_name: str) -> str:
