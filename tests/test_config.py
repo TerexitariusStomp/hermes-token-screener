@@ -32,9 +32,9 @@ def _fresh(**kw):
 
 def test_defaults():
     s = _fresh()
-    assert s.top_n == 100
-    assert s.max_enrich == 300
-    assert s.min_channels == 2
+    assert s.top_n == 1200
+    assert s.max_enrich == 2000
+    assert s.min_channels == 1
     assert s.request_timeout == 15
     assert s.log_level == "INFO"
     assert s.metrics_port == 9090
