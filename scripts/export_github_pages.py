@@ -595,6 +595,133 @@ def export_tiered_wallets():
     print(f"Exported tiered wallets ({len(tier_order_out)} tiers) to {dst}")
 
 
+def export_smart_money():
+    """Export smart money purchase data for GitHub Pages."""
+    from datetime import datetime, timezone
+
+    db_path = settings.wallets_db_path
+    if not db_path.exists():
+        print("No wallet DB, skipping smart money export")
+        return
+
+    conn = sqlite3.connect(str(db_path))
+    conn.row_factory = sqlite3.Row
+    try:
+        # Export smart money tokens (top by buyer count)
+        token_rows = conn.execute("""
+            SELECT t.token_address, t.chain, t.symbol, t.buyer_count,
+                   t.total_buy_usd, t.avg_buy_usd, t.top_buyer_score,
+                   t.first_seen_at, t.discovery_wallets
+            FROM smart_money_tokens t
+            ORDER BY t.buyer_count DESC, t.total_buy_usd DESC
+            LIMIT 200
+        """).fetchall()
+
+        tokens = []
+        for r in token_rows:
+            chain = normalize_chain(r["chain"] or "")
+            wallets_json = r["discovery_wallets"] or "[]"
+            try:
+                wallet_list = json.loads(wallets_json)
+            except (json.JSONDecodeError, TypeError):
+                wallet_list = []
+            tokens.append({
+                "token_address": r["token_address"],
+                "chain": chain,
+                "symbol": r["symbol"] or "",
+                "buyer_count": r["buyer_count"] or 0,
+                "total_buy_usd": r["total_buy_usd"] or 0,
+                "avg_buy_usd": r["avg_buy_usd"] or 0,
+                "top_buyer_score": r["top_buyer_score"] or 0,
+                "first_seen": r["first_seen_at"],
+                "buyer_wallets": wallet_list[:5],
+                "mcap_tier": "< $50K",  # Will be enriched later
+            })
+
+        # Enrich with FDV from token data
+        token_lookup = {}
+        data_dir = settings.output_path.parent
+        for src in [data_dir / "top100_phase4_social.json", settings.output_path]:
+            if src.exists():
+                with open(src) as f:
+                    raw = json.load(f)
+                for t in (raw.get("tokens") or raw.get("top_tokens") or []):
+                    addr = t.get("contract_address", "")
+                    if addr:
+                        fdv = t.get("fdv") or t.get("market_cap") or 0
+                        token_lookup[addr] = {
+                            "fdv": fdv,
+                            "score": t.get("score", 0),
+                            "dex_url": t.get("dex_url", ""),
+                        }
+                break
+
+        for t in tokens:
+            info = token_lookup.get(t["token_address"], {})
+            t["fdv"] = info.get("fdv", 0)
+            t["score"] = info.get("score", 0)
+            t["dex_url"] = info.get("dex_url", "")
+            t["mcap_tier"] = mcap_tier_label(t["fdv"])
+
+        dst = DOCS_DATA / "smart-money-tokens.json"
+        with open(dst, "w") as f:
+            json.dump(
+                {
+                    "tokens": tokens,
+                    "generated_at_iso": datetime.now(timezone.utc).isoformat(),
+                },
+                f,
+                indent=2,
+                default=str,
+            )
+        print(f"Exported {len(tokens)} smart money tokens to {dst}")
+
+        # Export recent purchases (last 1000 buys)
+        purchase_rows = conn.execute("""
+            SELECT p.wallet_address, p.chain, p.token_address, p.token_symbol,
+                   p.amount_usd, p.price_usd, p.timestamp, p.wallet_score, p.wallet_tags
+            FROM smart_money_purchases p
+            WHERE p.side = 'buy'
+            ORDER BY p.timestamp DESC
+            LIMIT 1000
+        """).fetchall()
+
+        purchases = []
+        for r in purchase_rows:
+            chain = normalize_chain(r["chain"] or "")
+            purchases.append(
+                {
+                    "wallet": r["wallet_address"],
+                    "chain": chain,
+                    "token_address": r["token_address"],
+                    "symbol": r["token_symbol"] or "",
+                    "amount_usd": r["amount_usd"] or 0,
+                    "price_usd": r["price_usd"] or 0,
+                    "timestamp": r["timestamp"] or 0,
+                    "wallet_score": r["wallet_score"] or 0,
+                    "wallet_tags": r["wallet_tags"] or "",
+                }
+            )
+
+        dst = DOCS_DATA / "smart-money-purchases.json"
+        with open(dst, "w") as f:
+            json.dump(
+                {
+                    "purchases": purchases,
+                    "generated_at_iso": datetime.now(timezone.utc).isoformat(),
+                },
+                f,
+                indent=2,
+                default=str,
+            )
+        print(f"Exported {len(purchases)} smart money purchases to {dst}")
+
+    except Exception as e:
+        print(f"ERROR in smart money export: {e}")
+    finally:
+        conn.close()
+
+
 if __name__ == "__main__":
     print("Exporting data for GitHub Pages...")
     DOCS_DATA.mkdir(parents=True, exist_ok=True)
@@ -603,6 +730,7 @@ if __name__ == "__main__":
     export_cross_tokens()
     export_cross_wallets()
     export_tiered_wallets()
+    export_smart_money()
     print("\nDone! Now commit and push the docs/data/ folder:")
     print("  cd /path/to/hermes-token-screener")
     print("  git add docs/data/")
