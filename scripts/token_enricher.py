@@ -79,7 +79,7 @@ start_metrics_server()
 # ══════════════════════════════════════════════════════════════════════════════
 
 
-def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
+def score_token(token: dict) -> tuple[float, list[str], list[str]]:
     dex = token.get("dex", {})
     score = 0.0
     positives = []
