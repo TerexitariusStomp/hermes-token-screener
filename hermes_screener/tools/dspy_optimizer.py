@@ -3,7 +3,7 @@ import os
 import sqlite3
 from datetime import datetime
 from pathlib import Path
-from typing import TypedDict
+from hermes_screener.types.template_types import TemplateSuggestion
 
 import yaml
 
@@ -11,14 +11,6 @@ try:
     from tools.registry import registry
 except ImportError:
     registry = None
-
-
-class TemplateSuggestion(TypedDict):
-    template: str
-    score: float
-    rationale: str
-    examples: list[dict]
-    metrics: dict[str, float]
 
 
 class DSPOptimizer:
@@ -91,9 +83,7 @@ class DSPOptimizer:
         scored.sort(reverse=True, key=lambda x: x[0])
         return [h for (_, h) in scored[:n]]
 
-    def _generate_template_variants(
-        self, tool_name: str, current_template: str
-    ) -> list[str]:
+    def _generate_template_variants(self, tool_name: str, current_template: str) -> list[str]:
         """Generate prompt template variants for A/B testing."""
         variants = []
 
@@ -133,9 +123,7 @@ class DSPOptimizer:
 
         return variants
 
-    def _score_template(
-        self, template: str, history: list[dict], metrics: dict[str, float]
-    ) -> float:
+    def _score_template(self, template: str, history: list[dict], metrics: dict[str, float]) -> float:
         """Score a template based on historical performance and structure."""
         score = 0.0
 
@@ -235,39 +223,27 @@ class DSPOptimizer:
             "task_id": task_id,
         }
 
-    def _generate_rationale(
-        self, template: str, metrics: dict[str, float], examples: list[dict]
-    ) -> str:
+    def _generate_rationale(self, template: str, metrics: dict[str, float], examples: list[dict]) -> str:
         """Generate rationale for why a template might perform well."""
         rationale = []
 
         if metrics["success_rate"] > 0.7:
-            rationale.append(
-                "High success rate in historical executions suggests this approach is reliable."
-            )
+            rationale.append("High success rate in historical executions suggests this approach is reliable.")
 
         if "{{parameters}}" in template:
-            rationale.append(
-                "Explicit parameter placeholders help ensure all required inputs are considered."
-            )
+            rationale.append("Explicit parameter placeholders help ensure all required inputs are considered.")
 
         if "{{context}}" in template:
-            rationale.append(
-                "Context placeholders allow for better situational adaptation."
-            )
+            rationale.append("Context placeholders allow for better situational adaptation.")
 
         if "step" in template.lower() or "analysis" in template.lower():
             rationale.append("Chain-of-thought elements may improve reasoning quality.")
 
         if len(template.split("\n")) > 5:
-            rationale.append(
-                "Detailed templates provide clearer guidance for execution."
-            )
+            rationale.append("Detailed templates provide clearer guidance for execution.")
 
         if not rationale:
-            rationale.append(
-                "This template provides a balanced approach to tool execution."
-            )
+            rationale.append("This template provides a balanced approach to tool execution.")
 
         return " ".join(rationale)
 
@@ -293,7 +269,5 @@ if registry is not None:
             },
             "required": ["tool_name"],
         },
-        handler=lambda args, **kw: dspy_optimize_tool(
-            **args, task_id=kw.get("task_id")
-        ),
+        handler=lambda args, **kw: dspy_optimize_tool(**args, task_id=kw.get("task_id")),
     )

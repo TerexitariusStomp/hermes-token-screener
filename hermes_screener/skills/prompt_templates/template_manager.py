@@ -8,26 +8,9 @@ YAML-based persistence with performance tracking.
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import TypedDict
 
 import yaml
-
-
-class TemplateMetadata(TypedDict, total=False):
-    version: int
-    created_at: str
-    updated_at: str
-    usage_count: int
-    avg_score: float
-    category: str
-    source: str
-
-
-class TemplateEntry(TypedDict):
-    content: str
-    metadata: TemplateMetadata
-    scores: list[dict[str, float]]
-    variants: list[dict]
+from hermes_screener.types.template_types import TemplateMetadata, TemplateEntry
 
 
 class TemplateStorage:
@@ -133,9 +116,7 @@ class TemplateStorage:
                 )
         return results
 
-    def score_template(
-        self, name: str, metric_value: float, metric_name: str = "quality"
-    ) -> bool:
+    def score_template(self, name: str, metric_value: float, metric_name: str = "quality") -> bool:
         """Record a performance score for a template. Returns True if found."""
         entry = self.load_template(name)
         if not entry:
@@ -210,9 +191,7 @@ class TemplateStorage:
         """Generate a standardized variant name."""
         return f"{base_name}_v{index}"
 
-    def copy_as_variant(
-        self, name: str, variant_name: str, modifications: str = ""
-    ) -> str | None:
+    def copy_as_variant(self, name: str, variant_name: str, modifications: str = "") -> str | None:
         """Copy current template as a new variant with optional modifications note."""
         entry = self.load_template(name)
         if not entry:
