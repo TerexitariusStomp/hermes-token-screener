@@ -175,6 +175,137 @@ try:
 except Exception as e:
     print('  deBridge ingestion failed:', e)
 
+# D) CCIP official chain data from Chainlink docs repo
+try:
+    ccip = http_json('https://raw.githubusercontent.com/smartcontractkit/documentation/main/src/config/data/ccip/v1_2_0/mainnet/chains.json', timeout=60)
+
+    def ccip_chain_name(slug: str):
+        s = slug.lower().strip()
+        # strip common suffixes
+        for suf in ['-mainnet', '-mainnet-opbnb-1', '-mainnet-1']:
+            if s.endswith(suf):
+                s = s[:-len(suf)]
+        mapping = {
+            'ethereum': 'Ethereum',
+            'arbitrum': 'Arbitrum',
+            'arbitrum-one': 'Arbitrum',
+            'optimism': 'Optimism',
+            'base': 'Base',
+            'polygon': 'Polygon',
+            'avalanche': 'Avalanche',
+            'binance-smart-chain': 'Binance',
+            'opbnb': 'Op_Bnb',
+            'linea': 'Linea',
+            'scroll': 'Scroll',
+            'x-layer': 'X Layer',
+            'xlayer': 'X Layer',
+            'apechain': 'ApeChain',
+            'berachain': 'Berachain',
+            'sonic': 'Sonic',
+            'world-chain': 'World Chain',
+            'worldchain': 'World Chain',
+            'zksync': 'zkSync Era',
+            'zksync-era': 'zkSync Era',
+            'mantle': 'Mantle',
+            'mode': 'Mode',
+            'fraxtal': 'Fraxtal',
+            'soneium': 'Soneium',
+            'unichain': 'Unichain',
+            'abstract': 'Abstract',
+            'ink': 'Ink',
+            'celo': 'Celo',
+            'gnosis': 'Gnosis',
+            'fantom': 'Fantom',
+            'metis': 'Metis',
+            'boba': 'Boba',
+            'blast': 'Blast',
+            'taiko': 'Taiko',
+            'ronin': 'Ronin',
+            'polygon-zkevm': 'Polygon zkEVM',
+            'zircuit': 'Zircuit',
+            'lisk': 'Lisk',
+            'kroma': 'Kroma',
+            'xdc': 'XDC',
+            'sei': 'Sei',
+            'injective': 'Injective',
+            'solana': 'Solana',
+            'sui': 'Sui',
+            'aptos': 'Aptos',
+            'tron': 'Tron',
+            'near': 'Near',
+            'ton': 'TON',
+            'bitcoin': 'Bitcoin',
+            'hedera': 'Hedera',
+            'stellar': 'Stellar',
+            'tezos': 'Tezos',
+            'cardano': 'Cardano',
+            'osmosis': 'Osmosis',
+            'cosmos-hub': 'Cosmos Hub',
+        }
+        if s in mapping:
+            return mapping[s]
+        # fallback title-case with separators removed
+        return s.replace('-', ' ').title()
+
+    added = 0
+    for slug, cfg in ccip.items():
+        chain = ccip_chain_name(slug)
+        for field in ['router', 'armProxy', 'registryModule', 'tokenAdminRegistry', 'tokenPoolFactory']:
+            obj = cfg.get(field)
+            if isinstance(obj, dict):
+                addr = obj.get('address')
+                if isinstance(addr, str) and re.fullmatch(r'0x[a-fA-F0-9]{40}', addr):
+                    add_candidate('CCIP', field, chain, None, addr, 'chainlink-docs/ccip/chains.json')
+                    added += 1
+    print(f'  CCIP candidates added: {added}')
+except Exception as e:
+    print('  CCIP ingestion failed:', e)
+
+# E) Connext official deployments
+try:
+    connext = http_json('https://raw.githubusercontent.com/connext/monorepo/main/packages/deployments/contracts/deployments.json', timeout=90)
+    chainlist_tmp = http_json('https://chainid.network/chains.json', timeout=60)
+    by_id_tmp = {c.get('chainId'): c.get('name') for c in chainlist_tmp if isinstance(c.get('chainId'), int)}
+
+    added = 0
+    for cid_s, arr in connext.items():
+        try:
+            cid = int(cid_s)
+        except Exception:
+            cid = None
+        if not isinstance(arr, list) or not arr:
+            continue
+        rec = arr[0] if isinstance(arr[0], dict) else {}
+        contracts = rec.get('contracts', {}) if isinstance(rec, dict) else {}
+
+        chain_name = by_id_tmp.get(cid)
+        if not chain_name:
+            # fallback to config name, but avoid generic mainnet labels
+            nm = str(rec.get('name', f'chain-{cid_s}'))
+            if nm.lower() in {'mainnet','testnet','local','devnet'}:
+                chain_name = f'Chain {cid_s}'
+            else:
+                chain_name = nm.title()
+
+        for cname, cv in contracts.items():
+            if not isinstance(cv, dict):
+                continue
+            addr = cv.get('address')
+            if not (isinstance(addr, str) and re.fullmatch(r'0x[a-fA-F0-9]{40}', addr)):
+                continue
+
+            # bridge-relevant Connext contracts
+            low = cname.lower()
+            if any(k in low for k in [
+                'connext', 'connector', 'rootmanager', 'merkletreemanager', 'relayerproxy', 'bridge'
+            ]):
+                add_candidate('Connext', cname, chain_name, cid, addr, 'connext/deployments.json')
+                added += 1
+
+    print(f'  Connext candidates added: {added}')
+except Exception as e:
+    print('  Connext ingestion failed:', e)
+
 # dedupe candidates
 uniq = {}
 for r in candidates:
@@ -364,16 +495,23 @@ for r in candidates:
 PROTO_MAP = {
     'layerzero':'layerzero', 'wormhole':'wormhole', 'axelar':'axelar', 'stargate':'stargate',
     'across':'across', 'debridge':'debridge', 'hop':'hop', 'cbridge':'cbridge', 'celer':'cbridge',
-    'ccip':'ccip', 'ibc':'ibc', 'xcm':'xcm', 'mayachain':'mayachain', 'thorchain':'thorchain',
+    'ccip':'ccip', 'connext':'connext',
+    'ibc':'ibc', 'xcm':'xcm', 'mayachain':'mayachain', 'thorchain':'thorchain',
     'rainbow bridge':'rainbow-bridge', 'allbridge':'allbridge', 'multichain':'multichain',
-    'connext':'connext', 'poly network':'poly-network', 'wanchain':'wanchain',
+    'poly network':'poly-network', 'wanchain':'wanchain',
 }
 
 MODULE_BASED = {'ibc','xcm','thorchain','mayachain'}
 NATIVE_LABELS = ['bridge','rollup','native','op stack']
 
 report_rows = []
-coverage = {'with_tested_contracts':0, 'without_tested_contracts':0, 'total':len(chains)}
+coverage = {
+    'with_tested_contracts':0,
+    'without_tested_contracts':0,
+    'with_bridge_intel':0,
+    'without_bridge_intel':0,
+    'total':len(chains)
+}
 
 for ch in chains:
     cname = ch['chain']
@@ -381,6 +519,7 @@ for ch in chains:
     blabels = [b.strip() for b in ch['bridges'].split(',') if b.strip()]
     bitems = []
     has_any = False
+    has_intel = False
 
     for b in blabels:
         key = re.sub(r'\s*\(.*?\)', '', b.lower()).strip()
@@ -390,7 +529,7 @@ for ch in chains:
                 mapped = v
                 break
 
-        if mapped in {'layerzero','wormhole','axelar','stargate','across','debridge','hop','cbridge'}:
+        if mapped in {'layerzero','wormhole','axelar','stargate','across','debridge','hop','cbridge','ccip','connext'}:
             cand = []
             for nm in {cname, ccanon, cname.replace(' ', ''), cname.title()}:
                 cand.extend(idx.get((mapped, nm.lower()), []))
@@ -401,6 +540,7 @@ for ch in chains:
             ok = [r for r in lst if r.get('test_status') == 'ok']
             if lst:
                 has_any = True
+                has_intel = True
             bitems.append({
                 'bridge': b,
                 'protocol': mapped,
@@ -410,6 +550,7 @@ for ch in chains:
                 'contracts': lst[:140],
             })
         elif mapped in MODULE_BASED:
+            has_intel = True
             bitems.append({
                 'bridge': b,
                 'protocol': mapped,
@@ -423,6 +564,7 @@ for ch in chains:
             itype = 'native_or_unknown'
             if any(x in key for x in NATIVE_LABELS):
                 itype = 'native_bridge_label'
+                has_intel = True
             bitems.append({
                 'bridge': b,
                 'protocol': mapped or 'unknown',
@@ -437,6 +579,11 @@ for ch in chains:
         coverage['with_tested_contracts'] += 1
     else:
         coverage['without_tested_contracts'] += 1
+
+    if has_any or has_intel:
+        coverage['with_bridge_intel'] += 1
+    else:
+        coverage['without_bridge_intel'] += 1
 
     report_rows.append({
         'chain': cname,

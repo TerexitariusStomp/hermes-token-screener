@@ -1,12 +1,14 @@
 {
-  "generated_at": "2026-04-18 06:50:38 UTC",
+  "generated_at": "2026-04-18 07:02:56 UTC",
   "coverage": {
     "with_tested_contracts": 46,
     "without_tested_contracts": 194,
+    "with_bridge_intel": 199,
+    "without_bridge_intel": 41,
     "total": 240
   },
   "source_summary": {
-    "total_records": 1932,
+    "total_records": 3075,
     "by_protocol": {
       "LayerZero": 628,
       "Stargate": 360,
@@ -15,15 +17,17 @@
       "Wormhole": 53,
       "cBridge": 11,
       "Hop": 418,
-      "deBridge": 107
+      "deBridge": 107,
+      "CCIP": 383,
+      "Connext": 760
     },
     "status": {
-      "ok": 1524,
-      "no_rpc": 95,
-      "rpc_error": 104,
-      "no_code": 209
+      "ok": 2231,
+      "no_rpc": 145,
+      "rpc_error": 344,
+      "no_code": 355
     },
-    "tested_unique": 1732
+    "tested_unique": 2495
   },
   "chains": [
     {
@@ -67,7 +71,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 48012
               }
             },
@@ -101,7 +105,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 4610
               }
             },
@@ -169,7 +173,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 4610
               }
             }
@@ -212,7 +216,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 1362
               }
             },
@@ -246,7 +250,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 1362
               }
             }
@@ -323,7 +327,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 3312
               }
             },
@@ -391,7 +395,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 5676
               }
             },
@@ -425,7 +429,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 11256
               }
             },
@@ -493,7 +497,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 5778
               }
             },
@@ -527,7 +531,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 844
               }
             },
@@ -570,11 +574,10 @@
         {
           "bridge": "CCIP",
           "protocol": "ccip",
-          "integration_type": "native_or_unknown",
+          "integration_type": "evm_contracts",
           "contracts_found": 0,
           "contracts_ok": 0,
-          "contracts": [],
-          "note": "No machine-readable contract source integrated yet for this bridge label"
+          "contracts": []
         },
         {
           "bridge": "Stargate",
@@ -647,7 +650,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 47112
               }
             },
@@ -715,7 +718,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 47484
               }
             },
@@ -749,7 +752,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 22152
               }
             },
@@ -987,7 +990,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 47112
               }
             },
@@ -1021,7 +1024,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 3706
               }
             }
@@ -1100,7 +1103,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 9756
               }
             },
@@ -1135,7 +1138,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 35126
               }
             },
@@ -1205,7 +1208,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 38600
               }
             },
@@ -1240,7 +1243,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 9756
               }
             },
@@ -1275,7 +1278,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 35126
               }
             },
@@ -1310,7 +1313,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 22152
               }
             },
@@ -1415,7 +1418,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 38748
               }
             },
@@ -1485,7 +1488,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 38748
               }
             },
@@ -1590,7 +1593,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 38294
               }
             },
@@ -1660,7 +1663,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 8322
               }
             },
@@ -1695,7 +1698,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 38748
               }
             },
@@ -1730,7 +1733,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 8322
               }
             },
@@ -1765,7 +1768,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 38748
               }
             },
@@ -1800,7 +1803,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 17602
               }
             },
@@ -1835,7 +1838,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 38748
               }
             },
@@ -1870,7 +1873,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 16602
               }
             },
@@ -1992,7 +1995,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://ethereum-rpc.publicnode.com",
+                "rpc": "https://eth.llamarpc.com",
                 "code_len": 15468
               }
             },
@@ -2062,7 +2065,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 4284
               }
             },
@@ -2097,7 +2100,7 @@
               "resolved_chain_id": 1,
               "test_status": "ok",
               "test_meta": {
-                "rpc": "https://eth.llamarpc.com",
+                "rpc": "https://ethereum-rpc.publicnode.com",
                 "code_len": 4284
               }
             },
@@ -2238,11 +2241,10 @@
         {
           "bridge": "CCIP",
           "protocol": "ccip",
-          "integration_type": "native_or_unknown",
+          "integration_type": "evm_contracts",
           "contracts_found": 0,
           "contracts_ok": 0,
-          "contracts": [],
-          "note": "No machine-readable contract source integrated yet for this bridge label"
+          "contracts": []
         },
         {
           "bridge": "Hop",
@@ -4719,11 +4721,10 @@
         {
           "bridge": "CCIP",
           "protocol": "ccip",
-          "integration_type": "native_or_unknown",
+          "integration_type": "evm_contracts",
           "contracts_found": 0,
           "contracts_ok": 0,
-          "contracts": [],
-          "note": "No machine-readable contract source integrated yet for this bridge label"
+          "contracts": []
         },
         {
           "bridge": "Across",
@@ -5429,11 +5430,10 @@
         {
           "bridge": "CCIP",
           "protocol": "ccip",
-          "integration_type": "native_or_unknown",
+          "integration_type": "evm_contracts",
           "contracts_found": 0,
           "contracts_ok": 0,
-          "contracts": [],
-          "note": "No machine-readable contract source integrated yet for this bridge label"
+          "contracts": []
         },
         {
           "bridge": "Hop",
@@ -8038,11 +8038,111 @@
         {
           "bridge": "CCIP",
           "protocol": "ccip",
-          "integration_type": "native_or_unknown",
-          "contracts_found": 0,
-          "contracts_ok": 0,
-          "contracts": [],
-          "note": "No machine-readable contract source integrated yet for this bridge label"
+          "integration_type": "evm_contracts",
+          "contracts_found": 5,
+          "contracts_ok": 5,
+          "contracts": [
+            {
+              "protocol": "CCIP",
+              "contract": "router",
+              "chain": "Avalanche",
+              "chain_id": null,
+              "address": "0xF4c7E640EdA248ef95972845a62bdC74237805dB",
+              "source": "chainlink-docs/ccip/chains.json",
+              "rpc_candidates": [
+                "https://api.avax.network/ext/bc/C/rpc",
+                "https://avalanche-c-chain-rpc.publicnode.com",
+                "wss://avalanche-c-chain-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Avalanche C-Chain",
+              "resolved_chain_id": 43114,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://api.avax.network/ext/bc/C/rpc",
+                "code_len": 22262
+              }
+            },
+            {
+              "protocol": "CCIP",
+              "contract": "armProxy",
+              "chain": "Avalanche",
+              "chain_id": null,
+              "address": "0xcBD48A8eB077381c3c4Eb36b402d7283aB2b11Bc",
+              "source": "chainlink-docs/ccip/chains.json",
+              "rpc_candidates": [
+                "https://api.avax.network/ext/bc/C/rpc",
+                "https://avalanche-c-chain-rpc.publicnode.com",
+                "wss://avalanche-c-chain-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Avalanche C-Chain",
+              "resolved_chain_id": 43114,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://api.avax.network/ext/bc/C/rpc",
+                "code_len": 2906
+              }
+            },
+            {
+              "protocol": "CCIP",
+              "contract": "registryModule",
+              "chain": "Avalanche",
+              "chain_id": null,
+              "address": "0x76Aa17dCda9E8529149E76e9ffaE4aD1C4AD701B",
+              "source": "chainlink-docs/ccip/chains.json",
+              "rpc_candidates": [
+                "https://api.avax.network/ext/bc/C/rpc",
+                "https://avalanche-c-chain-rpc.publicnode.com",
+                "wss://avalanche-c-chain-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Avalanche C-Chain",
+              "resolved_chain_id": 43114,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://api.avax.network/ext/bc/C/rpc",
+                "code_len": 2866
+              }
+            },
+            {
+              "protocol": "CCIP",
+              "contract": "tokenAdminRegistry",
+              "chain": "Avalanche",
+              "chain_id": null,
+              "address": "0xc8df5D618c6a59Cc6A311E96a39450381001464F",
+              "source": "chainlink-docs/ccip/chains.json",
+              "rpc_candidates": [
+                "https://api.avax.network/ext/bc/C/rpc",
+                "https://avalanche-c-chain-rpc.publicnode.com",
+                "wss://avalanche-c-chain-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Avalanche C-Chain",
+              "resolved_chain_id": 43114,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://api.avax.network/ext/bc/C/rpc",
+                "code_len": 10388
+              }
+            },
+            {
+              "protocol": "CCIP",
+              "contract": "tokenPoolFactory",
+              "chain": "Avalanche",
+              "chain_id": null,
+              "address": "0x6378c36C44B28f4d1513e7a5510A8481a23eecda",
+              "source": "chainlink-docs/ccip/chains.json",
+              "rpc_candidates": [
+                "https://api.avax.network/ext/bc/C/rpc",
+                "https://avalanche-c-chain-rpc.publicnode.com",
+                "wss://avalanche-c-chain-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Avalanche C-Chain",
+              "resolved_chain_id": 43114,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://api.avax.network/ext/bc/C/rpc",
+                "code_len": 16076
+              }
+            }
+          ]
         },
         {
           "bridge": "Stargate",
@@ -8158,8 +8258,8 @@
           "note": "No machine-readable contract source integrated yet for this bridge label"
         }
       ],
-      "tested_contract_total": 20,
-      "tested_contract_ok": 20
+      "tested_contract_total": 25,
+      "tested_contract_ok": 25
     },
     {
       "chain": "Optimism",
@@ -8273,11 +8373,10 @@
         {
           "bridge": "CCIP",
           "protocol": "ccip",
-          "integration_type": "native_or_unknown",
+          "integration_type": "evm_contracts",
           "contracts_found": 0,
           "contracts_ok": 0,
-          "contracts": [],
-          "note": "No machine-readable contract source integrated yet for this bridge label"
+          "contracts": []
         },
         {
           "bridge": "Hop",
@@ -14349,11 +14448,475 @@
         {
           "bridge": "Connext",
           "protocol": "connext",
-          "integration_type": "native_or_unknown",
-          "contracts_found": 0,
-          "contracts_ok": 0,
-          "contracts": [],
-          "note": "No machine-readable contract source integrated yet for this bridge label"
+          "integration_type": "evm_contracts",
+          "contracts_found": 16,
+          "contracts_ok": 16,
+          "contracts": [
+            {
+              "protocol": "Connext",
+              "contract": "BridgeFacet",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0x946dBC987876243Ea568E4dB6CAe1efF4a50f054",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 41746
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "BridgeFacetStaging",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0xaC161cF406fF3c70f0BbdaE9cA37076D1c85AF4b",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 41746
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "Connext",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0x5bB83e95f63217CDa6aE3D181BA580Ef377D2109",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 9816
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "ConnextStaging",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0x40D6229356d0b5d25CBc156130e39127CBB9df88",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 9722
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "ConnextStaging_DiamondProxy",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0x40D6229356d0b5d25CBc156130e39127CBB9df88",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 9722
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "Connext_DiamondProxy",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0x5bB83e95f63217CDa6aE3D181BA580Ef377D2109",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 9816
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "GnosisSpokeConnector",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0xDF97CadbcCeE9cfdB12A3e9BB7663E6753A71a0C",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 36058
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "GnosisSpokeConnectorStaging",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0xd781F4072Ea9dA2087f7759e65B17384B72F7c89",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 36058
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "MerkleTreeManager",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0x6e92344d08F8443a9C704452ac66bEFB90D32E12",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 19522
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "MerkleTreeManagerStaging",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0xacE0f0f654E08803F30b3Cb1e601507DB02b4593",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 19522
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "MerkleTreeManagerUpgradeBeacon",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0x88483B3e3B4DD7cEdB8EFcef81F6dC9adb6292D5",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 768
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "MerkleTreeManagerUpgradeBeaconProxy",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0x32155C9d39084F040Ba17890fE8134dbE2a0453f",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 956
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "MerkleTreeManagerUpgradeBeaconProxyStaging",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0x3b9098d80C20aeF0276EE9E44F088f5AD6c2D76C",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 956
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "MerkleTreeManagerUpgradeBeaconStaging",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0x3b3B3916271e5fB90a05A3fe37BB4e36E496550b",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 768
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "RelayerProxy",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0xCbd3E4b6e152a80d701c3Db6c212709610BE1835",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 18072
+              }
+            },
+            {
+              "protocol": "Connext",
+              "contract": "RelayerProxyStaging",
+              "chain": "Gnosis",
+              "chain_id": 100,
+              "address": "0xeab3d8a6BAb0d758791292DFe5e491e583DDAE06",
+              "source": "connext/deployments.json",
+              "rpc_candidates": [
+                "https://rpc.gnosischain.com",
+                "https://gnosis-rpc.publicnode.com",
+                "https://rpc.gnosis.gateway.fm",
+                "https://rpc.ankr.com/gnosis",
+                "https://gnosischain-rpc.gateway.pokt.network",
+                "https://gnosis-mainnet.public.blastapi.io",
+                "https://gnosis.api.onfinality.io/public",
+                "https://gnosis.blockpi.network/v1/rpc/public",
+                "https://web3endpoints.com/gnosischain-mainnet",
+                "https://gnosis.oat.farm",
+                "wss://rpc.gnosischain.com/wss",
+                "wss://gnosis-rpc.publicnode.com"
+              ],
+              "rpc_chain": "Gnosis",
+              "resolved_chain_id": 100,
+              "test_status": "ok",
+              "test_meta": {
+                "rpc": "https://rpc.gnosischain.com",
+                "code_len": 18072
+              }
+            }
+          ]
         },
         {
           "bridge": "Gnosis Bridge",
@@ -14365,8 +14928,8 @@
           "note": "No machine-readable contract source integrated yet for this bridge label"
         }
       ],
-      "tested_contract_total": 70,
-      "tested_contract_ok": 55
+      "tested_contract_total": 86,
+      "tested_contract_ok": 71
     },
     {
       "chain": "Plasma",

@@ -88,6 +88,8 @@ fetch('data/bridge_chain_contract_report.json').then(r=>r.json()).then(d=>{
   document.getElementById('kpis').innerHTML=`
     <div class="kpi"><div class="k">Matrix chains</div><div class="v">${d.coverage.total}</div></div>
     <div class="kpi"><div class="k">Chains with tested contracts</div><div class="v">${d.coverage.with_tested_contracts}</div></div>
+    <div class="kpi"><div class="k">Chains with bridge intel (tested + module/native)</div><div class="v ok">${d.coverage.with_bridge_intel ?? d.coverage.with_tested_contracts}</div></div>
+    <div class="kpi"><div class="k">Chains still unresolved</div><div class="v bad">${d.coverage.without_bridge_intel ?? d.coverage.without_tested_contracts}</div></div>
     <div class="kpi"><div class="k">Total contract records</div><div class="v">${(s.total_records||0).toLocaleString()}</div></div>
     <div class="kpi"><div class="k">On-chain verified (eth_getCode)</div><div class="v ok">${(status.ok||0).toLocaleString()}</div></div>
     <div class="kpi"><div class="k">RPC errors</div><div class="v warn">${(status.rpc_error||0).toLocaleString()}</div></div>
