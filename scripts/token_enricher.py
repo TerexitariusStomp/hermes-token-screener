@@ -39,6 +39,7 @@ from hermes_screener.async_enrichment import run_async_enrichment
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 from hermes_screener.metrics import start_metrics_server
+from hermes_screener.training import ExperienceCollector
 
 # ── Config (from centralized settings) ───────────────────────────────────────
 DB_PATH = settings.db_path
@@ -71,6 +72,7 @@ ZERION_API_KEY = settings.zerion_api_key
 # ── Logging + Metrics ────────────────────────────────────────────────────────
 log = get_logger("token_enricher")
 start_metrics_server()
+collector = ExperienceCollector(source_script="token_enricher")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -605,10 +607,20 @@ def run_enricher():
     # Score tokens
     log.info("Scoring tokens...")
     for token in enriched:
+        try:
+            collector.record_token_enriched(token)
+        except Exception:
+            pass
         score, positives, negatives = score_token(token)
         token["score"] = score
         token["positives"] = positives
         token["negatives"] = negatives
+        try:
+            collector.record_token_scored(
+                token, score, {"positives": positives, "negatives": negatives}
+            )
+        except Exception:
+            pass
 
     # Sort by score
     enriched.sort(key=lambda t: t.get("score", 0), reverse=True)

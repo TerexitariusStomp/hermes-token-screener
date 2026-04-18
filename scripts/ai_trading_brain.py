@@ -29,8 +29,10 @@ import requests
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
+from hermes_screener.training import ExperienceCollector
 
 log = get_logger("ai_trading_brain")
+collector = ExperienceCollector(source_script="ai_trading_brain")
 
 TOP_TOKENS_PATH = settings.output_path
 TRADE_LOG_PATH = (
@@ -376,6 +378,19 @@ def run_trading_brain(
             decision["fdv"] = token.get("fdv", 0)
 
             log_decision(decision)
+            # Record training experience for this AI decision
+            try:
+                collector.record_trade_decision(
+                    token          = token,
+                    decision       = decision.get("decision", "hold"),
+                    confidence     = float(decision.get("confidence", 50)),
+                    position_pct   = float(decision.get("position_pct", 0)),
+                    stop_loss_pct  = float(decision.get("stop_loss_pct", 15)),
+                    take_profit_pct = float(decision.get("take_profit_pct", 100)),
+                    reason         = decision.get("reason", ""),
+                )
+            except Exception:
+                pass
             decisions.append(decision)
 
             if (

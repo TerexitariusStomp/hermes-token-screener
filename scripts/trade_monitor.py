@@ -32,8 +32,10 @@ import requests
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
+from hermes_screener.training import ExperienceCollector
 
 log = get_logger("trade_monitor")
+collector = ExperienceCollector(source_script="trade_monitor")
 
 POSITIONS_PATH = (
     Path.home() / ".hermes" / "data" / "token_screener" / "active_positions.json"
@@ -550,6 +552,20 @@ def run_trade_monitor(execute: bool = False, dry_run: bool = True) -> Dict[str, 
         decision["decay_severity"] = decay.get("severity", 0)
         decision["decay_signals"] = decay.get("signals", [])
         log_monitor_decision(decision)
+        # Record monitor signal for training
+        try:
+            market_snap = market_history.get(address, [{}])[-1] if market_history else {}
+            collector.record_monitor_signal(
+                address         = address,
+                chain           = position.get("chain", ""),
+                symbol          = symbol,
+                market_snapshot = market_snap,
+                decay_severity  = float(decay.get("severity", 0)),
+                ai_action       = decision.get("action", "hold"),
+                ai_reason       = decision.get("reason", ""),
+            )
+        except Exception:
+            pass
 
         action = decision.get("action", "hold")
         confidence = decision.get("confidence", 0)
@@ -591,6 +607,25 @@ def run_trade_monitor(execute: bool = False, dry_run: bool = True) -> Dict[str, 
                         position["exit_price"] = current_price
                         position["exit_time"] = time.time()
                         position["exit_reason"] = decision.get("reason", "")
+                        # Record outcome for training (ground truth reward)
+                        try:
+                            entry_p = float(position.get("entry_price") or 0)
+                            exit_p  = float(current_price or 0)
+                            pnl_pct = ((exit_p - entry_p) / entry_p * 100) if entry_p else 0
+                            hold_h  = (time.time() - float(position.get("entry_time") or time.time())) / 3600
+                            collector.record_trade_outcome(
+                                address      = address,
+                                chain        = position.get("chain", ""),
+                                symbol       = symbol,
+                                entry_price  = entry_p,
+                                exit_price   = exit_p,
+                                hold_hours   = hold_h,
+                                outcome_type = action if action in ("sell","rotate") else "sell",
+                                pnl_pct      = pnl_pct,
+                                exit_reason  = decision.get("reason", ""),
+                            )
+                        except Exception:
+                            pass
                     sells_executed += 1
 
                     # Try to rotate into new token
