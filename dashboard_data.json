@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-04-18T23:15:37.078390",
+  "generated_at": "2026-04-18T23:40:41.953880",
   "total_candidates": 500,
-  "enriched": 4,
+  "enriched": 6,
   "tokens": [
     {
       "symbol": "skals",
@@ -1878,6 +1878,45 @@
       ]
     },
     {
+      "symbol": "QUEST",
+      "chain": "solana",
+      "contract_address": "E7Xfasv5CRTNc6Xb16w36BZk3HRSogh8T4ZFimSnpump",
+      "score": 3.16,
+      "fdv": 1553353,
+      "volume_h24": 212344.33,
+      "volume_h1": 6635.32,
+      "price_change_h1": 2.29,
+      "price_change_h6": 17.16,
+      "price_change_h24": 57.01,
+      "liquidity": 134588.96,
+      "age_hours": 1556.860181115926,
+      "price_usd": "0.001731",
+      "dex_name": "pumpswap",
+      "pair_address": "3FnRyXVLS7E99uEMXvtMKZ8qR554QYiyJhMwoHekwsSJ",
+      "url": "https://dexscreener.com/solana/3fnryxvls7e99uemxvtmkz8qr554qyiyjhmwohekwssj",
+      "twitter_url": "",
+      "telegram_url": "",
+      "website_url": "https://github.com/ahhimquesting/quest-mvp/",
+      "holders": 1030,
+      "honeypot": false,
+      "burn": "burn",
+      "mint_renounced": true,
+      "top10_holder_rate": 0.2726,
+      "rugcheck_score": 1,
+      "rugcheck_rugged": false,
+      "freeze_renounced": true,
+      "social_score": 12,
+      "channel_count": 1,
+      "mentions": 1,
+      "positives": [
+        "burned"
+      ],
+      "negatives": [
+        "stagnant volume",
+        "no txns in 6h"
+      ]
+    },
+    {
       "symbol": "ROCKET",
       "chain": "solana",
       "contract_address": "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump",
@@ -2067,45 +2106,6 @@
       "negatives": [
         "mint not renounced",
         "stagnant volume"
-      ]
-    },
-    {
-      "symbol": "QUEST",
-      "chain": "solana",
-      "contract_address": "E7Xfasv5CRTNc6Xb16w36BZk3HRSogh8T4ZFimSnpump",
-      "score": 2.53,
-      "fdv": 1420853,
-      "volume_h24": 200597.52,
-      "volume_h1": 3979.09,
-      "price_change_h1": -5.63,
-      "price_change_h6": 11.69,
-      "price_change_h24": 38.21,
-      "liquidity": 128545.19,
-      "age_hours": 1555.4435653127712,
-      "price_usd": "0.001583",
-      "dex_name": "pumpswap",
-      "pair_address": "3FnRyXVLS7E99uEMXvtMKZ8qR554QYiyJhMwoHekwsSJ",
-      "url": "https://dexscreener.com/solana/3fnryxvls7e99uemxvtmkz8qr554qyiyjhmwohekwssj",
-      "twitter_url": "",
-      "telegram_url": "",
-      "website_url": "https://github.com/ahhimquesting/quest-mvp/",
-      "holders": 1020,
-      "honeypot": false,
-      "burn": "burn",
-      "mint_renounced": true,
-      "top10_holder_rate": 0.2713,
-      "rugcheck_score": 1,
-      "rugcheck_rugged": false,
-      "freeze_renounced": true,
-      "social_score": 12,
-      "channel_count": 1,
-      "mentions": 1,
-      "positives": [
-        "burned"
-      ],
-      "negatives": [
-        "stagnant volume",
-        "no txns in 6h"
       ]
     },
     {
@@ -3704,22 +3704,22 @@
       "chain": "solana",
       "contract_address": "Cm6fNnMk7NfzStP9CZpsQA2v3jjzbcYGAxdJySmHpump",
       "score": 1.14,
-      "fdv": 6620873,
-      "volume_h24": 609580,
-      "volume_h1": 42120.96,
-      "price_change_h1": -5.07,
-      "price_change_h6": -15.66,
-      "price_change_h24": -23.39,
-      "liquidity": 445152.63,
-      "age_hours": 2384.6538430931937,
-      "price_usd": "0.006620",
+      "fdv": 6436314,
+      "volume_h24": 617553.75,
+      "volume_h1": 34260.52,
+      "price_change_h1": -5.42,
+      "price_change_h6": -16.85,
+      "price_change_h24": -24.23,
+      "liquidity": 439584.8,
+      "age_hours": 2386.0704588964168,
+      "price_usd": "0.006436",
       "dex_name": "pumpswap",
       "pair_address": "FFcYgSSgWHforA9rXXkA48p8YFoz8TSW85Jpo3CQHDyS",
       "url": "https://dexscreener.com/solana/ffcygssgwhfora9rxxka48p8yfoz8tsw85jpo3cqhdys",
       "twitter_url": "https://x.com/buttcoin",
       "telegram_url": "https://t.me/buttcoinonpf",
       "website_url": "https://www.buttcoinfoundation.org/",
-      "holders": 14964,
+      "holders": 14955,
       "honeypot": false,
       "burn": "burn",
       "mint_renounced": true,
@@ -3734,7 +3734,7 @@
         "burned"
       ],
       "negatives": [
-        "down h24 (-23%)",
+        "down h24 (-24%)",
         "stagnant volume",
         "no txns in 6h"
       ]
