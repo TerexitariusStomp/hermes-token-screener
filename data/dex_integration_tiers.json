@@ -1,0 +1,2205 @@
+{
+  "bsc": {
+    "dexscreener_id": "bsc",
+    "liquidity_usd": 64776950.379999995,
+    "tier": "A",
+    "dexes": [
+      "0x8fdedcAb6Ff497f75a65B085Ce0C5d497F23fbd7",
+      "biswap",
+      "pancakeswap",
+      "uniswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "ethereum": {
+    "dexscreener_id": "ethereum",
+    "liquidity_usd": 229858544.63,
+    "tier": "A",
+    "dexes": [
+      "pancakeswap",
+      "uniswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "base": {
+    "dexscreener_id": "base",
+    "liquidity_usd": 172800293.17999998,
+    "tier": "A",
+    "dexes": [
+      "aerodrome",
+      "hydrex",
+      "pancakeswap",
+      "quickswap",
+      "uniswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "arbitrum": {
+    "dexscreener_id": "arbitrum",
+    "liquidity_usd": 25343687.43,
+    "tier": "A",
+    "dexes": [
+      "pancakeswap",
+      "sushiswap",
+      "uniswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "polygon": {
+    "dexscreener_id": "polygon",
+    "liquidity_usd": 13146009.43,
+    "tier": "A",
+    "dexes": [
+      "balancer",
+      "quickswap",
+      "uniswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "avalanche": {
+    "dexscreener_id": "avalanche",
+    "liquidity_usd": 17308564.740000002,
+    "tier": "A",
+    "dexes": [
+      "blackhole",
+      "pharaoh",
+      "traderjoe",
+      "uniswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "fantom": {
+    "dexscreener_id": "fantom",
+    "liquidity_usd": 503414.6,
+    "tier": "B",
+    "dexes": [
+      "beethovenx",
+      "spiritswap",
+      "spookyswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "solana": {
+    "dexscreener_id": "solana",
+    "liquidity_usd": 414580917.45,
+    "tier": "A",
+    "dexes": [
+      "orca",
+      "raydium"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "optimism": {
+    "dexscreener_id": "optimism",
+    "liquidity_usd": 1369742.72,
+    "tier": "A",
+    "dexes": [
+      "uniswap",
+      "velodrome"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "scroll": {
+    "dexscreener_id": "scroll",
+    "liquidity_usd": 48035.05,
+    "tier": "C",
+    "dexes": [
+      "0x1d25AF2b0992bf227b350860Ea80Bad47382CAf6",
+      "0xB11042007e78bE92dc1c79DA1e7eF499b4B31838",
+      "iziswap",
+      "nuri",
+      "syncswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "linea": {
+    "dexscreener_id": "linea",
+    "liquidity_usd": 583570.15,
+    "tier": "B",
+    "dexes": [
+      "etherex",
+      "lynex",
+      "syncswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "zksyncera": {
+    "dexscreener_id": "zksyncera",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "blast": {
+    "dexscreener_id": "blast",
+    "liquidity_usd": 122031.17,
+    "tier": "B",
+    "dexes": [
+      "blade",
+      "fenix",
+      "monoswap",
+      "thruster",
+      "uniswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "sonic": {
+    "dexscreener_id": "sonic",
+    "liquidity_usd": 687032.92,
+    "tier": "B",
+    "dexes": [
+      "beets",
+      "defive",
+      "equalizer",
+      "oku",
+      "shadow-exchange",
+      "solidlycom",
+      "swapx",
+      "wagmi"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "kava": {
+    "dexscreener_id": "kava",
+    "liquidity_usd": 748902.11,
+    "tier": "B",
+    "dexes": [
+      "0xD6E4170C9097A5B5C85E8A39111bF37E47C90076",
+      "elkfinance",
+      "equilibre",
+      "kinetix",
+      "wagmi"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "monad": {
+    "dexscreener_id": "monad",
+    "liquidity_usd": 2457785.44,
+    "tier": "A",
+    "dexes": [
+      "monday-trade",
+      "nad-fun",
+      "pancakeswap",
+      "traderjoe",
+      "uniswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "hyperliquidl1": {
+    "dexscreener_id": "hyperliquidl1",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "cronos": {
+    "dexscreener_id": "cronos",
+    "liquidity_usd": 7806738.220000001,
+    "tier": "A",
+    "dexes": [
+      "0xDdcf30c1A85e5a60d85310d6b0D3952A75a00db4",
+      "cronaswap",
+      "mmfinance",
+      "obsidian-finance",
+      "vvsfinance"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "mantle": {
+    "dexscreener_id": "mantle",
+    "liquidity_usd": 9077830.26,
+    "tier": "A",
+    "dexes": [
+      "0xF883162Ed9c7E8EF604214c964c678E40c9B737C",
+      "agni",
+      "merchantmoe",
+      "oku"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "sui": {
+    "dexscreener_id": "sui",
+    "liquidity_usd": 7399559.25,
+    "tier": "A",
+    "dexes": [
+      "bluefin",
+      "cetus"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 2
+  },
+  "op_bnb": {
+    "dexscreener_id": "op_bnb",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "xlayer": {
+    "dexscreener_id": "xlayer",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "core": {
+    "dexscreener_id": "core",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "polygonzkevm": {
+    "dexscreener_id": "polygonzkevm",
+    "liquidity_usd": 0.0,
+    "tier": "D",
+    "dexes": [
+      "Balancer V2",
+      "Curve",
+      "PancakeSwap V3",
+      "QuickSwap V3"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 4
+  },
+  "kaia": {
+    "dexscreener_id": "kaia",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "mode": {
+    "dexscreener_id": "mode",
+    "liquidity_usd": 9740.939999999999,
+    "tier": "D",
+    "dexes": [
+      "0x423A079C43e4eD7ca561Ef04765eDB796F0Ec6c6",
+      "kim",
+      "supswap",
+      "swapmode",
+      "velodrome"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "aptos": {
+    "dexscreener_id": "aptos",
+    "liquidity_usd": 3668185.01,
+    "tier": "A",
+    "dexes": [
+      "cellana",
+      "liquidswap",
+      "pancakeswap",
+      "thala"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "dogechain": {
+    "dexscreener_id": "dogechain",
+    "liquidity_usd": 25059.690000000002,
+    "tier": "C",
+    "dexes": [
+      "dogeshrek",
+      "dogeswap",
+      "fraxswap",
+      "kibbleswap",
+      "quickswap",
+      "yodeswap"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "astar": {
+    "dexscreener_id": "astar",
+    "liquidity_usd": 272070.0,
+    "tier": "B",
+    "dexes": [
+      "arthswap",
+      "polkaex",
+      "versa",
+      "zenlink"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "moonbeam": {
+    "dexscreener_id": "moonbeam",
+    "liquidity_usd": 0.0,
+    "tier": "D",
+    "dexes": [
+      "Beamswap V2",
+      "StellaSwap V2",
+      "StellaSwap V3",
+      "SushiSwap V2",
+      "Uniswap V3"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 5
+  },
+  "pulsechain": {
+    "dexscreener_id": "pulsechain",
+    "liquidity_usd": 4448631.44,
+    "tier": "A",
+    "dexes": [
+      "9mm",
+      "pulsex"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "taiko": {
+    "dexscreener_id": "taiko",
+    "liquidity_usd": 4581413.06,
+    "tier": "A",
+    "dexes": [
+      "0x278E9cbe8839a8B634bb214b58207BE3743195aC",
+      "0x2EA9051d5a48eA2350b26306f2b959D262cf67e1",
+      "0x42B08e7a9211482d3643a126a7dF1895448d3509",
+      "0x826D713e30f0bF09Dd3219494A508E6B30327d4f",
+      "kodo",
+      "oku"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 8
+  },
+  "telos": {
+    "dexscreener_id": "telos",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "metis": {
+    "dexscreener_id": "metis",
+    "liquidity_usd": 472541.94,
+    "tier": "B",
+    "dexes": [
+      "0x2EF0B755dE0CE191F5E923fF674C0f6a6F6f2f02",
+      "netswap",
+      "tethys",
+      "uni-maia"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "sei": {
+    "dexscreener_id": "sei",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "gnosis": {
+    "dexscreener_id": "gnosis",
+    "liquidity_usd": 0.0,
+    "tier": "D",
+    "dexes": [
+      "1inch V5",
+      "BalancerV2Vault",
+      "CowSwap",
+      "Curve",
+      "SushiSwap V2",
+      "Uniswap V3"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 6
+  },
+  "aurora": {
+    "dexscreener_id": "aurora",
+    "liquidity_usd": 186042.0,
+    "tier": "B",
+    "dexes": [
+      "auroraswap",
+      "nearpad",
+      "trisolaris",
+      "wannaswap"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "manta": {
+    "dexscreener_id": "manta",
+    "liquidity_usd": 30215.4,
+    "tier": "C",
+    "dexes": [
+      "gullnetwork",
+      "iziswap",
+      "quickswap"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "berachain": {
+    "dexscreener_id": "berachain",
+    "liquidity_usd": 252212.76,
+    "tier": "B",
+    "dexes": [
+      "beraswap",
+      "bulla",
+      "kodiak",
+      "memeswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 5
+  },
+  "cardano": {
+    "dexscreener_id": "cardano",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "harmony": {
+    "dexscreener_id": "harmony",
+    "liquidity_usd": 1175.7199999999998,
+    "tier": "D",
+    "dexes": [
+      "swap"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 2
+  },
+  "heco": {
+    "dexscreener_id": "heco",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "starknet": {
+    "dexscreener_id": "starknet",
+    "liquidity_usd": 7031333.03,
+    "tier": "A",
+    "dexes": [
+      "ekubo"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "zetachain": {
+    "dexscreener_id": "zetachain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "celo": {
+    "dexscreener_id": "celo",
+    "liquidity_usd": 1583240.61,
+    "tier": "A",
+    "dexes": [
+      "sushiswap",
+      "ubeswap",
+      "uniswap",
+      "velodrome"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "moonriver": {
+    "dexscreener_id": "moonriver",
+    "liquidity_usd": 59609.81,
+    "tier": "C",
+    "dexes": [
+      "0xdD9EFCbDf9f422e2fc159eFe77aDD3730d48056d",
+      "huckleberry",
+      "solarbeam"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "shibarium": {
+    "dexscreener_id": "shibarium",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "tron": {
+    "dexscreener_id": "tron",
+    "liquidity_usd": 115061769.85000001,
+    "tier": "A",
+    "dexes": [
+      "sunswap"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "bittorrent": {
+    "dexscreener_id": "bittorrent",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "eos": {
+    "dexscreener_id": "eos",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "ton": {
+    "dexscreener_id": "ton",
+    "liquidity_usd": 14588533.50546321,
+    "tier": "A",
+    "dexes": [
+      "stonfi"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "unichain": {
+    "dexscreener_id": "unichain",
+    "liquidity_usd": 27000000,
+    "tier": "A",
+    "dexes": [
+      "uniswap",
+      "velodrome"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 8,
+    "onchain_verified": true
+  },
+  "ink": {
+    "dexscreener_id": "ink",
+    "liquidity_usd": 98011.2,
+    "tier": "C",
+    "dexes": [
+      "inkyswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 1
+  },
+  "smartbch": {
+    "dexscreener_id": "smartbch",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "soneium": {
+    "dexscreener_id": "soneium",
+    "liquidity_usd": 613769.67,
+    "tier": "B",
+    "dexes": [
+      "kyo-finance",
+      "sonefi",
+      "velodrome"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "ethereumpow": {
+    "dexscreener_id": "ethereumpow",
+    "liquidity_usd": 12232.5,
+    "tier": "C",
+    "dexes": [
+      "0xaBC4325bAD182076EAa5877c68437833d596D3Ee",
+      "lfgswap"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 3
+  },
+  "flare": {
+    "dexscreener_id": "flare",
+    "liquidity_usd": 8119809.06,
+    "tier": "A",
+    "dexes": [
+      "enosys",
+      "sparkdex"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "megaeth": {
+    "dexscreener_id": "megaeth",
+    "liquidity_usd": 8895.92,
+    "tier": "D",
+    "dexes": [
+      "noxa"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 1
+  },
+  "tezos": {
+    "dexscreener_id": "tezos",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "plasma": {
+    "dexscreener_id": "plasma",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "fuse": {
+    "dexscreener_id": "fuse",
+    "liquidity_usd": 99171.37,
+    "tier": "C",
+    "dexes": [
+      "sushiswap",
+      "voltagefinance"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "iotex": {
+    "dexscreener_id": "iotex",
+    "liquidity_usd": 487721.0,
+    "tier": "B",
+    "dexes": [
+      "0x0A753dD1AFDE272a2d4bf55dF616568744201577",
+      "0x92bfa051BF12A0AEf9a5E1AC8b2AA7DC1B05a406",
+      "0xF36788bF206f75F29f99Aa9d418fD8164b3B8198",
+      "mimo"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "kucoin": {
+    "dexscreener_id": "kucoin",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "okexchain": {
+    "dexscreener_id": "okexchain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "abstract": {
+    "dexscreener_id": "abstract",
+    "liquidity_usd": 103325.23999999999,
+    "tier": "B",
+    "dexes": [
+      "abstractswap",
+      "kona"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 8
+  },
+  "bob": {
+    "dexscreener_id": "bob",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "boba": {
+    "dexscreener_id": "boba",
+    "liquidity_usd": 882818.0,
+    "tier": "B",
+    "dexes": [
+      "0x39135bD1FD3A04381C1094AB0Dd35c7bbe61b3C5",
+      "0x3d97964506800d433fb5DbEBDd0c202EC9B62557",
+      "0xcB74d94Ddb0c365e62731FA289E90928C311223f",
+      "oku",
+      "oolongswap",
+      "sushiswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "etherlink": {
+    "dexscreener_id": "etherlink",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "evmos": {
+    "dexscreener_id": "evmos",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "hedera": {
+    "dexscreener_id": "hedera",
+    "liquidity_usd": 9878.17,
+    "tier": "D",
+    "dexes": [
+      "saucerswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 1
+  },
+  "oasis": {
+    "dexscreener_id": "oasis",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "radix": {
+    "dexscreener_id": "radix",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "stable": {
+    "dexscreener_id": "stable",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "xdc": {
+    "dexscreener_id": "xdc",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "arbitrumnova": {
+    "dexscreener_id": "arbitrumnova",
+    "liquidity_usd": 335786.0,
+    "tier": "B",
+    "dexes": [
+      "0xaa26771d497814E81D305c511Efbb3ceD90BF5bd",
+      "arbswap",
+      "rcpswap",
+      "sushiswap"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "canto": {
+    "dexscreener_id": "canto",
+    "liquidity_usd": 0.0,
+    "tier": "D",
+    "dexes": [
+      "CantoDEX"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 1
+  },
+  "ethereumclassic": {
+    "dexscreener_id": "ethereumclassic",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "flow": {
+    "dexscreener_id": "flow",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "fraxtal": {
+    "dexscreener_id": "fraxtal",
+    "liquidity_usd": 0,
+    "tier": "B",
+    "dexes": [
+      "fraxswap",
+      "velodrome"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 424,
+    "onchain_verified": true
+  },
+  "hemi": {
+    "dexscreener_id": "hemi",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "milkomeda": {
+    "dexscreener_id": "milkomeda",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "neon": {
+    "dexscreener_id": "neon",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "plume": {
+    "dexscreener_id": "plume",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "rsk": {
+    "dexscreener_id": "rsk",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "stellar": {
+    "dexscreener_id": "stellar",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "terra": {
+    "dexscreener_id": "terra",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "zkfair": {
+    "dexscreener_id": "zkfair",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "eclipse": {
+    "dexscreener_id": "eclipse",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "multiversx": {
+    "dexscreener_id": "multiversx",
+    "liquidity_usd": 159.47000000000003,
+    "tier": "D",
+    "dexes": [
+      "onedex",
+      "xexchange"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 2
+  },
+  "eosevm": {
+    "dexscreener_id": "eosevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "fuel": {
+    "dexscreener_id": "fuel",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "icp": {
+    "dexscreener_id": "icp",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "injective": {
+    "dexscreener_id": "injective",
+    "liquidity_usd": 0.0,
+    "tier": "D",
+    "dexes": [
+      "helix"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "morph": {
+    "dexscreener_id": "morph",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "near": {
+    "dexscreener_id": "near",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "somnia": {
+    "dexscreener_id": "somnia",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "velas": {
+    "dexscreener_id": "velas",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "zklink": {
+    "dexscreener_id": "zklink",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "algorand": {
+    "dexscreener_id": "algorand",
+    "liquidity_usd": 0.0,
+    "tier": "D",
+    "dexes": [
+      "tinyman"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "apechain": {
+    "dexscreener_id": "apechain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "bitgert": {
+    "dexscreener_id": "bitgert",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "bitkub": {
+    "dexscreener_id": "bitkub",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "bitlayer": {
+    "dexscreener_id": "bitlayer",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "conflux": {
+    "dexscreener_id": "conflux",
+    "liquidity_usd": 1454263.9100000001,
+    "tier": "A",
+    "dexes": [
+      "0x50cADdC77c6727Bdd3c78B428c149BF110b4f595",
+      "swappi"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "zkcronos": {
+    "dexscreener_id": "zkcronos",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "degen": {
+    "dexscreener_id": "degen",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "filecoin": {
+    "dexscreener_id": "filecoin",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "iotaevm": {
+    "dexscreener_id": "iotaevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "meter": {
+    "dexscreener_id": "meter",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "movement": {
+    "dexscreener_id": "movement",
+    "liquidity_usd": 34311.11,
+    "tier": "C",
+    "dexes": [
+      "yuzu"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 2
+  },
+  "nibiru": {
+    "dexscreener_id": "nibiru",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "shiden": {
+    "dexscreener_id": "shiden",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "shimmerevm": {
+    "dexscreener_id": "shimmerevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "songbird": {
+    "dexscreener_id": "songbird",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "stacks": {
+    "dexscreener_id": "stacks",
+    "liquidity_usd": 2203411.54,
+    "tier": "A",
+    "dexes": [
+      "alex",
+      "bitflow",
+      "velar"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "tempo": {
+    "dexscreener_id": "tempo",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "terra2": {
+    "dexscreener_id": "terra2",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "thundercore": {
+    "dexscreener_id": "thundercore",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "wax": {
+    "dexscreener_id": "wax",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "astarzkevm": {
+    "dexscreener_id": "astarzkevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "bevm": {
+    "dexscreener_id": "bevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "chiliz": {
+    "dexscreener_id": "chiliz",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "educhain": {
+    "dexscreener_id": "educhain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "europa": {
+    "dexscreener_id": "europa",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "findora": {
+    "dexscreener_id": "findora",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "godwokenv1": {
+    "dexscreener_id": "godwokenv1",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "juno": {
+    "dexscreener_id": "juno",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "merlin": {
+    "dexscreener_id": "merlin",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "shape": {
+    "dexscreener_id": "shape",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "swellchain": {
+    "dexscreener_id": "swellchain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "tac": {
+    "dexscreener_id": "tac",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "taraxa": {
+    "dexscreener_id": "taraxa",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "tomochain": {
+    "dexscreener_id": "tomochain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "vechain": {
+    "dexscreener_id": "vechain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "wanchain": {
+    "dexscreener_id": "wanchain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "worldchain": {
+    "dexscreener_id": "worldchain",
+    "liquidity_usd": 171.51,
+    "tier": "D",
+    "dexes": [
+      "uniswap",
+      "worldswap"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 3
+  },
+  "xrplevm": {
+    "dexscreener_id": "xrplevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "zilliqa": {
+    "dexscreener_id": "zilliqa",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "zircuit": {
+    "dexscreener_id": "zircuit",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "zora": {
+    "dexscreener_id": "zora",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "0g": {
+    "dexscreener_id": "0g",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "alephium": {
+    "dexscreener_id": "alephium",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "duckchain": {
+    "dexscreener_id": "duckchain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "echelon": {
+    "dexscreener_id": "echelon",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "goat": {
+    "dexscreener_id": "goat",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "gravity": {
+    "dexscreener_id": "gravity",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "horizeneon": {
+    "dexscreener_id": "horizeneon",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "inevm": {
+    "dexscreener_id": "inevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "jbc": {
+    "dexscreener_id": "jbc",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "kadena": {
+    "dexscreener_id": "kadena",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "kardia": {
+    "dexscreener_id": "kardia",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "kasplex": {
+    "dexscreener_id": "kasplex",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "lightlink": {
+    "dexscreener_id": "lightlink",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "lisk": {
+    "dexscreener_id": "lisk",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "mantra": {
+    "dexscreener_id": "mantra",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "mixin": {
+    "dexscreener_id": "mixin",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "neutron": {
+    "dexscreener_id": "neutron",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "oasys": {
+    "dexscreener_id": "oasys",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "onus": {
+    "dexscreener_id": "onus",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "osmosis": {
+    "dexscreener_id": "osmosis",
+    "liquidity_usd": 0.0,
+    "tier": "D",
+    "dexes": [
+      "osmosis"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "proton": {
+    "dexscreener_id": "proton",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "secret": {
+    "dexscreener_id": "secret",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "story": {
+    "dexscreener_id": "story",
+    "liquidity_usd": 14122.76,
+    "tier": "C",
+    "dexes": [
+      "storyhunt"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 2
+  },
+  "superseed": {
+    "dexscreener_id": "superseed",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "supra": {
+    "dexscreener_id": "supra",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "waves": {
+    "dexscreener_id": "waves",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "wemix": {
+    "dexscreener_id": "wemix",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "xai": {
+    "dexscreener_id": "xai",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "zksync": {
+    "dexscreener_id": "zksync",
+    "liquidity_usd": 2305142.61,
+    "tier": "A",
+    "dexes": [
+      "oku",
+      "pancakeswap",
+      "syncswap",
+      "zkswap"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 10
+  },
+  "airdao": {
+    "dexscreener_id": "airdao",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "alv": {
+    "dexscreener_id": "alv",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "ancient8": {
+    "dexscreener_id": "ancient8",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "archway": {
+    "dexscreener_id": "archway",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "auranetwork": {
+    "dexscreener_id": "auranetwork",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "babylongenesis": {
+    "dexscreener_id": "babylongenesis",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "bahamut": {
+    "dexscreener_id": "bahamut",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "beam": {
+    "dexscreener_id": "beam",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "bitcoincash": {
+    "dexscreener_id": "bitcoincash",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "botanix": {
+    "dexscreener_id": "botanix",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "bouncebit": {
+    "dexscreener_id": "bouncebit",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "citrea": {
+    "dexscreener_id": "citrea",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "comdex": {
+    "dexscreener_id": "comdex",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "corn": {
+    "dexscreener_id": "corn",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": true,
+    "pairs_tracked": 0
+  },
+  "csc": {
+    "dexscreener_id": "csc",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "cyber": {
+    "dexscreener_id": "cyber",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "defichainevm": {
+    "dexscreener_id": "defichainevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "elastos": {
+    "dexscreener_id": "elastos",
+    "liquidity_usd": 69185.35,
+    "tier": "C",
+    "dexes": [
+      "elkfinance",
+      "glidefinance"
+    ],
+    "has_rpc": false,
+    "pairs_tracked": 8
+  },
+  "electroneum": {
+    "dexscreener_id": "electroneum",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "endurance": {
+    "dexscreener_id": "endurance",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "eni": {
+    "dexscreener_id": "eni",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "ergo": {
+    "dexscreener_id": "ergo",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "fusion": {
+    "dexscreener_id": "fusion",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "gatelayer": {
+    "dexscreener_id": "gatelayer",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "godwoken": {
+    "dexscreener_id": "godwoken",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "hashkeychain": {
+    "dexscreener_id": "hashkeychain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "hoo": {
+    "dexscreener_id": "hoo",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "hydra": {
+    "dexscreener_id": "hydra",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "igra": {
+    "dexscreener_id": "igra",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "immutablezkevm": {
+    "dexscreener_id": "immutablezkevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "katana": {
+    "dexscreener_id": "katana",
+    "liquidity_usd": 786973.4400000001,
+    "tier": "B",
+    "dexes": [
+      "sushiswap"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 10
+  },
+  "keeta": {
+    "dexscreener_id": "keeta",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "kekchain": {
+    "dexscreener_id": "kekchain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "kroma": {
+    "dexscreener_id": "kroma",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "loop": {
+    "dexscreener_id": "loop",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "map": {
+    "dexscreener_id": "map",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "massa": {
+    "dexscreener_id": "massa",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "matchain": {
+    "dexscreener_id": "matchain",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "milkomedaa1": {
+    "dexscreener_id": "milkomedaa1",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "multivac": {
+    "dexscreener_id": "multivac",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "neo": {
+    "dexscreener_id": "neo",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "neox": {
+    "dexscreener_id": "neox",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "novanetwork": {
+    "dexscreener_id": "novanetwork",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "nuls": {
+    "dexscreener_id": "nuls",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "obyte": {
+    "dexscreener_id": "obyte",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "ontologyevm": {
+    "dexscreener_id": "ontologyevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "orai": {
+    "dexscreener_id": "orai",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "palm": {
+    "dexscreener_id": "palm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "peaq": {
+    "dexscreener_id": "peaq",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "planq": {
+    "dexscreener_id": "planq",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "prom": {
+    "dexscreener_id": "prom",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "rari": {
+    "dexscreener_id": "rari",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "re.al": {
+    "dexscreener_id": "re.al",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "redbelly": {
+    "dexscreener_id": "redbelly",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "reyanetwork": {
+    "dexscreener_id": "reyanetwork",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "xrpl": {
+    "dexscreener_id": "xrpl",
+    "liquidity_usd": 0.0,
+    "tier": "D",
+    "dexes": [
+      "xrpl-dex"
+    ],
+    "has_rpc": true,
+    "pairs_tracked": 1
+  },
+  "rollux": {
+    "dexscreener_id": "rollux",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "ronin": {
+    "dexscreener_id": "ronin",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "sapphire": {
+    "dexscreener_id": "sapphire",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "shido": {
+    "dexscreener_id": "shido",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "siliconzkevm": {
+    "dexscreener_id": "siliconzkevm",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "superposition": {
+    "dexscreener_id": "superposition",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "tenet": {
+    "dexscreener_id": "tenet",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "theta": {
+    "dexscreener_id": "theta",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "ultron": {
+    "dexscreener_id": "ultron",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "unit0": {
+    "dexscreener_id": "unit0",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "vite": {
+    "dexscreener_id": "vite",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "zeronetwork": {
+    "dexscreener_id": "zeronetwork",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "acala": {
+    "dexscreener_id": "acala",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "aelf": {
+    "dexscreener_id": "aelf",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "aeternity": {
+    "dexscreener_id": "aeternity",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "ailayer": {
+    "dexscreener_id": "ailayer",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "althea": {
+    "dexscreener_id": "althea",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  },
+  "areonnetwork": {
+    "dexscreener_id": "areonnetwork",
+    "liquidity_usd": 0,
+    "tier": "D",
+    "dexes": [],
+    "has_rpc": false,
+    "pairs_tracked": 0
+  }
+}

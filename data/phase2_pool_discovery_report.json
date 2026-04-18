@@ -1,0 +1,197 @@
+{
+  "generated_at": "2026-04-18T06:48:15.995195+00:00",
+  "targets": 13,
+  "chains": {
+    "apechain": {
+      "chain": "ApeChain",
+      "rpc": "https://rpc.apechain.com",
+      "search_pairs": 0,
+      "token_pairs": 29,
+      "verified_contracts": 12,
+      "active_pools": 6,
+      "sample": [
+        {
+          "pair": "WAPE/ApeUSD",
+          "dex": "camelot",
+          "pairAddress": "0x99556e210123da382eDEd3c72AA8DCb605C3c435",
+          "liquidity_usd": 465299.97,
+          "onchain": {
+            "exists": true,
+            "active": false,
+            "type": "unknown"
+          }
+        },
+        {
+          "pair": "WAPE/ApeUSD",
+          "dex": "saru",
+          "pairAddress": "0xa5d121732E2dE441591e4B4bF6f7E300a0304493",
+          "liquidity_usd": 508.89,
+          "onchain": {
+            "exists": true,
+            "active": true,
+            "type": "v2"
+          }
+        },
+        {
+          "pair": "WAPE/ApeUSD",
+          "dex": "camelot",
+          "pairAddress": "0x06B54a708021b41a15a7d53E22f671cd0869F2b3",
+          "liquidity_usd": 229.5,
+          "onchain": {
+            "exists": true,
+            "active": true,
+            "type": "v2"
+          }
+        },
+        {
+          "pair": "WAPE/ApeUSD",
+          "dex": "0x851c840d681B1B3fE2E751B35f856EC6Dd77bc27",
+          "pairAddress": "0x6c23e400E981d6544317EAb8846f234625041002",
+          "liquidity_usd": 26.39,
+          "onchain": {
+            "exists": true,
+            "active": true,
+            "type": "v2"
+          }
+        },
+        {
+          "pair": "WAPE/ApeUSD",
+          "dex": "0xEB62876a9d73bFC002FB750BF31A436c7c61800d",
+          "pairAddress": "0xb054178679e8CE57a5D99D17f648bae138BD9B50",
+          "liquidity_usd": 0.88,
+          "onchain": {
+            "exists": true,
+            "active": true,
+            "type": "v2"
+          }
+        }
+      ],
+      "status": "verified_active"
+    },
+    "injective": {
+      "chain": "Injective",
+      "rpc": "https://sentry.evm-rpc.injective.network",
+      "search_pairs": 17,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "pairs_found_no_contract"
+    },
+    "fraxtal": {
+      "chain": "Fraxtal",
+      "rpc": "https://rpc.frax.com",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    },
+    "bob": {
+      "chain": "BOB",
+      "rpc": "https://rpc.gobob.xyz",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    },
+    "unichain": {
+      "chain": "Unichain",
+      "rpc": "https://mainnet.unichain.org",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    },
+    "polygonzkevm": {
+      "chain": "Polygon zkEVM",
+      "rpc": "https://1rpc.io/polygon/zkevm",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    },
+    "moonbeam": {
+      "chain": "Moonbeam",
+      "rpc": "https://1rpc.io/glmr",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    },
+    "evmos": {
+      "chain": "Evmos",
+      "rpc": "https://evmos-evm-rpc.publicnode.com",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    },
+    "hemi": {
+      "chain": "Hemi",
+      "rpc": "https://rpc.hemi.network/rpc",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    },
+    "corn": {
+      "chain": "Corn",
+      "rpc": "https://mainnet.corn-rpc.com",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    },
+    "swellchain": {
+      "chain": "Swellchain",
+      "rpc": "https://rpc.ankr.com/swell",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    },
+    "wanchain": {
+      "chain": "Wanchain",
+      "rpc": "https://gwan-ssl.wandevs.org:56891",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    },
+    "shiden": {
+      "chain": "Shiden",
+      "rpc": "https://shiden.public.curie.radiumblock.co/http",
+      "search_pairs": 0,
+      "token_pairs": 0,
+      "verified_contracts": 0,
+      "active_pools": 0,
+      "sample": [],
+      "status": "no_pairs_found"
+    }
+  },
+  "summary": {
+    "verified_active": 1,
+    "pairs_found_no_contract": 1,
+    "no_pairs_found": 11
+  }
+}

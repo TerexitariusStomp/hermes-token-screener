@@ -1,0 +1,159 @@
+{
+  "Optimism": {
+    "block": 150432138,
+    "verified": 3,
+    "active": 0,
+    "samples": []
+  },
+  "Binance": {
+    "block": 93137426,
+    "verified": 0,
+    "active": 0,
+    "samples": []
+  },
+  "Avalanche": {
+    "block": 83205553,
+    "verified": 6,
+    "active": 0,
+    "samples": []
+  },
+  "Flare": {
+    "block": 58919644,
+    "verified": 6,
+    "active": 5,
+    "samples": [
+      "WFLR/USD\u20ae0",
+      "WFLR/USDC.e",
+      "WFLR/FXRP",
+      "USD\u20ae0/USDC.e",
+      "USD\u20ae0/USDC.e"
+    ]
+  },
+  "Blast": {
+    "block": 33826627,
+    "verified": 6,
+    "active": 5,
+    "samples": [
+      "YES/WETH",
+      "YOLO/WETH",
+      "USDB/WETH",
+      "USDB/WETH",
+      "?/?"
+    ]
+  },
+  "Mantle": {
+    "block": 94166383,
+    "verified": 6,
+    "active": 2,
+    "samples": [
+      "WMNT/USDe",
+      "USDC/USDT"
+    ]
+  },
+  "Celo": {
+    "block": 64562333,
+    "verified": 3,
+    "active": 3,
+    "samples": [
+      "?/?",
+      "CELO/USDm",
+      "?/?"
+    ]
+  },
+  "Moonriver": {
+    "block": 15935493,
+    "verified": 6,
+    "active": 6,
+    "samples": [
+      "?/?",
+      "?/?",
+      "?/?",
+      "?/?",
+      "?/?",
+      "?/?"
+    ]
+  },
+  "Kava": {
+    "block": 20310153,
+    "verified": 6,
+    "active": 6,
+    "samples": [
+      "WKAVA/axlUSDC",
+      "?/?",
+      "?/?",
+      "?/?",
+      "?/?",
+      "?/?"
+    ]
+  },
+  "Boba": {
+    "block": 32729134,
+    "verified": 3,
+    "active": 3,
+    "samples": [
+      "WETH/USDC",
+      "?/?",
+      "?/?"
+    ]
+  },
+  "Berachain": {
+    "block": 19724200,
+    "verified": 3,
+    "active": 3,
+    "samples": [
+      "WBERA/HONEY",
+      "WBERA/KDK",
+      "WBERA/WETH"
+    ]
+  },
+  "Astar": {
+    "block": 13036199,
+    "verified": 3,
+    "active": 3,
+    "samples": [
+      "?/?",
+      "?/?",
+      "?/?"
+    ]
+  },
+  "ApeChain": {
+    "block": 36489609,
+    "active": 6,
+    "verified": 12,
+    "samples": [
+      "WAPE/ApeUSD",
+      "ApeETH/WAPE",
+      "USDC.e/WAPE",
+      "USDT/WAPE",
+      "PNutz/WAPE",
+      "PNutz/WAPE"
+    ]
+  },
+  "Fraxtal": {
+    "block": null,
+    "active": 20,
+    "verified": 424,
+    "samples": [
+      "sdUSD/FXB20551231",
+      "cycvxFXS/FXS",
+      "scrvYIELD/scrvYIELD"
+    ],
+    "factory_v2": "0xe30521fe7f3beb6ad556887b50739d6c7ca667e6",
+    "factory_solidly": "0xba12222222228d8ba445958a75a0704d566bf2c8"
+  },
+  "Unichain": {
+    "block": 45748154,
+    "active": 8,
+    "verified": 30,
+    "samples": [
+      "USDC/USDT",
+      "USDC/DAI",
+      "WETH/USDC",
+      "UNI/USDC"
+    ],
+    "factories": [
+      "0x1f98400000000000000000000000000000000003",
+      "0x04625b046c69577efc40e6c0bb83cdbafab5a55f"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "Pulse": {
+    "status": "ok",
+    "chain_id": 369,
+    "rpc": "https://rpc.pulsechain.com",
+    "block": 26313406,
+    "scanned_addresses": 0,
+    "verified": false,
+    "verified_count": 0,
+    "verified_items": []
+  },
+  "Superseed": {
+    "status": "ok",
+    "chain_id": 5330,
+    "rpc": "https://superseed.drpc.org",
+    "block": 25157034,
+    "scanned_addresses": 0,
+    "verified": false,
+    "verified_count": 0,
+    "verified_items": []
+  },
+  "Ancient8": {
+    "status": "ok",
+    "chain_id": 888888888,
+    "rpc": "https://rpc.ancient8.gg",
+    "block": 35233182,
+    "scanned_addresses": 0,
+    "verified": false,
+    "verified_count": 0,
+    "verified_items": []
+  }
+}

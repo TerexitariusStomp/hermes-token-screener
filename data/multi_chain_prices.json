@@ -1,0 +1,4379 @@
+{
+  "fetched_at": "2026-04-18T05:14:09.519611",
+  "total_chains": 98,
+  "total_pairs": 287,
+  "total_liquidity_usd": 245731143.61999995,
+  "chains": {
+    "tron": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 114932282.75,
+      "total_volume_24h": 2144518.85,
+      "dexes": [
+        "sunswap"
+      ],
+      "pairs": [
+        {
+          "dex": "sunswap",
+          "pair": "SUN/USDT",
+          "pair_address": "TTdeCobmYxhfFBYUZbiQqbZ56zrFkSE5DG",
+          "price_usd": 0.01864,
+          "price_native": 0.01864,
+          "liquidity_usd": 5312873.24,
+          "volume_24h": 77026.68,
+          "base_token": "TSSMHYeV2uE9qYH95DqyoCuNCzEL1NvU3S",
+          "quote_token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+        },
+        {
+          "dex": "sunswap",
+          "pair": "BTC/USDT",
+          "pair_address": "TTQpjqQUjMJjF3MAvWWVURn3YrRxg2quTM",
+          "price_usd": 77167.4,
+          "price_native": 77167.4018,
+          "liquidity_usd": 2194586.2,
+          "volume_24h": 168393.18,
+          "base_token": "TN3W4H6rK2ce4vX9YnFQHwKENnHjoxb3m9",
+          "quote_token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+        },
+        {
+          "dex": "sunswap",
+          "pair": "JST/USDT",
+          "pair_address": "TW68dBGdy9gtk16BfzmvaCZ9pEti3KFkk2",
+          "price_usd": 0.06916,
+          "price_native": 0.06916,
+          "liquidity_usd": 9866690.38,
+          "volume_24h": 1087258.99,
+          "base_token": "TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9",
+          "quote_token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+        },
+        {
+          "dex": "sunswap",
+          "pair": "WTRX/USDT",
+          "pair_address": "TFGDbUyP8xez44C76fin3bn3Ss6jugoUwJ",
+          "price_usd": 0.3268,
+          "price_native": 0.3268,
+          "liquidity_usd": 92401791.73,
+          "volume_24h": 760006.73,
+          "base_token": "TNUC9Qb1rRpS5CbWLmNMxXBjyFoydXjWFR",
+          "quote_token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+        },
+        {
+          "dex": "sunswap",
+          "pair": "WIN/USDT",
+          "pair_address": "TC1GhhC5iGFLuuUthriuUu183P8YWPmQsK",
+          "price_usd": 2.1e-05,
+          "price_native": 2.1e-05,
+          "liquidity_usd": 1422054.41,
+          "volume_24h": 39250.8,
+          "base_token": "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          "quote_token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+        },
+        {
+          "dex": "sunswap",
+          "pair": "BTT/USDT",
+          "pair_address": "TLKyq7eJ4YKbs3TGEvoBJWkAXWYQKWo2Nn",
+          "price_usd": 3.293e-07,
+          "price_native": 3.293e-07,
+          "liquidity_usd": 3734286.79,
+          "volume_24h": 12582.47,
+          "base_token": "TAFjULxiVgT4qWk6UZwjqwZXTSaGaqnVp4",
+          "quote_token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:49.730452"
+    },
+    "avalanche": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 15428471.91,
+      "total_volume_24h": 95580250.52,
+      "dexes": [
+        "pharaoh",
+        "uniswap",
+        "blackhole",
+        "traderjoe"
+      ],
+      "pairs": [
+        {
+          "dex": "pharaoh",
+          "pair": "WAVAX/USDC",
+          "pair_address": "0xf01449C0bA930B6e2CaCA3DEF3CCBd7a3E589534",
+          "price_usd": 9.71,
+          "price_native": 9.7111,
+          "liquidity_usd": 6439321.85,
+          "volume_24h": 32899177.1,
+          "base_token": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+          "quote_token": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"
+        },
+        {
+          "dex": "blackhole",
+          "pair": "WAVAX/USDC",
+          "pair_address": "0xA02Ec3Ba8d17887567672b2CDCAF525534636Ea0",
+          "price_usd": 9.71,
+          "price_native": 9.7122,
+          "liquidity_usd": 3207436.76,
+          "volume_24h": 28047744.39,
+          "base_token": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+          "quote_token": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"
+        },
+        {
+          "dex": "traderjoe",
+          "pair": "WAVAX/USDC",
+          "pair_address": "0x864d4e5Ee7318e97483DB7EB0912E09F161516EA",
+          "price_usd": 9.71,
+          "price_native": 9.7152,
+          "liquidity_usd": 3682679.69,
+          "volume_24h": 24576382.88,
+          "base_token": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+          "quote_token": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "WAVAX/USDC",
+          "pair_address": "0xfAe3f424a0a47706811521E3ee268f00cFb5c45E",
+          "price_usd": 9.71,
+          "price_native": 9.7106,
+          "liquidity_usd": 959256.79,
+          "volume_24h": 2929843.31,
+          "base_token": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+          "quote_token": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"
+        },
+        {
+          "dex": "blackhole",
+          "pair": "WAVAX/USDC",
+          "pair_address": "0x41100C6D2c6920B10d12Cd8D59c8A9AA2eF56fC7",
+          "price_usd": 9.71,
+          "price_native": 9.7113,
+          "liquidity_usd": 1024281.64,
+          "volume_24h": 6074272.13,
+          "base_token": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+          "quote_token": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"
+        },
+        {
+          "dex": "blackhole",
+          "pair": "WAVAX/USDt",
+          "pair_address": "0xC13Fd9599F0bEDd2dA2C307f35bC03ba54a64332",
+          "price_usd": 9.7,
+          "price_native": 9.7098,
+          "liquidity_usd": 115495.18,
+          "volume_24h": 1052830.71,
+          "base_token": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+          "quote_token": "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:50.057234"
+    },
+    "solana": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 12570629.98,
+      "total_volume_24h": 3772536.17,
+      "dexes": [
+        "raydium",
+        "pumpswap"
+      ],
+      "pairs": [
+        {
+          "dex": "pumpswap",
+          "pair": "SOLANA/SOL",
+          "pair_address": "HwKF1Q45rXYjBm84wfz6FsCK5MVPaHFZiPnLDM9nk5Nf",
+          "price_usd": 4.571e-05,
+          "price_native": 5.159e-07,
+          "liquidity_usd": 20254.91,
+          "volume_24h": 3281733.38,
+          "base_token": "HZZDNQ3bT1dMqBVgkANuojgMvsbo4z3RiGjEsaUYpump",
+          "quote_token": "So11111111111111111111111111111111111111112"
+        },
+        {
+          "dex": "raydium",
+          "pair": "SOL/USDC",
+          "pair_address": "GhhUiNcoFKEtZ9RTGd1DgHHouDAJrW9DDADmX13jdGEY",
+          "price_usd": 78.36,
+          "price_native": 78.3653,
+          "liquidity_usd": 7050120.57,
+          "volume_24h": 163782.71,
+          "base_token": "SooEj828BSjtgTecBRkqBJ4oquc713yyFZqbCawawoN",
+          "quote_token": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        },
+        {
+          "dex": "raydium",
+          "pair": "SOL/USDC",
+          "pair_address": "3dS5VZhBAmv3FH5JSz221c7nBjLMaoTwKLcLm5N7mtiC",
+          "price_usd": 92.43,
+          "price_native": 92.4321,
+          "liquidity_usd": 901241.43,
+          "volume_24h": 163505.76,
+          "base_token": "sokhCSmzutMPPuNcxG1j6gYLowgiM8mswjJu8FBYm5r",
+          "quote_token": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        },
+        {
+          "dex": "raydium",
+          "pair": "SOL/USDC",
+          "pair_address": "3fkdUeRvUnSKKYgTyX1hkiJmJVbiYtDwyBwxYW19n28t",
+          "price_usd": 143.2,
+          "price_native": 143.2014,
+          "liquidity_usd": 2466901.64,
+          "volume_24h": 163503.75,
+          "base_token": "sosd5Q3DutGxMEaukBDmkPgsapMQz59jNjGWmhYcdTQ",
+          "quote_token": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        },
+        {
+          "dex": "raydium",
+          "pair": "SOL/USDC",
+          "pair_address": "8sfCkNnUsFQ2RsxCjR5dyV3q9LCUnXGZ3KorbEjeAk9w",
+          "price_usd": 79.82,
+          "price_native": 79.8285,
+          "liquidity_usd": 1077699.32,
+          "volume_24h": 5.4,
+          "base_token": "A9ecbzftsKGF99cNf3bWxv1HvGt3zrG8hC2v7CaGn5Br",
+          "quote_token": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        },
+        {
+          "dex": "raydium",
+          "pair": "SOL/USDC",
+          "pair_address": "4oucnHyh2erG6mNWWqEbtMxmK2bthH4Rn1xW3qdjgRAK",
+          "price_usd": 81.1,
+          "price_native": 81.1079,
+          "liquidity_usd": 1054412.11,
+          "volume_24h": 5.17,
+          "base_token": "672ArEjPuUx5uv6Py9bnGhsLkzAeAwnG1gbURkM185aP",
+          "quote_token": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:50.306032"
+    },
+    "mantle": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 8946762.15,
+      "total_volume_24h": 570863.54,
+      "dexes": [
+        "agni",
+        "oku",
+        "merchantmoe",
+        "0xF883162Ed9c7E8EF604214c964c678E40c9B737C"
+      ],
+      "pairs": [
+        {
+          "dex": "merchantmoe",
+          "pair": "MOE/WMNT",
+          "pair_address": "0x763868612858358f62b05691dB82Ad35a9b3E110",
+          "price_usd": 0.01216,
+          "price_native": 0.01773,
+          "liquidity_usd": 285725.24,
+          "volume_24h": 2280.3,
+          "base_token": "0x4515A45337F461A11Ff0FE8aBF3c606AE5dC00c9",
+          "quote_token": "0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8"
+        },
+        {
+          "dex": "agni",
+          "pair": "WMNT/USDe",
+          "pair_address": "0xeAfc4D6d4c3391Cd4Fc10c85D2f5f972d58C0dD5",
+          "price_usd": 0.6829,
+          "price_native": 0.6827,
+          "liquidity_usd": 3688379.01,
+          "volume_24h": 375488.12,
+          "base_token": "0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8",
+          "quote_token": "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34"
+        },
+        {
+          "dex": "oku",
+          "pair": "BILLI/WMNT",
+          "pair_address": "0x273f2fA7FB26d97880c8Aad9eAF7B37ccB719498",
+          "price_usd": 5.458e-05,
+          "price_native": 7.943e-05,
+          "liquidity_usd": 20704.77,
+          "volume_24h": 1998.33,
+          "base_token": "0x375450706cb79aB749EBB90001bDa10341dD82BC",
+          "quote_token": "0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8"
+        },
+        {
+          "dex": "merchantmoe",
+          "pair": "WMNT/USDT",
+          "pair_address": "0x365722f12ceb2063286A268B03c654Df81B7C00F",
+          "price_usd": 0.6811,
+          "price_native": 0.6811,
+          "liquidity_usd": 1226933.91,
+          "volume_24h": 45014.54,
+          "base_token": "0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8",
+          "quote_token": "0x201EBa5CC46D216Ce6DC03F6a759e8E766e956aE"
+        },
+        {
+          "dex": "merchantmoe",
+          "pair": "WMNT/USDe",
+          "pair_address": "0x5d54d430D1FD9425976147318E6080479bffC16D",
+          "price_usd": 0.6822,
+          "price_native": 0.6824,
+          "liquidity_usd": 3672641.2,
+          "volume_24h": 143190.09,
+          "base_token": "0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8",
+          "quote_token": "0x5d3a1Ff2b6BAb83b63cd9AD0787074081a52ef34"
+        },
+        {
+          "dex": "0xF883162Ed9c7E8EF604214c964c678E40c9B737C",
+          "pair": "ELSA/WMNT",
+          "pair_address": "0x87eA83f40fCcdb5e4a10FcC66a7a73B3F12bbf35",
+          "price_usd": 0.07321,
+          "price_native": 0.1068,
+          "liquidity_usd": 52378.02,
+          "volume_24h": 2892.16,
+          "base_token": "0x29cC30f9D113B356Ce408667aa6433589CeCBDcA",
+          "quote_token": "0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:50.693292"
+    },
+    "arbitrum": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 7203888.91,
+      "total_volume_24h": 16214365.38,
+      "dexes": [
+        "uniswap",
+        "camelot"
+      ],
+      "pairs": [
+        {
+          "dex": "uniswap",
+          "pair": "ARB/WETH",
+          "pair_address": "0xC6F780497A95e246EB9449f5e4770916DCd6396A",
+          "price_usd": 0.1304,
+          "price_native": 5.41e-05,
+          "liquidity_usd": 1987250.77,
+          "volume_24h": 15031351.0,
+          "base_token": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+          "quote_token": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
+        },
+        {
+          "dex": "camelot",
+          "pair": "ARB/WETH",
+          "pair_address": "0xe51635ae8136aBAc44906A8f230C2D235E9c195F",
+          "price_usd": 0.1304,
+          "price_native": 5.41e-05,
+          "liquidity_usd": 107670.65,
+          "volume_24h": 481904.88,
+          "base_token": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+          "quote_token": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "ARB/USDC",
+          "pair_address": "0xcDa53B1F66614552F834cEeF361A8D12a0B8DaD8",
+          "price_usd": 0.1305,
+          "price_native": 0.1305,
+          "liquidity_usd": 326399.0,
+          "volume_24h": 465186.64,
+          "base_token": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+          "quote_token": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "ARB/USDC",
+          "pair_address": "0xaEBDcA1Bc8d89177EbE2308d62af5e74885DcCc3",
+          "price_usd": 0.1303,
+          "price_native": 0.1304,
+          "liquidity_usd": 730511.56,
+          "volume_24h": 122428.72,
+          "base_token": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+          "quote_token": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "ARB/WBTC",
+          "pair_address": "0x689C96ceAb93f5E131631D225D75DeA3fD37747E",
+          "price_usd": 0.1303,
+          "price_native": 1.696e-06,
+          "liquidity_usd": 3924889.23,
+          "volume_24h": 85381.2,
+          "base_token": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+          "quote_token": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "ARB/WETH",
+          "pair_address": "0x92c63d0e701CAAe670C9415d91C474F686298f00",
+          "price_usd": 0.1302,
+          "price_native": 5.415e-05,
+          "liquidity_usd": 127167.7,
+          "volume_24h": 28112.94,
+          "base_token": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+          "quote_token": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:50.969773"
+    },
+    "starknet": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 6792434.2299999995,
+      "total_volume_24h": 3524227.44,
+      "dexes": [
+        "ekubo"
+      ],
+      "pairs": [
+        {
+          "dex": "ekubo",
+          "pair": "STRK/USDC",
+          "pair_address": "0x033068f6539f8e6e6b131e6b2b814e6c34a5224bc66947c47dab9dfee93b35fb-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-170141183460469235273462165868118016-1000-0x0",
+          "price_usd": 0.03688,
+          "price_native": 0.03688,
+          "liquidity_usd": 1116278.96,
+          "volume_24h": 2412593.0,
+          "base_token": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+          "quote_token": "0x033068f6539f8e6e6b131e6b2b814e6c34a5224bc66947c47dab9dfee93b35fb"
+        },
+        {
+          "dex": "ekubo",
+          "pair": "ETH/STRK",
+          "pair_address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7-1020847100762815411640772995208708096-5982-0x0",
+          "price_usd": 2410.99,
+          "price_native": 65516.1946,
+          "liquidity_usd": 115548.63,
+          "volume_24h": 29050.78,
+          "base_token": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+          "quote_token": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"
+        },
+        {
+          "dex": "ekubo",
+          "pair": "tBTC/WBTC",
+          "pair_address": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac-0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f-0-100-0x0",
+          "price_usd": 77604.014,
+          "price_native": 1.0004372,
+          "liquidity_usd": 1761131.92,
+          "volume_24h": 700701.81,
+          "base_token": "0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f",
+          "quote_token": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac"
+        },
+        {
+          "dex": "ekubo",
+          "pair": "tBTC/WBTC",
+          "pair_address": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac-0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f-34028236692093847977029636859101184-200-0x0",
+          "price_usd": 77611.54,
+          "price_native": 1.0005343,
+          "liquidity_usd": 2111789.73,
+          "volume_24h": 345526.46,
+          "base_token": "0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f",
+          "quote_token": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac"
+        },
+        {
+          "dex": "ekubo",
+          "pair": "xSTRK/STRK",
+          "pair_address": "0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-34028236692093847977029636859101184-200-0x0",
+          "price_usd": 0.04224,
+          "price_native": 1.1449,
+          "liquidity_usd": 1246862.58,
+          "volume_24h": 36351.93,
+          "base_token": "0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a",
+          "quote_token": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"
+        },
+        {
+          "dex": "ekubo",
+          "pair": "ETH/STRK",
+          "pair_address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7-170141183460469235273462165868118016-1000-0x0",
+          "price_usd": 2428.91,
+          "price_native": 65824.385,
+          "liquidity_usd": 440822.41,
+          "volume_24h": 3.46,
+          "base_token": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+          "quote_token": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:51.345816"
+    },
+    "polkadot": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 5499179.64,
+      "total_volume_24h": 372325.50999999995,
+      "dexes": [
+        "hydration"
+      ],
+      "pairs": [
+        {
+          "dex": "hydration",
+          "pair": "WUD/DOT",
+          "pair_address": "0xb941ce809e9793289c9e9127102d447723cabdfb9d51d0893f2bdbf9958995ce",
+          "price_usd": 4.619e-07,
+          "price_native": 3.486e-07,
+          "liquidity_usd": 60476.56,
+          "volume_24h": 1698.1,
+          "base_token": "1000085",
+          "quote_token": "5"
+        },
+        {
+          "dex": "hydration",
+          "pair": "aDOT/DOT",
+          "pair_address": "0x4554480002639ec01313c8775fae74f2dad1118c8a8a86da0000000000000000-5-0x02639ec01313c8775fae74f2dad1118c8a8a86da",
+          "price_usd": 1.32,
+          "price_native": 1.0,
+          "liquidity_usd": 5376569.13,
+          "volume_24h": 365358.6,
+          "base_token": "0x02639ec01313c8775fae74f2dad1118c8a8a86da",
+          "quote_token": "5"
+        },
+        {
+          "dex": "hydration",
+          "pair": "MYTH/DOT",
+          "pair_address": "0xbf80080b4d0077544ef058a29e878ae6f6bdb8cf2f462ab390490f668eb50b73",
+          "price_usd": 0.002439,
+          "price_native": 0.001844,
+          "liquidity_usd": 40430.06,
+          "volume_24h": 5143.36,
+          "base_token": "30",
+          "quote_token": "5"
+        },
+        {
+          "dex": "hydration",
+          "pair": "NEURO/DOT",
+          "pair_address": "0x0df27da23167ff41648cf3596fcfced41d02650bce7ed16ef469a1a3bdd5a23a",
+          "price_usd": 0.003344,
+          "price_native": 0.002501,
+          "liquidity_usd": 19173.35,
+          "volume_24h": 100.65,
+          "base_token": "36",
+          "quote_token": "5"
+        },
+        {
+          "dex": "hydration",
+          "pair": "EWT/DOT",
+          "pair_address": "0xd4044eed8c3a16740b3edf9e85cd6384c66eecf21179843cd863c20bfa6b082f",
+          "price_usd": 0.4392,
+          "price_native": 0.3315,
+          "liquidity_usd": 1527.21,
+          "volume_24h": 22.52,
+          "base_token": "252525",
+          "quote_token": "5"
+        },
+        {
+          "dex": "hydration",
+          "pair": "PEN/DOT",
+          "pair_address": "0x30923f0512c86866bf96e9b2815559243c95506ba1501e16056a39984a200615",
+          "price_usd": 0.02323,
+          "price_native": 0.01741,
+          "liquidity_usd": 1003.33,
+          "volume_24h": 2.28,
+          "base_token": "1000081",
+          "quote_token": "5"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:51.630049"
+    },
+    "taiko": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 4586448.75,
+      "total_volume_24h": 166930.43,
+      "dexes": [
+        "0x826D713e30f0bF09Dd3219494A508E6B30327d4f",
+        "0x2EA9051d5a48eA2350b26306f2b959D262cf67e1",
+        "kodo",
+        "0x42B08e7a9211482d3643a126a7dF1895448d3509",
+        "oku"
+      ],
+      "pairs": [
+        {
+          "dex": "0x826D713e30f0bF09Dd3219494A508E6B30327d4f",
+          "pair": "TAIKO/USDC",
+          "pair_address": "0xdf2DE6b0622fa3d5D6c0e0920661F18432bDc8eb",
+          "price_usd": 0.1245,
+          "price_native": 0.1245,
+          "liquidity_usd": 3166534.49,
+          "volume_24h": 117506.76,
+          "base_token": "0xA9d23408b9bA935c230493c40C73824Df71A0975",
+          "quote_token": "0x07d83526730c7438048D55A4fc0b850e2aaB6f0b"
+        },
+        {
+          "dex": "0x826D713e30f0bF09Dd3219494A508E6B30327d4f",
+          "pair": "TAIKO/WETH",
+          "pair_address": "0x5DFa952a395CD24dF6ee4461b294ef0188a1a52f",
+          "price_usd": 0.1249,
+          "price_native": 5.153e-05,
+          "liquidity_usd": 1417054.26,
+          "volume_24h": 49363.95,
+          "base_token": "0xA9d23408b9bA935c230493c40C73824Df71A0975",
+          "quote_token": "0xA51894664A773981C6C112C43ce576f315d5b1B6"
+        },
+        {
+          "dex": "0x42B08e7a9211482d3643a126a7dF1895448d3509",
+          "pair": "TAIKO/WETH",
+          "pair_address": "0x1011734849b6Ea161F2C9aD1bb4aa765C8E09BD3",
+          "price_usd": 0.1245,
+          "price_native": 5.162e-05,
+          "liquidity_usd": 1054.66,
+          "volume_24h": 4.3,
+          "base_token": "0xA9d23408b9bA935c230493c40C73824Df71A0975",
+          "quote_token": "0xA51894664A773981C6C112C43ce576f315d5b1B6"
+        },
+        {
+          "dex": "kodo",
+          "pair": "TAIKO/WETH",
+          "pair_address": "0x977343dC3086cB2C6A7c17833020Fe4553ff0cf0",
+          "price_usd": 0.1275,
+          "price_native": 5.21e-05,
+          "liquidity_usd": 963.77,
+          "volume_24h": 5.73,
+          "base_token": "0xA9d23408b9bA935c230493c40C73824Df71A0975",
+          "quote_token": "0xA51894664A773981C6C112C43ce576f315d5b1B6"
+        },
+        {
+          "dex": "oku",
+          "pair": "TAIKO/WETH",
+          "pair_address": "0x441Da7D4DE26161D8BaE64b1B59b2543b7Cf6303",
+          "price_usd": 0.1274,
+          "price_native": 5.219e-05,
+          "liquidity_usd": 479.7,
+          "volume_24h": 49.16,
+          "base_token": "0xA9d23408b9bA935c230493c40C73824Df71A0975",
+          "quote_token": "0xA51894664A773981C6C112C43ce576f315d5b1B6"
+        },
+        {
+          "dex": "0x2EA9051d5a48eA2350b26306f2b959D262cf67e1",
+          "pair": "TAIKO/WETH",
+          "pair_address": "0x75f952A59EC5a3742F1b841775B96B196D79C43f",
+          "price_usd": 0.1222,
+          "price_native": 5.21e-05,
+          "liquidity_usd": 361.87,
+          "volume_24h": 0.53,
+          "base_token": "0xA9d23408b9bA935c230493c40C73824Df71A0975",
+          "quote_token": "0xA51894664A773981C6C112C43ce576f315d5b1B6"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:51.982397"
+    },
+    "monad": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 2594494.83,
+      "total_volume_24h": 9998674.03,
+      "dexes": [
+        "uniswap",
+        "traderjoe",
+        "pancakeswap"
+      ],
+      "pairs": [
+        {
+          "dex": "uniswap",
+          "pair": "MON/USDC",
+          "pair_address": "0x659bD0BC4167BA25c62E05656F78043E7eD4a9da",
+          "price_usd": 0.0344,
+          "price_native": 0.0344,
+          "liquidity_usd": 1305717.68,
+          "volume_24h": 2156589.98,
+          "base_token": "0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A",
+          "quote_token": "0x754704Bc059F8C67012fEd69BC8A327a5aafb603"
+        },
+        {
+          "dex": "pancakeswap",
+          "pair": "MON/USDC",
+          "pair_address": "0x63e48B725540A3Db24ACF6682a29f877808C53F2",
+          "price_usd": 0.03444,
+          "price_native": 0.03444,
+          "liquidity_usd": 980251.21,
+          "volume_24h": 6649446.26,
+          "base_token": "0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A",
+          "quote_token": "0x754704Bc059F8C67012fEd69BC8A327a5aafb603"
+        },
+        {
+          "dex": "traderjoe",
+          "pair": "MON/USDC",
+          "pair_address": "0x5AFD3EC861f6104af26e8755aBcc1f876de77620",
+          "price_usd": 0.03446,
+          "price_native": 0.03446,
+          "liquidity_usd": 103655.54,
+          "volume_24h": 979234.87,
+          "base_token": "0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A",
+          "quote_token": "0x754704Bc059F8C67012fEd69BC8A327a5aafb603"
+        },
+        {
+          "dex": "traderjoe",
+          "pair": "MON/USDC",
+          "pair_address": "0x5E60BC3F7a7303BC4dfE4dc2220bdC90bc04fE22",
+          "price_usd": 0.03444,
+          "price_native": 0.03444,
+          "liquidity_usd": 71989.25,
+          "volume_24h": 193727.24,
+          "base_token": "0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A",
+          "quote_token": "0x754704Bc059F8C67012fEd69BC8A327a5aafb603"
+        },
+        {
+          "dex": "pancakeswap",
+          "pair": "MON/USDC",
+          "pair_address": "0xB9897986847472Cd08B9A0E7BCd31EA4F1322361",
+          "price_usd": 0.0344,
+          "price_native": 0.0344,
+          "liquidity_usd": 95200.68,
+          "volume_24h": 5073.06,
+          "base_token": "0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A",
+          "quote_token": "0x754704Bc059F8C67012fEd69BC8A327a5aafb603"
+        },
+        {
+          "dex": "pancakeswap",
+          "pair": "MON/USDC",
+          "pair_address": "0x85717A98d195c9306BBf7c9523Ba71F044Fea0f7",
+          "price_usd": 0.0344,
+          "price_native": 0.0344,
+          "liquidity_usd": 37680.47,
+          "volume_24h": 14602.62,
+          "base_token": "0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A",
+          "quote_token": "0x754704Bc059F8C67012fEd69BC8A327a5aafb603"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:52.358927"
+    },
+    "osmosis": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 2420287.56,
+      "total_volume_24h": 2983879.18,
+      "dexes": [
+        "osmosis"
+      ],
+      "pairs": [
+        {
+          "dex": "osmosis",
+          "pair": "BTC/USDC",
+          "pair_address": "1943-factory_osmo1z6r6qdknhgsc0zeracktgpcxf43j6sekq07nw8sxduc9lg0qjjlqfu25e3_alloyed_allBTC-ibc_498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4",
+          "price_usd": 77048.44,
+          "price_native": 77048.4443,
+          "liquidity_usd": 884572.94,
+          "volume_24h": 1697164.27,
+          "base_token": "factory/osmo1z6r6qdknhgsc0zeracktgpcxf43j6sekq07nw8sxduc9lg0qjjlqfu25e3/alloyed/allBTC",
+          "quote_token": "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4"
+        },
+        {
+          "dex": "osmosis",
+          "pair": "OSMO/USDC",
+          "pair_address": "1464-uosmo-ibc_498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4",
+          "price_usd": 0.03453,
+          "price_native": 0.03453,
+          "liquidity_usd": 86652.92,
+          "volume_24h": 175036.95,
+          "base_token": "uosmo",
+          "quote_token": "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4"
+        },
+        {
+          "dex": "osmosis",
+          "pair": "BTC/USDC",
+          "pair_address": "1942-factory_osmo1z6r6qdknhgsc0zeracktgpcxf43j6sekq07nw8sxduc9lg0qjjlqfu25e3_alloyed_allBTC-ibc_498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4",
+          "price_usd": 76999.47,
+          "price_native": 76999.4786,
+          "liquidity_usd": 369065.03,
+          "volume_24h": 160354.16,
+          "base_token": "factory/osmo1z6r6qdknhgsc0zeracktgpcxf43j6sekq07nw8sxduc9lg0qjjlqfu25e3/alloyed/allBTC",
+          "quote_token": "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4"
+        },
+        {
+          "dex": "osmosis",
+          "pair": "ETH/USDC",
+          "pair_address": "1948-factory_osmo1k6c8jln7ejuqwtqmay3yvzrg3kueaczl96pk067ldg8u835w0yhsw27twm_alloyed_allETH-ibc_498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4",
+          "price_usd": 2410.56,
+          "price_native": 2410.5659,
+          "liquidity_usd": 139978.2,
+          "volume_24h": 107882.57,
+          "base_token": "factory/osmo1k6c8jln7ejuqwtqmay3yvzrg3kueaczl96pk067ldg8u835w0yhsw27twm/alloyed/allETH",
+          "quote_token": "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4"
+        },
+        {
+          "dex": "osmosis",
+          "pair": "ATOM/USDC",
+          "pair_address": "1251-ibc_27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2-ibc_498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4",
+          "price_usd": 1.83,
+          "price_native": 1.8349,
+          "liquidity_usd": 354068.0,
+          "volume_24h": 377731.79,
+          "base_token": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+          "quote_token": "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4"
+        },
+        {
+          "dex": "osmosis",
+          "pair": "BTC/USDC",
+          "pair_address": "2321-factory_osmo1z6r6qdknhgsc0zeracktgpcxf43j6sekq07nw8sxduc9lg0qjjlqfu25e3_alloyed_allBTC-ibc_498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4",
+          "price_usd": 76964.6,
+          "price_native": 76964.6037,
+          "liquidity_usd": 585950.47,
+          "volume_24h": 465709.44,
+          "base_token": "factory/osmo1z6r6qdknhgsc0zeracktgpcxf43j6sekq07nw8sxduc9lg0qjjlqfu25e3/alloyed/allBTC",
+          "quote_token": "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:52.652234"
+    },
+    "xrpl": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 2196579.27,
+      "total_volume_24h": 379925.11000000004,
+      "dexes": [
+        "xrpl"
+      ],
+      "pairs": [
+        {
+          "dex": "xrpl",
+          "pair": "ARMY/XRP",
+          "pair_address": "41524D5900000000000000000000000000000000.rGG3wQ4kUzd7Jnmk1n5NWPZjjut62kCBfC_XRP",
+          "price_usd": 0.009169,
+          "price_native": 0.006248,
+          "liquidity_usd": 737065.52,
+          "volume_24h": 132640.64,
+          "base_token": "41524D5900000000000000000000000000000000.rGG3wQ4kUzd7Jnmk1n5NWPZjjut62kCBfC",
+          "quote_token": "XRP"
+        },
+        {
+          "dex": "xrpl",
+          "pair": "SLT/XRP",
+          "pair_address": "SLT.rfGCeDUdtbzKbXfgvrpG745qdC1hcZBz8S_XRP",
+          "price_usd": 1.706e-05,
+          "price_native": 1.156e-05,
+          "liquidity_usd": 181026.74,
+          "volume_24h": 447.05,
+          "base_token": "SLT.rfGCeDUdtbzKbXfgvrpG745qdC1hcZBz8S",
+          "quote_token": "XRP"
+        },
+        {
+          "dex": "xrpl",
+          "pair": "BEAR/XRP",
+          "pair_address": "4245415200000000000000000000000000000000.rBEARGUAsyu7tUw53rufQzFdWmJHpJEqFW_XRP",
+          "price_usd": 0.002338,
+          "price_native": 0.001587,
+          "liquidity_usd": 220327.57,
+          "volume_24h": 3268.87,
+          "base_token": "4245415200000000000000000000000000000000.rBEARGUAsyu7tUw53rufQzFdWmJHpJEqFW",
+          "quote_token": "XRP"
+        },
+        {
+          "dex": "xrpl",
+          "pair": "PHNIX/XRP",
+          "pair_address": "50484E4958000000000000000000000000000000.rDFXbW2ZZCG5WgPtqwNiA2xZokLMm9ivmN_XRP",
+          "price_usd": 2.096e-05,
+          "price_native": 1.424e-05,
+          "liquidity_usd": 888720.67,
+          "volume_24h": 173608.75,
+          "base_token": "50484E4958000000000000000000000000000000.rDFXbW2ZZCG5WgPtqwNiA2xZokLMm9ivmN",
+          "quote_token": "XRP"
+        },
+        {
+          "dex": "xrpl",
+          "pair": "666/XRP",
+          "pair_address": "666.rhvf9fe6PP3GC8Bku2Ug7iQPjPDxYZfrxN_XRP",
+          "price_usd": 0.2651,
+          "price_native": 0.18,
+          "liquidity_usd": 63811.67,
+          "volume_24h": 38779.51,
+          "base_token": "666.rhvf9fe6PP3GC8Bku2Ug7iQPjPDxYZfrxN",
+          "quote_token": "XRP"
+        },
+        {
+          "dex": "xrpl",
+          "pair": "Opulence/XRP",
+          "pair_address": "4F70756C656E6365000000000000000000000000.rs5wxrBTSErywDDfPs5NY4Zorrca5QMGVd_XRP",
+          "price_usd": 0.0001337,
+          "price_native": 9.08e-05,
+          "liquidity_usd": 105627.1,
+          "volume_24h": 31180.29,
+          "base_token": "4F70756C656E6365000000000000000000000000.rs5wxrBTSErywDDfPs5NY4Zorrca5QMGVd",
+          "quote_token": "XRP"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:53.005349"
+    },
+    "stacks": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 2106611.17,
+      "total_volume_24h": 65610.93,
+      "dexes": [
+        "velar",
+        "alex",
+        "bitflow"
+      ],
+      "pairs": [
+        {
+          "dex": "bitflow",
+          "pair": "STX/aeUSDC",
+          "pair_address": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-pool-stx-aeusdc-v-1-2",
+          "price_usd": 0.2383,
+          "price_native": 0.2383,
+          "liquidity_usd": 357129.71,
+          "volume_24h": 23467.66,
+          "base_token": "stx",
+          "quote_token": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc"
+        },
+        {
+          "dex": "velar",
+          "pair": "STX/aeUSDC",
+          "pair_address": "0x25edae9a9002607342f077d566b33f8a59c2ab460839d9f6456c9d10c7afc7b0",
+          "price_usd": 0.2396,
+          "price_native": 0.2396,
+          "liquidity_usd": 16065.77,
+          "volume_24h": 372.38,
+          "base_token": "stx",
+          "quote_token": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc"
+        },
+        {
+          "dex": "bitflow",
+          "pair": "sBTC/STX",
+          "pair_address": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-pool-sbtc-stx-v-1-1",
+          "price_usd": 76265.4,
+          "price_native": 320308.3067,
+          "liquidity_usd": 1465074.2,
+          "volume_24h": 31956.89,
+          "base_token": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token",
+          "quote_token": "stx"
+        },
+        {
+          "dex": "velar",
+          "pair": "sBTC/STX",
+          "pair_address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0070",
+          "price_usd": 76279.59,
+          "price_native": 320098.9969,
+          "liquidity_usd": 103191.07,
+          "volume_24h": 978.02,
+          "base_token": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token",
+          "quote_token": "stx"
+        },
+        {
+          "dex": "alex",
+          "pair": "ALEX/STX",
+          "pair_address": "0x5b5ccc41f222978fd73284c4c73483e19444cee1eca6a8e948f37a163792603b",
+          "price_usd": 0.0007931,
+          "price_native": 0.003328,
+          "liquidity_usd": 131768.41,
+          "volume_24h": 8835.34,
+          "base_token": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex",
+          "quote_token": "stx"
+        },
+        {
+          "dex": "velar",
+          "pair": "$ROO/STX",
+          "pair_address": "0x4b67372686dd9929a1d1e8de3175819700709511cf8844b98cbb556e8dc9cbae",
+          "price_usd": 0.0009602,
+          "price_native": 0.003977,
+          "liquidity_usd": 33382.01,
+          "volume_24h": 0.64,
+          "base_token": "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo",
+          "quote_token": "stx"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:53.387053"
+    },
+    "flare": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 2030906.89,
+      "total_volume_24h": 2720912.16,
+      "dexes": [
+        "enosys",
+        "sparkdex",
+        "blazeswap"
+      ],
+      "pairs": [
+        {
+          "dex": "sparkdex",
+          "pair": "WFLR/USD\u20ae0",
+          "pair_address": "0x63873f0d7165689022FeEf1B77428DF357b33dcf",
+          "price_usd": 0.008427,
+          "price_native": 0.008427,
+          "liquidity_usd": 105787.45,
+          "volume_24h": 213966.06,
+          "base_token": "0x1D80c49BbBCd1C0911346656B529DF9E5c2F783d",
+          "quote_token": "0xe7cd86e13AC4309349F30B3435a9d337750fC82D"
+        },
+        {
+          "dex": "sparkdex",
+          "pair": "WFLR/USDC.e",
+          "pair_address": "0x3Bc1eCbcd645e525508c570A0fF04480a5614a86",
+          "price_usd": 0.008431,
+          "price_native": 0.008431,
+          "liquidity_usd": 208031.51,
+          "volume_24h": 541462.25,
+          "base_token": "0x1D80c49BbBCd1C0911346656B529DF9E5c2F783d",
+          "quote_token": "0xFbDa5F676cB37624f28265A144A48B0d6e87d3b6"
+        },
+        {
+          "dex": "enosys",
+          "pair": "WFLR/FXRP",
+          "pair_address": "0xb4CB11a84CFbd8F6336Dc9417aC45c1F8E5B59E7",
+          "price_usd": 0.008404,
+          "price_native": 0.005704,
+          "liquidity_usd": 1108405.23,
+          "volume_24h": 1500917.33,
+          "base_token": "0x1D80c49BbBCd1C0911346656B529DF9E5c2F783d",
+          "quote_token": "0xAd552A648C74D49E10027AB8a618A3ad4901c5bE"
+        },
+        {
+          "dex": "blazeswap",
+          "pair": "BUGO/WFLR",
+          "pair_address": "0x90DFacE597C6C2cCF587f526770c59BB7c76E653",
+          "price_usd": 0.0003568,
+          "price_native": 0.0422,
+          "liquidity_usd": 17813.37,
+          "volume_24h": 5725.08,
+          "base_token": "0x6c1490729ce19E809Cf9F7e3e223c0490833DE02",
+          "quote_token": "0x1D80c49BbBCd1C0911346656B529DF9E5c2F783d"
+        },
+        {
+          "dex": "sparkdex",
+          "pair": "WFLR/FXRP",
+          "pair_address": "0x589689984a06E4640593eDec64e415c415940C7F",
+          "price_usd": 0.008423,
+          "price_native": 0.005717,
+          "liquidity_usd": 154283.98,
+          "volume_24h": 170432.31,
+          "base_token": "0x1D80c49BbBCd1C0911346656B529DF9E5c2F783d",
+          "quote_token": "0xAd552A648C74D49E10027AB8a618A3ad4901c5bE"
+        },
+        {
+          "dex": "sparkdex",
+          "pair": "sFLR/WFLR",
+          "pair_address": "0xc9baBa3F36ccaa54675dEECC327Ec7Eaa48CB97d",
+          "price_usd": 0.0153,
+          "price_native": 1.8176,
+          "liquidity_usd": 436585.35,
+          "volume_24h": 288409.13,
+          "base_token": "0x12e605bc104e93B45e1aD99F9e555f659051c2BB",
+          "quote_token": "0x1D80c49BbBCd1C0911346656B529DF9E5c2F783d"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:53.766204"
+    },
+    "zksync": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 1263166.97,
+      "total_volume_24h": 80229.34,
+      "dexes": [
+        "syncswap",
+        "oku",
+        "zkswap"
+      ],
+      "pairs": [
+        {
+          "dex": "syncswap",
+          "pair": "ZK/WETH",
+          "pair_address": "0x45856bD6Bb9f076F4C558A4D5932c6c8d832b0d0",
+          "price_usd": 0.01667,
+          "price_native": 6.923e-06,
+          "liquidity_usd": 506373.0,
+          "volume_24h": 35700.27,
+          "base_token": "0x5A7d6b2F92C77FAD6CCaBd7EE0624E64907Eaf3E",
+          "quote_token": "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91"
+        },
+        {
+          "dex": "zkswap",
+          "pair": "ZK/WETH",
+          "pair_address": "0x9EE3178701d91cc7b01D5b2d2Cae65cCB29B3De4",
+          "price_usd": 0.01667,
+          "price_native": 6.923e-06,
+          "liquidity_usd": 100305.01,
+          "volume_24h": 6548.18,
+          "base_token": "0x5A7d6b2F92C77FAD6CCaBd7EE0624E64907Eaf3E",
+          "quote_token": "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91"
+        },
+        {
+          "dex": "oku",
+          "pair": "ZK/WETH",
+          "pair_address": "0x3d7264539E6e3f596bb485E3091f3Ae02Ad01ef8",
+          "price_usd": 0.01666,
+          "price_native": 6.919e-06,
+          "liquidity_usd": 269838.91,
+          "volume_24h": 14568.64,
+          "base_token": "0x5A7d6b2F92C77FAD6CCaBd7EE0624E64907Eaf3E",
+          "quote_token": "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91"
+        },
+        {
+          "dex": "oku",
+          "pair": "ZK/WETH",
+          "pair_address": "0x105a6F7C2F23270DB6eed8D9EE8474323091D30c",
+          "price_usd": 0.01675,
+          "price_native": 6.956e-06,
+          "liquidity_usd": 296497.72,
+          "volume_24h": 21395.29,
+          "base_token": "0x5A7d6b2F92C77FAD6CCaBd7EE0624E64907Eaf3E",
+          "quote_token": "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91"
+        },
+        {
+          "dex": "zkswap",
+          "pair": "ZK/WETH",
+          "pair_address": "0x1556D5A73963d53c11c779893DF6fD8c865AC459",
+          "price_usd": 0.01661,
+          "price_native": 6.899e-06,
+          "liquidity_usd": 46849.46,
+          "volume_24h": 1748.6,
+          "base_token": "0x5A7d6b2F92C77FAD6CCaBd7EE0624E64907Eaf3E",
+          "quote_token": "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91"
+        },
+        {
+          "dex": "syncswap",
+          "pair": "ZK/WETH",
+          "pair_address": "0x01e00F0064Fa11Bb35D1251DF35376d60AF7D435",
+          "price_usd": 0.01667,
+          "price_native": 6.921e-06,
+          "liquidity_usd": 43302.87,
+          "volume_24h": 268.36,
+          "base_token": "0x5A7d6b2F92C77FAD6CCaBd7EE0624E64907Eaf3E",
+          "quote_token": "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:54.130289"
+    },
+    "optimism": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 1233727.93,
+      "total_volume_24h": 1772602.49,
+      "dexes": [
+        "uniswap",
+        "velodrome"
+      ],
+      "pairs": [
+        {
+          "dex": "velodrome",
+          "pair": "OP/WETH",
+          "pair_address": "0x4DC22588Ade05C40338a9D95A6da9dCeE68Bcd60",
+          "price_usd": 0.1325,
+          "price_native": 5.493e-05,
+          "liquidity_usd": 492017.06,
+          "volume_24h": 1468952.13,
+          "base_token": "0x4200000000000000000000000000000000000042",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "OP/USDC",
+          "pair_address": "0xB533c12fB4e7b53b5524EAb9b47d93fF6C7A456F",
+          "price_usd": 0.1321,
+          "price_native": 0.1322,
+          "liquidity_usd": 184491.57,
+          "volume_24h": 156206.5,
+          "base_token": "0x4200000000000000000000000000000000000042",
+          "quote_token": "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85"
+        },
+        {
+          "dex": "velodrome",
+          "pair": "OP/WETH",
+          "pair_address": "0xd25711EdfBf747efCE181442Cc1D8F5F8fc8a0D3",
+          "price_usd": 0.1321,
+          "price_native": 5.481e-05,
+          "liquidity_usd": 117001.41,
+          "volume_24h": 6599.18,
+          "base_token": "0x4200000000000000000000000000000000000042",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "OP/WETH",
+          "pair_address": "0x68F5C0A2DE713a54991E01858Fd27a3832401849",
+          "price_usd": 0.1321,
+          "price_native": 5.479e-05,
+          "liquidity_usd": 233119.16,
+          "volume_24h": 82019.18,
+          "base_token": "0x4200000000000000000000000000000000000042",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "velodrome",
+          "pair": "OP/VELO",
+          "pair_address": "0xe9581d0F1A628B038fC8B2a7F5A7d904f0e2f937",
+          "price_usd": 0.1316,
+          "price_native": 7.766,
+          "liquidity_usd": 174044.56,
+          "volume_24h": 8380.44,
+          "base_token": "0x4200000000000000000000000000000000000042",
+          "quote_token": "0x9560e827aF36c94D2Ac33a39bCE1Fe78631088Db"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "OP/WETH",
+          "pair_address": "0xFC1f3296458F9b2a27a0B91dd7681C4020E09D05",
+          "price_usd": 0.1323,
+          "price_native": 5.488e-05,
+          "liquidity_usd": 33054.17,
+          "volume_24h": 50445.06,
+          "base_token": "0x4200000000000000000000000000000000000042",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:54.523582"
+    },
+    "polygon": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 1236434.08,
+      "total_volume_24h": 23700.53,
+      "dexes": [
+        "quickswap",
+        "uniswap"
+      ],
+      "pairs": [
+        {
+          "dex": "uniswap",
+          "pair": "BET/WPOL",
+          "pair_address": "0xDa67d7c01C4C8F757C105c0890d94AC489952cD5",
+          "price_usd": 0.0003891,
+          "price_native": 0.004287,
+          "liquidity_usd": 292960.25,
+          "volume_24h": 9822.46,
+          "base_token": "0xbF7970D56a150cD0b60BD08388A4A75a27777777",
+          "quote_token": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
+        },
+        {
+          "dex": "quickswap",
+          "pair": "SAND/WPOL",
+          "pair_address": "0x369582d2010B6eD950B571F4101e3bB9b554876F",
+          "price_usd": 0.08354,
+          "price_native": 0.92,
+          "liquidity_usd": 244822.56,
+          "volume_24h": 7016.19,
+          "base_token": "0xBbba073C31bF03b8ACf7c28EF0738DeCF3695683",
+          "quote_token": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "TTAJ/WPOL",
+          "pair_address": "0xA6a2D598365cd758bA0a72cD95B7f8805248A5D5",
+          "price_usd": 0.002295,
+          "price_native": 0.02532,
+          "liquidity_usd": 114817.83,
+          "volume_24h": 2031.8,
+          "base_token": "0x3C12f8829041bF99DEAa2965014E01b750F87905",
+          "quote_token": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "SJOR/WPOL",
+          "pair_address": "0xEDd68EDf5D810Cf60fcE7d1ce3ADac91f2357616",
+          "price_usd": 0.0005413,
+          "price_native": 0.006025,
+          "liquidity_usd": 405979.76,
+          "volume_24h": 1.63,
+          "base_token": "0x0678b7e68688ea781E3C824Ec3Ba277d86E3225F",
+          "quote_token": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "ONLIVE/WPOL",
+          "pair_address": "0xB2C60F199F2F0ae7ef7B7923FFFA24B181E7E187",
+          "price_usd": 0.0003154,
+          "price_native": 0.003476,
+          "liquidity_usd": 46602.07,
+          "volume_24h": 255.01,
+          "base_token": "0x14F74e11F0d9D469A4c9D686cfB18a771b31D94f",
+          "quote_token": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "BFC/WPOL",
+          "pair_address": "0x62dbc97dD8E92756685134D03CbD0e75437E109f",
+          "price_usd": 0.003461,
+          "price_native": 0.03846,
+          "liquidity_usd": 131251.61,
+          "volume_24h": 4573.44,
+          "base_token": "0xabB265D4eD657169CfC5Ddb54E6cc362eE60d420",
+          "quote_token": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:54.824161"
+    },
+    "conflux": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 1143152.3800000001,
+      "total_volume_24h": 53728.39,
+      "dexes": [
+        "swappi",
+        "0x50cADdC77c6727Bdd3c78B428c149BF110b4f595"
+      ],
+      "pairs": [
+        {
+          "dex": "swappi",
+          "pair": "WCFX/USDC",
+          "pair_address": "0x0736b3384531cda2f545f5449e84c6c6bCd6F01b",
+          "price_usd": 0.06348,
+          "price_native": 0.06348,
+          "liquidity_usd": 205916.1,
+          "volume_24h": 20519.64,
+          "base_token": "0x14b2D3bC65e74DAE1030EAFd8ac30c533c976A9b",
+          "quote_token": "0x6963EfED0aB40F6C3d7BdA44A05dcf1437C44372"
+        },
+        {
+          "dex": "swappi",
+          "pair": "WCFX/USDT",
+          "pair_address": "0x8fCf9c586D45ce7Fcf6d714CB8b6b21a13111e0B",
+          "price_usd": 0.06266,
+          "price_native": 0.06266,
+          "liquidity_usd": 124006.79,
+          "volume_24h": 5551.22,
+          "base_token": "0x14b2D3bC65e74DAE1030EAFd8ac30c533c976A9b",
+          "quote_token": "0xfe97E85d13ABD9c1c33384E796F10B73905637cE"
+        },
+        {
+          "dex": "swappi",
+          "pair": "WBTC/WCFX",
+          "pair_address": "0x8BBBd6150C933fcd790B4a00baB23826912c192c",
+          "price_usd": 75728.29,
+          "price_native": 1208496.08566,
+          "liquidity_usd": 139716.68,
+          "volume_24h": 7798.13,
+          "base_token": "0x1F545487c62e5ACfEa45dcAdd9c627361d1616D8",
+          "quote_token": "0x14b2D3bC65e74DAE1030EAFd8ac30c533c976A9b"
+        },
+        {
+          "dex": "0x50cADdC77c6727Bdd3c78B428c149BF110b4f595",
+          "pair": "USDT0/WCFX",
+          "pair_address": "0xF45c6eaC91a1f18edd72d4CCcE859036c265Ff34",
+          "price_usd": 0.9824,
+          "price_native": 15.6689,
+          "liquidity_usd": 109994.41,
+          "volume_24h": 18115.76,
+          "base_token": "0xaf37E8B6C9ED7f6318979f56Fc287d76c30847ff",
+          "quote_token": "0x14b2D3bC65e74DAE1030EAFd8ac30c533c976A9b"
+        },
+        {
+          "dex": "swappi",
+          "pair": "GCFX/WCFX",
+          "pair_address": "0x371576F2cE309370a6234593f02953B09cDD2Ed2",
+          "price_usd": 0.04177,
+          "price_native": 0.6647,
+          "liquidity_usd": 268116.69,
+          "volume_24h": 1719.98,
+          "base_token": "0xc6156867a903C8fe1F31336d70D62a09bC48A2B9",
+          "quote_token": "0x14b2D3bC65e74DAE1030EAFd8ac30c533c976A9b"
+        },
+        {
+          "dex": "swappi",
+          "pair": "xCFX/WCFX",
+          "pair_address": "0x949b78eF2c8d6979098E195b08F27FF99cb20448",
+          "price_usd": 0.08587,
+          "price_native": 1.3622,
+          "liquidity_usd": 295401.71,
+          "volume_24h": 23.66,
+          "base_token": "0x889138644274a7Dc602f25A7e7D53fF40E6d0091",
+          "quote_token": "0x14b2D3bC65e74DAE1030EAFd8ac30c533c976A9b"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:56.701130"
+    },
+    "ton": {
+      "tier": "B",
+      "pairs_found": 3,
+      "total_liquidity_usd": 927041.8700000001,
+      "total_volume_24h": 90761.38,
+      "dexes": [
+        "stonfi"
+      ],
+      "pairs": [
+        {
+          "dex": "stonfi",
+          "pair": "UTYA/TON",
+          "pair_address": "EQCO9NDT4Il25_4ZpHIOgMAUbRJvpsI9pLzqhD8X7eTVB7X_",
+          "price_usd": 0.007325,
+          "price_native": 0.005247,
+          "liquidity_usd": 347084.78,
+          "volume_24h": 24444.04,
+          "base_token": "EQBaCgUwOoc6gHCNln_oJzb0mVs79YG7wYoavh-o1ItaneLA",
+          "quote_token": "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c"
+        },
+        {
+          "dex": "stonfi",
+          "pair": "FRT/TON",
+          "pair_address": "EQC-NefK7qY1ciFR2gfguwexDvrvE2IqB7J7jafZTJnPQgik",
+          "price_usd": 58.54,
+          "price_native": 41.935,
+          "liquidity_usd": 375152.9,
+          "volume_24h": 47022.44,
+          "base_token": "EQA1EIDrR33zgL21rwDIfGo7h4ETWieentUvg7jIT-3aP5GG",
+          "quote_token": "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c"
+        },
+        {
+          "dex": "stonfi",
+          "pair": "REDO/TON",
+          "pair_address": "EQBCwe_IObXA4Mt3RbcHil2s4-v4YQS3wUDt1-DvZOceeMGO",
+          "price_usd": 0.03951,
+          "price_native": 0.0283,
+          "liquidity_usd": 204804.19,
+          "volume_24h": 19294.9,
+          "base_token": "EQBZ_cafPyDr5KUTs0aNxh0ZTDhkpEZONmLJA2SNGlLm4Cko",
+          "quote_token": "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:56.999846"
+    },
+    "katana": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 785451.49,
+      "total_volume_24h": 459621.33,
+      "dexes": [
+        "sushiswap"
+      ],
+      "pairs": [
+        {
+          "dex": "sushiswap",
+          "pair": "KAT/vbUSDC",
+          "pair_address": "0x10045367E619Caae6f60CC80046c43c6cD55f629",
+          "price_usd": 0.009532,
+          "price_native": 0.009532,
+          "liquidity_usd": 518968.16,
+          "volume_24h": 349891.11,
+          "base_token": "0x7F1f4b4b29f5058fA32CC7a97141b8D7e5ABDC2d",
+          "quote_token": "0x203A662b0BD271A6ed5a60EdFbd04bFce608FD36"
+        },
+        {
+          "dex": "sushiswap",
+          "pair": "KAT/vbETH",
+          "pair_address": "0xfe4E52cCf659705141E6fa5Dee01432A3e637904",
+          "price_usd": 0.009575,
+          "price_native": 3.953e-06,
+          "liquidity_usd": 145489.37,
+          "volume_24h": 18362.77,
+          "base_token": "0x7F1f4b4b29f5058fA32CC7a97141b8D7e5ABDC2d",
+          "quote_token": "0xEE7D8BCFb72bC1880D0Cf19822eB0A2e6577aB62"
+        },
+        {
+          "dex": "sushiswap",
+          "pair": "avKAT/KAT",
+          "pair_address": "0x4Dc349C34C8c2728c5d018871b20291728BB4C77",
+          "price_usd": 0.009893,
+          "price_native": 1.04546,
+          "liquidity_usd": 61270.78,
+          "volume_24h": 4.48,
+          "base_token": "0x7231dbaCdFc968E07656D12389AB20De82FbfCeB",
+          "quote_token": "0x7F1f4b4b29f5058fA32CC7a97141b8D7e5ABDC2d"
+        },
+        {
+          "dex": "sushiswap",
+          "pair": "KAT/vbUSDC",
+          "pair_address": "0x6d8A30f4b2501dE8F0b443cB11eb512F12D5355f",
+          "price_usd": 0.009548,
+          "price_native": 0.009548,
+          "liquidity_usd": 49429.51,
+          "volume_24h": 85995.69,
+          "base_token": "0x7F1f4b4b29f5058fA32CC7a97141b8D7e5ABDC2d",
+          "quote_token": "0x203A662b0BD271A6ed5a60EdFbd04bFce608FD36"
+        },
+        {
+          "dex": "sushiswap",
+          "pair": "KAT/vbUSDC",
+          "pair_address": "0xAA7Bb0c80a30b61a5bB20A804f6cc96651baD37a",
+          "price_usd": 0.009491,
+          "price_native": 0.009491,
+          "liquidity_usd": 5837.57,
+          "volume_24h": 4773.04,
+          "base_token": "0x7F1f4b4b29f5058fA32CC7a97141b8D7e5ABDC2d",
+          "quote_token": "0x203A662b0BD271A6ed5a60EdFbd04bFce608FD36"
+        },
+        {
+          "dex": "sushiswap",
+          "pair": "KAT/vbUSDC",
+          "pair_address": "0x13Eb0E4c0F4bb8FD7282bBFa610643bB90ac72B3",
+          "price_usd": 0.009443,
+          "price_native": 0.009443,
+          "liquidity_usd": 4456.1,
+          "volume_24h": 594.24,
+          "base_token": "0x7F1f4b4b29f5058fA32CC7a97141b8D7e5ABDC2d",
+          "quote_token": "0x203A662b0BD271A6ed5a60EdFbd04bFce608FD36"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:57.430058"
+    },
+    "kava": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 737241.35,
+      "total_volume_24h": 127935.0,
+      "dexes": [
+        "wagmi",
+        "0xD6E4170C9097A5B5C85E8A39111bF37E47C90076",
+        "elkfinance",
+        "kinetix"
+      ],
+      "pairs": [
+        {
+          "dex": "0xD6E4170C9097A5B5C85E8A39111bF37E47C90076",
+          "pair": "USDt/WKAVA",
+          "pair_address": "0x26216b7b7dE80399b601b8217DA272b82d4f34cb",
+          "price_usd": 0.9978,
+          "price_native": 17.1968,
+          "liquidity_usd": 190095.53,
+          "volume_24h": 118995.13,
+          "base_token": "0x919C1c267BC06a7039e03fcc2eF738525769109c",
+          "quote_token": "0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b"
+        },
+        {
+          "dex": "kinetix",
+          "pair": "WAGMI/WKAVA",
+          "pair_address": "0xc81Fde7F51e432EA173e87BB3d0c5670fC7b7FF9",
+          "price_usd": 0.001174,
+          "price_native": 0.01969,
+          "liquidity_usd": 240275.31,
+          "volume_24h": 6161.54,
+          "base_token": "0xaf20f5f19698f1D19351028cd7103B63D30DE7d7",
+          "quote_token": "0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b"
+        },
+        {
+          "dex": "wagmi",
+          "pair": "WAGMI/WKAVA",
+          "pair_address": "0xE14B372d7F2a5f720c2DDB5287d81334beeF25a6",
+          "price_usd": 0.001164,
+          "price_native": 0.01958,
+          "liquidity_usd": 264392.25,
+          "volume_24h": 10.29,
+          "base_token": "0xaf20f5f19698f1D19351028cd7103B63D30DE7d7",
+          "quote_token": "0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b"
+        },
+        {
+          "dex": "wagmi",
+          "pair": "WAGMI/WKAVA",
+          "pair_address": "0x082199dB46beB9e55F437a5D0197C6C26Bcd2355",
+          "price_usd": 0.001149,
+          "price_native": 0.01933,
+          "liquidity_usd": 25588.18,
+          "volume_24h": 2765.5,
+          "base_token": "0xaf20f5f19698f1D19351028cd7103B63D30DE7d7",
+          "quote_token": "0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b"
+        },
+        {
+          "dex": "kinetix",
+          "pair": "KAI/WKAVA",
+          "pair_address": "0x8dC4A3df6AE668E3CD2D813D5A3B4dD6f9c8135C",
+          "price_usd": 0.0001989,
+          "price_native": 0.003428,
+          "liquidity_usd": 15949.1,
+          "volume_24h": 0.31,
+          "base_token": "0x52369B1539EA8F4e1eadEEF18D85462Dcf9a3658",
+          "quote_token": "0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b"
+        },
+        {
+          "dex": "elkfinance",
+          "pair": "ELK/WKAVA",
+          "pair_address": "0x45E61cf1d7a09c44b358Eb63aDE0da6c1644086f",
+          "price_usd": 0.01369,
+          "price_native": 0.2359,
+          "liquidity_usd": 940.98,
+          "volume_24h": 2.23,
+          "base_token": "0xeEeEEb57642040bE42185f49C52F7E9B38f8eeeE",
+          "quote_token": "0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:57.708577"
+    },
+    "sonic": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 633403.6900000001,
+      "total_volume_24h": 405210.75,
+      "dexes": [
+        "wagmi",
+        "beets",
+        "equalizer",
+        "defive",
+        "swapx",
+        "shadow-exchange"
+      ],
+      "pairs": [
+        {
+          "dex": "shadow-exchange",
+          "pair": "wS/USDC",
+          "pair_address": "0x324963c267C354c7660Ce8CA3F5f167E05649970",
+          "price_usd": 0.04706,
+          "price_native": 0.04706,
+          "liquidity_usd": 379907.19,
+          "volume_24h": 141404.36,
+          "base_token": "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+          "quote_token": "0x29219dd400f2Bf60E5a23d13Be72B486D4038894"
+        },
+        {
+          "dex": "equalizer",
+          "pair": "wS/USDC",
+          "pair_address": "0xb1BC4B830FCbA2184B92e15b9133c41160518038",
+          "price_usd": 0.04712,
+          "price_native": 0.04712,
+          "liquidity_usd": 42326.36,
+          "volume_24h": 80558.93,
+          "base_token": "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+          "quote_token": "0x29219dd400f2Bf60E5a23d13Be72B486D4038894"
+        },
+        {
+          "dex": "swapx",
+          "pair": "wS/USDC",
+          "pair_address": "0x5C4B7d607aAF7B5CDE9F09b5F03Cf3b5c923AEEa",
+          "price_usd": 0.04707,
+          "price_native": 0.04707,
+          "liquidity_usd": 56903.3,
+          "volume_24h": 108611.91,
+          "base_token": "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+          "quote_token": "0x29219dd400f2Bf60E5a23d13Be72B486D4038894"
+        },
+        {
+          "dex": "wagmi",
+          "pair": "wS/USDC",
+          "pair_address": "0x25f746bB206041Ed8dA6F08Ed1D32454A5856D37",
+          "price_usd": 0.04709,
+          "price_native": 0.04709,
+          "liquidity_usd": 47753.68,
+          "volume_24h": 35296.91,
+          "base_token": "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+          "quote_token": "0x29219dd400f2Bf60E5a23d13Be72B486D4038894"
+        },
+        {
+          "dex": "defive",
+          "pair": "wS/USDC",
+          "pair_address": "0x6eB32C8dB5Ff2878acbCB6a1Ec5e301F60884dA4",
+          "price_usd": 0.04703,
+          "price_native": 0.04703,
+          "liquidity_usd": 54476.36,
+          "volume_24h": 8008.57,
+          "base_token": "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+          "quote_token": "0x29219dd400f2Bf60E5a23d13Be72B486D4038894"
+        },
+        {
+          "dex": "beets",
+          "pair": "wS/USDC",
+          "pair_address": "0x3849AD7f879f8b8F5f41807dC2a6940765d8F14E",
+          "price_usd": 0.04703,
+          "price_native": 0.04703,
+          "liquidity_usd": 52036.8,
+          "volume_24h": 31330.07,
+          "base_token": "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+          "quote_token": "0x29219dd400f2Bf60E5a23d13Be72B486D4038894"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:58.058521"
+    },
+    "linea": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 557926.5599999999,
+      "total_volume_24h": 126868.82,
+      "dexes": [
+        "lynex",
+        "syncswap",
+        "etherex"
+      ],
+      "pairs": [
+        {
+          "dex": "etherex",
+          "pair": "LINEA/WETH",
+          "pair_address": "0x73045fe421F1F1719946cc664cf6020b0c183854",
+          "price_usd": 0.003621,
+          "price_native": 1.504e-06,
+          "liquidity_usd": 158470.37,
+          "volume_24h": 49193.9,
+          "base_token": "0x1789e0043623282D5DCc7F213d703C6D8BAfBB04",
+          "quote_token": "0xe5D7C2a44FfDDf6b295A15c148167daaAf5Cf34f"
+        },
+        {
+          "dex": "etherex",
+          "pair": "LINEA/USDC",
+          "pair_address": "0x70f536B375296b60078a6e1Bb0790919a13EFE77",
+          "price_usd": 0.003616,
+          "price_native": 0.003616,
+          "liquidity_usd": 282568.93,
+          "volume_24h": 4597.97,
+          "base_token": "0x1789e0043623282D5DCc7F213d703C6D8BAfBB04",
+          "quote_token": "0x176211869cA2b568f2A7D4EE941E073a821EE1ff"
+        },
+        {
+          "dex": "etherex",
+          "pair": "LINEA/WETH",
+          "pair_address": "0x14A098ef6cc0603eAD09d28bD5a65a987461A422",
+          "price_usd": 0.003636,
+          "price_native": 1.507e-06,
+          "liquidity_usd": 36218.91,
+          "volume_24h": 58122.47,
+          "base_token": "0x1789e0043623282D5DCc7F213d703C6D8BAfBB04",
+          "quote_token": "0xe5D7C2a44FfDDf6b295A15c148167daaAf5Cf34f"
+        },
+        {
+          "dex": "etherex",
+          "pair": "LINEA/mUSD",
+          "pair_address": "0x76e5D2033268F053CBE8B65aBbD00DB66Fa6D39B",
+          "price_usd": 0.003607,
+          "price_native": 0.003606,
+          "liquidity_usd": 36105.89,
+          "volume_24h": 462.42,
+          "base_token": "0x1789e0043623282D5DCc7F213d703C6D8BAfBB04",
+          "quote_token": "0xacA92E438df0B2401fF60dA7E4337B687a2435DA"
+        },
+        {
+          "dex": "lynex",
+          "pair": "LINEA/WETH",
+          "pair_address": "0x92cc8C8D661383546bb06d6c059310Ce791CcaA5",
+          "price_usd": 0.003632,
+          "price_native": 1.507e-06,
+          "liquidity_usd": 24864.41,
+          "volume_24h": 13755.0,
+          "base_token": "0x1789e0043623282D5DCc7F213d703C6D8BAfBB04",
+          "quote_token": "0xe5D7C2a44FfDDf6b295A15c148167daaAf5Cf34f"
+        },
+        {
+          "dex": "syncswap",
+          "pair": "LINEA/WETH",
+          "pair_address": "0x65543c91D48e31A4F5C3b187e88E4904D4b79403",
+          "price_usd": 0.003633,
+          "price_native": 1.507e-06,
+          "liquidity_usd": 19698.05,
+          "volume_24h": 737.06,
+          "base_token": "0x1789e0043623282D5DCc7F213d703C6D8BAfBB04",
+          "quote_token": "0xe5D7C2a44FfDDf6b295A15c148167daaAf5Cf34f"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:58.426204"
+    },
+    "venom": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 519439.71,
+      "total_volume_24h": 930.09,
+      "dexes": [
+        "web3world"
+      ],
+      "pairs": [
+        {
+          "dex": "web3world",
+          "pair": "WETH/WVENOM",
+          "pair_address": "0:56e94b4561a6adf3a241161157c7f85761ca2819c85344bd77f07fa72f258ee4",
+          "price_usd": 2362.59,
+          "price_native": 119413.6882,
+          "liquidity_usd": 113012.46,
+          "volume_24h": 390.42,
+          "base_token": "0:60b3ebf994515df7985cb62a9d141467edf2f869272baf507dc83d9ba2e1b199",
+          "quote_token": "0:77d36848bb159fa485628bc38dc37eadb74befa514395e09910f601b841f749e"
+        },
+        {
+          "dex": "web3world",
+          "pair": "WVENOM/USDT",
+          "pair_address": "0:56a3f53b5d07da8266c38eb7b4fe1b0e3f3dac6b88ef23a1634d4b9bd4eb2bbe",
+          "price_usd": 0.01979,
+          "price_native": 0.01979,
+          "liquidity_usd": 208921.38,
+          "volume_24h": 55.1,
+          "base_token": "0:77d36848bb159fa485628bc38dc37eadb74befa514395e09910f601b841f749e",
+          "quote_token": "0:8a4ed4483500caf2d4bb4b56c84df41009cc3d0ed6a9de05d853e26a30faeced"
+        },
+        {
+          "dex": "web3world",
+          "pair": "WBTC/WVENOM",
+          "pair_address": "0:c045bfc777c4a636709415d464dfc0be2a47b44c3f3464c8a4da01b1d51428eb",
+          "price_usd": 75366.92,
+          "price_native": 3808139.5348,
+          "liquidity_usd": 83384.3,
+          "volume_24h": 347.01,
+          "base_token": "0:4ff3c0f078889cbda817a5f5f2651824dea11a84f3857df27e76fee37d541877",
+          "quote_token": "0:77d36848bb159fa485628bc38dc37eadb74befa514395e09910f601b841f749e"
+        },
+        {
+          "dex": "web3world",
+          "pair": "WBNB/WVENOM",
+          "pair_address": "0:d98d3728044706eb31dab0969df0faeab0c1e11f7dd7bea96910aa94f78d08b8",
+          "price_usd": 627.53,
+          "price_native": 31694.4069,
+          "liquidity_usd": 72632.0,
+          "volume_24h": 76.97,
+          "base_token": "0:0a75b9ad65982b02493491b00454b34dcecb9e63700d560fc001473659297661",
+          "quote_token": "0:77d36848bb159fa485628bc38dc37eadb74befa514395e09910f601b841f749e"
+        },
+        {
+          "dex": "web3world",
+          "pair": "StVENOM/WVENOM",
+          "pair_address": "0:594bae5c976f0d2e6f6386b390870b3f9a46e6c7829cdf122dcd7f1da8ab7cb1",
+          "price_usd": 0.02384,
+          "price_native": 1.2047,
+          "liquidity_usd": 21147.99,
+          "volume_24h": 51.74,
+          "base_token": "0:74604c7a56419477d67329848d754d205f31870025a7135909e90e1726ad9a54",
+          "quote_token": "0:77d36848bb159fa485628bc38dc37eadb74befa514395e09910f601b841f749e"
+        },
+        {
+          "dex": "web3world",
+          "pair": "WVENOM/USDC",
+          "pair_address": "0:202b5bb7ebcd203352d1a28f8faddb8a06af502402c5a59f1fe132edb44776e5",
+          "price_usd": 0.02002,
+          "price_native": 0.02002,
+          "liquidity_usd": 20341.58,
+          "volume_24h": 8.85,
+          "base_token": "0:77d36848bb159fa485628bc38dc37eadb74befa514395e09910f601b841f749e",
+          "quote_token": "0:cda5e8d5953e1a09ffeb9f62316f2994019f10abe83c8f1b0aadfbc997bd79e6"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:58.795978"
+    },
+    "soneium": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 491755.01,
+      "total_volume_24h": 226240.24,
+      "dexes": [
+        "velodrome",
+        "kyo-finance"
+      ],
+      "pairs": [
+        {
+          "dex": "kyo-finance",
+          "pair": "ASTR/USDC.e",
+          "pair_address": "0xbc266d11E2F1CF0424dD68bF68030623eCF58528",
+          "price_usd": 0.008149,
+          "price_native": 0.008149,
+          "liquidity_usd": 50391.54,
+          "volume_24h": 8818.43,
+          "base_token": "0x2CAE934a1e84F693fbb78CA5ED3B0A6893259441",
+          "quote_token": "0xbA9986D2381edf1DA03B0B9c1f8b00dc4AacC369"
+        },
+        {
+          "dex": "kyo-finance",
+          "pair": "WETH/USDC.e",
+          "pair_address": "0x30f4fddb02a82076694682DCC9FC92e3AeCFf99c",
+          "price_usd": 2408.73,
+          "price_native": 2408.7386,
+          "liquidity_usd": 47675.79,
+          "volume_24h": 53096.29,
+          "base_token": "0x4200000000000000000000000000000000000006",
+          "quote_token": "0xbA9986D2381edf1DA03B0B9c1f8b00dc4AacC369"
+        },
+        {
+          "dex": "kyo-finance",
+          "pair": "USDSC/USDC.e",
+          "pair_address": "0x680bfCbFa2C2DBeD8B25b94cC73C15EA338F5F38",
+          "price_usd": 1.000031,
+          "price_native": 1.00003188,
+          "liquidity_usd": 193478.07,
+          "volume_24h": 3340.46,
+          "base_token": "0x3f99231dD03a9F0E7e3421c92B7b90fbe012985a",
+          "quote_token": "0xbA9986D2381edf1DA03B0B9c1f8b00dc4AacC369"
+        },
+        {
+          "dex": "kyo-finance",
+          "pair": "WETH/USDC.e",
+          "pair_address": "0x9FCCa0a1af56d34C88156E8857A5f430dB7A6382",
+          "price_usd": 2407.11,
+          "price_native": 2407.1101,
+          "liquidity_usd": 116844.4,
+          "volume_24h": 21016.19,
+          "base_token": "0x4200000000000000000000000000000000000006",
+          "quote_token": "0xbA9986D2381edf1DA03B0B9c1f8b00dc4AacC369"
+        },
+        {
+          "dex": "velodrome",
+          "pair": "WETH/USDC.e",
+          "pair_address": "0x5441c4c5cc00D33bd9409F742D511Ee01db1667B",
+          "price_usd": 2408.46,
+          "price_native": 2408.4663,
+          "liquidity_usd": 52691.84,
+          "volume_24h": 96710.65,
+          "base_token": "0x4200000000000000000000000000000000000006",
+          "quote_token": "0xbA9986D2381edf1DA03B0B9c1f8b00dc4AacC369"
+        },
+        {
+          "dex": "kyo-finance",
+          "pair": "USD\u20ae0/USDC.e",
+          "pair_address": "0x9f5be83E9F836CBb85cA68647FBF812211A33062",
+          "price_usd": 1.00044,
+          "price_native": 1.0004461,
+          "liquidity_usd": 30673.37,
+          "volume_24h": 43258.22,
+          "base_token": "0x102d758f688a4C1C5a80b116bD945d4455460282",
+          "quote_token": "0xbA9986D2381edf1DA03B0B9c1f8b00dc4AacC369"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:59.083184"
+    },
+    "metis": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 472687.99,
+      "total_volume_24h": 880024.22,
+      "dexes": [
+        "uni-maia",
+        "netswap",
+        "tethys"
+      ],
+      "pairs": [
+        {
+          "dex": "netswap",
+          "pair": "Metis/m.USDT",
+          "pair_address": "0x3D60aFEcf67e6ba950b499137A72478B2CA7c5A1",
+          "price_usd": 3.93,
+          "price_native": 3.939,
+          "liquidity_usd": 247924.57,
+          "volume_24h": 506688.53,
+          "base_token": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+          "quote_token": "0xbB06DCA3AE6887fAbF931640f67cab3e3a16F4dC"
+        },
+        {
+          "dex": "netswap",
+          "pair": "Metis/m.USDC",
+          "pair_address": "0x5Ae3ee7fBB3Cb28C17e7ADc3a6Ae605ae2465091",
+          "price_usd": 3.96,
+          "price_native": 3.9698,
+          "liquidity_usd": 163876.2,
+          "volume_24h": 264801.73,
+          "base_token": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+          "quote_token": "0xEA32A96608495e54156Ae48931A7c20f0dcc1a21"
+        },
+        {
+          "dex": "tethys",
+          "pair": "Metis/m.USDC",
+          "pair_address": "0xDd7dF3522a49e6e1127bf1A1d3bAEa3bc100583B",
+          "price_usd": 3.97,
+          "price_native": 3.9776,
+          "liquidity_usd": 35672.88,
+          "volume_24h": 67927.65,
+          "base_token": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+          "quote_token": "0xEA32A96608495e54156Ae48931A7c20f0dcc1a21"
+        },
+        {
+          "dex": "tethys",
+          "pair": "Metis/m.USDT",
+          "pair_address": "0x8121113eB9952086deC3113690Af0538BB5506fd",
+          "price_usd": 3.93,
+          "price_native": 3.9372,
+          "liquidity_usd": 16349.49,
+          "volume_24h": 36814.51,
+          "base_token": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+          "quote_token": "0xbB06DCA3AE6887fAbF931640f67cab3e3a16F4dC"
+        },
+        {
+          "dex": "uni-maia",
+          "pair": "Metis/m.USDC",
+          "pair_address": "0x4A51Cb0A8fb5c45a7F2DDfB95CF3B8d58E9dAa67",
+          "price_usd": 4.0049,
+          "price_native": 4.004999,
+          "liquidity_usd": 7773.91,
+          "volume_24h": 3019.05,
+          "base_token": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+          "quote_token": "0xEA32A96608495e54156Ae48931A7c20f0dcc1a21"
+        },
+        {
+          "dex": "uni-maia",
+          "pair": "Metis/m.USDC",
+          "pair_address": "0xBfAb95e4EEd952820B44f9c05d66FA6502E50506",
+          "price_usd": 3.99,
+          "price_native": 3.9939,
+          "liquidity_usd": 1090.94,
+          "volume_24h": 772.75,
+          "base_token": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+          "quote_token": "0xEA32A96608495e54156Ae48931A7c20f0dcc1a21"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:59.493804"
+    },
+    "fantom": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 304171.43,
+      "total_volume_24h": 287.72999999999996,
+      "dexes": [
+        "spookyswap",
+        "beethovenx",
+        "spiritswap"
+      ],
+      "pairs": [
+        {
+          "dex": "beethovenx",
+          "pair": "BEETS/WFTM",
+          "pair_address": "0xcdE5a11a4ACB4eE4c805352Cec57E236bdBC3837",
+          "price_usd": 0.007118,
+          "price_native": 0.1509,
+          "liquidity_usd": 65869.43,
+          "volume_24h": 12.9,
+          "base_token": "0xF24Bcf4d1e507740041C9cFd2DddB29585aDCe1e",
+          "quote_token": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83"
+        },
+        {
+          "dex": "spookyswap",
+          "pair": "TOMB/WFTM",
+          "pair_address": "0x2A651563C9d3Af67aE0388a5c8F89b867038089e",
+          "price_usd": 0.0005466,
+          "price_native": 0.0116,
+          "liquidity_usd": 61629.5,
+          "volume_24h": 4.83,
+          "base_token": "0x6c021Ae822BEa943b2E66552bDe1D2696a53fbB7",
+          "quote_token": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83"
+        },
+        {
+          "dex": "spookyswap",
+          "pair": "BOO/WFTM",
+          "pair_address": "0xEc7178F4C41f346b2721907F5cF7628E388A7a58",
+          "price_usd": 0.01661,
+          "price_native": 0.3522,
+          "liquidity_usd": 55236.5,
+          "volume_24h": 2.84,
+          "base_token": "0x841FAD6EAe12c286d1Fd18d1d525DFfA75C7EFFE",
+          "quote_token": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83"
+        },
+        {
+          "dex": "spiritswap",
+          "pair": "gOHM/WFTM",
+          "pair_address": "0xae9BBa22E87866e48ccAcFf0689AFaa41eB94995",
+          "price_usd": 4601.62,
+          "price_native": 96449.9302,
+          "liquidity_usd": 46406.66,
+          "volume_24h": 0.13,
+          "base_token": "0x91fa20244Fb509e8289CA630E5db3E9166233FDc",
+          "quote_token": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83"
+        },
+        {
+          "dex": "spookyswap",
+          "pair": "BTC/WFTM",
+          "pair_address": "0xFdb9Ab8B9513Ad9E419Cf19530feE49d412C3Ee3",
+          "price_usd": 1099.59,
+          "price_native": 23525.6752,
+          "liquidity_usd": 40701.03,
+          "volume_24h": 2.45,
+          "base_token": "0x321162Cd933E2Be498Cd2267a90534A804051b11",
+          "quote_token": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83"
+        },
+        {
+          "dex": "spiritswap",
+          "pair": "FRAX/WFTM",
+          "pair_address": "0x7ed0cdDB9BB6c6dfEa6fB63E117c8305479B8D7D",
+          "price_usd": 0.9925,
+          "price_native": 21.1307,
+          "liquidity_usd": 34328.31,
+          "volume_24h": 264.58,
+          "base_token": "0xdc301622e621166BD8E82f2cA0A26c13Ad0BE355",
+          "quote_token": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:13:59.893078"
+    },
+    "cronos": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 7595964.23,
+      "total_volume_24h": 338978.48,
+      "dexes": [
+        "mmfinance",
+        "0xDdcf30c1A85e5a60d85310d6b0D3952A75a00db4",
+        "cronaswap",
+        "vvsfinance"
+      ],
+      "pairs": [
+        {
+          "dex": "vvsfinance",
+          "pair": "WCRO/USDC",
+          "pair_address": "0xe61Db569E231B3f5530168Aa2C9D50246525b6d6",
+          "price_usd": 0.07154,
+          "price_native": 0.07154,
+          "liquidity_usd": 6412534.28,
+          "volume_24h": 268889.94,
+          "base_token": "0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23",
+          "quote_token": "0xc21223249CA28397B4B6541dfFaEcC539BfF0c59"
+        },
+        {
+          "dex": "mmfinance",
+          "pair": "WCRO/USDC",
+          "pair_address": "0xa68466208F1A3Eb21650320D2520ee8eBA5ba623",
+          "price_usd": 0.0715,
+          "price_native": 0.0715,
+          "liquidity_usd": 326926.36,
+          "volume_24h": 26588.96,
+          "base_token": "0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23",
+          "quote_token": "0xc21223249CA28397B4B6541dfFaEcC539BfF0c59"
+        },
+        {
+          "dex": "vvsfinance",
+          "pair": "WCRO/USDC",
+          "pair_address": "0x67255a0AB5aDD6D65045E6E855842Ca8b8A2B625",
+          "price_usd": 0.07152,
+          "price_native": 0.07152,
+          "liquidity_usd": 185214.91,
+          "volume_24h": 16008.22,
+          "base_token": "0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23",
+          "quote_token": "0xc21223249CA28397B4B6541dfFaEcC539BfF0c59"
+        },
+        {
+          "dex": "vvsfinance",
+          "pair": "WCRO/USDT",
+          "pair_address": "0x3d2180DB9E1B909f35C398BC39EF36108C0FC8c3",
+          "price_usd": 0.07161,
+          "price_native": 0.07161,
+          "liquidity_usd": 540430.47,
+          "volume_24h": 24623.59,
+          "base_token": "0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23",
+          "quote_token": "0x66e428c3f67a68878562e79A0234c1F83c208770"
+        },
+        {
+          "dex": "0xDdcf30c1A85e5a60d85310d6b0D3952A75a00db4",
+          "pair": "WCRO/USDC",
+          "pair_address": "0xfC84f7b512BF2A590ED48797aA42CcC817F918a0",
+          "price_usd": 0.07153,
+          "price_native": 0.07153,
+          "liquidity_usd": 65904.89,
+          "volume_24h": 1456.23,
+          "base_token": "0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23",
+          "quote_token": "0xc21223249CA28397B4B6541dfFaEcC539BfF0c59"
+        },
+        {
+          "dex": "cronaswap",
+          "pair": "WCRO/USDC",
+          "pair_address": "0x0625A68D25d304aed698c806267a4e369e8Eb12a",
+          "price_usd": 0.07157,
+          "price_native": 0.07157,
+          "liquidity_usd": 64953.32,
+          "volume_24h": 1411.54,
+          "base_token": "0x5C7F8A570d578ED84E63fdFA7b1eE72dEae1AE23",
+          "quote_token": "0xc21223249CA28397B4B6541dfFaEcC539BfF0c59"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:00.239649"
+    },
+    "arbitrumnova": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 242013.0,
+      "total_volume_24h": 4690.110000000001,
+      "dexes": [
+        "rcpswap",
+        "sushiswap",
+        "0xaa26771d497814E81D305c511Efbb3ceD90BF5bd",
+        "arbswap"
+      ],
+      "pairs": [
+        {
+          "dex": "rcpswap",
+          "pair": "WETH/USDC",
+          "pair_address": "0x66Ec0a03409E63Ae5b38f7bC5185F72e7191B17d",
+          "price_usd": 2407.76,
+          "price_native": 2407.7669,
+          "liquidity_usd": 33981.0,
+          "volume_24h": 993.03,
+          "base_token": "0x722E8BdD2ce80A4422E880164f2079488e115365",
+          "quote_token": "0x750ba8b76187092B0D1E87E28daaf484d1b5273b"
+        },
+        {
+          "dex": "arbswap",
+          "pair": "WETH/USDC",
+          "pair_address": "0xdBA61558A49c0A836A4106502cFbe5870DAD1743",
+          "price_usd": 2416.95,
+          "price_native": 2416.9572,
+          "liquidity_usd": 117817.0,
+          "volume_24h": 2120.63,
+          "base_token": "0x722E8BdD2ce80A4422E880164f2079488e115365",
+          "quote_token": "0x750ba8b76187092B0D1E87E28daaf484d1b5273b"
+        },
+        {
+          "dex": "sushiswap",
+          "pair": "WETH/USDC",
+          "pair_address": "0x26d96cfC6DF8262b1bb327a2df0eDE02FDfC8874",
+          "price_usd": 2422.54,
+          "price_native": 2422.5446,
+          "liquidity_usd": 70637.0,
+          "volume_24h": 1309.95,
+          "base_token": "0x722E8BdD2ce80A4422E880164f2079488e115365",
+          "quote_token": "0x750ba8b76187092B0D1E87E28daaf484d1b5273b"
+        },
+        {
+          "dex": "0xaa26771d497814E81D305c511Efbb3ceD90BF5bd",
+          "pair": "WETH/USDC",
+          "pair_address": "0x95442E8AC3A0A9021288F094A23f4dBb8Cb5308A",
+          "price_usd": 2428.33,
+          "price_native": 2428.3395,
+          "liquidity_usd": 6491.0,
+          "volume_24h": 165.49,
+          "base_token": "0x722E8BdD2ce80A4422E880164f2079488e115365",
+          "quote_token": "0x750ba8b76187092B0D1E87E28daaf484d1b5273b"
+        },
+        {
+          "dex": "0xaa26771d497814E81D305c511Efbb3ceD90BF5bd",
+          "pair": "WETH/USDC",
+          "pair_address": "0xFF48694650aA02dbb88ea75A3EC196c3696bA015",
+          "price_usd": 2425.68,
+          "price_native": 2425.6829,
+          "liquidity_usd": 1235.0,
+          "volume_24h": 17.29,
+          "base_token": "0x722E8BdD2ce80A4422E880164f2079488e115365",
+          "quote_token": "0x750ba8b76187092B0D1E87E28daaf484d1b5273b"
+        },
+        {
+          "dex": "sushiswap",
+          "pair": "WETH/DAI",
+          "pair_address": "0x5c7966CebD4027266bd5163a8aB04331Ade9C78c",
+          "price_usd": 2413.6,
+          "price_native": 2413.6068,
+          "liquidity_usd": 11852.0,
+          "volume_24h": 83.72,
+          "base_token": "0x722E8BdD2ce80A4422E880164f2079488e115365",
+          "quote_token": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:00.616191"
+    },
+    "boba": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 232920.0,
+      "total_volume_24h": 9801.29,
+      "dexes": [
+        "0x39135bD1FD3A04381C1094AB0Dd35c7bbe61b3C5",
+        "oolongswap",
+        "sushiswap",
+        "oku",
+        "0xcB74d94Ddb0c365e62731FA289E90928C311223f"
+      ],
+      "pairs": [
+        {
+          "dex": "oku",
+          "pair": "BOBA/USDC",
+          "pair_address": "0xdF37543dae7986E48E3ce83F390A828A9F3D23BA",
+          "price_usd": 0.02332,
+          "price_native": 0.02332,
+          "liquidity_usd": 68561.0,
+          "volume_24h": 7181.01,
+          "base_token": "0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7",
+          "quote_token": "0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc"
+        },
+        {
+          "dex": "sushiswap",
+          "pair": "BOBA/WETH",
+          "pair_address": "0x247442181b8bAA03b3c7DC0D8e971bD4686db27c",
+          "price_usd": 0.02326,
+          "price_native": 9.632e-06,
+          "liquidity_usd": 72887.0,
+          "volume_24h": 1220.03,
+          "base_token": "0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7",
+          "quote_token": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000"
+        },
+        {
+          "dex": "oolongswap",
+          "pair": "BOBA/WETH",
+          "pair_address": "0x077c28868B84c4b420638Ef97041764EFFBb2428",
+          "price_usd": 0.02326,
+          "price_native": 9.629e-06,
+          "liquidity_usd": 67796.0,
+          "volume_24h": 1016.55,
+          "base_token": "0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7",
+          "quote_token": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000"
+        },
+        {
+          "dex": "0xcB74d94Ddb0c365e62731FA289E90928C311223f",
+          "pair": "BOBA/WETH",
+          "pair_address": "0x3b444D1DBF68D1CFC64A8158AffB6a24A6BdF038",
+          "price_usd": 0.02325,
+          "price_native": 9.625e-06,
+          "liquidity_usd": 17582.0,
+          "volume_24h": 262.83,
+          "base_token": "0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7",
+          "quote_token": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000"
+        },
+        {
+          "dex": "0x39135bD1FD3A04381C1094AB0Dd35c7bbe61b3C5",
+          "pair": "BOBA/USDC",
+          "pair_address": "0x952E6e48BDca828899b6e0002573f87Efe5BbC5E",
+          "price_usd": 0.02323,
+          "price_native": 0.02323,
+          "liquidity_usd": 5376.0,
+          "volume_24h": 109.17,
+          "base_token": "0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7",
+          "quote_token": "0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc"
+        },
+        {
+          "dex": "oolongswap",
+          "pair": "BOBA/USDC",
+          "pair_address": "0xcE37D81713A25373E92475c5B9BD2c4980DFAB76",
+          "price_usd": 0.0232,
+          "price_native": 0.0232,
+          "liquidity_usd": 718.0,
+          "volume_24h": 11.7,
+          "base_token": "0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7",
+          "quote_token": "0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:01.022177"
+    },
+    "iotex": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 214235.0,
+      "total_volume_24h": 2904.06,
+      "dexes": [
+        "mimo"
+      ],
+      "pairs": [
+        {
+          "dex": "mimo",
+          "pair": "WIOTX/BUSD-bsc",
+          "pair_address": "0x6BDeFe87C4b18726002D3505B3251c89C8004c6a",
+          "price_usd": 0.006113,
+          "price_native": 0.006113,
+          "liquidity_usd": 2622.0,
+          "volume_24h": 0.46,
+          "base_token": "0xA00744882684C3e4747faEFD68D283eA44099D03",
+          "quote_token": "0x84ABcb2832bE606341a50128AEB1DB43AA017449"
+        },
+        {
+          "dex": "mimo",
+          "pair": "GEOD/WIOTX",
+          "pair_address": "0x3E8Bd57eb43BbDa79D0423c138a1dB3DCa754076",
+          "price_usd": 0.1423,
+          "price_native": 21.0157,
+          "liquidity_usd": 19754.0,
+          "volume_24h": 0.38,
+          "base_token": "0x8E33229206f726993E4A7bF7dA2347F3743Bf8b4",
+          "quote_token": "0xA00744882684C3e4747faEFD68D283eA44099D03"
+        },
+        {
+          "dex": "mimo",
+          "pair": "SENTAI/WIOTX",
+          "pair_address": "0xC73606b115EB9C0395fA01F1924E565AF7579142",
+          "price_usd": 3.786e-05,
+          "price_native": 0.00559,
+          "liquidity_usd": 1628.0,
+          "volume_24h": 0.37,
+          "base_token": "0xeaaf0e6Be5B33ee472E93ac7c1FCc10f57186986",
+          "quote_token": "0xA00744882684C3e4747faEFD68D283eA44099D03"
+        },
+        {
+          "dex": "mimo",
+          "pair": "GOAT/WIOTX",
+          "pair_address": "0x5C8b7dBd8d01cF919FC23248aD73Ab3EfE5d9481",
+          "price_usd": 0.0001181,
+          "price_native": 0.01744,
+          "liquidity_usd": 15.0,
+          "volume_24h": 0.37,
+          "base_token": "0x36F7feEE4Ebe42EcA1f2E21e4B63CA5B3Ec00F35",
+          "quote_token": "0xA00744882684C3e4747faEFD68D283eA44099D03"
+        },
+        {
+          "dex": "mimo",
+          "pair": "IOID/WIOTX",
+          "pair_address": "0x6CaFC26f100Efe97e8F49a147F72C4C2a616108A",
+          "price_usd": 6.923e-06,
+          "price_native": 0.001022,
+          "liquidity_usd": 2069.0,
+          "volume_24h": 0.36,
+          "base_token": "0xBfE6dFa737C82Ef5368385619D89Ce1Ea82bAF95",
+          "quote_token": "0xA00744882684C3e4747faEFD68D283eA44099D03"
+        },
+        {
+          "dex": "mimo",
+          "pair": "ioETH/WIOTX",
+          "pair_address": "0x543F4E80A0c2e226008f65F96964235523d16329",
+          "price_usd": 2238.78,
+          "price_native": 330528.6826,
+          "liquidity_usd": 188147.0,
+          "volume_24h": 2902.12,
+          "base_token": "0x0258866edAf84D6081df17660357aB20A07d0c80",
+          "quote_token": "0xA00744882684C3e4747faEFD68D283eA44099D03"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:01.380490"
+    },
+    "base": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 206101.67,
+      "total_volume_24h": 5306.94,
+      "dexes": [
+        "uniswap",
+        "swapbased"
+      ],
+      "pairs": [
+        {
+          "dex": "swapbased",
+          "pair": "BASE/WETH",
+          "pair_address": "0x5554419CCd0293d9383901F461C7C3E0c66E925F",
+          "price_usd": 1.342e-06,
+          "price_native": 5.58e-10,
+          "liquidity_usd": 52145.15,
+          "volume_24h": 1510.46,
+          "base_token": "0xd07379a755A8f11B57610154861D694b2A0f615a",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "swapbased",
+          "pair": "BASE/WETH",
+          "pair_address": "0xCbFe08767247Fd75234e640D047Bdd34364fef48",
+          "price_usd": 1.358e-06,
+          "price_native": 5.578e-10,
+          "liquidity_usd": 51675.05,
+          "volume_24h": 1073.1,
+          "base_token": "0xd07379a755A8f11B57610154861D694b2A0f615a",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "BASE/WETH",
+          "pair_address": "0x8EB9437532faC8d6A7870f3F887B7978d20355Fc",
+          "price_usd": 1.354e-06,
+          "price_native": 5.571e-10,
+          "liquidity_usd": 31555.41,
+          "volume_24h": 1560.87,
+          "base_token": "0xd07379a755A8f11B57610154861D694b2A0f615a",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "BASE/WETH",
+          "pair_address": "0x60DC51aB5Ad447f72D4C86ffFcCCB89038391471",
+          "price_usd": 4.124e-07,
+          "price_native": 1.705e-10,
+          "liquidity_usd": 23115.86,
+          "volume_24h": 1155.39,
+          "base_token": "0xF1B4ddF712E108cf43711B1C39f2fDDb0d5Ce243",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "BASE/WETH",
+          "pair_address": "0xdA1Cf50f7345Ba725e7c01640c5a1C5904617ecD",
+          "price_usd": 2.418e-05,
+          "price_native": 9.883e-09,
+          "liquidity_usd": 12454.92,
+          "volume_24h": 7.12,
+          "base_token": "0x0678488FfCF367e8593708462c95c7e110875e34",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "BASE/ETH",
+          "pair_address": "0x86cdfeb34f3f25b134418d1d78e6b3c1bf6a5247c10024687a7255aa1fd9119f",
+          "price_usd": 4.687e-05,
+          "price_native": 1.997e-08,
+          "liquidity_usd": 35155.28,
+          "volume_24h": 0.0,
+          "base_token": "0xE59e90e01eBa2754a2EA80AbDb617D4ec7661fF7",
+          "quote_token": "0x0000000000000000000000000000000000000000"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:01.678347"
+    },
+    "bsc": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 142387.73,
+      "total_volume_24h": 87073.70999999999,
+      "dexes": [
+        "apeswap",
+        "pancakeswap"
+      ],
+      "pairs": [
+        {
+          "dex": "pancakeswap",
+          "pair": "BSC/WBNB",
+          "pair_address": "0xff0A8df8c4A0332E28a4c94EBB3f633944B08a94",
+          "price_usd": 0.0003396,
+          "price_native": 5.246e-07,
+          "liquidity_usd": 100799.23,
+          "volume_24h": 84747.56,
+          "base_token": "0x6331BF8D601f0D7F0d2101772af5137c418c4444",
+          "quote_token": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+        },
+        {
+          "dex": "pancakeswap",
+          "pair": "BSC/WBNB",
+          "pair_address": "0xd16EEE66969539eA67BB85d1a3412A1ff0e3310F",
+          "price_usd": 2.454e-05,
+          "price_native": 3.792e-08,
+          "liquidity_usd": 24321.95,
+          "volume_24h": 2115.39,
+          "base_token": "0x6B4917a11BCb3BDCb545D79F211e81aa5835a3Ba",
+          "quote_token": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+        },
+        {
+          "dex": "pancakeswap",
+          "pair": "BSC/WBNB",
+          "pair_address": "0x2cc501334fe65fF0304e8563e3D3C79fAB54B50b",
+          "price_usd": 8.395e-06,
+          "price_native": 1.332e-08,
+          "liquidity_usd": 10002.41,
+          "volume_24h": 0.1,
+          "base_token": "0x8c29fC7a43eB6dc592C1d5f06d3fD574d9Fb1fd7",
+          "quote_token": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+        },
+        {
+          "dex": "pancakeswap",
+          "pair": "BSC/WBNB",
+          "pair_address": "0xB60eBbE4dE3D66723B70eB4e6F4eD9e72a0ab01F",
+          "price_usd": 0.0003393,
+          "price_native": 5.242e-07,
+          "liquidity_usd": 656.81,
+          "volume_24h": 209.59,
+          "base_token": "0x6331BF8D601f0D7F0d2101772af5137c418c4444",
+          "quote_token": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+        },
+        {
+          "dex": "pancakeswap",
+          "pair": "BSC/WBNB",
+          "pair_address": "0x21eed4E0Dd6Bc0835f0677C83407B0741B55492A",
+          "price_usd": 3.311e-06,
+          "price_native": 5.175e-09,
+          "liquidity_usd": 6543.3,
+          "volume_24h": 1.06,
+          "base_token": "0xB261AE567d6f08013a6D40c55c23f41E45DE4444",
+          "quote_token": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+        },
+        {
+          "dex": "apeswap",
+          "pair": "BSC/WBNB",
+          "pair_address": "0x5c60Efc9b169aCe846f185eFbb1a77efEA2dbE3C",
+          "price_usd": 0.01387,
+          "price_native": 2.168e-05,
+          "liquidity_usd": 64.03,
+          "volume_24h": 0.01,
+          "base_token": "0xf5128928f85F16bD67C1E02DdD1b47A71d17aDF5",
+          "quote_token": "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:01.967400"
+    },
+    "aurora": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 139050.0,
+      "total_volume_24h": 3168.9100000000003,
+      "dexes": [
+        "wannaswap",
+        "auroraswap",
+        "trisolaris"
+      ],
+      "pairs": [
+        {
+          "dex": "trisolaris",
+          "pair": "AURORA/NEAR",
+          "pair_address": "0x1e0e812FBcd3EB75D8562AD6F310Ed94D258D008",
+          "price_usd": 0.02758,
+          "price_native": 0.0197,
+          "liquidity_usd": 129926.0,
+          "volume_24h": 3069.9,
+          "base_token": "0x8BEc47865aDe3B172A928df8f990Bc7f2A3b9f79",
+          "quote_token": "0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d"
+        },
+        {
+          "dex": "trisolaris",
+          "pair": "AURORA/WETH",
+          "pair_address": "0x5eeC60F348cB1D661E4A5122CF4638c7DB7A886e",
+          "price_usd": 0.02749,
+          "price_native": 1.136e-05,
+          "liquidity_usd": 8357.0,
+          "volume_24h": 92.46,
+          "base_token": "0x8BEc47865aDe3B172A928df8f990Bc7f2A3b9f79",
+          "quote_token": "0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB"
+        },
+        {
+          "dex": "wannaswap",
+          "pair": "AURORA/NEAR",
+          "pair_address": "0x7E9EA10E5984a09D19D05F31ca3cB65BB7df359d",
+          "price_usd": 0.02733,
+          "price_native": 0.01955,
+          "liquidity_usd": 511.0,
+          "volume_24h": 4.65,
+          "base_token": "0x8BEc47865aDe3B172A928df8f990Bc7f2A3b9f79",
+          "quote_token": "0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d"
+        },
+        {
+          "dex": "auroraswap",
+          "pair": "AURORA/NEAR",
+          "pair_address": "0x84567E7511E0d97DE676d236AEa7aE688221799e",
+          "price_usd": 0.0273,
+          "price_native": 0.01953,
+          "liquidity_usd": 243.0,
+          "volume_24h": 1.82,
+          "base_token": "0x8BEc47865aDe3B172A928df8f990Bc7f2A3b9f79",
+          "quote_token": "0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d"
+        },
+        {
+          "dex": "auroraswap",
+          "pair": "AURORA/WETH",
+          "pair_address": "0x865C59d555e59c9F35487bbdFB22d617c67aEaBd",
+          "price_usd": 0.02759,
+          "price_native": 1.131e-05,
+          "liquidity_usd": 11.0,
+          "volume_24h": 0.07,
+          "base_token": "0x8BEc47865aDe3B172A928df8f990Bc7f2A3b9f79",
+          "quote_token": "0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB"
+        },
+        {
+          "dex": "wannaswap",
+          "pair": "AURORA/WETH",
+          "pair_address": "0x2B76d0bF270F561d6995436934b5461636646090",
+          "price_usd": 0.02761,
+          "price_native": 1.132e-05,
+          "liquidity_usd": 2.0,
+          "volume_24h": 0.01,
+          "base_token": "0x8BEc47865aDe3B172A928df8f990Bc7f2A3b9f79",
+          "quote_token": "0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:02.265764"
+    },
+    "celo": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 136736.17,
+      "total_volume_24h": 103739.89,
+      "dexes": [
+        "uniswap",
+        "ubeswap",
+        "velodrome"
+      ],
+      "pairs": [
+        {
+          "dex": "ubeswap",
+          "pair": "CELO/mcUSD",
+          "pair_address": "0xb460F9Ae1fEa4f77107146C1960bb1C978118816",
+          "price_usd": 0.08713,
+          "price_native": 0.08713,
+          "liquidity_usd": 90073.89,
+          "volume_24h": 2959.5,
+          "base_token": "0x471EcE3750Da237f93B8E339c536989b8978a438",
+          "quote_token": "0x918146359264C492BD6934071c6Bd31C854EDBc3"
+        },
+        {
+          "dex": "ubeswap",
+          "pair": "CELO/USDm",
+          "pair_address": "0x21ef97B2D0D7c5fe872d141d48E5c2bc352ab028",
+          "price_usd": 0.08748,
+          "price_native": 0.08748,
+          "liquidity_usd": 10771.29,
+          "volume_24h": 32566.4,
+          "base_token": "0x471EcE3750Da237f93B8E339c536989b8978a438",
+          "quote_token": "0x765DE816845861e75A25fCA122bb6898B8B1282a"
+        },
+        {
+          "dex": "ubeswap",
+          "pair": "CELO/USDm",
+          "pair_address": "0x1E593F1FE7B61c53874B54EC0c59FD0d5eb8621e",
+          "price_usd": 0.08721,
+          "price_native": 0.08721,
+          "liquidity_usd": 16822.13,
+          "volume_24h": 1105.56,
+          "base_token": "0x471EcE3750Da237f93B8E339c536989b8978a438",
+          "quote_token": "0x765DE816845861e75A25fCA122bb6898B8B1282a"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "CELO/USDm",
+          "pair_address": "0x2d70cBAbf4d8e61d5317b62cBe912935FD94e0FE",
+          "price_usd": 0.08745,
+          "price_native": 0.08745,
+          "liquidity_usd": 9511.07,
+          "volume_24h": 66672.15,
+          "base_token": "0x471EcE3750Da237f93B8E339c536989b8978a438",
+          "quote_token": "0x765DE816845861e75A25fCA122bb6898B8B1282a"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "CELO/USDm",
+          "pair_address": "0x079e7A44F42E9cd2442C3B9536244be634e8f888",
+          "price_usd": 0.0871,
+          "price_native": 0.0871,
+          "liquidity_usd": 8316.6,
+          "volume_24h": 20.7,
+          "base_token": "0x471EcE3750Da237f93B8E339c536989b8978a438",
+          "quote_token": "0x765DE816845861e75A25fCA122bb6898B8B1282a"
+        },
+        {
+          "dex": "velodrome",
+          "pair": "CELO/USDm",
+          "pair_address": "0xc20e81553f797ab98Bf4628057F88B0a5F1F5ce1",
+          "price_usd": 0.08736,
+          "price_native": 0.08736,
+          "liquidity_usd": 1241.19,
+          "volume_24h": 415.58,
+          "base_token": "0x471EcE3750Da237f93B8E339c536989b8978a438",
+          "quote_token": "0x765DE816845861e75A25fCA122bb6898B8B1282a"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:02.628634"
+    },
+    "ethereum": {
+      "tier": "B",
+      "pairs_found": 2,
+      "total_liquidity_usd": 131174.52,
+      "total_volume_24h": 3588.04,
+      "dexes": [
+        "uniswap"
+      ],
+      "pairs": [
+        {
+          "dex": "uniswap",
+          "pair": "ETHEREUM/WETH",
+          "pair_address": "0x5F538E4A8D8C833aA9e7a926a99A3b415bb029eF",
+          "price_usd": 9.283e-05,
+          "price_native": 3.992e-08,
+          "liquidity_usd": 70393.62,
+          "volume_24h": 17.21,
+          "base_token": "0xC32dB1D3282e872d98f6437D3BCFa57801CA6d5c",
+          "quote_token": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "\u79d1\u592a\u5e01/WETH",
+          "pair_address": "0x4bE346Cc45646BAfc94B7d1bC9262Ee0E9AcB932",
+          "price_usd": 1.311e-10,
+          "price_native": 5.441e-14,
+          "liquidity_usd": 60780.9,
+          "volume_24h": 3570.83,
+          "base_token": "0xDC5E9445169C73Cf21e1da0B270e8433caC69959",
+          "quote_token": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:02.912500"
+    },
+    "blast": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 118262.56,
+      "total_volume_24h": 2921.52,
+      "dexes": [
+        "uniswap",
+        "thruster"
+      ],
+      "pairs": [
+        {
+          "dex": "thruster",
+          "pair": "BLAST/USDB",
+          "pair_address": "0x5D49456a119EF9afB5bEC2A644338a078bef2B4B",
+          "price_usd": 0.0005259,
+          "price_native": 0.0005262,
+          "liquidity_usd": 47656.22,
+          "volume_24h": 37.01,
+          "base_token": "0xb1a5700fA2358173Fe465e6eA4Ff52E36e88E2ad",
+          "quote_token": "0x4300000000000000000000000000000000000003"
+        },
+        {
+          "dex": "thruster",
+          "pair": "BLAST/WETH",
+          "pair_address": "0x9A0AA28d999a21d3cf6F2703CDBba9FeAF4a32F7",
+          "price_usd": 0.0005248,
+          "price_native": 2.18e-07,
+          "liquidity_usd": 31674.27,
+          "volume_24h": 2620.24,
+          "base_token": "0xb1a5700fA2358173Fe465e6eA4Ff52E36e88E2ad",
+          "quote_token": "0x4300000000000000000000000000000000000004"
+        },
+        {
+          "dex": "thruster",
+          "pair": "BLAST/USDB",
+          "pair_address": "0xE3a5f46667461e35eeCe4E39e2177b438AF6B7f7",
+          "price_usd": 0.0005247,
+          "price_native": 0.000525,
+          "liquidity_usd": 25487.53,
+          "volume_24h": 3.35,
+          "base_token": "0xb1a5700fA2358173Fe465e6eA4Ff52E36e88E2ad",
+          "quote_token": "0x4300000000000000000000000000000000000003"
+        },
+        {
+          "dex": "thruster",
+          "pair": "BLAST/WETH",
+          "pair_address": "0x9076204c71aad67b904f979552F07c4bA6025BfF",
+          "price_usd": 0.0005242,
+          "price_native": 2.178e-07,
+          "liquidity_usd": 6920.65,
+          "volume_24h": 66.94,
+          "base_token": "0xb1a5700fA2358173Fe465e6eA4Ff52E36e88E2ad",
+          "quote_token": "0x4300000000000000000000000000000000000004"
+        },
+        {
+          "dex": "thruster",
+          "pair": "BLAST/WETH",
+          "pair_address": "0x266BAfB866fc4a47D53ebaBF4f7C102a884d1335",
+          "price_usd": 0.0005279,
+          "price_native": 2.193e-07,
+          "liquidity_usd": 5257.23,
+          "volume_24h": 124.32,
+          "base_token": "0xb1a5700fA2358173Fe465e6eA4Ff52E36e88E2ad",
+          "quote_token": "0x4300000000000000000000000000000000000004"
+        },
+        {
+          "dex": "uniswap",
+          "pair": "BLAST/WETH",
+          "pair_address": "0x57529f9E2a23CC53Fc387B162d2aB0F1dF3Ed701",
+          "price_usd": 0.0005278,
+          "price_native": 2.18e-07,
+          "liquidity_usd": 1266.66,
+          "volume_24h": 69.66,
+          "base_token": "0xb1a5700fA2358173Fe465e6eA4Ff52E36e88E2ad",
+          "quote_token": "0x4300000000000000000000000000000000000004"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:03.340558"
+    },
+    "abstract": {
+      "tier": "B",
+      "pairs_found": 6,
+      "total_liquidity_usd": 101986.67,
+      "total_volume_24h": 155.57,
+      "dexes": [
+        "kona",
+        "abstractswap"
+      ],
+      "pairs": [
+        {
+          "dex": "abstractswap",
+          "pair": "PANDA/WETH",
+          "pair_address": "0xDc087D63BC59ae8692F6CBb0f2d8A1828a97c819",
+          "price_usd": 0.0001055,
+          "price_native": 4.34e-08,
+          "liquidity_usd": 31294.27,
+          "volume_24h": 0.97,
+          "base_token": "0x67C778B5e5705Aaa46707F3F16e498BeEf627b0b",
+          "quote_token": "0x3439153EB7AF838Ad19d56E1571FBD09333C2809"
+        },
+        {
+          "dex": "abstractswap",
+          "pair": "TYAG/WETH",
+          "pair_address": "0x029ee67667F7A48401f66a005A3856cde38a73C6",
+          "price_usd": 3.498e-05,
+          "price_native": 1.424e-08,
+          "liquidity_usd": 20466.92,
+          "volume_24h": 2.18,
+          "base_token": "0x0A2C776E4F9017ca0679e6064d2f99Cf397b6457",
+          "quote_token": "0x3439153EB7AF838Ad19d56E1571FBD09333C2809"
+        },
+        {
+          "dex": "kona",
+          "pair": "PANDA/WETH",
+          "pair_address": "0xA072825c5Eb8113D9B66e3bD942Fb41018515bED",
+          "price_usd": 0.0001055,
+          "price_native": 4.34e-08,
+          "liquidity_usd": 10206.76,
+          "volume_24h": 1.72,
+          "base_token": "0x67C778B5e5705Aaa46707F3F16e498BeEf627b0b",
+          "quote_token": "0x3439153EB7AF838Ad19d56E1571FBD09333C2809"
+        },
+        {
+          "dex": "abstractswap",
+          "pair": "absETH/WETH",
+          "pair_address": "0x3bC14f6e54a44199D00bc472B4430FC498bFA416",
+          "price_usd": 2432.25,
+          "price_native": 1.03274,
+          "liquidity_usd": 36848.7,
+          "volume_24h": 121.51,
+          "base_token": "0xa8726bD058Bea1973B61a9BC2a5E0e605B797307",
+          "quote_token": "0x3439153EB7AF838Ad19d56E1571FBD09333C2809"
+        },
+        {
+          "dex": "abstractswap",
+          "pair": "TYAG/USDC.e",
+          "pair_address": "0x96987a3Fa11CC111588828668aAd37342D8C23C5",
+          "price_usd": 3.441e-05,
+          "price_native": 3.441e-05,
+          "liquidity_usd": 695.32,
+          "volume_24h": 2.15,
+          "base_token": "0x0A2C776E4F9017ca0679e6064d2f99Cf397b6457",
+          "quote_token": "0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1"
+        },
+        {
+          "dex": "abstractswap",
+          "pair": "absETH/WETH",
+          "pair_address": "0x6D8FC1E44b23d6c484Bcc20F5D227567c00f0ACc",
+          "price_usd": 2488.93,
+          "price_native": 1.0302,
+          "liquidity_usd": 2474.7,
+          "volume_24h": 27.04,
+          "base_token": "0xa8726bD058Bea1973B61a9BC2a5E0e605B797307",
+          "quote_token": "0x3439153EB7AF838Ad19d56E1571FBD09333C2809"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:03.732872"
+    },
+    "ink": {
+      "tier": "C",
+      "pairs_found": 1,
+      "total_liquidity_usd": 93496.78,
+      "total_volume_24h": 37885.14,
+      "dexes": [
+        "inkyswap"
+      ],
+      "pairs": [
+        {
+          "dex": "inkyswap",
+          "pair": "ANITA/WETH",
+          "pair_address": "0x716ddc8Df376488660e85eEFda8df74f447C453A",
+          "price_usd": 0.0009907,
+          "price_native": 4.107e-07,
+          "liquidity_usd": 93496.78,
+          "volume_24h": 37885.14,
+          "base_token": "0x0606FC632ee812bA970af72F8489baAa443C4B98",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:04.081683"
+    },
+    "fuse": {
+      "tier": "C",
+      "pairs_found": 6,
+      "total_liquidity_usd": 78852.15,
+      "total_volume_24h": 32.92,
+      "dexes": [
+        "voltagefinance"
+      ],
+      "pairs": [
+        {
+          "dex": "voltagefinance",
+          "pair": "WBTC/WETH",
+          "pair_address": "0x97F4F45F0172F2E20Ab284A61C8adcf5E4d04228",
+          "price_usd": 89937.29,
+          "price_native": 39.2427,
+          "liquidity_usd": 29803.47,
+          "volume_24h": 1.32,
+          "base_token": "0x33284f95ccb7B948d9D352e1439561CF83d8d00d",
+          "quote_token": "0xa722c13135930332Eb3d749B2F0906559D2C5b99"
+        },
+        {
+          "dex": "voltagefinance",
+          "pair": "BNB/fUSD",
+          "pair_address": "0x123e18262642a090b209A9CdD5bC5DFA03d734D1",
+          "price_usd": 1186.028,
+          "price_native": 3393.4333,
+          "liquidity_usd": 11987.74,
+          "volume_24h": 13.96,
+          "base_token": "0x6acb34b1Df86E254b544189Ec32Cf737e2482058",
+          "quote_token": "0x249BE57637D8B013Ad64785404b24aeBaE9B098B"
+        },
+        {
+          "dex": "voltagefinance",
+          "pair": "WETH/WFUSE",
+          "pair_address": "0x7Fe1A61E4FE983D275cb5669072A9d1dee9Bd45C",
+          "price_usd": 2291.81,
+          "price_native": 335308.3107,
+          "liquidity_usd": 11813.27,
+          "volume_24h": 0.86,
+          "base_token": "0xa722c13135930332Eb3d749B2F0906559D2C5b99",
+          "quote_token": "0x0BE9e53fd7EDaC9F859882AfdDa116645287C629"
+        },
+        {
+          "dex": "voltagefinance",
+          "pair": "fUSD/WFUSE",
+          "pair_address": "0xcDd8964BA8963929867CAfFCf5942De4F085bFB7",
+          "price_usd": 0.3495,
+          "price_native": 51.1441,
+          "liquidity_usd": 9190.32,
+          "volume_24h": 14.32,
+          "base_token": "0x249BE57637D8B013Ad64785404b24aeBaE9B098B",
+          "quote_token": "0x0BE9e53fd7EDaC9F859882AfdDa116645287C629"
+        },
+        {
+          "dex": "voltagefinance",
+          "pair": "WETH/WBTC",
+          "pair_address": "0x79FB917292f841Ab64941C04aCDf5F9059aa24E7",
+          "price_usd": 2290.78,
+          "price_native": 0.02548,
+          "liquidity_usd": 9092.71,
+          "volume_24h": 1.46,
+          "base_token": "0xa722c13135930332Eb3d749B2F0906559D2C5b99",
+          "quote_token": "0x33284f95ccb7B948d9D352e1439561CF83d8d00d"
+        },
+        {
+          "dex": "voltagefinance",
+          "pair": "WFUSE/BUSD",
+          "pair_address": "0x91520Fc2942Fd52949514f159aA4927b8850178d",
+          "price_usd": 0.006831,
+          "price_native": 0.006831,
+          "liquidity_usd": 6964.64,
+          "volume_24h": 1.0,
+          "base_token": "0x0BE9e53fd7EDaC9F859882AfdDa116645287C629",
+          "quote_token": "0x6a5F6A8121592BeCd6747a38d67451B310F7f156"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:04.366779"
+    },
+    "elastos": {
+      "tier": "C",
+      "pairs_found": 6,
+      "total_liquidity_usd": 69137.67,
+      "total_volume_24h": 558.0,
+      "dexes": [
+        "elkfinance",
+        "glidefinance"
+      ],
+      "pairs": [
+        {
+          "dex": "glidefinance",
+          "pair": "WELA/ethUSDC",
+          "pair_address": "0x6077b7990d3d0dfB5A50f1D207f67ac5955B999d",
+          "price_usd": 0.4727,
+          "price_native": 0.4727,
+          "liquidity_usd": 44738.4,
+          "volume_24h": 384.32,
+          "base_token": "0x517E9e5d46C1EA8aB6f78677d6114Ef47F71f6c4",
+          "quote_token": "0xA06be0F5950781cE28D965E5EFc6996e88a8C141"
+        },
+        {
+          "dex": "glidefinance",
+          "pair": "ETH/WELA",
+          "pair_address": "0xa86883c2405f4557D2242Df47b220C54d0D611e4",
+          "price_usd": 2391.63,
+          "price_native": 5059.4048,
+          "liquidity_usd": 16396.67,
+          "volume_24h": 119.76,
+          "base_token": "0x802c3e839E4fDb10aF583E3E759239ec7703501e",
+          "quote_token": "0x517E9e5d46C1EA8aB6f78677d6114Ef47F71f6c4"
+        },
+        {
+          "dex": "elkfinance",
+          "pair": "ELK/htHUSD",
+          "pair_address": "0x21427f4B29f0560ce0F3d9849a768bf2243707Af",
+          "price_usd": 0.01434,
+          "price_native": 0.3705,
+          "liquidity_usd": 17.84,
+          "volume_24h": 2.2,
+          "base_token": "0xeEeEEb57642040bE42185f49C52F7E9B38f8eeeE",
+          "quote_token": "0xF9Ca2eA3b1024c0DB31adB224B407441bECC18BB"
+        },
+        {
+          "dex": "glidefinance",
+          "pair": "GLIDE/ethUSDC",
+          "pair_address": "0x26aCE9c9da938fb2Db91B0d0E7703861c249bf08",
+          "price_usd": 0.002541,
+          "price_native": 0.002541,
+          "liquidity_usd": 5598.09,
+          "volume_24h": 49.56,
+          "base_token": "0xd39eC832FF1CaaFAb2729c76dDeac967ABcA8F27",
+          "quote_token": "0xA06be0F5950781cE28D965E5EFc6996e88a8C141"
+        },
+        {
+          "dex": "glidefinance",
+          "pair": "BEER/ethUSDC",
+          "pair_address": "0xFDa63a04d71c35E01D697615dD078e5b8AF98EF9",
+          "price_usd": 0.0002573,
+          "price_native": 0.0002573,
+          "liquidity_usd": 35.7,
+          "volume_24h": 0.17,
+          "base_token": "0x44F57DF34e7873191f5aF7065B8348dD581c34DC",
+          "quote_token": "0xA06be0F5950781cE28D965E5EFc6996e88a8C141"
+        },
+        {
+          "dex": "glidefinance",
+          "pair": "htHUSD/ethUSDC",
+          "pair_address": "0xB0917F2595A2c4C56498f6da2C52690a3EF558D2",
+          "price_usd": 0.03871,
+          "price_native": 0.03871,
+          "liquidity_usd": 2350.97,
+          "volume_24h": 1.99,
+          "base_token": "0xF9Ca2eA3b1024c0DB31adB224B407441bECC18BB",
+          "quote_token": "0xA06be0F5950781cE28D965E5EFc6996e88a8C141"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:04.699817"
+    },
+    "astar": {
+      "tier": "C",
+      "pairs_found": 6,
+      "total_liquidity_usd": 68926.0,
+      "total_volume_24h": 1263.41,
+      "dexes": [
+        "arthswap",
+        "zenlink",
+        "versa"
+      ],
+      "pairs": [
+        {
+          "dex": "zenlink",
+          "pair": "WASTR/USDC",
+          "pair_address": "0x18d1C8eF07B05c1Be3b4569E9E1d5A24300C6b3F",
+          "price_usd": 0.008167,
+          "price_native": 0.008167,
+          "liquidity_usd": 37463.0,
+          "volume_24h": 737.7,
+          "base_token": "0xAeaaf0e2c81Af264101B9129C00F4440cCF0F720",
+          "quote_token": "0x6a2d262D56735DbA19Dd70682B39F6bE9a931D98"
+        },
+        {
+          "dex": "arthswap",
+          "pair": "WASTR/USDT",
+          "pair_address": "0x806f746a7c4293092ac7aa604347BE123322dF1e",
+          "price_usd": 0.008184,
+          "price_native": 0.008184,
+          "liquidity_usd": 17198.0,
+          "volume_24h": 324.63,
+          "base_token": "0xAeaaf0e2c81Af264101B9129C00F4440cCF0F720",
+          "quote_token": "0x3795C36e7D12A8c252A20C5a7B455f7c57b60283"
+        },
+        {
+          "dex": "arthswap",
+          "pair": "WASTR/USDC",
+          "pair_address": "0xBB1290c1829007F440C771b37718FAbf309cd527",
+          "price_usd": 0.008173,
+          "price_native": 0.008173,
+          "liquidity_usd": 11694.0,
+          "volume_24h": 176.23,
+          "base_token": "0xAeaaf0e2c81Af264101B9129C00F4440cCF0F720",
+          "quote_token": "0x6a2d262D56735DbA19Dd70682B39F6bE9a931D98"
+        },
+        {
+          "dex": "versa",
+          "pair": "WASTR/USDC",
+          "pair_address": "0x7910902e0dEe0aa0F50414aA623ddfE82bD33dc1",
+          "price_usd": 0.008214,
+          "price_native": 0.008214,
+          "liquidity_usd": 1819.0,
+          "volume_24h": 16.58,
+          "base_token": "0xAeaaf0e2c81Af264101B9129C00F4440cCF0F720",
+          "quote_token": "0x6a2d262D56735DbA19Dd70682B39F6bE9a931D98"
+        },
+        {
+          "dex": "zenlink",
+          "pair": "WASTR/USDT",
+          "pair_address": "0xCA426A12A4ff20b60510c328c4C255fF37751007",
+          "price_usd": 0.008249,
+          "price_native": 0.008249,
+          "liquidity_usd": 395.0,
+          "volume_24h": 4.53,
+          "base_token": "0xAeaaf0e2c81Af264101B9129C00F4440cCF0F720",
+          "quote_token": "0x3795C36e7D12A8c252A20C5a7B455f7c57b60283"
+        },
+        {
+          "dex": "zenlink",
+          "pair": "WASTR/USDC",
+          "pair_address": "0x77fE816550d8FdD0Fcb0cdeA66541F3d76918681",
+          "price_usd": 0.008216,
+          "price_native": 0.008216,
+          "liquidity_usd": 357.0,
+          "volume_24h": 3.74,
+          "base_token": "0xAeaaf0e2c81Af264101B9129C00F4440cCF0F720",
+          "quote_token": "0x6a2d262D56735DbA19Dd70682B39F6bE9a931D98"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:05.065575"
+    },
+    "movement": {
+      "tier": "C",
+      "pairs_found": 2,
+      "total_liquidity_usd": 33593.55,
+      "total_volume_24h": 12.91,
+      "dexes": [
+        "yuzu"
+      ],
+      "pairs": [
+        {
+          "dex": "yuzu",
+          "pair": "gMOVE/MOVE",
+          "pair_address": "0x15c1acdf88085458fbc1dda8a67b6385a00b033282bfe6acb82692358d100e62",
+          "price_usd": 0.01815,
+          "price_native": 0.971,
+          "liquidity_usd": 33539.22,
+          "volume_24h": 9.75,
+          "base_token": "0xba070099efd401e69ae924e31464541bb9c815b9a1866367f07499d9b3698b2c",
+          "quote_token": "0xa"
+        },
+        {
+          "dex": "yuzu",
+          "pair": "gMOVE/USDC.e",
+          "pair_address": "0xa5d297b0d8f03a618d722ffbc1f545d05a3a5730403ee1582812be0677286c99",
+          "price_usd": 0.01816,
+          "price_native": 0.01816,
+          "liquidity_usd": 54.33,
+          "volume_24h": 3.16,
+          "base_token": "0xba070099efd401e69ae924e31464541bb9c815b9a1866367f07499d9b3698b2c",
+          "quote_token": "0x83121c9f9b0527d1f056e21a950d6bf3b9e9e2e8353d0e95ccea726713cbea39"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:05.442960"
+    },
+    "scroll": {
+      "tier": "C",
+      "pairs_found": 6,
+      "total_liquidity_usd": 28721.19,
+      "total_volume_24h": 3034.4500000000003,
+      "dexes": [
+        "0xB11042007e78bE92dc1c79DA1e7eF499b4B31838",
+        "0x1d25AF2b0992bf227b350860Ea80Bad47382CAf6",
+        "syncswap",
+        "iziswap"
+      ],
+      "pairs": [
+        {
+          "dex": "syncswap",
+          "pair": "SCR/WETH",
+          "pair_address": "0x054641825533d1bc3324Df3C30Cbc3BAEa812087",
+          "price_usd": 0.04889,
+          "price_native": 2.028e-05,
+          "liquidity_usd": 16018.37,
+          "volume_24h": 2571.03,
+          "base_token": "0xd29687c813D741E2F938F4aC377128810E217b1b",
+          "quote_token": "0x5300000000000000000000000000000000000004"
+        },
+        {
+          "dex": "syncswap",
+          "pair": "SCR/WETH",
+          "pair_address": "0x95B0C398Cf6d296fAA551291a9F3bf02a68C7A30",
+          "price_usd": 0.0479,
+          "price_native": 1.987e-05,
+          "liquidity_usd": 7082.54,
+          "volume_24h": 292.0,
+          "base_token": "0xd29687c813D741E2F938F4aC377128810E217b1b",
+          "quote_token": "0x5300000000000000000000000000000000000004"
+        },
+        {
+          "dex": "syncswap",
+          "pair": "SCR/USDC",
+          "pair_address": "0x53f1B398dB3a730f6864840C17bdD6FA86843F3a",
+          "price_usd": 0.04803,
+          "price_native": 0.04803,
+          "liquidity_usd": 4280.78,
+          "volume_24h": 156.46,
+          "base_token": "0xd29687c813D741E2F938F4aC377128810E217b1b",
+          "quote_token": "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4"
+        },
+        {
+          "dex": "iziswap",
+          "pair": "SCR/WETH",
+          "pair_address": "0xeA65B189b033b7aE6B8736e77d291e3aBb58F3f1",
+          "price_usd": 0.04854,
+          "price_native": 2.009e-05,
+          "liquidity_usd": 507.28,
+          "volume_24h": 2.61,
+          "base_token": "0xd29687c813D741E2F938F4aC377128810E217b1b",
+          "quote_token": "0x5300000000000000000000000000000000000004"
+        },
+        {
+          "dex": "0xB11042007e78bE92dc1c79DA1e7eF499b4B31838",
+          "pair": "SCR/WETH",
+          "pair_address": "0xB13d606C6592Fe26D9189534d203386daB651121",
+          "price_usd": 0.04851,
+          "price_native": 1.998e-05,
+          "liquidity_usd": 497.52,
+          "volume_24h": 1.02,
+          "base_token": "0xd29687c813D741E2F938F4aC377128810E217b1b",
+          "quote_token": "0x5300000000000000000000000000000000000004"
+        },
+        {
+          "dex": "0x1d25AF2b0992bf227b350860Ea80Bad47382CAf6",
+          "pair": "SCR/WETH",
+          "pair_address": "0x7761786afAB6E496e6Bf3EBe56fc2ea71cd02d7D",
+          "price_usd": 0.0484,
+          "price_native": 2.009e-05,
+          "liquidity_usd": 334.7,
+          "volume_24h": 11.33,
+          "base_token": "0xd29687c813D741E2F938F4aC377128810E217b1b",
+          "quote_token": "0x5300000000000000000000000000000000000004"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:05.798907"
+    },
+    "dogechain": {
+      "tier": "C",
+      "pairs_found": 6,
+      "total_liquidity_usd": 24257.11,
+      "total_volume_24h": 428.52,
+      "dexes": [
+        "kibbleswap",
+        "fraxswap",
+        "dogeshrek",
+        "quickswap",
+        "yodeswap",
+        "dogeswap"
+      ],
+      "pairs": [
+        {
+          "dex": "fraxswap",
+          "pair": "DC/WWDOGE",
+          "pair_address": "0x1C4c9a18361259952E818f7ea824432e7340F7d3",
+          "price_usd": 2.302e-06,
+          "price_native": 2.338e-05,
+          "liquidity_usd": 20689.86,
+          "volume_24h": 298.28,
+          "base_token": "0x7B4328c127B85369D9f82ca0503B000D09CF9180",
+          "quote_token": "0xB7ddC6414bf4F5515b52D8BdD69973Ae205ff101"
+        },
+        {
+          "dex": "kibbleswap",
+          "pair": "DC/WWDOGE",
+          "pair_address": "0x4A1442143B3491a8EDeb19C9cF7Cdd9f7Fe39B97",
+          "price_usd": 2.326e-06,
+          "price_native": 2.339e-05,
+          "liquidity_usd": 1498.97,
+          "volume_24h": 42.54,
+          "base_token": "0x7B4328c127B85369D9f82ca0503B000D09CF9180",
+          "quote_token": "0xB7ddC6414bf4F5515b52D8BdD69973Ae205ff101"
+        },
+        {
+          "dex": "quickswap",
+          "pair": "DC/WWDOGE",
+          "pair_address": "0x41043e6227472dAA2fE8625C2BE4BB3F64537138",
+          "price_usd": 2.338e-06,
+          "price_native": 2.351e-05,
+          "liquidity_usd": 818.51,
+          "volume_24h": 40.26,
+          "base_token": "0x7B4328c127B85369D9f82ca0503B000D09CF9180",
+          "quote_token": "0xB7ddC6414bf4F5515b52D8BdD69973Ae205ff101"
+        },
+        {
+          "dex": "dogeshrek",
+          "pair": "DC/WWDOGE",
+          "pair_address": "0x2bcc9c4067821dD4899C2Dd901c9eDadb2551cE2",
+          "price_usd": 2.34e-06,
+          "price_native": 2.352e-05,
+          "liquidity_usd": 391.93,
+          "volume_24h": 28.34,
+          "base_token": "0x7B4328c127B85369D9f82ca0503B000D09CF9180",
+          "quote_token": "0xB7ddC6414bf4F5515b52D8BdD69973Ae205ff101"
+        },
+        {
+          "dex": "yodeswap",
+          "pair": "DC/WWDOGE",
+          "pair_address": "0xd2333137d28710acEd9E8572D8bf4Baf184e6d16",
+          "price_usd": 2.318e-06,
+          "price_native": 2.331e-05,
+          "liquidity_usd": 843.55,
+          "volume_24h": 18.9,
+          "base_token": "0x7B4328c127B85369D9f82ca0503B000D09CF9180",
+          "quote_token": "0xB7ddC6414bf4F5515b52D8BdD69973Ae205ff101"
+        },
+        {
+          "dex": "dogeswap",
+          "pair": "DC/OMNOM",
+          "pair_address": "0x773eDd780dDFD608e8256f608A20C73a4B62f88E",
+          "price_usd": 2.309e-06,
+          "price_native": 1007.581,
+          "liquidity_usd": 14.29,
+          "volume_24h": 0.2,
+          "base_token": "0x7B4328c127B85369D9f82ca0503B000D09CF9180",
+          "quote_token": "0xe3fcA919883950c5cD468156392a6477Ff5d18de"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:06.153809"
+    },
+    "story": {
+      "tier": "C",
+      "pairs_found": 2,
+      "total_liquidity_usd": 14345.42,
+      "total_volume_24h": 14192.86,
+      "dexes": [
+        "storyhunt"
+      ],
+      "pairs": [
+        {
+          "dex": "storyhunt",
+          "pair": "AISTORY/WIP",
+          "pair_address": "0x43C82c9BB5C8aB7b20e737aB07DaC7E55492C6Fb",
+          "price_usd": 3.221e-05,
+          "price_native": 5.42e-05,
+          "liquidity_usd": 12181.83,
+          "volume_24h": 5888.01,
+          "base_token": "0xeD8a486D525e587aE0c8D07144E4a943DE7d4Ba0",
+          "quote_token": "0x1514000000000000000000000000000000000000"
+        },
+        {
+          "dex": "storyhunt",
+          "pair": "$AISTORY/WIP",
+          "pair_address": "0x26b1eBc0F51629b0F6e889E1119be8c1B28179cb",
+          "price_usd": 2.213e-06,
+          "price_native": 3.745e-06,
+          "liquidity_usd": 2163.59,
+          "volume_24h": 8304.85,
+          "base_token": "0x4DFe085fa117319389D31f8323CE9f29a26c35bD",
+          "quote_token": "0x1514000000000000000000000000000000000000"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:06.503145"
+    },
+    "moonriver": {
+      "tier": "C",
+      "pairs_found": 6,
+      "total_liquidity_usd": 30800.14,
+      "total_volume_24h": 17498.89,
+      "dexes": [
+        "0xC05A5aA56DF0Dc97D6B9849A06627a079790014f",
+        "elkfinance",
+        "0xdD9EFCbDf9f422e2fc159eFe77aDD3730d48056d",
+        "zenlink",
+        "solarbeam"
+      ],
+      "pairs": [
+        {
+          "dex": "solarbeam",
+          "pair": "WMOVR/FRAX",
+          "pair_address": "0x2cc54b4A3878e36E1C754871438113C1117a3ad7",
+          "price_usd": 2.3,
+          "price_native": 2.3026,
+          "liquidity_usd": 16045.43,
+          "volume_24h": 4857.34,
+          "base_token": "0x98878B06940aE243284CA214f92Bb71a2b032B8A",
+          "quote_token": "0x1A93B23281CC1CDE4C4741353F3064709A16197d"
+        },
+        {
+          "dex": "0xdD9EFCbDf9f422e2fc159eFe77aDD3730d48056d",
+          "pair": "WMOVR/FRAX",
+          "pair_address": "0x87e96b0a6cE5c1E9E90A7E51cACA8e022707F5F1",
+          "price_usd": 2.3,
+          "price_native": 2.3011,
+          "liquidity_usd": 4078.25,
+          "volume_24h": 1175.47,
+          "base_token": "0x98878B06940aE243284CA214f92Bb71a2b032B8A",
+          "quote_token": "0x1A93B23281CC1CDE4C4741353F3064709A16197d"
+        },
+        {
+          "dex": "elkfinance",
+          "pair": "WMOVR/FRAX",
+          "pair_address": "0x4FcCff06921674A7294ABE562eCaCB32BafE51f3",
+          "price_usd": 2.29,
+          "price_native": 2.2985,
+          "liquidity_usd": 55.24,
+          "volume_24h": 8.24,
+          "base_token": "0x98878B06940aE243284CA214f92Bb71a2b032B8A",
+          "quote_token": "0x1A93B23281CC1CDE4C4741353F3064709A16197d"
+        },
+        {
+          "dex": "0xC05A5aA56DF0Dc97D6B9849A06627a079790014f",
+          "pair": "WMOVR/FRAX",
+          "pair_address": "0x74d1Deae61D3080b88Ada0AF2b88A99e056edcFd",
+          "price_usd": 2.3,
+          "price_native": 2.3001,
+          "liquidity_usd": 24.2,
+          "volume_24h": 2.84,
+          "base_token": "0x98878B06940aE243284CA214f92Bb71a2b032B8A",
+          "quote_token": "0x1A93B23281CC1CDE4C4741353F3064709A16197d"
+        },
+        {
+          "dex": "zenlink",
+          "pair": "WMOVR/FRAX",
+          "pair_address": "0x9A3cf92a7EC9D13FD28BCa1BEaD6fF263C8D766E",
+          "price_usd": 1.22,
+          "price_native": 1.2237,
+          "liquidity_usd": 0.21,
+          "volume_24h": 0.0,
+          "base_token": "0x98878B06940aE243284CA214f92Bb71a2b032B8A",
+          "quote_token": "0x1A93B23281CC1CDE4C4741353F3064709A16197d"
+        },
+        {
+          "dex": "solarbeam",
+          "pair": "xcKSM/WMOVR",
+          "pair_address": "0xea3d1E9e69ADDFA1ee5BBb89778Decd862F1F7C5",
+          "price_usd": 4.51,
+          "price_native": 1.9619,
+          "liquidity_usd": 10596.81,
+          "volume_24h": 11455.0,
+          "base_token": "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080",
+          "quote_token": "0x98878B06940aE243284CA214f92Bb71a2b032B8A"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:06.890952"
+    },
+    "ethereumpow": {
+      "tier": "C",
+      "pairs_found": 4,
+      "total_liquidity_usd": 12296.6,
+      "total_volume_24h": 79.34,
+      "dexes": [
+        "lfgswap",
+        "0xaBC4325bAD182076EAa5877c68437833d596D3Ee"
+      ],
+      "pairs": [
+        {
+          "dex": "lfgswap",
+          "pair": "vvDXN/vvXEN",
+          "pair_address": "0xaBe4cc55719012c076Ee3AE578713347EB00cC27",
+          "price_usd": 0.02407,
+          "price_native": 136683881.4549,
+          "liquidity_usd": 11313.49,
+          "volume_24h": 17.21,
+          "base_token": "0xc418B123885d732ED042b16e12e259741863F723",
+          "quote_token": "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e"
+        },
+        {
+          "dex": "lfgswap",
+          "pair": "vvDXN/WETHW",
+          "pair_address": "0x40B4E9AA6f62B783d5d2bdf1C7140Fe5125eCbD1",
+          "price_usd": 0.02493,
+          "price_native": 0.001589,
+          "liquidity_usd": 475.89,
+          "volume_24h": 49.3,
+          "base_token": "0xc418B123885d732ED042b16e12e259741863F723",
+          "quote_token": "0x7Bf88d2c0e32dE92CdaF2D43CcDc23e8Edfd5990"
+        },
+        {
+          "dex": "0xaBC4325bAD182076EAa5877c68437833d596D3Ee",
+          "pair": "vvDXN/WETH",
+          "pair_address": "0xA8f5C0D4a01977F71a0Defe35bDC21ad953316C4",
+          "price_usd": 0.02498,
+          "price_native": 0.001582,
+          "liquidity_usd": 443.12,
+          "volume_24h": 10.35,
+          "base_token": "0xc418B123885d732ED042b16e12e259741863F723",
+          "quote_token": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+        },
+        {
+          "dex": "lfgswap",
+          "pair": "WBTC/vvDXN",
+          "pair_address": "0x07e40882ec684a6143C445722799856CA0Eb1F22",
+          "price_usd": 5369053.97,
+          "price_native": 221704377.1158,
+          "liquidity_usd": 64.1,
+          "volume_24h": 2.48,
+          "base_token": "0x4bBd68D8B1F25Ae7b460E3347C637FE9E7338E0C",
+          "quote_token": "0xc418B123885d732ED042b16e12e259741863F723"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:07.316807"
+    },
+    "manta": {
+      "tier": "C",
+      "pairs_found": 6,
+      "total_liquidity_usd": 12138.52,
+      "total_volume_24h": 2550.29,
+      "dexes": [
+        "quickswap",
+        "gullnetwork",
+        "iziswap"
+      ],
+      "pairs": [
+        {
+          "dex": "quickswap",
+          "pair": "MANTA/WETH",
+          "pair_address": "0x8f0111Df7d48C9117d44b9cEDfc23F160E3311f3",
+          "price_usd": 0.07021,
+          "price_native": 2.913e-05,
+          "liquidity_usd": 1168.95,
+          "volume_24h": 1424.24,
+          "base_token": "0x95CeF13441Be50d20cA4558CC0a27B601aC544E5",
+          "quote_token": "0x0Dc808adcE2099A9F62AA87D9670745AbA741746"
+        },
+        {
+          "dex": "quickswap",
+          "pair": "MANTA/WETH",
+          "pair_address": "0x97433019b560C1C20055BA5eDC8eeF226f2d1bE7",
+          "price_usd": 0.0699,
+          "price_native": 2.905e-05,
+          "liquidity_usd": 3251.52,
+          "volume_24h": 757.46,
+          "base_token": "0x95CeF13441Be50d20cA4558CC0a27B601aC544E5",
+          "quote_token": "0x0Dc808adcE2099A9F62AA87D9670745AbA741746"
+        },
+        {
+          "dex": "gullnetwork",
+          "pair": "MANTA/USDC",
+          "pair_address": "0x5C6E3dB777502b6b0708cA2C0136bfacD804D617",
+          "price_usd": 0.07005,
+          "price_native": 0.07005,
+          "liquidity_usd": 2815.99,
+          "volume_24h": 127.56,
+          "base_token": "0x95CeF13441Be50d20cA4558CC0a27B601aC544E5",
+          "quote_token": "0xb73603C5d87fA094B7314C74ACE2e64D165016fb"
+        },
+        {
+          "dex": "gullnetwork",
+          "pair": "MANTA/WETH",
+          "pair_address": "0xb1346FF891a74c4444984F1Ce3cdB13ee787C1FD",
+          "price_usd": 0.07018,
+          "price_native": 2.918e-05,
+          "liquidity_usd": 2849.58,
+          "volume_24h": 171.19,
+          "base_token": "0x95CeF13441Be50d20cA4558CC0a27B601aC544E5",
+          "quote_token": "0x0Dc808adcE2099A9F62AA87D9670745AbA741746"
+        },
+        {
+          "dex": "quickswap",
+          "pair": "MANTA/USDC",
+          "pair_address": "0x80b605193d2bb30243Bd6582d646f57f6923083C",
+          "price_usd": 0.07015,
+          "price_native": 0.07015,
+          "liquidity_usd": 720.44,
+          "volume_24h": 68.36,
+          "base_token": "0x95CeF13441Be50d20cA4558CC0a27B601aC544E5",
+          "quote_token": "0xb73603C5d87fA094B7314C74ACE2e64D165016fb"
+        },
+        {
+          "dex": "iziswap",
+          "pair": "MANTA/WETH",
+          "pair_address": "0x8515bd9D9F5AF69775787175E398da16201a2fF2",
+          "price_usd": 0.06783,
+          "price_native": 2.883e-05,
+          "liquidity_usd": 1332.04,
+          "volume_24h": 1.48,
+          "base_token": "0x95CeF13441Be50d20cA4558CC0a27B601aC544E5",
+          "quote_token": "0x0Dc808adcE2099A9F62AA87D9670745AbA741746"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:07.657978"
+    },
+    "pulsechain": {
+      "tier": "C",
+      "pairs_found": 6,
+      "total_liquidity_usd": 10806.88,
+      "total_volume_24h": 388.43,
+      "dexes": [
+        "pulsex"
+      ],
+      "pairs": [
+        {
+          "dex": "pulsex",
+          "pair": "PLS/WPLS",
+          "pair_address": "0x9b6efc2c2858dec2889ecA2Ce887C57099076bBF",
+          "price_usd": 6.691e-05,
+          "price_native": 7.4456,
+          "liquidity_usd": 10806.88,
+          "volume_24h": 388.43,
+          "base_token": "0x260e5dA7eF6E30e0A647d1aDF47628198DCb0709",
+          "quote_token": "0xA1077a294dDE1B09bB078844df40758a5D0f9a27"
+        },
+        {
+          "dex": "pulsex",
+          "pair": "PLS/ETH",
+          "pair_address": "0x115Cd7b65f94439cDE2885F4c298d7D59dffCD54",
+          "price_usd": 0.0,
+          "price_native": 1.04503,
+          "liquidity_usd": 0.0,
+          "volume_24h": 0.0,
+          "base_token": "0x260e5dA7eF6E30e0A647d1aDF47628198DCb0709",
+          "quote_token": "0xBFcfA52225Baa5feec5fbb54E6458957D53ddD94"
+        },
+        {
+          "dex": "pulsex",
+          "pair": "PULSECHAIN/PINU",
+          "pair_address": "0x1D55CD663F1Ca4F946C4Bfb503516a94c2A79e11",
+          "price_usd": 0.0,
+          "price_native": 13.6586,
+          "liquidity_usd": 0.0,
+          "volume_24h": 0.0,
+          "base_token": "0x54E51Cfa1CF14cB03A7eF172439fEca8804dBE1D",
+          "quote_token": "0xe83034A7A78fC148c69defebD6D4C80f8Bb4f710"
+        },
+        {
+          "dex": "pulsex",
+          "pair": "PLS/MOG",
+          "pair_address": "0x2F034056b498748a7E6b924CC954539E4dE4eFD6",
+          "price_usd": 0.0,
+          "price_native": 0.1721,
+          "liquidity_usd": 0.0,
+          "volume_24h": 0.0,
+          "base_token": "0x260e5dA7eF6E30e0A647d1aDF47628198DCb0709",
+          "quote_token": "0x495d9b70480A22a82D0FB81981480764BA55550e"
+        },
+        {
+          "dex": "pulsex",
+          "pair": "PLS/\ud835\udc0f\ud835\udd3d\ud835\udd3d",
+          "pair_address": "0xF300198DB57429e8a2D10D202B9E1Bcf8fC2f9a2",
+          "price_usd": 0.0,
+          "price_native": 0.9753,
+          "liquidity_usd": 0.0,
+          "volume_24h": 0.0,
+          "base_token": "0x260e5dA7eF6E30e0A647d1aDF47628198DCb0709",
+          "quote_token": "0xbe2cd67164B3c1Ae1D0b6E1def14df663a64B263"
+        },
+        {
+          "dex": "pulsex",
+          "pair": "PLS/PLSX",
+          "pair_address": "0xd88d69F63d1208BbDd657f4f2c4f55b4a9C8c7d4",
+          "price_usd": 0.0,
+          "price_native": 1.2899,
+          "liquidity_usd": 0.0,
+          "volume_24h": 0.0,
+          "base_token": "0x260e5dA7eF6E30e0A647d1aDF47628198DCb0709",
+          "quote_token": "0xd73731bDA87C3464e76268c094D959c1B35b9bF1"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:07.946155"
+    },
+    "mode": {
+      "tier": "D",
+      "pairs_found": 6,
+      "total_liquidity_usd": 9964.86,
+      "total_volume_24h": 1137.58,
+      "dexes": [
+        "velodrome",
+        "kim",
+        "swapmode",
+        "0x423A079C43e4eD7ca561Ef04765eDB796F0Ec6c6"
+      ],
+      "pairs": [
+        {
+          "dex": "velodrome",
+          "pair": "MODE/WETH",
+          "pair_address": "0x1E41CDE26b30646bb3DBBea48A63708b00470c1c",
+          "price_usd": 0.0001579,
+          "price_native": 6.559e-08,
+          "liquidity_usd": 5083.77,
+          "volume_24h": 692.57,
+          "base_token": "0xDfc7C877a950e49D2610114102175A06C2e3167a",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "kim",
+          "pair": "MODE/WETH",
+          "pair_address": "0x8cfE2A02dfBAbC56aE7e573170E35f88A38BeA55",
+          "price_usd": 0.0001588,
+          "price_native": 6.598e-08,
+          "liquidity_usd": 4375.65,
+          "volume_24h": 412.15,
+          "base_token": "0xDfc7C877a950e49D2610114102175A06C2e3167a",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "swapmode",
+          "pair": "MODE/WETH",
+          "pair_address": "0xd724540F997337100B0Da0CE5A8Df39f15Fbb7b3",
+          "price_usd": 0.000158,
+          "price_native": 6.565e-08,
+          "liquidity_usd": 188.94,
+          "volume_24h": 18.8,
+          "base_token": "0xDfc7C877a950e49D2610114102175A06C2e3167a",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "0x423A079C43e4eD7ca561Ef04765eDB796F0Ec6c6",
+          "pair": "MODE/USDC",
+          "pair_address": "0x18c4b8d3895EC6C6B0240006cAF068308ddf388f",
+          "price_usd": 0.0001593,
+          "price_native": 0.0001582,
+          "liquidity_usd": 139.05,
+          "volume_24h": 8.09,
+          "base_token": "0xDfc7C877a950e49D2610114102175A06C2e3167a",
+          "quote_token": "0xd988097fb8612cc24eeC14542bC03424c656005f"
+        },
+        {
+          "dex": "kim",
+          "pair": "MODE/WETH",
+          "pair_address": "0x813f4F7BD6B278fcA601CAc8d548Bf1DAca96E44",
+          "price_usd": 0.0001585,
+          "price_native": 6.584e-08,
+          "liquidity_usd": 113.93,
+          "volume_24h": 5.95,
+          "base_token": "0xDfc7C877a950e49D2610114102175A06C2e3167a",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        },
+        {
+          "dex": "kim",
+          "pair": "MODE/USDC",
+          "pair_address": "0x844c00562d5DA9754b571501c903807D84b37E40",
+          "price_usd": 0.0001575,
+          "price_native": 0.0001579,
+          "liquidity_usd": 63.52,
+          "volume_24h": 0.02,
+          "base_token": "0xDfc7C877a950e49D2610114102175A06C2e3167a",
+          "quote_token": "0xd988097fb8612cc24eeC14542bC03424c656005f"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:08.338135"
+    },
+    "megaeth": {
+      "tier": "D",
+      "pairs_found": 1,
+      "total_liquidity_usd": 8895.92,
+      "total_volume_24h": 31.0,
+      "dexes": [
+        "noxa"
+      ],
+      "pairs": [
+        {
+          "dex": "noxa",
+          "pair": "FLUFFEY/WETH",
+          "pair_address": "0xd774dd586Cd0bB1c242E75b06a02eaCC951629fA",
+          "price_usd": 9.151e-06,
+          "price_native": 3.769e-09,
+          "liquidity_usd": 8895.92,
+          "volume_24h": 31.0,
+          "base_token": "0x90f3bc4eDBE31BcB6758499D0a308d1D0863c1EF",
+          "quote_token": "0x4200000000000000000000000000000000000006"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:08.725955"
+    },
+    "energi": {
+      "tier": "D",
+      "pairs_found": 6,
+      "total_liquidity_usd": 2023.0,
+      "total_volume_24h": 88.91,
+      "dexes": [
+        "energiswap"
+      ],
+      "pairs": [
+        {
+          "dex": "energiswap",
+          "pair": "eTHETA/WNRG",
+          "pair_address": "0x22e6fa3130eF23D083649eae72DCd61082Eff3c0",
+          "price_usd": 0.2268,
+          "price_native": 18.3286,
+          "liquidity_usd": 182.0,
+          "volume_24h": 11.55,
+          "base_token": "0x65622f8e8b569aDE3F684B5F2a189F78F98A75b0",
+          "quote_token": "0xA55F26319462355474A9F2c8790860776a329aA4"
+        },
+        {
+          "dex": "energiswap",
+          "pair": "eXLM/WNRG",
+          "pair_address": "0xbE9F13b21008E609A803F3DCD3a258F84AD31768",
+          "price_usd": 0.1729,
+          "price_native": 13.9538,
+          "liquidity_usd": 756.0,
+          "volume_24h": 34.61,
+          "base_token": "0xC0Cd560393A3fAD67486B10BBb461eD2a42DD882",
+          "quote_token": "0xA55F26319462355474A9F2c8790860776a329aA4"
+        },
+        {
+          "dex": "energiswap",
+          "pair": "eDOT/WNRG",
+          "pair_address": "0x0Af5A122B8e2770D73733cE0bf5724B8eC36FaaC",
+          "price_usd": 1.31,
+          "price_native": 106.4261,
+          "liquidity_usd": 508.0,
+          "volume_24h": 19.56,
+          "base_token": "0x2208824Cd05Ac473D5F92D39b28F145D481669de",
+          "quote_token": "0xA55F26319462355474A9F2c8790860776a329aA4"
+        },
+        {
+          "dex": "energiswap",
+          "pair": "eFIL/WNRG",
+          "pair_address": "0x351894E553367E6814357e0993c556B6F4831195",
+          "price_usd": 0.974,
+          "price_native": 78.6847,
+          "liquidity_usd": 334.0,
+          "volume_24h": 13.34,
+          "base_token": "0xF8A425E39aF1976e1826f0C8843149AfA5e9Ec04",
+          "quote_token": "0xA55F26319462355474A9F2c8790860776a329aA4"
+        },
+        {
+          "dex": "energiswap",
+          "pair": "eIOTA/WNRG",
+          "pair_address": "0xe9a6F0f1ba2Ce5113d883dB5b9574d3defD2b988",
+          "price_usd": 0.059,
+          "price_native": 4.7668,
+          "liquidity_usd": 133.0,
+          "volume_24h": 5.82,
+          "base_token": "0x9Bb3Ca9e1b664030cd4CF820F5b3230F2386e0c6",
+          "quote_token": "0xA55F26319462355474A9F2c8790860776a329aA4"
+        },
+        {
+          "dex": "energiswap",
+          "pair": "eRUNE/WNRG",
+          "pair_address": "0xEa01060c48c2fBf8eFb9e295f3D3A12cA2F2C79D",
+          "price_usd": 0.4301,
+          "price_native": 34.7469,
+          "liquidity_usd": 110.0,
+          "volume_24h": 4.03,
+          "base_token": "0x7f3c85AB5D87f8eB8F19B545AC09a7FDd49e2B6c",
+          "quote_token": "0xA55F26319462355474A9F2c8790860776a329aA4"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:09.093452"
+    },
+    "harmony": {
+      "tier": "D",
+      "pairs_found": 2,
+      "total_liquidity_usd": 1175.7199999999998,
+      "total_volume_24h": 0.11,
+      "dexes": [
+        "swap"
+      ],
+      "pairs": [
+        {
+          "dex": "swap",
+          "pair": "PEACE/MONA",
+          "pair_address": "0x4B7E5F0D15e6f536556c9a9273764f2E3828d23c",
+          "price_usd": 0.003804,
+          "price_native": 116350.5764,
+          "liquidity_usd": 580.3,
+          "volume_24h": 0.03,
+          "base_token": "0x06578C8776e487cC477d63C70854B3c186BA296a",
+          "quote_token": "0x33cF332B80A0236D0A75B986b5501D387F5dE169"
+        },
+        {
+          "dex": "swap",
+          "pair": "PEACE/WONE",
+          "pair_address": "0x92f51E55251bfc66cEeBe60182D37AbB15fE5E03",
+          "price_usd": 0.003712,
+          "price_native": 1.5535,
+          "liquidity_usd": 595.42,
+          "volume_24h": 0.08,
+          "base_token": "0x06578C8776e487cC477d63C70854B3c186BA296a",
+          "quote_token": "0xcF664087a5bB0237a0BAd6742852ec6c8d69A27a"
+        }
+      ],
+      "fetched_at": "2026-04-18T05:14:09.369205"
+    },
+    "sui": {
+      "tier": "A",
+      "pairs_found": 2,
+      "total_liquidity_usd": 7580543,
+      "total_volume_24h": 0,
+      "dexes": [
+        "bluefin",
+        "cetus"
+      ],
+      "pairs": []
+    },
+    "aptos": {
+      "tier": "A",
+      "pairs_found": 6,
+      "total_liquidity_usd": 2440262,
+      "total_volume_24h": 0,
+      "dexes": [
+        "cellana",
+        "thala",
+        "liquidswap"
+      ],
+      "pairs": []
+    },
+    "berachain": {
+      "tier": "B",
+      "pairs_found": 5,
+      "total_liquidity_usd": 252213,
+      "total_volume_24h": 0,
+      "dexes": [
+        "bulla",
+        "memeswap",
+        "beraswap"
+      ],
+      "pairs": []
+    },
+    "hyperliquid": {
+      "source": "dexscreener",
+      "dexes": [
+        "hyperliquid"
+      ],
+      "tvl": 1696958135,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "seiv2": {
+      "source": "dexscreener",
+      "dexes": [
+        "dragonswap"
+      ],
+      "tvl": 64950410,
+      "liquidity": 7857833,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "apechain": {
+      "tier": "B",
+      "pairs_found": 12,
+      "total_liquidity_usd": 1083284.0599999998,
+      "total_volume_24h": 37406.549999999996,
+      "dexes": [
+        "camelot"
+      ],
+      "onchain_verified": true,
+      "verification_method": "phase2_pool_pair_verification",
+      "verified_contracts": 12,
+      "active_pools": 6,
+      "fetched_at": "2026-04-18T06:50:08.471415+00:00"
+    },
+    "algorand": {
+      "source": "dexscreener",
+      "dexes": [
+        "tinyman"
+      ],
+      "tvl": 40402387,
+      "liquidity": 2204131,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "multiversx": {
+      "source": "dexscreener",
+      "dexes": [
+        "xExchange",
+        "onedex"
+      ],
+      "tvl": 13380769,
+      "liquidity": 3801954,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "telos": {
+      "source": "dexscreener",
+      "dexes": [
+        "oku",
+        "swapsicle"
+      ],
+      "tvl": 0,
+      "liquidity": 9108,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "hedera": {
+      "source": "dexscreener",
+      "dexes": [
+        "saucerswap"
+      ],
+      "tvl": 60122238,
+      "liquidity": 17763,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "injective": {
+      "source": "dexscreener",
+      "dexes": [
+        "helix"
+      ],
+      "tvl": 16533186,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered",
+      "phase2_status": "pairs_found_no_contract",
+      "onchain_verified": false,
+      "verification_note": "DexScreener pairs found but pairAddress not deployed on Injective EVM RPC"
+    },
+    "cardano": {
+      "source": "dexscreener",
+      "dexes": [
+        "wingriders",
+        "minswap"
+      ],
+      "tvl": 137659534,
+      "liquidity": 970,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "opbnb": {
+      "source": "dexscreener",
+      "dexes": [
+        "pancakeswap"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "kcc": {
+      "source": "dexscreener",
+      "dexes": [
+        "mojitoswap"
+      ],
+      "tvl": 0,
+      "liquidity": 326423,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "ethereumclassic": {
+      "source": "dexscreener",
+      "dexes": [
+        "hebeswap"
+      ],
+      "tvl": 0,
+      "liquidity": 6319,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "gnosis": {
+      "source": "geckoterminal",
+      "dexes": [
+        "curve",
+        "balancer-v3",
+        "sushiswap",
+        "honeyswap"
+      ],
+      "tvl": 92004781,
+      "liquidity": 12093826,
+      "pairs": [],
+      "status": "discovered",
+      "onchain_verified": true,
+      "verification_method": "factory.allPairsLength",
+      "onchain_pairs": 3767,
+      "factory": "0xa818b4f111ccac7aa31d0bcc0806d64f2e0737d7"
+    },
+    "kaia": {
+      "source": "geckoterminal",
+      "dexes": [
+        "klayswap-v3",
+        "dragonswap-v3"
+      ],
+      "tvl": 12811126,
+      "liquidity": 3719765,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "xlayer": {
+      "source": "geckoterminal",
+      "dexes": [
+        "curve",
+        "uniswap-v4",
+        "uniswap-v3"
+      ],
+      "tvl": 25072305,
+      "liquidity": 13986764,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "worldchain": {
+      "source": "geckoterminal",
+      "dexes": [
+        "uniswap-v4",
+        "uniswap-v2",
+        "uniswap-v3"
+      ],
+      "tvl": 26580765,
+      "liquidity": 1353785,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "xdc": {
+      "source": "geckoterminal",
+      "dexes": [
+        "xswap-v3",
+        "curve"
+      ],
+      "tvl": 0,
+      "liquidity": 2283126,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "zeronetwork": {
+      "source": "geckoterminal",
+      "dexes": [
+        "reservoir-v3",
+        "reservoir-v2"
+      ],
+      "tvl": 0,
+      "liquidity": 155285,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "near": {
+      "source": "defillama",
+      "dexes": [
+        "ref-finance"
+      ],
+      "tvl": 113143514,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "rootstock": {
+      "source": "defillama",
+      "dexes": [
+        "sovryn"
+      ],
+      "tvl": 114087632,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "stellar": {
+      "source": "defillama",
+      "dexes": [
+        "soroswap"
+      ],
+      "tvl": 198939541,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "fraxtal": {
+      "tier": "B",
+      "pairs_found": 424,
+      "total_liquidity_usd": 0,
+      "total_volume_24h": 0,
+      "dexes": [
+        "fraxswap",
+        "velodrome"
+      ],
+      "onchain_verified": true,
+      "verification_method": "phase3_event_log_discovery",
+      "v2_pairs": 424,
+      "solidly_pairs": 355674,
+      "factory_v2": "0xe30521fe7f3beb6ad556887b50739d6c7ca667e6",
+      "factory_solidly": "0xba12222222228d8ba445958a75a0704d566bf2c8",
+      "note": "DEX infrastructure verified on-chain but not indexed by DexScreener",
+      "fetched_at": "2026-04-18T07:48:26.154327+00:00"
+    },
+    "ronin": {
+      "source": "defillama",
+      "dexes": [
+        "katana-dex"
+      ],
+      "tvl": 14306651,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "bob": {
+      "source": "defillama",
+      "dexes": [
+        "oku"
+      ],
+      "tvl": 10728383,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "unichain": {
+      "tier": "A",
+      "pairs_found": 8,
+      "total_liquidity_usd": 27000000,
+      "total_volume_24h": 0,
+      "dexes": [
+        "uniswap",
+        "velodrome"
+      ],
+      "onchain_verified": true,
+      "verification_method": "phase3_dexscreener_pair_verify",
+      "factories": [
+        "0x1f98400000000000000000000000000000000003",
+        "0x04625b046c69577efc40e6c0bb83cdbafab5a55f"
+      ],
+      "fetched_at": "2026-04-18T07:48:26.154343+00:00"
+    },
+    "icp": {
+      "source": "defillama",
+      "dexes": [
+        "icpswap",
+        "sonic"
+      ],
+      "tvl": 11318081,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "flow": {
+      "source": "defillama",
+      "dexes": [
+        "increment"
+      ],
+      "tvl": 18157599,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "immutablezkevm": {
+      "source": "defillama",
+      "dexes": [
+        "quickswap"
+      ],
+      "tvl": 11288744,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "polygonzkevm": {
+      "source": "defillama",
+      "dexes": [
+        "quickswap",
+        "pancakeswap"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "moonbeam": {
+      "tier": "D",
+      "pairs_found": 0,
+      "total_liquidity_usd": 0,
+      "total_volume_24h": 0,
+      "dexes": [],
+      "onchain_verified": false,
+      "phase3_status": "rpc_live_no_dexscreener_indexing",
+      "note": "Moonbeam RPC live but not indexed by DexScreener; no standard factory events found in recent blocks",
+      "fetched_at": "2026-04-18T07:48:26.154347+00:00"
+    },
+    "evmos": {
+      "source": "defillama",
+      "dexes": [
+        "forge"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "canto": {
+      "source": "defillama",
+      "dexes": [
+        "canto-dex"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered",
+      "onchain_verified": true,
+      "verification_method": "factory.allPairsLength",
+      "onchain_pairs": 161,
+      "factory": "0xe387067f12561e579c5f7d4294f51867e0c1cfba"
+    },
+    "hemi": {
+      "source": "defillama",
+      "dexes": [
+        "hemi-swap"
+      ],
+      "tvl": 7877816,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "corn": {
+      "source": "defillama",
+      "dexes": [
+        "corn-swap"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "swellchain": {
+      "source": "defillama",
+      "dexes": [
+        "ambient"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "wanchain": {
+      "source": "defillama",
+      "dexes": [
+        "wanswap"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "shiden": {
+      "source": "defillama",
+      "dexes": [
+        "arthswap"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "wemix": {
+      "source": "defillama",
+      "dexes": [
+        "kurrency"
+      ],
+      "tvl": 7506741,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "shibarium": {
+      "source": "defillama",
+      "dexes": [
+        "shibaswap"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "zetachain": {
+      "source": "defillama",
+      "dexes": [
+        "eddy-finance"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "bittorrent": {
+      "source": "defillama",
+      "dexes": [
+        "sunswap"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    },
+    "core": {
+      "source": "defillama",
+      "dexes": [
+        "corex"
+      ],
+      "tvl": 0,
+      "liquidity": 0,
+      "pairs": [],
+      "status": "discovered"
+    }
+  }
+}

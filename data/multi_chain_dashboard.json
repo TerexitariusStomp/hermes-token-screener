@@ -1,0 +1,1281 @@
+{
+  "generated_at": "2026-04-18T05:14:09.519611",
+  "total_chains": 98,
+  "total_liquidity_usd": 245731143.61999995,
+  "total_dex_protocols": 151,
+  "chains": {
+    "tron": {
+      "chain": "tron",
+      "liquidity_usd": 114932282.75,
+      "volume_24h": 2144518.85,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "sunswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "avalanche": {
+      "chain": "avalanche",
+      "liquidity_usd": 15428471.91,
+      "volume_24h": 95580250.52,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "pharaoh",
+        "uniswap",
+        "blackhole",
+        "traderjoe"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "solana": {
+      "chain": "solana",
+      "liquidity_usd": 12570629.98,
+      "volume_24h": 3772536.17,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "raydium",
+        "pumpswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "mantle": {
+      "chain": "mantle",
+      "liquidity_usd": 8946762.15,
+      "volume_24h": 570863.54,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "agni",
+        "oku",
+        "merchantmoe",
+        "0xF883162Ed9c7E8EF604214c964c678E40c9B737C"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "arbitrum": {
+      "chain": "arbitrum",
+      "liquidity_usd": 7203888.91,
+      "volume_24h": 16214365.38,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "uniswap",
+        "camelot"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "starknet": {
+      "chain": "starknet",
+      "liquidity_usd": 6792434.2299999995,
+      "volume_24h": 3524227.44,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "ekubo"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "polkadot": {
+      "chain": "polkadot",
+      "liquidity_usd": 5499179.64,
+      "volume_24h": 372325.50999999995,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "hydration"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "taiko": {
+      "chain": "taiko",
+      "liquidity_usd": 4586448.75,
+      "volume_24h": 166930.43,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "0x826D713e30f0bF09Dd3219494A508E6B30327d4f",
+        "0x2EA9051d5a48eA2350b26306f2b959D262cf67e1",
+        "kodo",
+        "0x42B08e7a9211482d3643a126a7dF1895448d3509",
+        "oku"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "monad": {
+      "chain": "monad",
+      "liquidity_usd": 2594494.83,
+      "volume_24h": 9998674.03,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "uniswap",
+        "traderjoe",
+        "pancakeswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "osmosis": {
+      "chain": "osmosis",
+      "liquidity_usd": 2420287.56,
+      "volume_24h": 2983879.18,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "osmosis"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "xrpl": {
+      "chain": "xrpl",
+      "liquidity_usd": 2196579.27,
+      "volume_24h": 379925.11000000004,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "xrpl"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "stacks": {
+      "chain": "stacks",
+      "liquidity_usd": 2106611.17,
+      "volume_24h": 65610.93,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "velar",
+        "alex",
+        "bitflow"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "flare": {
+      "chain": "flare",
+      "liquidity_usd": 2030906.89,
+      "volume_24h": 2720912.16,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "enosys",
+        "sparkdex",
+        "blazeswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "zksync": {
+      "chain": "zksync",
+      "liquidity_usd": 1263166.97,
+      "volume_24h": 80229.34,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "syncswap",
+        "oku",
+        "zkswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "optimism": {
+      "chain": "optimism",
+      "liquidity_usd": 1233727.93,
+      "volume_24h": 1772602.49,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "uniswap",
+        "velodrome"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "polygon": {
+      "chain": "polygon",
+      "liquidity_usd": 1236434.08,
+      "volume_24h": 23700.53,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "quickswap",
+        "uniswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "conflux": {
+      "chain": "conflux",
+      "liquidity_usd": 1143152.3800000001,
+      "volume_24h": 53728.39,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "swappi",
+        "0x50cADdC77c6727Bdd3c78B428c149BF110b4f595"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "ton": {
+      "chain": "ton",
+      "liquidity_usd": 927041.8700000001,
+      "volume_24h": 90761.38,
+      "pairs": 3,
+      "tier": "B",
+      "dexes": [
+        "stonfi"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "katana": {
+      "chain": "katana",
+      "liquidity_usd": 785451.49,
+      "volume_24h": 459621.33,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "sushiswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "kava": {
+      "chain": "kava",
+      "liquidity_usd": 737241.35,
+      "volume_24h": 127935.0,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "wagmi",
+        "0xD6E4170C9097A5B5C85E8A39111bF37E47C90076",
+        "elkfinance",
+        "kinetix"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "sonic": {
+      "chain": "sonic",
+      "liquidity_usd": 633403.6900000001,
+      "volume_24h": 405210.75,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "wagmi",
+        "beets",
+        "equalizer",
+        "defive",
+        "swapx",
+        "shadow-exchange"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "linea": {
+      "chain": "linea",
+      "liquidity_usd": 557926.5599999999,
+      "volume_24h": 126868.82,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "lynex",
+        "syncswap",
+        "etherex"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "venom": {
+      "chain": "venom",
+      "liquidity_usd": 519439.71,
+      "volume_24h": 930.09,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "web3world"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "soneium": {
+      "chain": "soneium",
+      "liquidity_usd": 491755.01,
+      "volume_24h": 226240.24,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "velodrome",
+        "kyo-finance"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "metis": {
+      "chain": "metis",
+      "liquidity_usd": 472687.99,
+      "volume_24h": 880024.22,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "uni-maia",
+        "netswap",
+        "tethys"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "fantom": {
+      "chain": "fantom",
+      "liquidity_usd": 304171.43,
+      "volume_24h": 287.72999999999996,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "spookyswap",
+        "beethovenx",
+        "spiritswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "cronos": {
+      "chain": "cronos",
+      "liquidity_usd": 7595964.23,
+      "volume_24h": 338978.48,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "mmfinance",
+        "0xDdcf30c1A85e5a60d85310d6b0D3952A75a00db4",
+        "cronaswap",
+        "vvsfinance"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "arbitrumnova": {
+      "chain": "arbitrumnova",
+      "liquidity_usd": 242013.0,
+      "volume_24h": 4690.110000000001,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "rcpswap",
+        "sushiswap",
+        "0xaa26771d497814E81D305c511Efbb3ceD90BF5bd",
+        "arbswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "boba": {
+      "chain": "boba",
+      "liquidity_usd": 232920.0,
+      "volume_24h": 9801.29,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "0x39135bD1FD3A04381C1094AB0Dd35c7bbe61b3C5",
+        "oolongswap",
+        "sushiswap",
+        "oku",
+        "0xcB74d94Ddb0c365e62731FA289E90928C311223f"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "iotex": {
+      "chain": "iotex",
+      "liquidity_usd": 214235.0,
+      "volume_24h": 2904.06,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "mimo"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "base": {
+      "chain": "base",
+      "liquidity_usd": 206101.67,
+      "volume_24h": 5306.94,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "uniswap",
+        "swapbased"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "bsc": {
+      "chain": "bsc",
+      "liquidity_usd": 142387.73,
+      "volume_24h": 87073.70999999999,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "apeswap",
+        "pancakeswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "aurora": {
+      "chain": "aurora",
+      "liquidity_usd": 139050.0,
+      "volume_24h": 3168.9100000000003,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "wannaswap",
+        "auroraswap",
+        "trisolaris"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "celo": {
+      "chain": "celo",
+      "liquidity_usd": 136736.17,
+      "volume_24h": 103739.89,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "uniswap",
+        "ubeswap",
+        "velodrome"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "ethereum": {
+      "chain": "ethereum",
+      "liquidity_usd": 131174.52,
+      "volume_24h": 3588.04,
+      "pairs": 2,
+      "tier": "B",
+      "dexes": [
+        "uniswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "blast": {
+      "chain": "blast",
+      "liquidity_usd": 118262.56,
+      "volume_24h": 2921.52,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "uniswap",
+        "thruster"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "abstract": {
+      "chain": "abstract",
+      "liquidity_usd": 101986.67,
+      "volume_24h": 155.57,
+      "pairs": 6,
+      "tier": "B",
+      "dexes": [
+        "kona",
+        "abstractswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "ink": {
+      "chain": "ink",
+      "liquidity_usd": 93496.78,
+      "volume_24h": 37885.14,
+      "pairs": 1,
+      "tier": "C",
+      "dexes": [
+        "inkyswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "fuse": {
+      "chain": "fuse",
+      "liquidity_usd": 78852.15,
+      "volume_24h": 32.92,
+      "pairs": 6,
+      "tier": "C",
+      "dexes": [
+        "voltagefinance"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "elastos": {
+      "chain": "elastos",
+      "liquidity_usd": 69137.67,
+      "volume_24h": 558.0,
+      "pairs": 6,
+      "tier": "C",
+      "dexes": [
+        "elkfinance",
+        "glidefinance"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "astar": {
+      "chain": "astar",
+      "liquidity_usd": 68926.0,
+      "volume_24h": 1263.41,
+      "pairs": 6,
+      "tier": "C",
+      "dexes": [
+        "arthswap",
+        "zenlink",
+        "versa"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "movement": {
+      "chain": "movement",
+      "liquidity_usd": 33593.55,
+      "volume_24h": 12.91,
+      "pairs": 2,
+      "tier": "C",
+      "dexes": [
+        "yuzu"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "scroll": {
+      "chain": "scroll",
+      "liquidity_usd": 28721.19,
+      "volume_24h": 3034.4500000000003,
+      "pairs": 6,
+      "tier": "C",
+      "dexes": [
+        "0xB11042007e78bE92dc1c79DA1e7eF499b4B31838",
+        "0x1d25AF2b0992bf227b350860Ea80Bad47382CAf6",
+        "syncswap",
+        "iziswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "dogechain": {
+      "chain": "dogechain",
+      "liquidity_usd": 24257.11,
+      "volume_24h": 428.52,
+      "pairs": 6,
+      "tier": "C",
+      "dexes": [
+        "kibbleswap",
+        "fraxswap",
+        "dogeshrek",
+        "quickswap",
+        "yodeswap",
+        "dogeswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "story": {
+      "chain": "story",
+      "liquidity_usd": 14345.42,
+      "volume_24h": 14192.86,
+      "pairs": 2,
+      "tier": "C",
+      "dexes": [
+        "storyhunt"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "moonriver": {
+      "chain": "moonriver",
+      "liquidity_usd": 30800.14,
+      "volume_24h": 17498.89,
+      "pairs": 6,
+      "tier": "C",
+      "dexes": [
+        "0xC05A5aA56DF0Dc97D6B9849A06627a079790014f",
+        "elkfinance",
+        "0xdD9EFCbDf9f422e2fc159eFe77aDD3730d48056d",
+        "zenlink",
+        "solarbeam"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "ethereumpow": {
+      "chain": "ethereumpow",
+      "liquidity_usd": 12296.6,
+      "volume_24h": 79.34,
+      "pairs": 4,
+      "tier": "C",
+      "dexes": [
+        "lfgswap",
+        "0xaBC4325bAD182076EAa5877c68437833d596D3Ee"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "manta": {
+      "chain": "manta",
+      "liquidity_usd": 12138.52,
+      "volume_24h": 2550.29,
+      "pairs": 6,
+      "tier": "C",
+      "dexes": [
+        "quickswap",
+        "gullnetwork",
+        "iziswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "pulsechain": {
+      "chain": "pulsechain",
+      "liquidity_usd": 10806.88,
+      "volume_24h": 388.43,
+      "pairs": 6,
+      "tier": "C",
+      "dexes": [
+        "pulsex"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "mode": {
+      "chain": "mode",
+      "liquidity_usd": 9964.86,
+      "volume_24h": 1137.58,
+      "pairs": 6,
+      "tier": "D",
+      "dexes": [
+        "velodrome",
+        "kim",
+        "swapmode",
+        "0x423A079C43e4eD7ca561Ef04765eDB796F0Ec6c6"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "megaeth": {
+      "chain": "megaeth",
+      "liquidity_usd": 8895.92,
+      "volume_24h": 31.0,
+      "pairs": 1,
+      "tier": "D",
+      "dexes": [
+        "noxa"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "energi": {
+      "chain": "energi",
+      "liquidity_usd": 2023.0,
+      "volume_24h": 88.91,
+      "pairs": 6,
+      "tier": "D",
+      "dexes": [
+        "energiswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "harmony": {
+      "chain": "harmony",
+      "liquidity_usd": 1175.7199999999998,
+      "volume_24h": 0.11,
+      "pairs": 2,
+      "tier": "D",
+      "dexes": [
+        "swap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "sui": {
+      "chain": "sui",
+      "liquidity_usd": 7580543.0,
+      "volume_24h": 0.0,
+      "pairs": 2,
+      "tier": "A",
+      "dexes": [
+        "bluefin",
+        "cetus"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "aptos": {
+      "chain": "aptos",
+      "liquidity_usd": 2440262.0,
+      "volume_24h": 0.0,
+      "pairs": 6,
+      "tier": "A",
+      "dexes": [
+        "cellana",
+        "thala",
+        "liquidswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "berachain": {
+      "chain": "berachain",
+      "liquidity_usd": 252213.0,
+      "volume_24h": 0.0,
+      "pairs": 5,
+      "tier": "B",
+      "dexes": [
+        "bulla",
+        "memeswap",
+        "beraswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "hyperliquid": {
+      "chain": "hyperliquid",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "hyperliquid"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "seiv2": {
+      "chain": "seiv2",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "dragonswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "apechain": {
+      "chain": "apechain",
+      "liquidity_usd": 1083284.0599999998,
+      "volume_24h": 37406.549999999996,
+      "pairs": 12,
+      "tier": "B",
+      "dexes": [
+        "camelot"
+      ],
+      "onchain_verified": true,
+      "gas_gwei": -1
+    },
+    "algorand": {
+      "chain": "algorand",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "tinyman"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "multiversx": {
+      "chain": "multiversx",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "xExchange",
+        "onedex"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "telos": {
+      "chain": "telos",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "oku",
+        "swapsicle"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "hedera": {
+      "chain": "hedera",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "saucerswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "injective": {
+      "chain": "injective",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "helix"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "cardano": {
+      "chain": "cardano",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "wingriders",
+        "minswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "opbnb": {
+      "chain": "opbnb",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "pancakeswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "kcc": {
+      "chain": "kcc",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "mojitoswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "ethereumclassic": {
+      "chain": "ethereumclassic",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "hebeswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "gnosis": {
+      "chain": "gnosis",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "curve",
+        "balancer-v3",
+        "sushiswap",
+        "honeyswap"
+      ],
+      "onchain_verified": true,
+      "gas_gwei": -1
+    },
+    "kaia": {
+      "chain": "kaia",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "klayswap-v3",
+        "dragonswap-v3"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "xlayer": {
+      "chain": "xlayer",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "curve",
+        "uniswap-v4",
+        "uniswap-v3"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "worldchain": {
+      "chain": "worldchain",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "uniswap-v4",
+        "uniswap-v2",
+        "uniswap-v3"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "xdc": {
+      "chain": "xdc",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "xswap-v3",
+        "curve"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "zeronetwork": {
+      "chain": "zeronetwork",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "reservoir-v3",
+        "reservoir-v2"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "near": {
+      "chain": "near",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "ref-finance"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "rootstock": {
+      "chain": "rootstock",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "sovryn"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "stellar": {
+      "chain": "stellar",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "soroswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "fraxtal": {
+      "chain": "fraxtal",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 424,
+      "tier": "B",
+      "dexes": [
+        "fraxswap",
+        "velodrome"
+      ],
+      "onchain_verified": true,
+      "gas_gwei": -1
+    },
+    "ronin": {
+      "chain": "ronin",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "katana-dex"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "bob": {
+      "chain": "bob",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "oku"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "unichain": {
+      "chain": "unichain",
+      "liquidity_usd": 27000000.0,
+      "volume_24h": 0.0,
+      "pairs": 8,
+      "tier": "A",
+      "dexes": [
+        "uniswap",
+        "velodrome"
+      ],
+      "onchain_verified": true,
+      "gas_gwei": -1
+    },
+    "icp": {
+      "chain": "icp",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "icpswap",
+        "sonic"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "flow": {
+      "chain": "flow",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "increment"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "immutablezkevm": {
+      "chain": "immutablezkevm",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "quickswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "polygonzkevm": {
+      "chain": "polygonzkevm",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "quickswap",
+        "pancakeswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "moonbeam": {
+      "chain": "moonbeam",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "evmos": {
+      "chain": "evmos",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "forge"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "canto": {
+      "chain": "canto",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "canto-dex"
+      ],
+      "onchain_verified": true,
+      "gas_gwei": -1
+    },
+    "hemi": {
+      "chain": "hemi",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "hemi-swap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "corn": {
+      "chain": "corn",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "corn-swap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "swellchain": {
+      "chain": "swellchain",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "ambient"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "wanchain": {
+      "chain": "wanchain",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "wanswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "shiden": {
+      "chain": "shiden",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "arthswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "wemix": {
+      "chain": "wemix",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "kurrency"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "shibarium": {
+      "chain": "shibarium",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "shibaswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "zetachain": {
+      "chain": "zetachain",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "eddy-finance"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "bittorrent": {
+      "chain": "bittorrent",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "sunswap"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    },
+    "core": {
+      "chain": "core",
+      "liquidity_usd": 0.0,
+      "volume_24h": 0.0,
+      "pairs": 0,
+      "tier": "D",
+      "dexes": [
+        "corex"
+      ],
+      "onchain_verified": false,
+      "gas_gwei": -1
+    }
+  }
+}

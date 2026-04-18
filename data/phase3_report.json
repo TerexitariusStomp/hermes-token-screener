@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-04-18T07:12:00+00:00",
+  "phase": 3,
+  "method": "event_log_discovery_doc_driven_native_apis",
+  "targets": 13,
+  "results": {
+    "verified_onchain": [
+      {
+        "chain": "Fraxtal",
+        "ds_id": "fraxtal",
+        "method": "event_log_discovery",
+        "factories": [
+          {"type": "v2", "address": "0xe30521fe7f3beb6ad556887b50739d6c7ca667e6", "pairs": 424},
+          {"type": "solidly", "address": "0xba12222222228d8ba445958a75a0704d566bf2c8", "events": 355674}
+        ],
+        "sampled_active_pairs": "20/20",
+        "dexscreener_indexed": false,
+        "status": "verified_no_prices"
+      },
+      {
+        "chain": "Unichain",
+        "ds_id": "unichain",
+        "method": "dexscreener_pair_verify",
+        "factories": [
+          {"type": "v3", "name": "Uniswap V3", "address": "0x1f98400000000000000000000000000000000003"},
+          {"type": "v3", "name": "Velodrome V3", "address": "0x04625b046c69577efc40e6c0bb83cdbafab5a55f"}
+        ],
+        "verified_pairs": 8,
+        "total_dexscreener_pairs": 30,
+        "liquidity_usd": 27000000,
+        "dexscreener_indexed": true,
+        "status": "verified_with_prices"
+      }
+    ],
+    "not_found": [
+      {"chain": "Moonbeam", "status": "rpc_live_no_dexscreener_indexing", "note": "Zero events in 500k blocks"},
+      {"chain": "Polygon zkEVM", "status": "no_dexscreener_no_events", "note": "Balancer Vault matched Solidly topic but not a DEX factory"},
+      {"chain": "BOB", "status": "no_dexscreener_no_events"},
+      {"chain": "Hemi", "status": "no_dexscreener_no_events"},
+      {"chain": "Corn", "status": "no_dexscreener_no_events"},
+      {"chain": "Swellchain", "status": "no_dexscreener_no_events"},
+      {"chain": "Wanchain", "status": "rpc_live_registry_code_no_factory"},
+      {"chain": "Evmos", "status": "cosmos_rest_active_evm_dex_minimal"},
+      {"chain": "Shiden", "status": "substrate_rpc_active_no_evm_events"},
+      {"chain": "Injective", "status": "pairs_found_no_contract_on_evm_rpc"},
+      {"chain": "ApeChain", "status": "verified_in_phase2", "note": "Already promoted in phase 2"}
+    ]
+  },
+  "net_changes": {
+    "new_verified_chains": 2,
+    "fraxtal": {"type": "onchain_only", "pairs": 424, "dexscreener": false},
+    "unichain": {"type": "onchain_and_prices", "pairs": 8, "liquidity": 27000000, "dexscreener": true}
+  },
+  "totals_after_phase3": {
+    "chains_tracked": 98,
+    "total_liquidity_usd": 245731144,
+    "chains_onchain_verified": 15,
+    "chains_with_live_prices": 56
+  }
+}

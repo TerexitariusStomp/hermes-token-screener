@@ -1,0 +1,230 @@
+{
+  "generated_at": "2026-04-18T06:44:08.381800+00:00",
+  "targets": 15,
+  "chains": {
+    "apechain": {
+      "ds_id": "apechain",
+      "chain": "ApeChain",
+      "rpc_live": true,
+      "rpc": "https://rpc.apechain.com",
+      "block": 36489609,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 0,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "No hex contract addresses in top registry DEX entries"
+      ]
+    },
+    "injective": {
+      "ds_id": "injective",
+      "chain": "Injective",
+      "rpc_live": true,
+      "rpc": "https://sentry.evm-rpc.injective.network",
+      "block": 162958748,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 0,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "No hex contract addresses in top registry DEX entries"
+      ]
+    },
+    "gnosis": {
+      "ds_id": "gnosis",
+      "chain": "xDai",
+      "rpc_live": true,
+      "rpc": "https://rpc.gnosischain.com",
+      "block": 45731471,
+      "known_factory_verified": {
+        "factory": "0xa818b4f111ccac7aa31d0bcc0806d64f2e0737d7",
+        "code": true,
+        "pairs": 3767,
+        "expected_pairs": 3767
+      },
+      "registry_addresses_scanned": 8,
+      "registry_addresses_with_code": 1,
+      "router_factory_hits": 0,
+      "notes": [
+        "Registry code hits: 1/8"
+      ]
+    },
+    "fraxtal": {
+      "ds_id": "fraxtal",
+      "chain": "Fraxtal",
+      "rpc_live": true,
+      "rpc": "https://rpc.frax.com",
+      "block": 34841971,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 3,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "Registry addresses are not deployed contracts on this chain (likely token/global addresses)"
+      ]
+    },
+    "bob": {
+      "ds_id": "bob",
+      "chain": "BOB",
+      "rpc_live": true,
+      "rpc": "https://rpc.gobob.xyz",
+      "block": 31816334,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 1,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "Registry addresses are not deployed contracts on this chain (likely token/global addresses)"
+      ]
+    },
+    "unichain": {
+      "ds_id": "unichain",
+      "chain": "Unichain",
+      "rpc_live": true,
+      "rpc": "https://mainnet.unichain.org",
+      "block": 45746294,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 2,
+      "registry_addresses_with_code": 1,
+      "router_factory_hits": 0,
+      "notes": [
+        "Registry code hits: 1/2"
+      ]
+    },
+    "polygonzkevm": {
+      "ds_id": "polygonzkevm",
+      "chain": "Polygon zkEVM",
+      "rpc_live": true,
+      "rpc": "https://1rpc.io/polygon/zkevm",
+      "block": 31341913,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 3,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "Registry addresses are not deployed contracts on this chain (likely token/global addresses)"
+      ]
+    },
+    "moonbeam": {
+      "ds_id": "moonbeam",
+      "chain": "Moonbeam",
+      "rpc_live": true,
+      "rpc": "https://1rpc.io/glmr",
+      "block": 15270956,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 3,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "Registry addresses are not deployed contracts on this chain (likely token/global addresses)"
+      ]
+    },
+    "evmos": {
+      "ds_id": "evmos",
+      "chain": "Evmos",
+      "rpc_live": true,
+      "rpc": "https://evmos-evm-rpc.publicnode.com",
+      "block": 36704937,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 1,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "Registry addresses are not deployed contracts on this chain (likely token/global addresses)"
+      ]
+    },
+    "canto": {
+      "ds_id": "canto",
+      "chain": "Canto",
+      "rpc_live": true,
+      "rpc": "https://canto.gravitychain.io",
+      "block": 20157299,
+      "known_factory_verified": {
+        "factory": "0xe387067f12561e579c5f7d4294f51867e0c1cfba",
+        "code": true,
+        "pairs": 161,
+        "expected_pairs": 161
+      },
+      "registry_addresses_scanned": 0,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "No hex contract addresses in top registry DEX entries"
+      ]
+    },
+    "hemi": {
+      "ds_id": "hemi",
+      "chain": "Hemi",
+      "rpc_live": true,
+      "rpc": "https://rpc.hemi.network/rpc",
+      "block": 4218995,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 1,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "Registry addresses are not deployed contracts on this chain (likely token/global addresses)"
+      ]
+    },
+    "corn": {
+      "ds_id": "corn",
+      "chain": "Corn",
+      "rpc_live": true,
+      "rpc": "https://mainnet.corn-rpc.com",
+      "block": 1494846,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 0,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "No hex contract addresses in top registry DEX entries"
+      ]
+    },
+    "swellchain": {
+      "ds_id": "swellchain",
+      "chain": "Swellchain",
+      "rpc_live": true,
+      "rpc": "https://rpc.ankr.com/swell",
+      "block": 21898979,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 0,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "No hex contract addresses in top registry DEX entries"
+      ]
+    },
+    "wanchain": {
+      "ds_id": "wanchain",
+      "chain": "Wanchain",
+      "rpc_live": true,
+      "rpc": "https://gwan-ssl.wandevs.org:56891",
+      "block": 43955033,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 1,
+      "registry_addresses_with_code": 1,
+      "router_factory_hits": 0,
+      "notes": [
+        "Registry code hits: 1/1"
+      ]
+    },
+    "shiden": {
+      "ds_id": "shiden",
+      "chain": "Shiden",
+      "rpc_live": true,
+      "rpc": "https://shiden.public.curie.radiumblock.co/http",
+      "block": 14481048,
+      "known_factory_verified": null,
+      "registry_addresses_scanned": 3,
+      "registry_addresses_with_code": 0,
+      "router_factory_hits": 0,
+      "notes": [
+        "Registry addresses are not deployed contracts on this chain (likely token/global addresses)"
+      ]
+    }
+  },
+  "summary": {
+    "verified_onchain": 2,
+    "unverified": 13
+  }
+}
