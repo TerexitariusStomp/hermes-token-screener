@@ -146,8 +146,9 @@ function showDetails(chain){
   row.bridges.forEach(b=>{
     const st=b.contracts_ok>0?'ok':(b.contracts_found>0?'warn':'bad');
     html += `<h1 style="font-size:.92rem;margin:.8rem 0 .25rem">${esc(b.bridge)} <span class="${st}">(${b.contracts_ok}/${b.contracts_found})</span></h1>`;
+    html += `<div class="small" style="margin-bottom:.35rem">Type: ${esc(b.integration_type||'unknown')}${b.note?` | ${esc(b.note)}`:''}</div>`;
     if(!b.contracts || b.contracts.length===0){
-      html += `<div class="small">No contracts discovered yet for this protocol in automated sources.</div>`;
+      html += `<div class="small">No contract rows for this bridge label in current automated sources.</div>`;
       return;
     }
     html += '<div class="tbl"><table><thead><tr><th>Contract</th><th>Address</th><th>Status</th><th>RPC chain</th><th>Source</th></tr></thead><tbody>';
