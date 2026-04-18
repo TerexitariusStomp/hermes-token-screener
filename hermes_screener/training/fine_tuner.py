@@ -167,10 +167,17 @@ class FineTuner:
         from trl import SFTTrainer
         from transformers import TrainingArguments
 
-        if dataset_path is None:
-            dataset_path = DEFAULT_DATASET_DIR / "combined_dataset_train.jsonl"
-        if not Path(dataset_path).exists():
-            dataset_path = DEFAULT_DATASET_DIR / "combined_dataset.jsonl"
+    if dataset_path is None:
+        # Prefer the merged initial training dataset (external + pipeline)
+        for candidate in [
+            DEFAULT_DATASET_DIR / "initial_training_train.jsonl",
+            DEFAULT_DATASET_DIR / "combined_dataset_train.jsonl",
+            DEFAULT_DATASET_DIR / "initial_training_dataset.jsonl",
+            DEFAULT_DATASET_DIR / "combined_dataset.jsonl",
+        ]:
+            if candidate.exists() and candidate.stat().st_size > 0:
+                dataset_path = candidate
+                break
 
         if not Path(dataset_path).exists():
             return {"status": "no_dataset", "path": str(dataset_path)}
