@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-18T23:10:36.839182",
+  "generated_at": "2026-04-18T23:15:37.078390",
   "total_candidates": 500,
   "enriched": 4,
   "tokens": [
@@ -1997,22 +1997,22 @@
       "chain": "solana",
       "contract_address": "9SeCSdbPzz95KomGUGEV9Shn2zGXNmMJhE9J72Hipump",
       "score": 2.76,
-      "fdv": 53416,
-      "volume_h24": 46715.54,
-      "volume_h1": 1924.44,
-      "price_change_h1": 8.45,
-      "price_change_h6": -14.98,
-      "price_change_h24": -24.65,
-      "liquidity": 23437.71,
-      "age_hours": 285.7632042255995,
-      "price_usd": "0.00005342",
+      "fdv": 52619,
+      "volume_h24": 46292.92,
+      "volume_h1": 1924.96,
+      "price_change_h1": 7.19,
+      "price_change_h6": -15.13,
+      "price_change_h24": -23.72,
+      "liquidity": 23262.65,
+      "age_hours": 285.84669357625324,
+      "price_usd": "0.00005262",
       "dex_name": "pumpswap",
       "pair_address": "FaPgRzxwDn61stS7y2xsXwiHWmqNKitx6TKcmcxqUnxS",
       "url": "https://dexscreener.com/solana/fapgrzxwdn61sts7y2xsxwihwmqnkitx6tkcmcxqunxs",
       "twitter_url": "https://twitter.com/i/communities/2023912875237273947",
       "telegram_url": "https://t.me/irohaportal",
       "website_url": "https://irohasol.xyz",
-      "holders": 2823,
+      "holders": 2824,
       "honeypot": false,
       "burn": "burn",
       "mint_renounced": true,
@@ -2027,7 +2027,7 @@
         "burned"
       ],
       "negatives": [
-        "down h24 (-25%)",
+        "down h24 (-24%)",
         "stagnant volume",
         "no txns in 6h"
       ]
