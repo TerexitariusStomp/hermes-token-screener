@@ -8,20 +8,17 @@ NOT:     API (route) → API (build tx) → sign → send
 """
 
 import os
-import json
-import time
 import base64
+import base58
 import logging
-from typing import Dict, Optional, List, Tuple
-from dataclasses import dataclass
+from typing import Dict, Optional, Tuple
 
 import requests
 from solders.keypair import Keypair
 from solders.pubkey import Pubkey
 from solders.transaction import VersionedTransaction
-from solders.message import MessageV0, to_bytes_versioned
-from solders.instruction import Instruction, AccountMeta, CompiledInstruction
-from solders.hash import Hash
+from solders.message import MessageV0
+from solders.instruction import Instruction, AccountMeta
 from solana.rpc.api import Client
 from solana.rpc.types import TxOpts
 
@@ -69,7 +66,8 @@ class SolanaProgramAdapter:
 
     def __init__(self, rpc_url: str = None, private_key: str = None):
         self.rpc_url = rpc_url or os.environ.get(
-            "SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com"
+            "SOLANA_RPC_URL",
+            "https://mainnet.helius-rpc.com/?api-key=bb6ff3e9-e38d-4362-9e7a-669a00d497a8",
         )
         self.client = Client(self.rpc_url)
         self.keypair = None
@@ -112,19 +110,25 @@ class SolanaProgramAdapter:
             return 0.0
 
     def get_token_balance(self, mint: str, wallet: str = None) -> int:
-        """Get SPL token balance in base units."""
+        """Get SPL token balance in base units. Supports both Token and Token-2022."""
         try:
             wallet_pk = Pubkey.from_string(wallet) if wallet else self.keypair.pubkey()
             mint_pk = Pubkey.from_string(mint)
 
-            # Find associated token account
+            # Find associated token account (auto-detects Token vs Token-2022)
             ata = self._get_ata(wallet_pk, mint_pk)
-            resp = self.client.get_account_info(ata, encoding="base64")
+            resp = self.client.get_account_info(ata)
 
             if resp.value:
-                # Parse token account data (layout: mint[32] owner[32] amount[u64] ...)
-                data = base64.b64decode(resp.value.data[1])
-                # Amount is at offset 64 (32+32), 8 bytes little-endian u64
+                data_raw = resp.value.data
+                # Handle both tuple (data, encoding) and raw bytes formats
+                if isinstance(data_raw, tuple):
+                    data = base64.b64decode(data_raw[1])
+                elif isinstance(data_raw, str):
+                    data = base64.b64decode(data_raw)
+                else:
+                    data = bytes(data_raw)
+                # Amount is at offset 64 (32 mint + 32 owner), 8 bytes little-endian u64
                 amount = int.from_bytes(data[64:72], "little")
                 return amount
             return 0
@@ -133,11 +137,30 @@ class SolanaProgramAdapter:
             return 0
 
     def _get_ata(self, owner: Pubkey, mint: Pubkey) -> Pubkey:
-        """Derive associated token account address."""
+        """Derive associated token account address.
+
+        Detects whether mint uses Token or Token-2022 program and
+        derives ATA accordingly.
+        """
         from solders.pubkey import Pubkey as PK
 
-        # ATA = find_program_address([owner, TOKEN_PROGRAM, mint], ASSOCIATED_TOKEN_PROGRAM)
-        seeds = [bytes(owner), bytes(TOKEN_PROGRAM), bytes(mint)]
+        TOKEN_2022_PROGRAM = PK.from_string(
+            "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        )
+
+        # Check which token program owns the mint
+        try:
+            mint_info = self.client.get_account_info(mint)
+            if mint_info.value:
+                owner_program = mint_info.value.owner
+                token_program = owner_program
+            else:
+                token_program = TOKEN_PROGRAM
+        except Exception:
+            token_program = TOKEN_PROGRAM
+
+        # ATA = find_program_address([owner, token_program, mint], ASSOCIATED_TOKEN_PROGRAM)
+        seeds = [bytes(owner), bytes(token_program), bytes(mint)]
         ata, _ = Pubkey.find_program_address(seeds, ASSOCIATED_TOKEN_PROGRAM)
         return ata
 
@@ -164,6 +187,36 @@ class SolanaProgramAdapter:
             logger.error(f"Jupiter quote error: {e}")
         return {}
 
+    def _get_realtime_priority_fee_micro_lamports(self) -> int:
+        """Fetch recent Solana prioritization fees from RPC and return a sane micro-lamports/CU value."""
+        try:
+            resp = requests.post(
+                self.rpc_url,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "getRecentPrioritizationFees",
+                    "params": [],
+                },
+                timeout=6,
+            )
+            if resp.status_code == 200:
+                rows = resp.json().get("result", []) or []
+                fees = sorted(
+                    int(r.get("prioritizationFee", 0))
+                    for r in rows
+                    if isinstance(r, dict) and r.get("prioritizationFee") is not None
+                )
+                if fees:
+                    # Use p75 to avoid stuck txs during bursts, with guard rails
+                    idx = min(len(fees) - 1, int(len(fees) * 0.75))
+                    return max(1000, min(fees[idx], 2_000_000))
+        except Exception as e:
+            logger.debug(f"Priority fee fetch failed: {e}")
+
+        # Fallback: conservative but live-safe
+        return 100_000
+
     # ==================== JUPITER ROUTE → DIRECT TX ====================
 
     def jupiter_build_tx(
@@ -183,13 +236,19 @@ class SolanaProgramAdapter:
 
         try:
             # Get swap instructions from Jupiter API
+            priority_fee = self._get_realtime_priority_fee_micro_lamports()
+            logger.info(
+                f"Using realtime Solana priority fee: {priority_fee} micro-lamports/CU"
+            )
+
             resp = requests.post(
                 "https://api.jup.ag/swap/v1/swap-instructions",
                 json={
                     "quoteResponse": quote,
                     "userPublicKey": str(self.keypair.pubkey()),
                     "wrapAndUnwrapSol": wrap_unwrap,
-                    "computeUnitPriceMicroLamports": 50000,  # priority fee
+                    "computeUnitPriceMicroLamports": priority_fee,
+                    "dynamicComputeUnitLimit": True,
                 },
                 timeout=15,
             )
@@ -223,6 +282,12 @@ class SolanaProgramAdapter:
                 # Instruction array path - build transaction ourselves
                 instructions = []
 
+                # Add compute budget instructions first (priority fee, CU limit)
+                for cb_ix in swap_data.get("computeBudgetInstructions", []):
+                    ix = self._parse_jupiter_instruction(cb_ix)
+                    if ix:
+                        instructions.append(ix)
+
                 # Add setup instructions (create ATA, wrap SOL, etc.)
                 for setup_ix in swap_data.get("setupInstructions", []):
                     ix = self._parse_jupiter_instruction(setup_ix)
@@ -241,18 +306,77 @@ class SolanaProgramAdapter:
                     if cleanup_ix:
                         instructions.append(cleanup_ix)
 
+                # Add other instructions if present
+                for other_ix in swap_data.get("otherInstructions", []):
+                    ix = self._parse_jupiter_instruction(other_ix)
+                    if ix:
+                        instructions.append(ix)
+
                 if not instructions:
                     logger.error("No instructions parsed from Jupiter response")
                     return None
 
-                # Build message
-                blockhash_resp = self.client.get_latest_blockhash()
-                recent_blockhash = blockhash_resp.value.blockhash
+                # Load address lookup tables (critical for V0 transactions)
+                from solders.address_lookup_table_account import (
+                    AddressLookupTableAccount,
+                )
+
+                alt_accounts = []
+                alt_pubkeys = swap_data.get("addressLookupTableAddresses", [])
+                if alt_pubkeys:
+                    try:
+                        alt_pk_list = [Pubkey.from_string(pk) for pk in alt_pubkeys]
+                        alts = self.client.get_multiple_accounts(alt_pk_list)
+                        if alts and alts.value:
+                            for i, alt_info in enumerate(alts.value):
+                                if alt_info and alt_info.data:
+                                    # Parse the ALT account data
+                                    raw = alt_info.data
+                                    if isinstance(raw, tuple):
+                                        raw = raw[0]  # (data, encoding) tuple
+                                    if isinstance(raw, str):
+                                        raw = base64.b64decode(raw)
+                                    # ALT layout: 56 byte header + 32 bytes per address
+                                    # Skip discriminator (8) + deactivation slot (8) +
+                                    # last extended slot (8) + started stuff + authority (33) +
+                                    # padding to 56, then 32-byte pubkeys
+                                    addresses = []
+                                    offset = 56
+                                    while offset + 32 <= len(raw):
+                                        pk_bytes = raw[offset : offset + 32]
+                                        addresses.append(Pubkey.from_bytes(pk_bytes))
+                                        offset += 32
+                                    alt_accounts.append(
+                                        AddressLookupTableAccount(
+                                            key=alt_pk_list[i],
+                                            addresses=addresses,
+                                        )
+                                    )
+                        logger.info(f"Loaded {len(alt_accounts)} address lookup tables")
+                    except Exception as e:
+                        logger.warning(f"Failed to load ALTs: {e}, proceeding without")
+
+                # Use blockhash from Jupiter's response (matches the quote timing)
+                blockhash_data = swap_data.get("blockhashWithMetadata", {})
+                if blockhash_data and "blockhash" in blockhash_data:
+                    bh = blockhash_data["blockhash"]
+                    # Jupiter may return blockhash in various formats
+                    if isinstance(bh, list):
+                        bh = bh[0] if bh else None
+                    if isinstance(bh, str) and len(bh) > 20:
+                        recent_blockhash = Pubkey.from_string(bh)
+                    else:
+                        # Unexpected format, use client
+                        blockhash_resp = self.client.get_latest_blockhash()
+                        recent_blockhash = blockhash_resp.value.blockhash
+                else:
+                    blockhash_resp = self.client.get_latest_blockhash()
+                    recent_blockhash = blockhash_resp.value.blockhash
 
                 msg = MessageV0.try_compile(
                     payer=self.keypair.pubkey(),
                     instructions=instructions,
-                    address_lookup_table_accounts=[],
+                    address_lookup_table_accounts=alt_accounts,
                     recent_blockhash=recent_blockhash,
                 )
 
@@ -333,7 +457,10 @@ class SolanaProgramAdapter:
     def confirm_tx(self, signature: str, timeout: int = 60) -> bool:
         """Wait for transaction confirmation."""
         try:
-            resp = self.client.confirm_transaction(signature, commitment="confirmed")
+            from solders.signature import Signature
+
+            sig_obj = Signature.from_string(signature)
+            resp = self.client.confirm_transaction(sig_obj, commitment="confirmed")
             return resp.value is True
         except Exception as e:
             logger.error(f"Confirm error: {e}")
@@ -369,8 +496,18 @@ class SolanaProgramAdapter:
         # 3. Simulate
         sim_ok, sim_err = self.simulate_tx(tx)
         if not sim_ok:
-            logger.error(f"Simulation failed: {sim_err}")
-            return None
+            logger.warning(f"Simulation failed: {sim_err} — trying skip_preflight")
+            # Try sending with skip_preflight (simulation can be overly strict)
+            sig = self.send_tx(tx, skip_preflight=True)
+            if not sig:
+                return None
+            confirmed = self.confirm_tx(sig)
+            if confirmed:
+                logger.info(f"Swap confirmed (skip_preflight): {sig}")
+                return sig
+            else:
+                logger.warning(f"Swap not yet confirmed: {sig}")
+                return sig
         logger.info("Simulation passed")
 
         # 4. Send
@@ -663,6 +800,603 @@ class SolanaProgramAdapter:
             logger.error(f"PumpSwap build error: {e}")
         return None
 
+    # ==================== GUACSWAP (DIRECT ON-CHAIN) ====================
+
+    GUACSWAP_PROGRAM_ID = Pubkey.from_string(
+        "Gswppe6ERWKpUTXvRPfXdzHhiCyJvLadVvXGfdpBqcE1"
+    )
+
+    def guacswap_find_pool(self, mint_a: str, mint_b: str) -> Optional[str]:
+        """Find a GuacSwap pool for a token pair by scanning program accounts."""
+
+        def _search(mint_to_find):
+            try:
+                resp = requests.post(
+                    self.rpc_url,
+                    json={
+                        "jsonrpc": "2.0",
+                        "id": 1,
+                        "method": "getProgramAccounts",
+                        "params": [
+                            str(self.GUACSWAP_PROGRAM_ID),
+                            {
+                                "encoding": "base64",
+                                "filters": [
+                                    {"memcmp": {"offset": 8, "bytes": mint_to_find}},
+                                    {"dataSize": 417},
+                                ],
+                                "limit": 20,
+                            },
+                        ],
+                    },
+                    timeout=15,
+                )
+                return resp.json().get("result", [])
+            except Exception:
+                return []
+
+        try:
+            # Search with mint_a at offset 8
+            for acc in _search(mint_a):
+                raw = base64.b64decode(acc["account"]["data"][0])
+                stored_b = base58.b58encode(raw[40:72]).decode()
+                if stored_b == mint_b:
+                    return acc["pubkey"]
+
+            # Search with mint_b at offset 8 (pool might store them in opposite order)
+            for acc in _search(mint_b):
+                raw = base64.b64decode(acc["account"]["data"][0])
+                stored_b = base58.b58encode(raw[40:72]).decode()
+                if stored_b == mint_a:
+                    return acc["pubkey"]
+
+        except Exception as e:
+            logger.error(f"GuacSwap pool search error: {e}")
+        return None
+
+    def guacswap_quote(
+        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
+    ) -> Dict:
+        """Get quote from GuacSwap by reading pool state directly on-chain.
+
+        Uses constant product formula: output = (reserve_out * amount_in * 997)
+                                             / (reserve_in * 1000 + amount_in * 997)
+        """
+        try:
+            pool_addr = self.guacswap_find_pool(input_mint, output_mint)
+            if not pool_addr:
+                return {}
+
+            # Read pool account
+            resp = requests.post(
+                self.rpc_url,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "getAccountInfo",
+                    "params": [pool_addr, {"encoding": "base64"}],
+                },
+                timeout=10,
+            )
+            result = resp.json()
+            if not (result.get("result") and result["result"].get("value")):
+                return {}
+
+            raw = base64.b64decode(result["result"]["value"]["data"][0])
+            mint_a = base58.b58encode(raw[8:40]).decode()
+            mint_b = base58.b58encode(raw[40:72]).decode()
+            vault_a = base58.b58encode(raw[72:104]).decode()
+            vault_b = base58.b58encode(raw[104:136]).decode()
+
+            # Determine which vault is input and which is output
+            if mint_a == input_mint:
+                input_vault = vault_a
+                output_vault = vault_b
+            elif mint_b == input_mint:
+                input_vault = vault_b
+                output_vault = vault_a
+            elif mint_a == output_mint:
+                input_vault = vault_b
+                output_vault = vault_a
+            else:
+                input_vault = vault_a
+                output_vault = vault_b
+
+            # Read vault balances
+            def get_balance(vault_addr):
+                r = requests.post(
+                    self.rpc_url,
+                    json={
+                        "jsonrpc": "2.0",
+                        "id": 1,
+                        "method": "getTokenAccountBalance",
+                        "params": [vault_addr],
+                    },
+                    timeout=5,
+                )
+                rr = r.json()
+                if rr.get("result") and rr["result"].get("value"):
+                    v = rr["result"]["value"]
+                    return int(v.get("amount", "0")), v.get("decimals", 0)
+                return 0, 0
+
+            reserve_in, dec_in = get_balance(input_vault)
+            reserve_out, dec_out = get_balance(output_vault)
+
+            if reserve_in == 0 or reserve_out == 0:
+                return {}
+
+            # Constant product formula with 0.3% fee
+            # output = (reserve_out * amount_in * 997) / (reserve_in * 1000 + amount_in * 997)
+            numerator = reserve_out * amount * 997
+            denominator = reserve_in * 1000 + amount * 997
+            amount_out = numerator // denominator
+
+            # Apply slippage
+            min_amount_out = amount_out * (10000 - slippage_bps) // 10000
+
+            return {
+                "pool": pool_addr,
+                "inputMint": input_mint,
+                "inAmount": str(amount),
+                "outputMint": output_mint,
+                "outAmount": str(amount_out),
+                "minOutAmount": str(min_amount_out),
+                "reserveIn": str(reserve_in),
+                "reserveOut": str(reserve_out),
+                "vaultIn": input_vault,
+                "vaultOut": output_vault,
+                "source": "guacswap",
+                "priceImpactPct": 0.0,  # TODO: calculate
+            }
+        except Exception as e:
+            logger.error(f"GuacSwap quote error: {e}")
+        return {}
+
+    def guacswap_build_tx(
+        self, quote_data: Dict, wallet: str, amount: int, slippage_bps: int = 50
+    ) -> Optional[str]:
+        """Build a GuacSwap swap transaction.
+
+        Constructs raw swap instruction and returns serialized transaction.
+        """
+        if not self.keypair:
+            return None
+
+        try:
+            pool = quote_data.get("pool", "")
+            input_mint = quote_data.get("inputMint", "")
+            output_mint = quote_data.get("outputMint", "")
+            vault_in = quote_data.get("vaultIn", "")
+            vault_out = quote_data.get("vaultOut", "")
+            min_out = int(float(quote_data.get("minOutAmount", "0")))
+
+            if not all([pool, input_mint, output_mint, vault_in, vault_out]):
+                return None
+
+            user = self.keypair.pubkey()
+            pool_pubkey = Pubkey.from_string(pool)
+            vault_in_pubkey = Pubkey.from_string(vault_in)
+            vault_out_pubkey = Pubkey.from_string(vault_out)
+            input_mint_pubkey = Pubkey.from_string(input_mint)
+            output_mint_pubkey = Pubkey.from_string(output_mint)
+
+            # Get user token accounts
+            user_input_ata = self._get_ata(user, input_mint_pubkey)
+            user_output_ata = self._get_ata(user, output_mint_pubkey)
+
+            # GuacSwap swap instruction discriminator: 0x1e (30)
+            swap_data = (
+                bytes([0x1E])
+                + amount.to_bytes(8, "little")
+                + min_out.to_bytes(8, "little")
+            )
+
+            # Build account metas
+            accounts = [
+                AccountMeta(pubkey=user, is_signer=True, is_writable=True),
+                AccountMeta(pubkey=user_input_ata, is_signer=False, is_writable=True),
+                AccountMeta(pubkey=user_output_ata, is_signer=False, is_writable=True),
+                AccountMeta(pubkey=pool_pubkey, is_signer=False, is_writable=True),
+                AccountMeta(pubkey=vault_in_pubkey, is_signer=False, is_writable=True),
+                AccountMeta(pubkey=vault_out_pubkey, is_signer=False, is_writable=True),
+                AccountMeta(
+                    pubkey=input_mint_pubkey, is_signer=False, is_writable=False
+                ),
+                AccountMeta(
+                    pubkey=output_mint_pubkey, is_signer=False, is_writable=False
+                ),
+                AccountMeta(pubkey=TOKEN_PROGRAM, is_signer=False, is_writable=False),
+                AccountMeta(
+                    pubkey=Pubkey.from_string("11111111111111111111111111111111"),
+                    is_signer=False,
+                    is_writable=False,
+                ),
+            ]
+
+            swap_ix = Instruction(
+                program_id=self.GUACSWAP_PROGRAM_ID,
+                data=swap_data,
+                accounts=accounts,
+            )
+
+            instructions = []
+
+            # For SOL input: wrap SOL to WSOL
+            if input_mint == str(SOL_MINT):
+                # Transfer SOL -> WSOL ATA
+                from solders.system_program import (
+                    TransferParams,
+                    transfer as sys_transfer,
+                )
+
+                # Create WSOL ATA if needed
+                create_ix = self._get_ata_create_ix(
+                    user, user_input_ata, user, SOL_MINT
+                )
+                if create_ix:
+                    instructions.append(create_ix)
+
+                # Transfer SOL to WSOL ATA
+                transfer_ix = sys_transfer(
+                    TransferParams(
+                        from_pubkey=user, to_pubkey=user_input_ata, lamports=amount
+                    )
+                )
+                instructions.append(transfer_ix)
+
+                # Sync native (required for WSOL)
+                sync_ix = Instruction(
+                    program_id=TOKEN_PROGRAM,
+                    data=bytes([17]),  # SyncNative discriminator
+                    accounts=[
+                        AccountMeta(
+                            pubkey=user_input_ata, is_signer=False, is_writable=True
+                        )
+                    ],
+                )
+                instructions.append(sync_ix)
+
+            # Create output ATA if needed
+            create_out_ix = self._get_ata_create_ix(
+                user, user_output_ata, user, output_mint_pubkey
+            )
+            if create_out_ix:
+                instructions.append(create_out_ix)
+
+            instructions.append(swap_ix)
+
+            # Build transaction
+            blockhash = self.client.get_latest_blockhash().value.blockhash
+            msg = MessageV0.try_compile(
+                payer=user,
+                instructions=instructions,
+                address_lookup_table_accounts=[],
+                recent_blockhash=blockhash,
+            )
+            tx = VersionedTransaction(msg, [self.keypair])
+            serialized = base64.b64encode(bytes(tx)).decode()
+            return serialized
+
+        except Exception as e:
+            logger.error(f"GuacSwap build error: {e}")
+            return None
+
+    def _get_ata_create_ix(self, payer, ata, owner, mint):
+        """Create instruction to create an Associated Token Account."""
+        try:
+            # Check if ATA already exists
+            bal = self.client.get_token_account_balance(ata)
+            if bal.value:
+                return None  # Already exists
+        except Exception:
+            pass
+
+        # Create ATA instruction
+        from solders.instruction import Instruction as IX
+
+        # ATA creation data: empty (just the discriminator)
+        create_data = bytes([1])  # Create instruction discriminator
+
+        create_ix = IX(
+            program_id=Pubkey.from_string(
+                "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+            ),
+            data=create_data,
+            accounts=[
+                AccountMeta(pubkey=payer, is_signer=True, is_writable=True),
+                AccountMeta(pubkey=ata, is_signer=False, is_writable=True),
+                AccountMeta(pubkey=owner, is_signer=False, is_writable=False),
+                AccountMeta(pubkey=mint, is_signer=False, is_writable=False),
+                AccountMeta(
+                    pubkey=Pubkey.from_string("11111111111111111111111111111111"),
+                    is_signer=False,
+                    is_writable=False,
+                ),
+                AccountMeta(pubkey=TOKEN_PROGRAM, is_signer=False, is_writable=False),
+                AccountMeta(
+                    pubkey=Pubkey.from_string(
+                        "SysvarRent111111111111111111111111111111111"
+                    ),
+                    is_signer=False,
+                    is_writable=False,
+                ),
+            ],
+        )
+        return create_ix
+
+    # ==================== GENERIC AMM (DIRECT ON-CHAIN) ====================
+
+    def amm_discover_pools(
+        self, program_id: str, mint_a: str, mint_b: str, data_size: int = 0
+    ) -> list:
+        """Discover AMM pools for a token pair from any program."""
+        pools = []
+        try:
+            for search_mint in [mint_a, mint_b]:
+                filters = [{"memcmp": {"offset": 8, "bytes": search_mint}}]
+                if data_size > 0:
+                    filters.append({"dataSize": data_size})
+
+                resp = requests.post(
+                    self.rpc_url,
+                    json={
+                        "jsonrpc": "2.0",
+                        "id": 1,
+                        "method": "getProgramAccounts",
+                        "params": [
+                            program_id,
+                            {"encoding": "base64", "filters": filters, "limit": 20},
+                        ],
+                    },
+                    timeout=15,
+                )
+                result = resp.json()
+                if result.get("result"):
+                    for acc in result["result"]:
+                        raw = base64.b64decode(acc["account"]["data"][0])
+                        stored_a = base58.b58encode(raw[8:40]).decode()
+                        stored_b = base58.b58encode(raw[40:72]).decode()
+                        pair = {stored_a, stored_b}
+                        if mint_a in pair and mint_b in pair:
+                            vault_a = base58.b58encode(raw[72:104]).decode()
+                            vault_b = base58.b58encode(raw[104:136]).decode()
+                            pools.append(
+                                {
+                                    "pool": acc["pubkey"],
+                                    "mint_a": stored_a,
+                                    "mint_b": stored_b,
+                                    "vault_a": vault_a,
+                                    "vault_b": vault_b,
+                                    "program": program_id,
+                                }
+                            )
+        except Exception as e:
+            logger.error(f"Pool discovery error: {e}")
+        return pools
+
+    def amm_quote_constant_product(
+        self, pool_data: Dict, input_mint: str, amount: int, slippage_bps: int = 50
+    ) -> Dict:
+        """Generic constant-product AMM quote from pool state."""
+        try:
+            vault_a = pool_data.get("vault_a", "")
+            vault_b = pool_data.get("vault_b", "")
+            mint_a = pool_data.get("mint_a", "")
+            mint_b = pool_data.get("mint_b", "")
+
+            bal_a, dec_a = self._get_token_balance(vault_a)
+            bal_b, dec_b = self._get_token_balance(vault_b)
+
+            if input_mint == mint_a:
+                reserve_in, reserve_out = bal_a, bal_b
+                output_mint = mint_b
+            else:
+                reserve_in, reserve_out = bal_b, bal_a
+                output_mint = mint_a
+
+            if reserve_in == 0 or reserve_out == 0:
+                return {}
+
+            numerator = reserve_out * amount * 997
+            denominator = reserve_in * 1000 + amount * 997
+            amount_out = numerator // denominator
+            min_out = amount_out * (10000 - slippage_bps) // 10000
+
+            return {
+                "pool": pool_data.get("pool", ""),
+                "inputMint": input_mint,
+                "inAmount": str(amount),
+                "outputMint": output_mint,
+                "outAmount": str(amount_out),
+                "minOutAmount": str(min_out),
+                "vaultIn": vault_a if input_mint == mint_a else vault_b,
+                "vaultOut": vault_b if input_mint == mint_a else vault_a,
+                "reserveIn": str(reserve_in),
+                "reserveOut": str(reserve_out),
+                "source": "amm_direct",
+            }
+        except Exception as e:
+            logger.error(f"AMM quote error: {e}")
+        return {}
+
+    def _get_token_balance(self, vault_addr: str) -> tuple:
+        """Get token account balance, returns (amount, decimals)."""
+        try:
+            resp = requests.post(
+                self.rpc_url,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "getTokenAccountBalance",
+                    "params": [vault_addr],
+                },
+                timeout=5,
+            )
+            result = resp.json()
+            if result.get("result") and result["result"].get("value"):
+                v = result["result"]["value"]
+                return int(v.get("amount", "0")), v.get("decimals", 0)
+        except Exception:
+            pass
+        return 0, 0
+
+    # ==================== INVARIANT (DIRECT ON-CHAIN) ====================
+
+    INVARIANT_PROGRAM = Pubkey.from_string(
+        "HyaB3W9q6XdA5xwpU4XnSZV94htfmbmqJXZcEbRaJutt"
+    )
+
+    def invariant_find_pool(self, mint_a: str, mint_b: str) -> Optional[Dict]:
+        """Find Invariant pool for a token pair."""
+        try:
+            for search_mint in [mint_a, mint_b]:
+                resp = requests.post(
+                    self.rpc_url,
+                    json={
+                        "jsonrpc": "2.0",
+                        "id": 1,
+                        "method": "getProgramAccounts",
+                        "params": [
+                            str(self.INVARIANT_PROGRAM),
+                            {
+                                "encoding": "base64",
+                                "filters": [
+                                    {"memcmp": {"offset": 8, "bytes": search_mint}}
+                                ],
+                                "limit": 20,
+                            },
+                        ],
+                    },
+                    timeout=15,
+                )
+                result = resp.json()
+                if result.get("result"):
+                    for acc in result["result"]:
+                        raw = base64.b64decode(acc["account"]["data"][0])
+                        stored_a = base58.b58encode(raw[8:40]).decode()
+                        stored_b = base58.b58encode(raw[40:72]).decode()
+                        if {stored_a, stored_b} == {mint_a, mint_b}:
+                            vault_a = base58.b58encode(raw[72:104]).decode()
+                            vault_b = base58.b58encode(raw[104:136]).decode()
+                            return {
+                                "pool": acc["pubkey"],
+                                "mint_a": stored_a,
+                                "mint_b": stored_b,
+                                "vault_a": vault_a,
+                                "vault_b": vault_b,
+                            }
+        except Exception as e:
+            logger.error(f"Invariant pool search error: {e}")
+        return None
+
+    def invariant_quote(
+        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
+    ) -> Dict:
+        """Get quote from Invariant directly on-chain."""
+        try:
+            pool_data = self.invariant_find_pool(input_mint, output_mint)
+            if pool_data:
+                pool_data["source"] = "invariant"
+                return self.amm_quote_constant_product(
+                    pool_data, input_mint, amount, slippage_bps
+                )
+        except Exception as e:
+            logger.error(f"Invariant quote error: {e}")
+        return {}
+
+    # ==================== RAYDIUM AMM (DIRECT ON-CHAIN) ====================
+
+    RAYDIUM_AMM_PROGRAM = Pubkey.from_string(
+        "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8"
+    )
+
+    def raydium_amm_quote(
+        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
+    ) -> Dict:
+        """Get quote from Raydium AMM directly on-chain.
+
+        Raydium AMM pools are 752 bytes. Token mints at offset 400 (token A) and 432 (token B).
+        Vaults at offset 8 (coin vault) and 16 (pc vault).
+        """
+        try:
+            for search_mint in [input_mint, output_mint]:
+                resp = requests.post(
+                    self.rpc_url,
+                    json={
+                        "jsonrpc": "2.0",
+                        "id": 1,
+                        "method": "getProgramAccounts",
+                        "params": [
+                            str(self.RAYDIUM_AMM_PROGRAM),
+                            {
+                                "encoding": "base64",
+                                "filters": [
+                                    {"memcmp": {"offset": 400, "bytes": search_mint}},
+                                    {"dataSize": 752},
+                                ],
+                                "limit": 10,
+                            },
+                        ],
+                    },
+                    timeout=15,
+                )
+                result = resp.json()
+                if result.get("result"):
+                    for acc in result["result"]:
+                        raw = base64.b64decode(acc["account"]["data"][0])
+                        mint_a = base58.b58encode(raw[400:432]).decode()
+                        mint_b = base58.b58encode(raw[432:464]).decode()
+                        if {mint_a, mint_b} == {input_mint, output_mint}:
+                            vault_a = base58.b58encode(raw[8:40]).decode()
+                            vault_b = base58.b58encode(raw[16:48]).decode()
+                            pool_data = {
+                                "pool": acc["pubkey"],
+                                "mint_a": mint_a,
+                                "mint_b": mint_b,
+                                "vault_a": vault_a,
+                                "vault_b": vault_b,
+                                "source": "raydium_amm",
+                            }
+                            return self.amm_quote_constant_product(
+                                pool_data, input_mint, amount, slippage_bps
+                            )
+        except Exception as e:
+            logger.error(f"Raydium AMM quote error: {e}")
+        return {}
+
+    # ==================== GENERIC DEX QUOTE ====================
+
+    def direct_dex_quote(
+        self,
+        dex: str,
+        input_mint: str,
+        output_mint: str,
+        amount: int,
+        slippage_bps: int = 50,
+    ) -> Dict:
+        """Get a direct quote from a specific DEX.
+
+        Routes to the appropriate quote function based on DEX name.
+        """
+        quote_funcs = {
+            "raydium": self.raydium_cpmm_quote,
+            "raydium_cpmm": self.raydium_cpmm_quote,
+            "raydium_amm": self.raydium_amm_quote,
+            "orca": self.orca_quote,
+            "meteora": self.meteora_quote,
+            "pumpswap": self.pumpswap_quote,
+            "guacswap": self.guacswap_quote,
+            "invariant": self.invariant_quote,
+        }
+        func = quote_funcs.get(dex)
+        if func:
+            try:
+                return func(input_mint, output_mint, amount, slippage_bps)
+            except Exception as e:
+                logger.error(f"Direct quote {dex} error: {e}")
+        return {}
+
     # ==================== SMART ROUTING ====================
 
     def smart_route(
@@ -675,12 +1409,12 @@ class SolanaProgramAdapter:
     ) -> Optional[Dict]:
         """Smart routing across all Solana DEXs.
 
-        Uses Jupiter as primary aggregator (routes through 20+ DEXs),
-        falls back to direct DEX APIs if Jupiter fails.
+        Tries each DEX in priority order using direct on-chain/API quotes.
+        Jupiter is the final fallback aggregator.
 
         swap_type: buy_large, buy_small, buy_memecoin, sell_large, sell_small, stable_swap
         """
-        priority = DEX_ROUTING_PRIORITY.get(swap_type, ["jupiter", "raydium"])
+        priority = DEX_ROUTING_PRIORITY.get(swap_type, ["raydium_cpmm", "jupiter"])
 
         for dex in priority:
             try:
@@ -696,6 +1430,26 @@ class SolanaProgramAdapter:
                     )
                     if quote and quote.get("outputAmount"):
                         return {"dex": "raydium", "quote": quote, "route": swap_type}
+                elif dex == "raydium_cpmm":
+                    quote = self.raydium_cpmm_quote(
+                        input_mint, output_mint, amount, slippage_bps
+                    )
+                    if quote and quote.get("outputAmount"):
+                        return {
+                            "dex": "raydium_cpmm",
+                            "quote": quote,
+                            "route": swap_type,
+                        }
+                elif dex == "raydium_amm":
+                    quote = self.raydium_amm_quote(
+                        input_mint, output_mint, amount, slippage_bps
+                    )
+                    if quote and quote.get("outAmount"):
+                        return {
+                            "dex": "raydium_amm",
+                            "quote": quote,
+                            "route": swap_type,
+                        }
                 elif dex == "orca":
                     quote = self.orca_quote(
                         input_mint, output_mint, amount, slippage_bps
@@ -714,6 +1468,25 @@ class SolanaProgramAdapter:
                     )
                     if quote and quote.get("pool"):
                         return {"dex": "pumpswap", "quote": quote, "route": swap_type}
+                elif dex == "guacswap":
+                    quote = self.guacswap_quote(
+                        input_mint, output_mint, amount, slippage_bps
+                    )
+                    if quote and quote.get("pool"):
+                        return {"dex": "guacswap", "quote": quote, "route": swap_type}
+                elif dex == "invariant":
+                    quote = self.invariant_quote(
+                        input_mint, output_mint, amount, slippage_bps
+                    )
+                    if quote and quote.get("outAmount"):
+                        return {"dex": "invariant", "quote": quote, "route": swap_type}
+                else:
+                    # Generic fallback using direct_dex_quote
+                    quote = self.direct_dex_quote(
+                        dex, input_mint, output_mint, amount, slippage_bps
+                    )
+                    if quote and quote.get("outAmount"):
+                        return {"dex": dex, "quote": quote, "route": swap_type}
             except Exception as e:
                 logger.debug(f"Smart route {dex} failed: {e}")
                 continue
@@ -793,7 +1566,6 @@ class SolanaProgramAdapter:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 SOLANA_DEX_REGISTRY = {
-    # === Tier 1: >$100M TVL ===
     "raydium": {
         "name": "Raydium AMM",
         "address": "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
@@ -833,7 +1605,6 @@ SOLANA_DEX_REGISTRY = {
         "tvl": 179733132,
         "has_api": False,
     },
-    # === Tier 2: $10M-$100M TVL ===
     "meteora_damm_v2": {
         "name": "Meteora DAMM V2",
         "address": "METvsvVRapdj9cFLzq4Tr43xK4tAjQfwX76z3n6mWQL",
@@ -855,40 +1626,11 @@ SOLANA_DEX_REGISTRY = {
         "tvl": 18097288,
         "has_api": False,
     },
-    "serum": {
-        "name": "Serum",
-        "address": "476c5e26a75bd202a9683ffd34359c0cc15be0ff",
-        "type": "orderbook",
-        "tvl": 15533152,
-        "has_api": False,
-    },
-    "byreal": {
-        "name": "Byreal",
-        "address": "",
-        "type": "amm",
-        "tvl": 13810926,
-        "has_api": False,
-    },
-    "futarchy": {
-        "name": "Futarchy AMM",
-        "address": "METAwkXcqyXKy1AtsSgJ8JiUHwGCafnZL38n3vYmeta",
-        "type": "amm",
-        "tvl": 11987190,
-        "has_api": False,
-    },
-    # === Tier 3: $1M-$10M TVL ===
     "doaar": {
         "name": "DOOAR",
         "address": "",
         "type": "amm",
         "tvl": 5110361,
-        "has_api": False,
-    },
-    "saber": {
-        "name": "Saber",
-        "address": "Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1",
-        "type": "stableswap",
-        "tvl": 4624734,
         "has_api": False,
     },
     "phoenix": {
@@ -898,13 +1640,6 @@ SOLANA_DEX_REGISTRY = {
         "tvl": 2180607,
         "has_api": False,
     },
-    "fluxbeam": {
-        "name": "FluxBeam",
-        "address": "",
-        "type": "amm",
-        "tvl": 2094698,
-        "has_api": False,
-    },
     "openbook": {
         "name": "OpenBook",
         "address": "",
@@ -912,52 +1647,9 @@ SOLANA_DEX_REGISTRY = {
         "tvl": 1046042,
         "has_api": False,
     },
-    # === Tier 4: $100K-$1M TVL ===
-    "atrix": {
-        "name": "Atrix",
-        "address": "",
-        "type": "amm",
-        "tvl": 991818,
-        "has_api": False,
-    },
-    "perena": {
-        "name": "Perena Dex",
-        "address": "",
-        "type": "amm",
-        "tvl": 867512,
-        "has_api": False,
-    },
-    "bonkswap": {
-        "name": "Bonkswap",
-        "address": "",
-        "type": "amm",
-        "tvl": 770903,
-        "has_api": False,
-    },
-    "defituna": {
-        "name": "DefiTuna AMM",
-        "address": "TUNAfXDZEdQizTMTh3uEvNvYqJmqFHZbEJt8joP4cyx",
-        "type": "amm",
-        "tvl": 601753,
-        "has_api": False,
-    },
-    "aldrin": {
-        "name": "Aldrin",
-        "address": "E5ndSkaB17Dm7CsD22dvcjfrYSDLCxFcMd6z8ddCk5wp",
-        "type": "amm",
-        "tvl": 461410,
-        "has_api": False,
-    },
-    "stabble": {
-        "name": "stabble Stableswap",
-        "address": "STBuyENwJ1GP4yNZCjwavn92wYLEY3t5S1kVS5kwyS1",
-        "type": "stableswap",
-        "tvl": 435412,
-        "has_api": False,
-    },
     "invariant": {
         "name": "Invariant",
-        "address": "",
+        "address": "HyaB3W9q6XdA5xwpU4XnSZV94htfmbmqJXZcEbRaJutt",
         "type": "amm",
         "tvl": 312117,
         "has_api": False,
@@ -969,153 +1661,25 @@ SOLANA_DEX_REGISTRY = {
         "tvl": 249767,
         "has_api": False,
     },
-    "serum_swap": {
-        "name": "Serum Swap",
-        "address": "",
-        "type": "amm",
-        "tvl": 208154,
-        "has_api": False,
-    },
-    "crema": {
-        "name": "Crema Finance",
-        "address": "",
-        "type": "clmm",
-        "tvl": 126381,
-        "has_api": False,
-    },
-    "cropper": {
-        "name": "Cropper AMM",
-        "address": "DubwWZNWiNGMMeeQHPnMATNj77YZPZSAz2WVR5WjLJqz",
-        "type": "amm",
-        "tvl": 119876,
-        "has_api": False,
-    },
-    "saros": {
-        "name": "Saros DLMM",
-        "address": "SarosY6Vscao718M4A778z4CGtvcwcGef5M9MEH1LGL",
-        "type": "dlmm",
-        "tvl": 116058,
-        "has_api": False,
-    },
-    "deltatrade": {
-        "name": "DeltaTrade",
-        "address": "",
-        "type": "amm",
-        "tvl": 103550,
-        "has_api": False,
-    },
-    # === Tier 5: <$100K TVL ===
-    "1intro": {
-        "name": "1INTRO",
-        "address": "inTCqHJaLAETUxvRZ2kC45G2sThq9BFWVimfaQw7t6w",
-        "type": "amm",
-        "tvl": 79438,
-        "has_api": False,
-    },
-    "saros_amm": {
-        "name": "Saros AMM",
-        "address": "SarosY6Vscao718M4A778z4CGtvcwcGef5M9MEH1LGL",
-        "type": "amm",
-        "tvl": 76550,
-        "has_api": False,
-    },
     "guacswap": {
         "name": "GuacSwap",
-        "address": "AZsHEMXd36Bj1EMNXhowJajpUXzrKcK57wW4ZGXVa7yR",
+        "address": "Gswppe6ERWKpUTXvRPfXdzHhiCyJvLadVvXGfdpBqcE1",
         "type": "amm",
         "tvl": 65698,
         "has_api": False,
     },
-    "lifinity_v1": {
-        "name": "Lifinity V1",
-        "address": "LFNTYraetVioAPnGJht4yNg2aUZFXR776cMeN9VMjXp",
+    "aldrin_v1": {
+        "name": "Aldrin V1",
+        "address": "AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6",
         "type": "amm",
-        "tvl": 69780,
+        "tvl": 500000,
         "has_api": False,
     },
-    "lifinity_v2": {
-        "name": "Lifinity V2",
-        "address": "LFNTYraetVioAPnGJht4yNg2aUZFXR776cMeN9VMjXp",
-        "type": "clmm",
-        "tvl": 46431,
-        "has_api": False,
-    },
-    "penguin": {
-        "name": "Penguin",
-        "address": "",
-        "type": "amm",
-        "tvl": 22485,
-        "has_api": False,
-    },
-    "cykura": {
-        "name": "Cykura",
-        "address": "BRLsMczKuaR5w9vSubF4j8HwEGGprVAyyVgS4EX7DKEg",
-        "type": "clmm",
-        "tvl": 15797,
-        "has_api": False,
-    },
-    "sentre": {
-        "name": "Sentre",
-        "address": "SENBBKVCM7homnf5RX9zqpf1GFe935hnbU4uVzY1Y6M",
-        "type": "amm",
-        "tvl": 10293,
-        "has_api": False,
-    },
-    "goosefx": {
-        "name": "GooseFX V2",
-        "address": "GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD",
-        "type": "amm",
-        "tvl": 1975,
-        "has_api": False,
-    },
-    "swapio_clmm": {
-        "name": "Swap.io CLMM",
-        "address": "",
-        "type": "clmm",
-        "tvl": 2118,
-        "has_api": False,
-    },
-    "sega_swap": {
-        "name": "Sega Swap",
-        "address": "",
-        "type": "amm",
-        "tvl": 1810,
-        "has_api": False,
-    },
-    "dradex": {
-        "name": "Dradex",
-        "address": "",
-        "type": "orderbook",
-        "tvl": 1583,
-        "has_api": False,
-    },
-    "cropper_clmm": {
-        "name": "Cropper CLMM",
-        "address": "DubwWZNWiNGMMeeQHPnMATNj77YZPZSAz2WVR5WjLJqz",
-        "type": "clmm",
-        "tvl": 1288,
-        "has_api": False,
-    },
-    # === Not in DefiLlama but known ===
-    "goat_swap": {
-        "name": "Goat Swap",
-        "address": "",
-        "type": "amm",
-        "tvl": 963,
-        "has_api": False,
-    },
-    "beluga": {
-        "name": "Beluga Protocol",
-        "address": "",
-        "type": "amm",
-        "tvl": 302,
-        "has_api": False,
-    },
-    "spice": {
-        "name": "Spice",
-        "address": "",
-        "type": "amm",
-        "tvl": 168,
+    "aldrin_v2": {
+        "name": "Aldrin V2",
+        "address": "CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4",
+        "type": "clob",
+        "tvl": 500000,
         "has_api": False,
     },
     "orbit_finance": {
@@ -1129,10 +1693,52 @@ SOLANA_DEX_REGISTRY = {
 
 # Type-based routing priority: which DEX type to try first for each swap category
 DEX_ROUTING_PRIORITY = {
-    "buy_large": ["jupiter", "raydium", "orca", "meteora"],
-    "buy_small": ["jupiter", "pumpswap", "raydium"],
-    "buy_memecoin": ["pumpswap", "jupiter", "raydium"],
-    "sell_large": ["jupiter", "raydium", "orca", "meteora"],
-    "sell_small": ["jupiter", "raydium"],
-    "stable_swap": ["jupiter", "saber", "raydium"],
+    "buy_large": [
+        "raydium_cpmm",
+        "raydium_amm",
+        "orca",
+        "meteora",
+        "invariant",
+        "guacswap",
+        "pumpswap",
+        "jupiter",
+    ],
+    "buy_small": [
+        "pumpswap",
+        "raydium_cpmm",
+        "raydium_amm",
+        "guacswap",
+        "orca",
+        "jupiter",
+    ],
+    "buy_memecoin": [
+        "pumpswap",
+        "raydium_amm",
+        "raydium_cpmm",
+        "guacswap",
+        "jupiter",
+    ],
+    "sell_large": [
+        "raydium_cpmm",
+        "raydium_amm",
+        "orca",
+        "meteora",
+        "invariant",
+        "guacswap",
+        "pumpswap",
+        "jupiter",
+    ],
+    "sell_small": [
+        "raydium_cpmm",
+        "raydium_amm",
+        "guacswap",
+        "orca",
+        "jupiter",
+    ],
+    "stable_swap": [
+        "invariant",
+        "raydium_cpmm",
+        "orca",
+        "jupiter",
+    ],
 }

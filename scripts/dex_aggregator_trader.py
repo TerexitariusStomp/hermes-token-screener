@@ -9,10 +9,8 @@ import sys
 import json
 import time
 import logging
-import subprocess
-from datetime import datetime, timezone
 from decimal import Decimal
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import requests
 from dotenv import load_dotenv
@@ -27,7 +25,6 @@ LOCKFILE = "/tmp/dex_aggregator_trader.lock"
 
 def acquire_lock():
     """Acquire exclusive lock via PID-based lockfile. Exit if another instance is running."""
-    import signal
 
     if os.path.exists(LOCKFILE):
         try:
@@ -130,7 +127,7 @@ class DexAggregatorTrader:
     PORTALS_BEARER = "04a791c6-7f56-4bcc-b0fd-a00cc0157cde"
 
     # API Endpoints
-    JUPITER_API = "https://quote-api.jup.ag/v6"
+    JUPITER_API = "https://api.jup.ag/swap/v1"  # quote-api.jup.ag is DNS-blocked; use api.jup.ag/swap/v1
     JUPITER_API_V1 = "https://api.jup.ag/swap/v1"
     KYBERSWAP_API = "https://aggregator-api.kyberswap.com"
     OPENOCEAN_API = "https://open-api.openocean.finance/v3"
@@ -147,6 +144,9 @@ class DexAggregatorTrader:
     PUMPSWAP_API = "https://frontend-api.pump.fun"
     GMX_API = "https://arbitrum-api.gmxinfra.io"
 
+    # Trade history file for persistence across restarts
+    TRADE_HISTORY_FILE = os.path.expanduser("~/.hermes/data/trade_history.json")
+
     def __init__(self):
         self.evm_account = None
         self.solana_keypair = None
@@ -154,6 +154,8 @@ class DexAggregatorTrader:
         self.contract_executor = None
         self.solana_adapter = None
         self._enso_rate_limited = False
+        # Trade history: track failed attempts and completed trades
+        self.trade_history = self._load_trade_history()
         self.initialize()
 
     def initialize(self):
@@ -228,6 +230,94 @@ class DexAggregatorTrader:
         except Exception as e:
             logger.error(f"Initialization failed: {e}")
             raise
+
+    # ==================== TRADE HISTORY ====================
+
+    def _load_trade_history(self) -> dict:
+        """Load trade history from disk. Tracks buys, sells, and failed attempts."""
+        try:
+            os.makedirs(os.path.dirname(self.TRADE_HISTORY_FILE), exist_ok=True)
+            if os.path.exists(self.TRADE_HISTORY_FILE):
+                with open(self.TRADE_HISTORY_FILE, "r") as f:
+                    return json.load(f)
+        except Exception:
+            pass
+        return {"buys": {}, "sells": {}, "failed": {}}
+
+    def _save_trade_history(self):
+        """Persist trade history to disk."""
+        try:
+            os.makedirs(os.path.dirname(self.TRADE_HISTORY_FILE), exist_ok=True)
+            with open(self.TRADE_HISTORY_FILE, "w") as f:
+                json.dump(self.trade_history, f, indent=2)
+        except Exception as e:
+            logger.warning(f"Failed to save trade history: {e}")
+
+    def record_buy(self, token: str, chain: str, address: str, amount: float):
+        """Record a successful buy."""
+        key = f"{chain}:{token}"
+        self.trade_history["buys"][key] = {
+            "token": token,
+            "chain": chain,
+            "address": address,
+            "amount": amount,
+            "timestamp": time.time(),
+        }
+        # Clear failed attempts on successful buy
+        self.trade_history["failed"].pop(key, None)
+        self._save_trade_history()
+        logger.info(f"[History] Recorded BUY: {token} on {chain}")
+
+    def record_sell(self, token: str, chain: str):
+        """Record a successful sell."""
+        key = f"{chain}:{token}"
+        self.trade_history["sells"][key] = {
+            "token": token,
+            "chain": chain,
+            "timestamp": time.time(),
+        }
+        # Remove from buys
+        self.trade_history["buys"].pop(key, None)
+        self._save_trade_history()
+        logger.info(f"[History] Recorded SELL: {token} on {chain}")
+
+    def record_failed_trade(self, token: str, chain: str, reason: str):
+        """Record a failed trade attempt. After 3 failures, token is blacklisted for 1 hour."""
+        key = f"{chain}:{token}"
+        if key not in self.trade_history["failed"]:
+            self.trade_history["failed"][key] = {
+                "count": 0,
+                "reasons": [],
+                "first_fail": time.time(),
+            }
+        self.trade_history["failed"][key]["count"] += 1
+        self.trade_history["failed"][key]["reasons"].append(reason[:80])
+        self.trade_history["failed"][key]["last_fail"] = time.time()
+        self._save_trade_history()
+
+    def should_skip_token(self, token: str, chain: str) -> bool:
+        """Check if a token should be skipped (failed 3+ times in last 6 hours)."""
+        key = f"{chain}:{token}"
+        failed = self.trade_history["failed"].get(key, {})
+        count = failed.get("count", 0)
+        last_fail = failed.get("last_fail", 0)
+
+        # Reset failures older than 6 hours (was 1 hour - too aggressive)
+        if last_fail and (time.time() - last_fail) > 21600:
+            self.trade_history["failed"].pop(key, None)
+            self._save_trade_history()
+            return False
+
+        # Skip if failed 3+ times
+        if count >= 3:
+            return True
+
+        return False
+
+    def is_already_held(self, token: str, chain: str) -> bool:
+        """Check if we already hold this token (bought but not sold)."""
+        key = f"{chain}:{token}"
+        return key in self.trade_history["buys"]
 
     def get_web3(self) -> Optional[Web3]:
         """Get Web3 connection."""
@@ -397,9 +487,9 @@ class DexAggregatorTrader:
         in_token: str,
         out_token: str,
         amount: str,
-        gas_price: str = "5",
+        gas_price: str = None,
     ) -> Dict:
-        """Get quote from OpenOcean."""
+        """Get quote from OpenOcean using realtime gas when possible."""
         chain_ids = {
             "base": 8453,
             "ethereum": 1,
@@ -409,6 +499,15 @@ class DexAggregatorTrader:
             "solana": 101,
         }
         chain_id = chain_ids.get(chain, 8453)
+
+        if gas_price is None:
+            try:
+                # OpenOcean expects gwei string on EVM chains
+                live_gwei = (self.w3.eth.gas_price / 1e9) if self.w3 else 1.0
+                gas_price = f"{max(live_gwei, 0.001):.6f}"
+            except Exception:
+                gas_price = "0.001000"
+
         try:
             resp = requests.get(
                 f"{self.OPENOCEAN_API}/{chain_id}/quote",
@@ -783,12 +882,8 @@ class DexAggregatorTrader:
                 logger.error(f"Solana balance error: {e}")
         return Decimal("0")
 
-    def get_token_balance(self, token_address: str, chain: str = "base") -> Decimal:
-        """Get ERC20 token balance on EVM chain with RPC rotation."""
-        if chain != "base" or not self.evm_account:
-            return Decimal("0")
-
-        rpcs = [
+    def _base_rpcs(self) -> List[str]:
+        return [
             "https://mainnet.base.org",
             "https://base.llamarpc.com",
             "https://base.drpc.org",
@@ -799,7 +894,40 @@ class DexAggregatorTrader:
             "https://rpc.ankr.com/base/0e8c5d238f6a82f29d32988cccc7094b7435463936045a913be32563e16b5792",
         ]
 
-        # Standard ERC20 balanceOf + decimals ABI
+    def get_token_decimals(self, token_address: str, chain: str = "base") -> int:
+        """Get ERC20 decimals with RPC rotation."""
+        if chain != "base":
+            return 18
+
+        abi = [
+            {
+                "inputs": [],
+                "name": "decimals",
+                "outputs": [{"name": "", "type": "uint8"}],
+                "stateMutability": "view",
+                "type": "function",
+            }
+        ]
+
+        for rpc_url in self._base_rpcs():
+            try:
+                w3 = Web3(Web3.HTTPProvider(rpc_url, request_kwargs={"timeout": 10}))
+                if not w3.is_connected():
+                    continue
+                contract = w3.eth.contract(
+                    address=Web3.to_checksum_address(token_address), abi=abi
+                )
+                return int(contract.functions.decimals().call())
+            except Exception:
+                continue
+
+        return 18
+
+    def get_token_balance(self, token_address: str, chain: str = "base") -> Decimal:
+        """Get ERC20 token balance on EVM chain with RPC rotation."""
+        if chain != "base" or not self.evm_account:
+            return Decimal("0")
+
         abi = [
             {
                 "inputs": [{"name": "account", "type": "address"}],
@@ -817,7 +945,7 @@ class DexAggregatorTrader:
             },
         ]
 
-        for rpc_url in rpcs:
+        for rpc_url in self._base_rpcs():
             try:
                 w3 = Web3(Web3.HTTPProvider(rpc_url, request_kwargs={"timeout": 10}))
                 if not w3.is_connected():
@@ -827,8 +955,8 @@ class DexAggregatorTrader:
                 )
                 raw = contract.functions.balanceOf(self.evm_account.address).call()
                 try:
-                    decimals = contract.functions.decimals().call()
-                except:
+                    decimals = int(contract.functions.decimals().call())
+                except Exception:
                     decimals = 18
                 return Decimal(raw) / Decimal(10**decimals)
             except Exception:
@@ -844,12 +972,12 @@ class DexAggregatorTrader:
         try:
             with open(screener_path, "r") as f:
                 data = json.load(f)
-            for t in data.get("tokens", []):
+            for t in data.get("top_tokens", data.get("tokens", [])):
                 if t.get("chain") != "base":
                     continue
-                addr = t.get("contract_address", "")
-                sym = t.get("symbol", "UNKNOWN")
-                score = t.get("score", 0)
+                addr = t.get("contract_address") or t.get("address") or ""
+                sym = t.get("symbol") or t.get("name") or "UNKNOWN"
+                score = t.get("score") or t.get("priority_score") or 0
                 if addr and score >= 20:  # Only tokens with decent screener score
                     tokens[sym] = addr
             logger.info(f"Loaded {len(tokens)} Base tokens from screener (top100.json)")
@@ -869,12 +997,9 @@ class DexAggregatorTrader:
             "HIGHER": "0x0578d8A44db98B23BF096A382e016e29a5Ce0ffe",
             "NORMIE": "0x7F12d13B34F5F4f0a9449c16Bcd42f0da47AF200",
             "TYBG": "0x0d97F261b1e88845184f678e2d1e7a98D9FD38dE",
-            "ANDY": "0x029Eb076D2E9E5b2dDc1aB7BDe2D5d3b4b1bfAA0",
             "BRIAN": "0x22af33fe49fd1fa80c7149773dde5890d3c76f3b",
             "BALD": "0x27D2DECb4bFC9C76F0309b8E88dec3a601Fe25a8",
             "ROCKY": "0x2Da56AcB9Ea78330f947bD57C54119Debda7AF71",
-            "BOGE": "0x4F36ce48c4938e3e45cEB63e1A516c9e9D6f3d1e",
-            "CHOMP": "0x6AE52E06c40068C7F804A9f4BB2B8C2e5B629199",
         }
         for sym, addr in KNOWN_BASE_TOKENS.items():
             bal = self.get_token_balance(addr, "base")
@@ -973,7 +1098,8 @@ class DexAggregatorTrader:
     ) -> bool:
         """Fallback sell via KyberSwap when Odos fails."""
         try:
-            amount_wei = str(int(sell_amount * Decimal(10**18)))
+            token_decimals = self.get_token_decimals(token_address, "base")
+            amount_wei = str(int(sell_amount * Decimal(10**token_decimals)))
             weth = "0x4200000000000000000000000000000000000006"
 
             # Get KyberSwap quote
@@ -1023,7 +1149,7 @@ class DexAggregatorTrader:
                     tx_data.get("routerAddress", router_address)
                 ),
                 "data": tx_data.get("data"),
-                "value": int(tx_data.get("amountIn", 0)),
+                "value": 0,  # ERC20 sell: no native ETH value
                 "gas": int(tx_data.get("gas", 300000)),
                 "maxFeePerGas": self.w3.eth.gas_price,
                 "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
@@ -1054,6 +1180,17 @@ class DexAggregatorTrader:
             traceback.print_exc()
             return False
 
+    def _get_web3(self) -> Web3:
+        """Get a fresh Web3 connection from the RPC rotation pool."""
+        for rpc_url in self._base_rpcs():
+            try:
+                w3 = Web3(Web3.HTTPProvider(rpc_url, request_kwargs={"timeout": 10}))
+                if w3.is_connected():
+                    return w3
+            except Exception:
+                continue
+        return self.w3  # Fallback to main
+
     def _erc20_approve_if_needed(
         self, token_address: str, spender: str, amount_wei: int
     ) -> bool:
@@ -1083,7 +1220,9 @@ class DexAggregatorTrader:
                     "type": "function",
                 },
             ]
-            token_contract = self.w3.eth.contract(
+            # Use rotating RPC for reads to avoid rate limits
+            read_w3 = self._get_web3()
+            token_contract = read_w3.eth.contract(
                 address=Web3.to_checksum_address(token_address), abi=erc20_abi
             )
             current_allowance = token_contract.functions.allowance(
@@ -1096,20 +1235,25 @@ class DexAggregatorTrader:
                 return True
             # Approve max uint256
             MAX_UINT256 = 2**256 - 1
-            tx = token_contract.functions.approve(
+            # Use main w3 for writes (send tx), but get gas from live
+            gas_price = self.w3.eth.gas_price
+            approve_fn = token_contract.functions.approve(
                 Web3.to_checksum_address(spender), MAX_UINT256
-            ).build_transaction(
-                {
-                    "from": self.evm_account.address,
-                    "nonce": self.w3.eth.get_transaction_count(
-                        self.evm_account.address, "pending"
-                    ),
-                    "gas": 60000,
-                    "maxFeePerGas": self.w3.eth.gas_price,
-                    "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
-                    "chainId": 8453,
-                }
             )
+            approve_data = approve_fn._encode_transaction_data()
+            tx = {
+                "from": self.evm_account.address,
+                "to": Web3.to_checksum_address(token_address),
+                "data": approve_data,
+                "value": 0,
+                "gas": 60000,
+                "nonce": self.w3.eth.get_transaction_count(
+                    self.evm_account.address, "pending"
+                ),
+                "maxFeePerGas": gas_price,
+                "maxPriorityFeePerGas": max(gas_price // 10, 10000),
+                "chainId": 8453,
+            }
             signed = self.evm_account.sign_transaction(tx)
             tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
             logger.info(f"Approve tx sent: {tx_hash.hex()}")
@@ -1133,9 +1277,10 @@ class DexAggregatorTrader:
         weth = "0x4200000000000000000000000000000000000006"
         addr = self.evm_account.address
         deadline = int(time.time()) + 300
+        _live_gas = self.w3.eth.gas_price if self.w3 else 1_000_000  # 0.001 gwei
         cheap_gas = {
-            "maxFeePerGas": 10000000,
-            "maxPriorityFeePerGas": 100000,
+            "maxFeePerGas": max(_live_gas, 1_000_000),  # live gas, min 0.001 gwei
+            "maxPriorityFeePerGas": max(_live_gas // 10, 100000),
             "chainId": 8453,
         }
 
@@ -1171,16 +1316,19 @@ class DexAggregatorTrader:
                 addr, Web3.to_checksum_address(spender)
             ).call()
             if current < amount_wei:
-                approve_tx = token_contract.functions.approve(
+                approve_fn = token_contract.functions.approve(
                     Web3.to_checksum_address(spender), 2**256 - 1
-                ).build_transaction(
-                    {
-                        "from": addr,
-                        "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
-                        "gas": 50000,
-                        **cheap_gas,
-                    }
                 )
+                approve_data = approve_fn._encode_transaction_data()
+                approve_tx = {
+                    "from": addr,
+                    "to": Web3.to_checksum_address(token_address),
+                    "data": approve_data,
+                    "value": 0,
+                    "gas": 60000,
+                    "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
+                    **cheap_gas,
+                }
                 signed = self.evm_account.sign_transaction(approve_tx)
                 txh = self.w3.eth.send_raw_transaction(signed.raw_transaction)
                 receipt = self.w3.eth.wait_for_transaction_receipt(txh, timeout=60)
@@ -1241,21 +1389,23 @@ class DexAggregatorTrader:
             router = self.w3.eth.contract(
                 address=Web3.to_checksum_address(sushi_router), abi=sushi_abi
             )
-            tx = router.functions.processRoute(
+            fn = router.functions.processRoute(
                 Web3.to_checksum_address(token_address),
                 amount_wei,
                 Web3.to_checksum_address(weth),
                 0,
                 Web3.to_checksum_address(addr),
                 b"",
-            ).build_transaction(
-                {
-                    "from": addr,
-                    "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
-                    "gas": 300000,
-                    **cheap_gas,
-                }
             )
+            tx = {
+                "from": addr,
+                "to": Web3.to_checksum_address(sushi_router),
+                "data": fn._encode_transaction_data(),
+                "value": 0,
+                "gas": 300000,
+                "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
+                **cheap_gas,
+            }
             result = send_and_confirm("SushiSwap", tx)
             if result:
                 return result
@@ -1287,7 +1437,7 @@ class DexAggregatorTrader:
             router = self.w3.eth.contract(
                 address=Web3.to_checksum_address(pancake_v2), abi=V2_ABI
             )
-            tx = router.functions.swapExactTokensForTokens(
+            fn = router.functions.swapExactTokensForTokens(
                 amount_wei,
                 0,
                 [
@@ -1296,14 +1446,16 @@ class DexAggregatorTrader:
                 ],
                 Web3.to_checksum_address(addr),
                 deadline,
-            ).build_transaction(
-                {
-                    "from": addr,
-                    "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
-                    "gas": 200000,
-                    **cheap_gas,
-                }
             )
+            tx = {
+                "from": addr,
+                "to": Web3.to_checksum_address(pancake_v2),
+                "data": fn._encode_transaction_data(),
+                "value": 0,
+                "gas": 200000,
+                "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
+                **cheap_gas,
+            }
             result = send_and_confirm("PancakeV2", tx)
             if result:
                 return result
@@ -1371,21 +1523,23 @@ class DexAggregatorTrader:
             )
             # Build actual route: encode pool address for auto-routing
             # SushiSwap processRoute needs route bytes for non-standard tokens
-            tx = router.functions.processRoute(
+            fn = router.functions.processRoute(
                 Web3.to_checksum_address(token_address),
                 amount_wei,
                 Web3.to_checksum_address(weth),
                 0,
                 Web3.to_checksum_address(addr),
                 b"",
-            ).build_transaction(
-                {
-                    "from": addr,
-                    "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
-                    "gas": 300000,
-                    **cheap_gas,
-                }
             )
+            tx = {
+                "from": addr,
+                "to": Web3.to_checksum_address(sushi_router),
+                "data": fn._encode_transaction_data(),
+                "value": 0,
+                "gas": 300000,
+                "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
+                **cheap_gas,
+            }
             result = send_and_confirm("SushiSwap", tx)
             if result:
                 return result
@@ -1442,14 +1596,19 @@ class DexAggregatorTrader:
                     0,
                     0,
                 )
-                tx = router.functions.exactInputSingle(params).build_transaction(
-                    {
-                        "from": addr,
-                        "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
-                        "gas": 250000,
-                        **cheap_gas,
-                    }
+                v3_router = pancake_cfg.get(
+                    "v3_router", "0x13f4EA83D0bd40E75C8222255bc855a974568Dd4"
                 )
+                fn = router.functions.exactInputSingle(params)
+                tx = {
+                    "from": addr,
+                    "to": Web3.to_checksum_address(v3_router),
+                    "data": fn._encode_transaction_data(),
+                    "value": 0,
+                    "gas": 250000,
+                    "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
+                    **cheap_gas,
+                }
                 result = send_and_confirm(f"PancakeV3-{fee}", tx)
                 if result:
                     return result
@@ -1475,14 +1634,16 @@ class DexAggregatorTrader:
                     0,
                     0,
                 )
-                tx = router.functions.exactInputSingle(params).build_transaction(
-                    {
-                        "from": addr,
-                        "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
-                        "gas": 250000,
-                        **cheap_gas,
-                    }
-                )
+                fn = router.functions.exactInputSingle(params)
+                tx = {
+                    "from": addr,
+                    "to": Web3.to_checksum_address(uni_router),
+                    "data": fn._encode_transaction_data(),
+                    "value": 0,
+                    "gas": 250000,
+                    "nonce": self.w3.eth.get_transaction_count(addr, "pending"),
+                    **cheap_gas,
+                }
                 result = send_and_confirm(f"UniV3-{fee}", tx)
                 if result:
                     return result
@@ -1514,8 +1675,8 @@ class DexAggregatorTrader:
         logger.info(
             f"SELLING {sell_amount:.4f} {token_name} ({sell_pct*100:.0f}% of {token_bal:.4f}) to free up ETH"
         )
-        amount_wei = int(sell_amount * Decimal(10**18))
-        weth = "0x4200000000000000000000000000000000000006"
+        token_decimals = self.get_token_decimals(token_address, "base")
+        amount_wei = int(sell_amount * Decimal(10**token_decimals))
 
         # 1. Try direct on-chain AMM swaps (cheapest gas, no API overhead)
         result = self._direct_cheap_sell(token_address, amount_wei)
@@ -1542,8 +1703,8 @@ class DexAggregatorTrader:
     ) -> bool:
         """Sell via Odos API (higher gas, last resort)."""
         try:
-            amount_wei = str(int(sell_amount * Decimal(10**18)))
-            weth = "0x4200000000000000000000000000000000000006"
+            token_decimals = self.get_token_decimals(token_address, "base")
+            amount_wei = str(int(sell_amount * Decimal(10**token_decimals)))
 
             # Get quote from Odos
             quote_resp = requests.post(
@@ -1613,14 +1774,23 @@ class DexAggregatorTrader:
                 f"Odos tx data: to={tx_data.get('to')}, value={tx_data.get('value')}, gas={tx_data.get('gas')}"
             )
 
+            odos_calldata = tx_data.get("data", "")
+            if not odos_calldata or len(odos_calldata) <= 2 or odos_calldata == "0x":
+                logger.error(
+                    "Odos assemble returned empty calldata — tx would revert, aborting"
+                )
+                return self._sell_via_kyberswap(token_name, token_address, sell_amount)
+
             tx = {
                 "from": self.evm_account.address,
                 "to": Web3.to_checksum_address(tx_data.get("to")),
                 "data": tx_data.get("data"),
                 "value": 0,  # Selling ERC20, no ETH value needed
                 "gas": int(tx_data.get("gas", 300000)),
-                "maxFeePerGas": 10000000,  # 0.01 gwei for Base L2
-                "maxPriorityFeePerGas": 100000,
+                "maxFeePerGas": max(
+                    self.w3.eth.gas_price, 1_000_000
+                ),  # live gas, min 0.001 gwei
+                "maxPriorityFeePerGas": max(self.w3.eth.gas_price // 10, 100000),
                 "nonce": self.w3.eth.get_transaction_count(
                     self.evm_account.address, "latest"
                 ),
@@ -1647,21 +1817,43 @@ class DexAggregatorTrader:
             traceback.print_exc()
             return False
 
-    def should_sell_position(self, token: str, position: Dict) -> bool:
-        """Determine if a position should be sold to chase faster movers."""
+    def should_sell_position(
+        self, token: str, position: Dict, new_signal_conf: float = 0
+    ) -> bool:
+        """Determine if a position should be sold.
+
+        Sells when:
+        - Position older than 1 hour (time decay for micro-caps)
+        - Position older than 30 min AND a higher-confidence signal appeared
+        - Position older than 15 min AND SOL is too low to trade new signals
+        """
         entry_time = position.get("timestamp", 0)
         age_seconds = time.time() - entry_time
+        chain = position.get("chain", "base")
 
-        # Sell if position is older than 2 hours and hasn't been profitable
-        # (we'd have updated entry_price if it was going up)
-        if age_seconds > 7200:  # 2 hours
+        # Aggressive rotation for micro-caps: sell after 1 hour
+        if age_seconds > 3600:  # 1 hour
             logger.info(
-                f"Position {token} is {age_seconds/3600:.1f}h old - rotating out"
+                f"Position {token} is {age_seconds/60:.0f}min old - rotating out (time limit)"
             )
             return True
 
-        # Sell if position is older than 30 min and a higher-confidence signal appeared
-        # (checked in the main loop)
+        # Sell after 30 min if a higher-confidence signal appeared
+        if age_seconds > 1800 and new_signal_conf > 0.8:  # 30 min + high conf signal
+            logger.info(
+                f"Position {token} is {age_seconds/60:.0f}min old - selling for higher conf signal ({new_signal_conf:.2f})"
+            )
+            return True
+
+        # Sell after 15 min if SOL is too low to trade anything (< 0.002)
+        if chain == "solana" and age_seconds > 900:
+            sol_bal = self.get_balance("solana")
+            if sol_bal < Decimal("0.002"):
+                logger.info(
+                    f"Position {token} is {age_seconds/60:.0f}min old - selling to free SOL (bal: {sol_bal:.6f})"
+                )
+                return True
+
         return False
 
     # ==================== BRIDGING (CROSS-CHAIN) ====================
@@ -2247,32 +2439,79 @@ class DexAggregatorTrader:
     def execute_solana_trade(
         self, token_symbol: str, token_mint: str, sol_amount: float
     ) -> bool:
-        """Execute a trade on Solana. Tries program adapter first, falls back to Jupiter CLI."""
+        """Execute a trade on Solana. Tries adapter (Jupiter→Raydium→Meteora), falls back to CLI."""
 
-        # === PRIMARY: Direct program execution via Solana adapter ===
+        SOL_MINT = "So11111111111111111111111111111111111111112"
+        amount_base = int(sol_amount * 1e9)
+
+        # === PRIMARY: Solana adapter with multiple DEX fallbacks ===
         if self.solana_adapter:
+            # Route 1: Jupiter API (best for listed tokens)
+            if "pump" not in token_mint.lower():
+                try:
+                    logger.info(
+                        f"[Solana/Jupiter] Swapping {sol_amount:.6f} SOL -> {token_symbol}"
+                    )
+                    sig = self.solana_adapter.swap(
+                        input_mint=SOL_MINT,
+                        output_mint=token_mint,
+                        amount=amount_base,
+                        slippage_bps=100,
+                    )
+                    if sig:
+                        logger.info(f"[Solana/Jupiter] Trade confirmed: {sig}")
+                        return True
+                    else:
+                        logger.warning("[Solana/Jupiter] Swap returned None")
+                except Exception as e:
+                    logger.warning(f"[Solana/Jupiter] Error: {e}")
+
+            # Route 2: Raydium CPMM (works for pump.fun graduated tokens)
             try:
                 logger.info(
-                    f"[Solana] Direct program swap: {sol_amount} SOL -> {token_symbol}"
+                    f"[Solana/Raydium] Quoting {sol_amount:.6f} SOL -> {token_symbol}"
                 )
-                SOL_MINT = "So11111111111111111111111111111111111111112"
-                amount_base = int(sol_amount * 1e9)
-
-                sig = self.solana_adapter.swap(
-                    input_mint=SOL_MINT,
-                    output_mint=token_mint,
-                    amount=amount_base,
-                    slippage_bps=100,  # 1% slippage
+                quote = self.solana_adapter.raydium_cpmm_quote(
+                    SOL_MINT,
+                    token_mint,
+                    amount_base,
+                    slippage_bps=300,  # 3% slippage for illiquid
                 )
-                if sig:
-                    logger.info(f"[Solana] Trade confirmed: {sig}")
-                    return True
-                else:
-                    logger.warning(
-                        "[Solana] Direct swap failed, falling back to CLI..."
-                    )
+                if quote:
+                    tx = self.solana_adapter.raydium_build_tx(quote)
+                    if tx:
+                        sim_ok, sim_err = self.solana_adapter.simulate_tx(tx)
+                        if sim_ok:
+                            sig = self.solana_adapter.send_tx(tx)
+                            if sig:
+                                self.solana_adapter.confirm_tx(sig)
+                                logger.info(f"[Solana/Raydium] Trade confirmed: {sig}")
+                                return True
+                        else:
+                            logger.warning(f"[Solana/Raydium] Sim failed: {sim_err}")
             except Exception as e:
-                logger.warning(f"[Solana] Adapter error: {e}, falling back to CLI...")
+                logger.warning(f"[Solana/Raydium] Error: {e}")
+
+            # Route 3: Meteora DLMM
+            try:
+                logger.info(
+                    f"[Solana/Meteora] Quoting {sol_amount:.6f} SOL -> {token_symbol}"
+                )
+                quote = self.solana_adapter.meteora_quote(
+                    SOL_MINT, token_mint, amount_base, slippage_bps=300
+                )
+                if quote:
+                    tx = self.solana_adapter.meteora_build_tx(quote)
+                    if tx:
+                        sig = self.solana_adapter.send_tx(tx)
+                        if sig:
+                            self.solana_adapter.confirm_tx(sig)
+                            logger.info(f"[Solana/Meteora] Trade confirmed: {sig}")
+                            return True
+            except Exception as e:
+                logger.warning(f"[Solana/Meteora] Error: {e}")
+
+            logger.warning("[Solana] All adapter routes failed, falling back to CLI...")
 
         # === FALLBACK: Jupiter CLI ===
         return self._execute_solana_trade_cli(token_symbol, token_mint, sol_amount)
@@ -2340,7 +2579,6 @@ class DexAggregatorTrader:
             return False
 
         try:
-            from solders.pubkey import Pubkey
 
             wallet = str(self.solana_keypair.pubkey())
 
@@ -2349,6 +2587,17 @@ class DexAggregatorTrader:
                 balance = self.solana_adapter.get_token_balance(token_mint, wallet)
             else:
                 balance = 0
+
+            if balance <= 0:
+                # Token accounts can take a moment to appear after fresh buys
+                for _ in range(5):
+                    time.sleep(2)
+                    if self.solana_adapter:
+                        balance = self.solana_adapter.get_token_balance(
+                            token_mint, wallet
+                        )
+                    if balance > 0:
+                        break
 
             if balance <= 0:
                 logger.warning(f"[Solana Sell] No {token_symbol} balance to sell")
@@ -2379,7 +2628,10 @@ class DexAggregatorTrader:
             try:
                 import subprocess
 
-                token_amount = sell_amount / 1e9  # Convert to human-readable
+                decimals = SOLANA_TOKENS.get(token_symbol.upper(), {}).get(
+                    "decimals", 9
+                )
+                token_amount = sell_amount / (10**decimals)  # Convert to human-readable
                 cmd = [
                     "/home/terexitarius/.hermes/node/bin/jup",
                     "spot",
@@ -2570,7 +2822,23 @@ class DexAggregatorTrader:
         logger.info("Starting DEX Aggregator Trader...")
 
         # Track positions and strategies
+        # Load existing positions from trade history (survives restarts)
         active_positions = {}
+        for key, buy_data in self.trade_history.get("buys", {}).items():
+            token = buy_data.get("token", "")
+            chain = buy_data.get("chain", "")
+            if token:
+                active_positions[token] = {
+                    "chain": chain,
+                    "address": buy_data.get("address", ""),
+                    "amount": buy_data.get("amount", 0),
+                    "entry_price": 0,
+                    "timestamp": buy_data.get("timestamp", time.time()),
+                }
+        if active_positions:
+            logger.info(
+                f"Loaded {len(active_positions)} existing positions: {list(active_positions.keys())}"
+            )
         limit_orders = {}
         dca_schedules = {}
 
@@ -2623,22 +2891,47 @@ class DexAggregatorTrader:
                             break  # One sell per cycle
 
                 # ==================== ROTATE OLD POSITIONS ====================
+                # First, find the best new BUY signal (for sell-to-upgrade logic)
+                best_new_conf = 0
+                for sig in signals if "signals" in dir() else []:
+                    if sig.get("action") == "BUY":
+                        best_new_conf = max(best_new_conf, sig.get("confidence", 0))
+
                 for token, position in list(active_positions.items()):
-                    if self.should_sell_position(token, position):
-                        chain = position.get("chain", "base")
+                    chain = position.get("chain", "base")
+                    if self.should_sell_position(
+                        token, position, new_signal_conf=best_new_conf
+                    ):
                         if chain == "base":
                             token_addr = self.get_token_address(token, "base")
                             if token_addr and base_bal > Decimal("0.000005"):
                                 logger.info(
-                                    f"Rotating: selling {token} to chase faster movers"
+                                    f"Rotating: selling {token} on Base to chase faster movers"
                                 )
                                 sold = self.sell_token_for_eth(
                                     token, token_addr, sell_pct=1.0
                                 )
                                 if sold:
+                                    self.record_sell(token, chain)
                                     del active_positions[token]
                                     time.sleep(3)
                                     base_bal = self.get_balance("base")
+                        elif chain == "solana":
+                            token_addr = position.get("address", "")
+                            sol_bal = self.get_balance("solana")
+                            if token_addr and sol_bal > Decimal("0.001"):
+                                logger.info(
+                                    f"Rotating: selling {token} on Solana to free up SOL"
+                                )
+                                sold = self.sell_solana_token(
+                                    token, token_addr, sell_pct=1.0
+                                )
+                                if sold:
+                                    self.record_sell(token, chain)
+                                    del active_positions[token]
+                                    time.sleep(3)
+                                else:
+                                    logger.warning(f"Failed to sell {token} on Solana")
 
                 # ==================== SIGNAL-BASED TRADING ====================
                 try:
@@ -2682,14 +2975,26 @@ class DexAggregatorTrader:
                                 "token_address"
                             ) or self.get_token_address(token, chain)
 
+                            # Skip tokens with repeated failures or already held
+                            if self.should_skip_token(token, chain):
+                                logger.info(
+                                    f"  Skipping {token}: too many recent failures"
+                                )
+                                continue
+                            if self.is_already_held(token, chain):
+                                logger.info(f"  Skipping {token}: already held")
+                                continue
+
                             traded = False
 
                             if chain == "base" and base_bal > Decimal("0.00001"):
                                 # Trade 50% of ETH balance
                                 trade_amount = float(base_bal) * 0.5
 
-                                # Check if trade is > 5 cents
-                                if trade_amount > 0.00002:  # ~$0.05
+                                # Check if trade is > 1 cent
+                                if (
+                                    trade_amount > 0.000005
+                                ):  # allow tiny Base test trades
                                     logger.info(
                                         f"Trading {trade_amount:.6f} ETH for {token} on Base"
                                     )
@@ -2698,6 +3003,9 @@ class DexAggregatorTrader:
                                     )
                                     if success:
                                         logger.info(f"Successfully bought {token}")
+                                        self.record_buy(
+                                            token, chain, token_addr, trade_amount
+                                        )
                                         active_positions[token] = {
                                             "chain": chain,
                                             "amount": trade_amount,
@@ -2707,17 +3015,20 @@ class DexAggregatorTrader:
                                         traded = True
                                     else:
                                         logger.error(f"Failed to buy {token}")
+                                        self.record_failed_trade(
+                                            token, chain, "Base trade execution failed"
+                                        )
                                 else:
                                     logger.warning(
                                         f"Trade too small: {trade_amount:.6f} ETH"
                                     )
 
-                            elif chain == "solana" and sol_bal > Decimal("0.005"):
+                            elif chain == "solana" and sol_bal > Decimal("0.002"):
                                 # Trade 50% of SOL balance
                                 trade_amount = float(sol_bal) * 0.5
 
                                 # Check if trade is > 5 cents
-                                if trade_amount > 0.0006:  # ~$0.05
+                                if trade_amount > 0.0003:  # ~$0.03 minimum
                                     logger.info(
                                         f"Trading {trade_amount:.6f} SOL for {token} on Solana"
                                     )
@@ -2727,6 +3038,12 @@ class DexAggregatorTrader:
                                     )
                                     if success:
                                         logger.info(f"Successfully bought {token}")
+                                        self.record_buy(
+                                            token,
+                                            chain,
+                                            token_addr or sol_mint,
+                                            trade_amount,
+                                        )
                                         active_positions[token] = {
                                             "chain": chain,
                                             "amount": trade_amount,
@@ -2736,6 +3053,11 @@ class DexAggregatorTrader:
                                         traded = True
                                     else:
                                         logger.error(f"Failed to buy {token}")
+                                        self.record_failed_trade(
+                                            token,
+                                            chain,
+                                            "Solana trade execution failed",
+                                        )
                                 else:
                                     logger.warning(
                                         f"Trade too small: {trade_amount:.6f} SOL"
@@ -2746,7 +3068,7 @@ class DexAggregatorTrader:
                                     logger.warning(
                                         f"Insufficient Base balance ({base_bal:.8f} ETH) for {token} - need >0.00001 ETH"
                                     )
-                                elif chain == "solana" and sol_bal <= Decimal("0.003"):
+                                elif chain == "solana" and sol_bal <= Decimal("0.001"):
                                     logger.warning(
                                         f"Insufficient Solana balance ({sol_bal:.6f} SOL) for {token} - need >0.003 SOL"
                                     )
@@ -2888,7 +3210,77 @@ class DexAggregatorTrader:
                 time.sleep(60)
 
 
+def run_smoke_test(trader: DexAggregatorTrader, chain: str = "both") -> int:
+    """Run a minimal real buy/sell round-trip to verify execution paths."""
+    ok = True
+
+    if chain in ("base", "both"):
+        try:
+            base_bal = trader.get_balance("base")
+            usdc_base = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+            buy_eth = min(float(base_bal) * 0.4, 0.00002)
+            if buy_eth >= 0.000008:
+                logger.info(f"[SMOKE][BASE] BUY USDC with {buy_eth:.8f} ETH")
+                buy_ok = trader.execute_base_trade("USDC", usdc_base, buy_eth)
+                logger.info(f"[SMOKE][BASE] buy_ok={buy_ok}")
+                time.sleep(6)
+                logger.info("[SMOKE][BASE] SELL 100% USDC back to WETH")
+                sell_ok = trader.sell_token_for_eth("USDC", usdc_base, sell_pct=1.0)
+                logger.info(f"[SMOKE][BASE] sell_ok={sell_ok}")
+                ok = ok and buy_ok and sell_ok
+            else:
+                logger.warning(
+                    f"[SMOKE][BASE] skipped: insufficient Base ETH balance ({base_bal:.8f})"
+                )
+                ok = False
+        except Exception as e:
+            logger.error(f"[SMOKE][BASE] failed: {e}")
+            ok = False
+
+    if chain in ("solana", "both"):
+        try:
+            sol_bal = trader.get_balance("solana")
+            usdc_sol = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+            buy_sol = min(float(sol_bal) * 0.25, 0.001)
+            if buy_sol >= 0.0003:
+                logger.info(f"[SMOKE][SOL] BUY USDC with {buy_sol:.6f} SOL")
+                buy_ok = trader.execute_solana_trade("USDC", usdc_sol, buy_sol)
+                logger.info(f"[SMOKE][SOL] buy_ok={buy_ok}")
+                time.sleep(6)
+                logger.info("[SMOKE][SOL] SELL 50% USDC back to SOL")
+                sell_ok = trader.sell_solana_token("USDC", usdc_sol, sell_pct=0.5)
+                logger.info(f"[SMOKE][SOL] sell_ok={sell_ok}")
+                ok = ok and buy_ok and sell_ok
+            else:
+                logger.warning(
+                    f"[SMOKE][SOL] skipped: insufficient Solana balance ({sol_bal:.6f})"
+                )
+                ok = False
+        except Exception as e:
+            logger.error(f"[SMOKE][SOL] failed: {e}")
+            ok = False
+
+    logger.info(f"[SMOKE] overall_ok={ok}")
+    return 0 if ok else 1
+
+
 def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description="DEX Aggregator Trader")
+    parser.add_argument(
+        "--smoke-test",
+        action="store_true",
+        help="Run one-shot real buy/sell verification (USDC on selected chain)",
+    )
+    parser.add_argument(
+        "--chain",
+        choices=["base", "solana", "both"],
+        default="both",
+        help="Chain scope for --smoke-test",
+    )
+    args = parser.parse_args()
+
     try:
         trader = DexAggregatorTrader()
 
@@ -2905,6 +3297,9 @@ def main():
             "Capabilities: Swaps, Bridging, Liquidity Pooling, Limit Orders, DCA"
         )
         logger.info("=" * 60)
+
+        if args.smoke_test:
+            raise SystemExit(run_smoke_test(trader, chain=args.chain))
 
         trader.run()
 
