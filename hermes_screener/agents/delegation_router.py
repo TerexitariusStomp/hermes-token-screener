@@ -441,8 +441,7 @@ class TaskDecomposer:
     def decompose_llm(self, text: str) -> list[dict[str, str]]:
         """Use LLM to decompose a complex task into sub-tasks."""
         categories = self.classifier.classify(text)
-        prompt = textwrap.dedent(
-            f"""\
+        prompt = textwrap.dedent(f"""\
             Decompose this complex task into 2-5 specific, independent sub-tasks
             that can each be handled by a specialized agent.
 
@@ -453,8 +452,7 @@ class TaskDecomposer:
             [
               {{"description": "sub-task 1", "category": "coding", "dependencies": []}},
               {{"description": "sub-task 2", "category": "review", "dependencies": ["task-1"]}}
-            ]"""
-        )
+            ]""")
 
         raw = _call_llm(prompt)
         if raw:

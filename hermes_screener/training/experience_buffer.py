@@ -67,8 +67,7 @@ class ExperienceBuffer:
 
     def _init_db(self):
         with self._conn() as conn:
-            conn.executescript(
-                """
+            conn.executescript("""
                 CREATE TABLE IF NOT EXISTS experiences (
                     id                INTEGER PRIMARY KEY AUTOINCREMENT,
                     episode_id        TEXT    NOT NULL,
@@ -113,8 +112,7 @@ class ExperienceBuffer:
                     backfilled_at   REAL,
                     rows_updated    INTEGER
                 );
-            """
-            )
+            """)
 
     # ------------------------------------------------------------------
     # Write
