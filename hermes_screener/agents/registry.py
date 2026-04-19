@@ -117,9 +117,7 @@ class AgentMetrics:
             self.tasks_failed += 1
         self.total_runtime_seconds += duration_seconds
         total = self.tasks_completed + self.tasks_failed
-        self.avg_task_time_seconds = (
-            self.total_runtime_seconds / total if total else 0.0
-        )
+        self.avg_task_time_seconds = self.total_runtime_seconds / total if total else 0.0
         self.success_rate = self.tasks_completed / total if total else 1.0
         last = datetime.now(timezone.utc).isoformat()
         self.last_task_at = last
@@ -240,9 +238,7 @@ class AgentRegistry:
         metadata: dict[str, Any] | None = None,
     ) -> AgentEntry:
         """Create and register a new agent entry."""
-        agent = AgentEntry.create(
-            name, role=role, model=model, capabilities=capabilities, metadata=metadata
-        )
+        agent = AgentEntry.create(name, role=role, model=model, capabilities=capabilities, metadata=metadata)
         # Deduplicate by name — replace existing agent with same name
         for existing in list(self._agents.values()):
             if existing.name == name:
@@ -454,9 +450,7 @@ class AgentRegistry:
             status_counts[a.status] = status_counts.get(a.status, 0) + 1
             role_counts[a.role] = role_counts.get(a.role, 0) + 1
 
-        total_tasks = sum(
-            a.metrics.tasks_completed + a.metrics.tasks_failed for a in agents
-        )
+        total_tasks = sum(a.metrics.tasks_completed + a.metrics.tasks_failed for a in agents)
         total_success = sum(a.metrics.tasks_completed for a in agents)
         overall_rate = total_success / total_tasks if total_tasks else 0.0
 
@@ -486,9 +480,7 @@ def main() -> None:
 
     p_add = sub.add_parser("add", help="Register a new agent")
     p_add.add_argument("name", help="Agent name")
-    p_add.add_argument(
-        "--role", default=AgentRole.GENERAL, choices=[r.value for r in AgentRole]
-    )
+    p_add.add_argument("--role", default=AgentRole.GENERAL, choices=[r.value for r in AgentRole])
     p_add.add_argument("--model", default="", help="Model identifier")
 
     p_select = sub.add_parser("select", help="Select an agent for delegation")

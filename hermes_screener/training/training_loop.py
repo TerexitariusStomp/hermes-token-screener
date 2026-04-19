@@ -133,9 +133,7 @@ def run_cycle(
     with buf._conn() as conn:
         ids = [
             r[0]
-            for r in conn.execute(
-                "SELECT id FROM experiences WHERE reward IS NOT NULL AND used_in_train=0"
-            ).fetchall()
+            for r in conn.execute("SELECT id FROM experiences WHERE reward IS NOT NULL AND used_in_train=0").fetchall()
         ]
     buf.mark_trained(ids)
     logger.info(f"Marked {len(ids)} experiences as trained")
@@ -179,19 +177,11 @@ def main():
         default=DEFAULT_MIN_NEW_EXP,
         help="Minimum new experiences required to train",
     )
-    parser.add_argument(
-        "--max-steps", type=int, default=-1, help="Max training steps (-1 = full epoch)"
-    )
+    parser.add_argument("--max-steps", type=int, default=-1, help="Max training steps (-1 = full epoch)")
     parser.add_argument("--once", action="store_true", help="Run one cycle then exit")
-    parser.add_argument(
-        "--status", action="store_true", help="Print buffer stats and exit"
-    )
-    parser.add_argument(
-        "--build-only", action="store_true", help="Only build datasets, don't train"
-    )
-    parser.add_argument(
-        "--base-model", type=str, default=None, help="Override base model name"
-    )
+    parser.add_argument("--status", action="store_true", help="Print buffer stats and exit")
+    parser.add_argument("--build-only", action="store_true", help="Only build datasets, don't train")
+    parser.add_argument("--base-model", type=str, default=None, help="Override base model name")
     args = parser.parse_args()
 
     # Status check
@@ -219,10 +209,7 @@ def main():
         cfg_overrides["base_model"] = args.base_model
 
     state = load_state()
-    logger.info(
-        f"Training loop starting. Interval: {args.interval}s, "
-        f"min_exp: {args.min_exp}"
-    )
+    logger.info(f"Training loop starting. Interval: {args.interval}s, " f"min_exp: {args.min_exp}")
 
     while True:
         logger.info(f"=== Cycle {state['total_cycles'] + 1} ===")

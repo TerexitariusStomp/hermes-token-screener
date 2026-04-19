@@ -96,9 +96,7 @@ def _rpc_call(chain: str, method: str, params: list = None) -> dict:
     for _ in range(len(rpcs) * 2):
         url = rpcs[idx % len(rpcs)]
         try:
-            payload = json.dumps(
-                {"jsonrpc": "2.0", "method": method, "params": params, "id": 1}
-            ).encode()
+            payload = json.dumps({"jsonrpc": "2.0", "method": method, "params": params, "id": 1}).encode()
             req = urllib.request.Request(
                 url,
                 data=payload,
@@ -152,16 +150,9 @@ def _check_v2_pool(factory: str, token_a: str, token_b: str, chain: str) -> str 
     return None
 
 
-def _check_v3_pool(
-    factory: str, token_a: str, token_b: str, fee: int, chain: str
-) -> str | None:
+def _check_v3_pool(factory: str, token_a: str, token_b: str, fee: int, chain: str) -> str | None:
     """Return V3 pool address or None."""
-    data = (
-        "0x1698ee82"
-        + token_a[2:].zfill(64)
-        + token_b[2:].zfill(64)
-        + hex(fee)[2:].zfill(64)
-    )
+    data = "0x1698ee82" + token_a[2:].zfill(64) + token_b[2:].zfill(64) + hex(fee)[2:].zfill(64)
     result = _eth_call(chain, factory, data)
     if result and len(result) >= 66:
         addr = "0x" + result[-40:]
@@ -169,9 +160,7 @@ def _check_v3_pool(
     return None
 
 
-def _quote_v2(
-    router: str, token_a: str, token_b: str, amount_wei: int, chain: str
-) -> int | None:
+def _quote_v2(router: str, token_a: str, token_b: str, amount_wei: int, chain: str) -> int | None:
     """getAmountsOut quote from V2 router."""
     path_off = "0" * 62 + "40"
     path_len = "0" * 62 + "02"

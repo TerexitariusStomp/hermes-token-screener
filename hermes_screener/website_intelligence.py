@@ -57,9 +57,7 @@ LLM_ENDPOINTS = [
 ]
 
 
-def _call_llm(
-    prompt: str, system: str = "", max_tokens: int = 300, timeout: int = 60
-) -> str | None:
+def _call_llm(prompt: str, system: str = "", max_tokens: int = 300, timeout: int = 60) -> str | None:
     """Call local LLM with fallback chain. Returns response text or None."""
     for endpoint in LLM_ENDPOINTS:
         try:
@@ -99,9 +97,7 @@ def _call_llm(
                     if "error" in data and "cloud" in data["error"].get("type", ""):
                         continue
                     return (  # type: ignore[no-any-return]
-                        data.get("choices", [{}])[0]
-                        .get("message", {})
-                        .get("content", "")
+                        data.get("choices", [{}])[0].get("message", {}).get("content", "")
                     )
         except Exception:
             continue
@@ -147,9 +143,7 @@ async def fetch_website_content(url: str, client: httpx.AsyncClient) -> dict | N
         page_kb = len(html) / 1024
 
         # Blog/announcement links
-        blog_links = re.findall(
-            r'href=["\']([^"\']*(?:blog|news|post|announc)[^"\']*)["\']', html, re.I
-        )
+        blog_links = re.findall(r'href=["\']([^"\']*(?:blog|news|post|announc)[^"\']*)["\']', html, re.I)
         recent_dates = re.findall(
             r"(?:202[5-6][-/]\d|january|february|march|april|may|june|july|august|september|october|november|december).{0,20}202[5-6]",
             html,
@@ -324,13 +318,9 @@ def _analyze_website_algorithmic(
         score += 5
 
     # Trendiness (0-20)
-    text = (
-        website_data.get("text", "") + " " + website_data.get("meta_description", "")
-    ).lower()
+    text = (website_data.get("text", "") + " " + website_data.get("meta_description", "")).lower()
     if trending_keywords and text:
-        matches = sum(
-            1 for kw in trending_keywords if kw.get("keyword", "").lower() in text
-        )
+        matches = sum(1 for kw in trending_keywords if kw.get("keyword", "").lower() in text)
         score += min(matches * 2, 20)
 
     return round(min(score, 100), 1), details
@@ -381,9 +371,7 @@ async def _analyze_all(
                 }
                 continue
 
-            score, details = analyze_website_with_llm(
-                website_data, trending_keywords, sym
-            )
+            score, details = analyze_website_with_llm(website_data, trending_keywords, sym)
 
             results[addr] = {
                 "website_url": url,

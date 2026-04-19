@@ -31,9 +31,7 @@ def _rpc_call_exec(chain: str, method: str, params: list = None) -> dict:
     for _ in range(len(rpcs) * 2):
         url = rpcs[idx % len(rpcs)]
         try:
-            payload = json.dumps(
-                {"jsonrpc": "2.0", "method": method, "params": params, "id": 1}
-            ).encode()
+            payload = json.dumps({"jsonrpc": "2.0", "method": method, "params": params, "id": 1}).encode()
             req = urllib.request.Request(
                 url,
                 data=payload,
@@ -174,9 +172,7 @@ def _execute_v2_swap(
         ]
 
         # Approve
-        token_contract = w3.eth.contract(
-            address=Web3.to_checksum_address(token_in), abi=ERC20_APPROVE_ABI
-        )
+        token_contract = w3.eth.contract(address=Web3.to_checksum_address(token_in), abi=ERC20_APPROVE_ABI)
         approve_tx = token_contract.functions.approve(
             Web3.to_checksum_address(router), amount_in_wei
         ).build_transaction(
@@ -193,9 +189,7 @@ def _execute_v2_swap(
         approve_hash = w3.eth.send_raw_transaction(signed_approve.raw_transaction)
         w3.eth.wait_for_transaction_receipt(approve_hash, timeout=60)
 
-        router_contract = w3.eth.contract(
-            address=Web3.to_checksum_address(router), abi=V2_ABI
-        )
+        router_contract = w3.eth.contract(address=Web3.to_checksum_address(router), abi=V2_ABI)
         tx = router_contract.functions.swapExactTokensForTokens(
             amount_in_wei,
             min_out_wei,
@@ -251,9 +245,7 @@ def execute_arbitrage(
     amount_in_usd = Decimal(str(trade_usd))
     amount_in_tokens = amount_in_usd / buy.price  # tokens of token_in
     amount_in_wei = int(amount_in_tokens * Decimal(10**dec_in))
-    min_out_wei = int(
-        amount_in_usd * Decimal("1000000") * (Decimal("1") - opp.estimated_slippage_pct)
-    )
+    min_out_wei = int(amount_in_usd * Decimal("1000000") * (Decimal("1") - opp.estimated_slippage_pct))
 
     if dry_run:
         logger.info(
@@ -273,8 +265,7 @@ def execute_arbitrage(
         }
 
     logger.info(
-        f"Executing arb: buy on {buy.dex}, sell on {sell.dex}, "
-        f"expected net={float(opp.net_profit_pct)*100:.3f}%"
+        f"Executing arb: buy on {buy.dex}, sell on {sell.dex}, " f"expected net={float(opp.net_profit_pct)*100:.3f}%"
     )
 
     # --- Leg 1: Buy ---
@@ -291,9 +282,7 @@ def execute_arbitrage(
             chain=chain,
         )
     else:
-        logger.warning(
-            f"V3 direct execution not yet implemented; buy leg skipped for {buy.dex}"
-        )
+        logger.warning(f"V3 direct execution not yet implemented; buy leg skipped for {buy.dex}")
 
     if not tx_buy:
         return {
@@ -318,9 +307,7 @@ def execute_arbitrage(
             chain=chain,
         )
     else:
-        logger.warning(
-            f"V3 direct execution not yet implemented; sell leg skipped for {sell.dex}"
-        )
+        logger.warning(f"V3 direct execution not yet implemented; sell leg skipped for {sell.dex}")
 
     success = bool(tx_buy and tx_sell)
     actual_profit = float(opp.net_profit_pct) * trade_usd if success else 0.0

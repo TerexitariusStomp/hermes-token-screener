@@ -308,11 +308,7 @@ def collect_twitter_texts(symbols: list[str], max_per_symbol: int = 5) -> list[s
             )
             if result.returncode == 0:
                 data = json.loads(result.stdout)
-                tweets = (
-                    data
-                    if isinstance(data, list)
-                    else data.get("results", data.get("tweets", []))
-                )
+                tweets = data if isinstance(data, list) else data.get("results", data.get("tweets", []))
                 for tweet in tweets if isinstance(tweets, list) else []:
                     if isinstance(tweet, dict):
                         text = tweet.get("text", tweet.get("content", ""))
@@ -334,9 +330,7 @@ def collect_twitter_texts(symbols: list[str], max_per_symbol: int = 5) -> list[s
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def extract_keywords_tfidf(
-    texts: list[str], max_keywords: int = 10
-) -> list[tuple[str, float]]:
+def extract_keywords_tfidf(texts: list[str], max_keywords: int = 10) -> list[tuple[str, float]]:
     """
     Extract trending keywords using TF-IDF-like scoring.
 
@@ -390,16 +384,12 @@ def extract_keywords_tfidf(
     ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
     # Filter out too-common single-char or very generic words
-    filtered = [
-        (word, score) for word, score in ranked if len(word) >= 3 and word.isalpha()
-    ]
+    filtered = [(word, score) for word, score in ranked if len(word) >= 3 and word.isalpha()]
 
     return filtered[:max_keywords]
 
 
-def extract_keywords_llm(
-    texts: list[str], max_keywords: int = 10
-) -> list[tuple[str, float]] | None:
+def extract_keywords_llm(texts: list[str], max_keywords: int = 10) -> list[tuple[str, float]] | None:
     """
     Use local LLM to extract trending keywords from collected texts.
     Falls back to None if LLM is unavailable.
@@ -429,10 +419,7 @@ JSON:""",
             json_match = re.search(r"\[.*?\]", content, re.DOTALL)
             if json_match:
                 data = json.loads(json_match.group())
-                return [
-                    (item["keyword"], item.get("relevance", 50))
-                    for item in data[:max_keywords]
-                ]
+                return [(item["keyword"], item.get("relevance", 50)) for item in data[:max_keywords]]
     except Exception:
         pass
 
@@ -459,16 +446,11 @@ JSON:""",
             timeout=60,
         )
         if r.status_code == 200:
-            content = (
-                r.json().get("choices", [{}])[0].get("message", {}).get("content", "")
-            )
+            content = r.json().get("choices", [{}])[0].get("message", {}).get("content", "")
             json_match = re.search(r"\[.*?\]", content, re.DOTALL)
             if json_match:
                 data = json.loads(json_match.group())
-                return [
-                    (item["keyword"], item.get("relevance", 50))
-                    for item in data[:max_keywords]
-                ]
+                return [(item["keyword"], item.get("relevance", 50)) for item in data[:max_keywords]]
     except Exception:
         pass
 
@@ -552,9 +534,7 @@ def run_keyword_discovery(
     start = time.time()
     existing_addresses = existing_addresses or set()
 
-    log.info(
-        "keyword_discovery_start", max_keywords=max_keywords, hours_back=hours_back
-    )
+    log.info("keyword_discovery_start", max_keywords=max_keywords, hours_back=hours_back)
 
     # Step 1: Collect social text
     tg_texts = collect_telegram_texts(hours_back)
@@ -563,9 +543,7 @@ def run_keyword_discovery(
     try:
         conn = sqlite3.connect(str(DB_PATH), timeout=30)
         c = conn.cursor()
-        c.execute(
-            "SELECT DISTINCT contract_address FROM telegram_contracts_unique LIMIT 50"
-        )
+        c.execute("SELECT DISTINCT contract_address FROM telegram_contracts_unique LIMIT 50")
         {row[0] for row in c.fetchall()}
         conn.close()
     except Exception:
@@ -620,15 +598,11 @@ def run_keyword_discovery(
     for keyword, score in keywords:
         tokens = search_dexscreener_keyword(keyword, max_tokens_per_keyword)
         # Filter out already-known tokens
-        new_tokens = [
-            t for t in tokens if t["contract_address"] not in existing_addresses
-        ]
+        new_tokens = [t for t in tokens if t["contract_address"] not in existing_addresses]
         for t in new_tokens:
             t["keyword_score"] = round(score, 1)
         all_discovered.extend(new_tokens)
-        metrics.api_calls.labels(
-            provider="dexscreener_keyword", status="ok" if tokens else "empty"
-        ).inc()
+        metrics.api_calls.labels(provider="dexscreener_keyword", status="ok" if tokens else "empty").inc()
 
     # Deduplicate by address
     seen = set()
@@ -673,9 +647,7 @@ def run_keyword_discovery(
 
 def save_discovered_tokens(tokens: list[dict]) -> Path:
     """Save discovered tokens to a file for the enricher to pick up."""
-    output_path = (
-        settings.hermes_home / "data" / "token_screener" / "keyword_discoveries.json"
-    )
+    output_path = settings.hermes_home / "data" / "token_screener" / "keyword_discoveries.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Append to existing (don't overwrite)

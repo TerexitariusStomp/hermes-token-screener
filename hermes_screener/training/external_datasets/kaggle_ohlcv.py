@@ -225,11 +225,7 @@ def _candle_analysis_sample(rows: list, symbol: str) -> dict | None:
         else (
             "hammer"
             if lower_wick > 60
-            else (
-                "shooting_star"
-                if upper_wick > 60
-                else "marubozu" if body_pct > 80 else "standard"
-            )
+            else ("shooting_star" if upper_wick > 60 else "marubozu" if body_pct > 80 else "standard")
         )
     )
     assistant = json.dumps(
@@ -283,9 +279,7 @@ def _prediction_sample(rows: list, symbol: str, lookback: int = 7) -> dict | Non
     user = (
         f"Predict the next day's price direction for {symbol} "
         f"based on the last {lookback} days.\n\n"
-        f"Historical OHLCV:\n"
-        + "\n".join(hist_lines)
-        + '\n\nRespond with JSON: {"direction": "up|down|sideways", '
+        f"Historical OHLCV:\n" + "\n".join(hist_lines) + '\n\nRespond with JSON: {"direction": "up|down|sideways", '
         '"confidence": 0-100, '
         '"predicted_change_pct": float, '
         '"reasoning": "brief technical analysis"}'
@@ -359,9 +353,7 @@ def _entry_timing_sample(rows: list, symbol: str) -> dict | None:
         }
     )
     reward = 0.4 if verdict == "good_entry" else (-0.2 if verdict == "avoid" else 0.0)
-    return chat_sample(
-        SYSTEM_PRICE, user, assistant, {"source": "kaggle_ohlcv", "reward": reward}
-    )
+    return chat_sample(SYSTEM_PRICE, user, assistant, {"source": "kaggle_ohlcv", "reward": reward})
 
 
 # -------------------------------------------------------------------
@@ -466,9 +458,7 @@ if __name__ == "__main__":
         default="all",
         help="Which dataset to process",
     )
-    parser.add_argument(
-        "--limit", type=int, default=30_000, help="Max samples per dataset"
-    )
+    parser.add_argument("--limit", type=int, default=30_000, help="Max samples per dataset")
     args = parser.parse_args()
 
     if args.dataset == "all":

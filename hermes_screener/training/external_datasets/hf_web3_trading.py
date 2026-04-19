@@ -137,9 +137,7 @@ def _row_to_wallet_sample(row: dict) -> dict | None:
         }
     )
     reward = min(1.0, max(-0.5, (raw_score - 50) / 50))
-    return chat_sample(
-        SYSTEM, user, assistant, {"source": DATASET_ID, "reward": reward}
-    )
+    return chat_sample(SYSTEM, user, assistant, {"source": DATASET_ID, "reward": reward})
 
 
 def _row_to_token_sample(row: dict) -> dict | None:

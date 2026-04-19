@@ -33,9 +33,7 @@ METEORA_DLMM = Pubkey.from_string("LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo")
 # Token program
 TOKEN_PROGRAM = Pubkey.from_string("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
 TOKEN_2022_PROGRAM = Pubkey.from_string("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb")
-ASSOCIATED_TOKEN_PROGRAM = Pubkey.from_string(
-    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
-)
+ASSOCIATED_TOKEN_PROGRAM = Pubkey.from_string("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL")
 SYSTEM_PROGRAM = Pubkey.from_string("11111111111111111111111111111111")
 SYSVAR_RENT = Pubkey.from_string("SysvarRent111111111111111111111111111111111")
 
@@ -63,18 +61,14 @@ class SolanaProgramAdapter:
     """Direct Solana program interaction via RPC. Uses Jupiter API for routing only."""
 
     def __init__(self, rpc_url: str = None, private_key: str = None):
-        self.rpc_url = rpc_url or os.environ.get(
-            "SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com"
-        )
+        self.rpc_url = rpc_url or os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com")
         self.client = Client(self.rpc_url)
         self.keypair = None
 
         if private_key:
             self._init_keypair(private_key)
         else:
-            pk = os.environ.get("SOLANA_PRIVATE_KEY") or os.environ.get(
-                "WALLET_PRIVATE_KEY_SOLANA", ""
-            )
+            pk = os.environ.get("SOLANA_PRIVATE_KEY") or os.environ.get("WALLET_PRIVATE_KEY_SOLANA", "")
             if pk:
                 self._init_keypair(pk)
 
@@ -137,9 +131,7 @@ class SolanaProgramAdapter:
 
     # ==================== JUPITER QUOTE ====================
 
-    def jupiter_quote(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> dict:
+    def jupiter_quote(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> dict:
         """Get quote from Jupiter API v1."""
         try:
             resp = requests.get(
@@ -160,9 +152,7 @@ class SolanaProgramAdapter:
 
     # ==================== JUPITER ROUTE → DIRECT TX ====================
 
-    def jupiter_build_tx(
-        self, quote: dict, wrap_unwrap: bool = True
-    ) -> VersionedTransaction | None:
+    def jupiter_build_tx(self, quote: dict, wrap_unwrap: bool = True) -> VersionedTransaction | None:
         """
         Build a VersionedTransaction from Jupiter quote.
 
@@ -189,9 +179,7 @@ class SolanaProgramAdapter:
             )
 
             if resp.status_code != 200:
-                logger.error(
-                    f"Jupiter swap-instructions failed: HTTP {resp.status_code} - {resp.text[:200]}"
-                )
+                logger.error(f"Jupiter swap-instructions failed: HTTP {resp.status_code} - {resp.text[:200]}")
                 return None
 
             swap_data = resp.json()
@@ -254,9 +242,7 @@ class SolanaProgramAdapter:
                 return tx
 
             else:
-                logger.error(
-                    f"Unexpected Jupiter response format: {list(swap_data.keys())}"
-                )
+                logger.error(f"Unexpected Jupiter response format: {list(swap_data.keys())}")
                 return None
 
         except Exception as e:
@@ -306,9 +292,7 @@ class SolanaProgramAdapter:
 
     # ==================== SEND =============================
 
-    def send_tx(
-        self, tx: VersionedTransaction, skip_preflight: bool = False
-    ) -> str | None:
+    def send_tx(self, tx: VersionedTransaction, skip_preflight: bool = False) -> str | None:
         """Send a signed transaction. Returns signature or None."""
         try:
             opts = TxOpts(
@@ -335,9 +319,7 @@ class SolanaProgramAdapter:
 
     # ==================== HIGH-LEVEL SWAP ====================
 
-    def swap(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> str | None:
+    def swap(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> str | None:
         """
         Execute swap: quote → build → simulate → sign → send → confirm.
         Returns signature or None.
@@ -381,9 +363,7 @@ class SolanaProgramAdapter:
             logger.warning(f"Swap not yet confirmed: {sig}")
             return sig  # Return anyway, might confirm later
 
-    def swap_by_symbol(
-        self, from_symbol: str, to_symbol: str, amount_ui: float, slippage_bps: int = 50
-    ) -> str | None:
+    def swap_by_symbol(self, from_symbol: str, to_symbol: str, amount_ui: float, slippage_bps: int = 50) -> str | None:
         """Swap using token symbols and UI amount."""
         from_token = TOKENS.get(from_symbol.upper())
         to_token = TOKENS.get(to_symbol.upper())
@@ -393,15 +373,11 @@ class SolanaProgramAdapter:
             return None
 
         amount_base = int(amount_ui * (10 ** from_token["decimals"]))
-        return self.swap(
-            from_token["mint"], to_token["mint"], amount_base, slippage_bps
-        )
+        return self.swap(from_token["mint"], to_token["mint"], amount_base, slippage_bps)
 
     # ==================== RAYDIUM (DIRECT) ====================
 
-    def raydium_cpmm_quote(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> dict:
+    def raydium_cpmm_quote(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> dict:
         """Get quote from Raydium CPMM API."""
         try:
             resp = requests.get(
@@ -487,9 +463,7 @@ class SolanaProgramAdapter:
 
     # ==================== MULTI-DEX COMPARISON ====================
 
-    def compare_quotes(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> dict:
+    def compare_quotes(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> dict:
         """Compare quotes across Solana DEXes."""
         quotes = {}
 

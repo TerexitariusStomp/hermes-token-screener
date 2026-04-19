@@ -201,9 +201,7 @@ class FineTuner:
 
             train_dataset = self._jsonl_to_hf_dataset(dataset_path, tokenizer)
             eval_dataset = (
-                self._jsonl_to_hf_dataset(eval_path, tokenizer)
-                if eval_path and Path(eval_path).exists()
-                else None
+                self._jsonl_to_hf_dataset(eval_path, tokenizer) if eval_path and Path(eval_path).exists() else None
             )
 
             adapter_path = DEFAULT_ADAPTER_BASE / adapter_name

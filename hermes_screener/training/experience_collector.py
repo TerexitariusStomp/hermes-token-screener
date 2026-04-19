@@ -176,9 +176,7 @@ class ExperienceCollector:
     # ------------------------------------------------------------------
     # Stage 3: Scoring
     # ------------------------------------------------------------------
-    def record_token_scored(
-        self, token: dict, score: float, breakdown: dict | None = None
-    ):
+    def record_token_scored(self, token: dict, score: float, breakdown: dict | None = None):
         """Call after scoring (enhanced_scoring or cross_scoring)."""
         addr = token.get("contract_address", "")
         chain = token.get("chain", "")
@@ -404,9 +402,7 @@ class ExperienceCollector:
     # ------------------------------------------------------------------
     # Stage 9: Arbitrage opportunity
     # ------------------------------------------------------------------
-    def record_arb_opportunity(
-        self, token_address: str, chain: str, symbol: str, opportunity: dict
-    ):
+    def record_arb_opportunity(self, token_address: str, chain: str, symbol: str, opportunity: dict):
         """Call when arbitrage_scanner finds a profitable opportunity."""
         exp = Experience(
             stage=PipelineStage.ARBITRAGE,

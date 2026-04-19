@@ -67,25 +67,16 @@ class Quantizer:
 
         min_val = min(vector)
         max_val = max(vector)
-        scale = (
-            max(abs(min_val), abs(max_val)) / 127.0
-            if max(abs(min_val), abs(max_val)) > 0
-            else 1.0
-        )
+        scale = max(abs(min_val), abs(max_val)) / 127.0 if max(abs(min_val), abs(max_val)) > 0 else 1.0
 
         quantized = struct.pack(
             f"{len(vector)}b",
-            *[
-                max(-127, min(127, int(round(v / scale))) if scale > 0 else 0)
-                for v in vector
-            ],
+            *[max(-127, min(127, int(round(v / scale))) if scale > 0 else 0) for v in vector],
         )
         return quantized, scale, 0.0  # zero_point = 0 for symmetric
 
     @staticmethod
-    def dequantize_int8(
-        data: bytes, dimension: int, scale: float, zero_point: float = 0.0
-    ) -> list[float]:
+    def dequantize_int8(data: bytes, dimension: int, scale: float, zero_point: float = 0.0) -> list[float]:
         """Dequantize int8 back to float."""
         values = struct.unpack(f"{dimension}b", data)
         return [(v - zero_point) * scale for v in values]
@@ -98,16 +89,10 @@ class Quantizer:
 
         min_val = min(vector)
         max_val = max(vector)
-        scale = (
-            max(abs(min_val), abs(max_val)) / 7.0
-            if max(abs(min_val), abs(max_val)) > 0
-            else 1.0
-        )
+        scale = max(abs(min_val), abs(max_val)) / 7.0 if max(abs(min_val), abs(max_val)) > 0 else 1.0
 
         # Clamp and convert to int4 range [-7, 7]
-        int4_values = [
-            max(-7, min(7, int(round(v / scale))) if scale > 0 else 0) for v in vector
-        ]
+        int4_values = [max(-7, min(7, int(round(v / scale))) if scale > 0 else 0) for v in vector]
 
         # Pack two int4 values per byte
         packed = bytearray()
@@ -119,9 +104,7 @@ class Quantizer:
         return bytes(packed), scale, 0.0
 
     @staticmethod
-    def dequantize_int4(
-        data: bytes, dimension: int, scale: float, zero_point: float = 0.0
-    ) -> list[float]:
+    def dequantize_int4(data: bytes, dimension: int, scale: float, zero_point: float = 0.0) -> list[float]:
         """Dequantize int4 back to float."""
         result = []
         for byte in data:
@@ -157,9 +140,7 @@ class Quantizer:
         return bytes(packed), residual
 
     @staticmethod
-    def dequantize_binary(
-        data: bytes, dimension: int, residual: list[float]
-    ) -> list[float]:
+    def dequantize_binary(data: bytes, dimension: int, residual: list[float]) -> list[float]:
         """Dequantize binary + residual back to approximate float."""
         bits = []
         for byte in data:
@@ -182,19 +163,14 @@ class DimensionReducer:
     """Simple dimensionality reduction without sklearn dependency."""
 
     @staticmethod
-    def random_projection(
-        dimension: int, target_dim: int, seed: int = 42
-    ) -> list[list[float]]:
+    def random_projection(dimension: int, target_dim: int, seed: int = 42) -> list[list[float]]:
         """Generate random projection matrix for Johnson-Lindenstrauss lemma."""
         import random
 
         random.seed(seed)
         # Scale by 1/sqrt(target_dim) for approximate distance preservation
         scale = 1.0 / math.sqrt(target_dim)
-        return [
-            [random.gauss(0, scale) for _ in range(dimension)]
-            for _ in range(target_dim)
-        ]
+        return [[random.gauss(0, scale) for _ in range(dimension)] for _ in range(target_dim)]
 
     @staticmethod
     def project(vector: list[float], matrix: list[list[float]]) -> list[float]:
@@ -266,9 +242,7 @@ class TurboQuantStore:
             with open(proj_file) as f:
                 self._projection_matrix = json.load(f)
         elif self.reduce_dimensions and self._projection_matrix is None:
-            self._projection_matrix = DimensionReducer.random_projection(
-                self.dimension, self.target_dimension
-            )
+            self._projection_matrix = DimensionReducer.random_projection(self.dimension, self.target_dimension)
 
     def _save_index(self):
         """Save index to disk."""
@@ -378,9 +352,7 @@ class TurboQuantStore:
             return True
         return False
 
-    def search(
-        self, query_vector: list[float], top_k: int = 5
-    ) -> list[tuple[str, float]]:
+    def search(self, query_vector: list[float], top_k: int = 5) -> list[tuple[str, float]]:
         """Search for similar vectors using cosine similarity."""
         prepared = self._prepare_vector(query_vector)
 
@@ -408,9 +380,7 @@ class TurboQuantStore:
         total_vectors = len(self._index)
         total_raw_bytes = total_vectors * self.target_dimension * 4  # FP32 baseline
         total_stored_bytes = sum(len(entry["data"]) for entry in self._index.values())
-        compression_ratio = (
-            total_raw_bytes / total_stored_bytes if total_stored_bytes > 0 else 1.0
-        )
+        compression_ratio = total_raw_bytes / total_stored_bytes if total_stored_bytes > 0 else 1.0
 
         return {
             "total_vectors": total_vectors,
@@ -455,15 +425,10 @@ def validate_store():
 
     results = []
     for tier in tiers:
-        store = TurboQuantStore(
-            dimension=dim, compression=tier, store_path=f"/tmp/tq_test_{tier}"
-        )
+        store = TurboQuantStore(dimension=dim, compression=tier, store_path=f"/tmp/tq_test_{tier}")
 
         # Add test vectors
-        vectors = {
-            f"vec_{i}": ([random.gauss(0, 1) for _ in range(dim)], {"group": i % 3})
-            for i in range(10)
-        }
+        vectors = {f"vec_{i}": ([random.gauss(0, 1) for _ in range(dim)], {"group": i % 3}) for i in range(10)}
         store.add_batch(vectors)
 
         # Search test

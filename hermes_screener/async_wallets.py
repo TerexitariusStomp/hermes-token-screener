@@ -143,10 +143,7 @@ async def _fetch_all_holders_for_token(
         return []
 
     # Fire all sort orders concurrently
-    tasks = [
-        _fetch_holders_batch(node_bin, gmgn_chain, address, ob, d)
-        for ob, d in SORT_ORDERS
-    ]
+    tasks = [_fetch_holders_batch(node_bin, gmgn_chain, address, ob, d) for ob, d in SORT_ORDERS]
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     # Deduplicate by address
@@ -223,9 +220,7 @@ async def enrich_wallets_async(
 
         async with semaphore:
             start = time.time()
-            holders = await _fetch_all_holders_for_token(
-                node_bin, chain, addr, limit=settings.holders_per_token
-            )
+            holders = await _fetch_all_holders_for_token(node_bin, chain, addr, limit=settings.holders_per_token)
             elapsed = time.time() - start
 
             tokens_scanned += 1
@@ -253,8 +248,7 @@ async def enrich_wallets_async(
                     "unrealized_profit": h.get("unrealized_profit", 0) or 0,
                     "buy_tx_count": h.get("buy_tx_count_cur", 0) or 0,
                     "sell_tx_count": h.get("sell_tx_count_cur", 0) or 0,
-                    "total_trades": (h.get("buy_tx_count_cur", 0) or 0)
-                    + (h.get("sell_tx_count_cur", 0) or 0),
+                    "total_trades": (h.get("buy_tx_count_cur", 0) or 0) + (h.get("sell_tx_count_cur", 0) or 0),
                     "avg_cost": h.get("avg_cost"),
                     "start_holding_at": h.get("start_holding_at"),
                     "is_profitable": 1 if profit > 0 else 0,
@@ -409,8 +403,4 @@ def enrich_wallets_async_sync(
     dry_run: bool = False,
 ) -> WalletEnrichResult:
     """Synchronous wrapper for enrich_wallets_async()."""
-    return asyncio.run(
-        enrich_wallets_async(
-            conn, tokens, min_token_score, max_concurrent_tokens, dry_run
-        )
-    )
+    return asyncio.run(enrich_wallets_async(conn, tokens, min_token_score, max_concurrent_tokens, dry_run))

@@ -47,9 +47,7 @@ Always respond with valid JSON only."""
 
 def _fmt_state_decision(state: dict, action: dict) -> str:
     """Format a token state into a readable user prompt for decision tasks."""
-    parts = [
-        "Analyze this token and decide whether to buy, hold, or sell.\n\nToken Metrics:"
-    ]
+    parts = ["Analyze this token and decide whether to buy, hold, or sell.\n\nToken Metrics:"]
     mapping = {
         "score": ("Screener Score", "{:.1f}/100"),
         "fdv": ("FDV", "${:,.0f}"),
@@ -159,16 +157,11 @@ def _fmt_state_scoring(state: dict) -> str:
 def _fmt_state_monitor(state: dict, action: dict) -> str:
     market = state.get("market", {})
     decay = state.get("decay_severity", 0)
-    parts = [
-        f"Monitor open position. Decay severity: {decay:.1f}/10\n\nMarket snapshot:"
-    ]
+    parts = [f"Monitor open position. Decay severity: {decay:.1f}/10\n\nMarket snapshot:"]
     for k, v in market.items():
         if v is not None:
             parts.append(f"  {k}: {v}")
-    parts.append(
-        '\nRespond with JSON: {"action": "hold"|"sell"|"rotate", '
-        '"confidence": 0-100, "reason": "brief"}'
-    )
+    parts.append('\nRespond with JSON: {"action": "hold"|"sell"|"rotate", ' '"confidence": 0-100, "reason": "brief"}')
     return "\n".join(parts)
 
 
@@ -203,9 +196,7 @@ class DatasetBuilder:
         )
 
         # Filter by minimum signal strength
-        exps = [
-            e for e in exps if e.reward is not None and abs(e.reward) >= min_abs_reward
-        ]
+        exps = [e for e in exps if e.reward is not None and abs(e.reward) >= min_abs_reward]
         random.shuffle(exps)
 
         decision_samples = []
@@ -234,9 +225,7 @@ class DatasetBuilder:
                 used_ids.append(exp.episode_id)  # track by episode
 
             elif exp.stage == PipelineStage.SCORING:
-                score_given = exp.action.get("score") or (
-                    exp.action.get("breakdown") or {}
-                ).get("total", 50)
+                score_given = exp.action.get("score") or (exp.action.get("breakdown") or {}).get("total", 50)
                 # Ideal score adjusted by reward
                 ideal_score = max(0, min(100, score_given + reward * 30))
                 scoring_samples.append(
@@ -276,9 +265,7 @@ class DatasetBuilder:
                                 "content": json.dumps(
                                     {
                                         "action": ideal_action,
-                                        "confidence": max(
-                                            20, min(95, int(abs(reward) * 80))
-                                        ),
+                                        "confidence": max(20, min(95, int(abs(reward) * 80))),
                                         "reason": exp.action.get("ai_reason", ""),
                                     }
                                 ),

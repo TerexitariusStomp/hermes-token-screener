@@ -252,11 +252,7 @@ def _get_models() -> list:
     cfg_path = os.path.join(os.path.expanduser("~"), ".hermes", "config.yaml")
     if not os.path.isfile(cfg_path):
         key = os.environ.get("OPENROUTER_API_KEY", "")
-        return (
-            [("qwen/qwen3.6-plus:free", "https://openrouter.ai/api/v1", key)]
-            if key
-            else []
-        )
+        return [("qwen/qwen3.6-plus:free", "https://openrouter.ai/api/v1", key)] if key else []
     with open(cfg_path) as f:
         cfg = yaml.safe_load(f)
     if not isinstance(cfg, dict):
@@ -267,9 +263,7 @@ def _get_models() -> list:
     providers = []
     pk = os.environ.get(m.get("api_key_env", "OPENROUTER_API_KEY"), "")
     if pk:
-        providers.append(
-            (m["default"], m.get("base_url", "https://openrouter.ai/api/v1"), pk)
-        )
+        providers.append((m["default"], m.get("base_url", "https://openrouter.ai/api/v1"), pk))
     for fb in cfg.get("fallback_providers", []):
         key = os.environ.get(fb.get("api_key_env", ""), "")
         if key:
@@ -392,9 +386,7 @@ class TaskClassifier:
             try:
                 return json.loads(raw)
             except json.JSONDecodeError:
-                logger.warning(
-                    "LLM classify_llm returned non-JSON response; falling back to empty result"
-                )
+                logger.warning("LLM classify_llm returned non-JSON response; falling back to empty result")
         return {}
 
     def classify(self, text: str) -> ClassificationResult:
@@ -467,14 +459,10 @@ class TaskDecomposer:
             try:
                 return json.loads(raw)
             except json.JSONDecodeError:
-                logger.warning(
-                    "LLM decompose_llm returned non-JSON response; falling back to empty subtask list"
-                )
+                logger.warning("LLM decompose_llm returned non-JSON response; falling back to empty subtask list")
         return []
 
-    def decompose_keyword(
-        self, text: str, categories: list[str]
-    ) -> list[dict[str, str]]:
+    def decompose_keyword(self, text: str, categories: list[str]) -> list[dict[str, str]]:
         """Fallback: create one sub-task per identified category."""
         subtasks = []
         for cat in categories[:3]:  # Max 3 sub-tasks from keywords
@@ -501,9 +489,7 @@ class TaskDecomposer:
         if not raw_subtasks:
             return [SubTask.create(text, classification.get("primary"))]
 
-        return [
-            SubTask.create(st["description"], st["category"]) for st in raw_subtasks
-        ]
+        return [SubTask.create(st["description"], st["category"]) for st in raw_subtasks]
 
 
 # ── Delegation Router ──────────────────────────────────────────────────────
@@ -648,12 +634,7 @@ class DelegationRouter:
 
     def get_delegation_state(self) -> DelegationState:
         """Return a summary of the current delegation system state."""
-        active_tasks = sum(
-            1
-            for log in self._task_log
-            for a in log.get("assignments", [])
-            if a.get("status") is None
-        )
+        active_tasks = sum(1 for log in self._task_log for a in log.get("assignments", []) if a.get("status") is None)
         return {  # type: ignore[typeddict-item,typeddict-unknown-key]
             "registry_stats": self.registry.stats(),
             "recent_tasks": len(self._task_log),
@@ -679,9 +660,7 @@ def main() -> None:
 
     p_route = sub.add_parser("route", help="Route a task to agents")
     p_route.add_argument("text", nargs="+", help="Task description")
-    p_route.add_argument(
-        "--dry-run", action="store_true", help="Show plan without dispatching"
-    )
+    p_route.add_argument("--dry-run", action="store_true", help="Show plan without dispatching")
 
     p_state = sub.add_parser("state", help="Show delegation system state")
     p_log = sub.add_parser("log", help="Show recent task routing log")

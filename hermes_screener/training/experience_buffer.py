@@ -254,18 +254,10 @@ class ExperienceBuffer:
     def stats(self) -> dict:
         with self._conn() as conn:
             total = conn.execute("SELECT COUNT(*) FROM experiences").fetchone()[0]
-            with_rew = conn.execute(
-                "SELECT COUNT(*) FROM experiences WHERE reward IS NOT NULL"
-            ).fetchone()[0]
-            trained = conn.execute(
-                "SELECT COUNT(*) FROM experiences WHERE used_in_train=1"
-            ).fetchone()[0]
+            with_rew = conn.execute("SELECT COUNT(*) FROM experiences WHERE reward IS NOT NULL").fetchone()[0]
+            trained = conn.execute("SELECT COUNT(*) FROM experiences WHERE used_in_train=1").fetchone()[0]
             runs = conn.execute("SELECT COUNT(*) FROM training_runs").fetchone()[0]
-            by_stage = dict(
-                conn.execute(
-                    "SELECT stage, COUNT(*) FROM experiences GROUP BY stage"
-                ).fetchall()
-            )
+            by_stage = dict(conn.execute("SELECT stage, COUNT(*) FROM experiences GROUP BY stage").fetchall())
         return {
             "total": total,
             "with_reward": with_rew,

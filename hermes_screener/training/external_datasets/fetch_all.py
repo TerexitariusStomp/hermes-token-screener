@@ -52,9 +52,7 @@ def merge_datasets(
 
     # Auto-discover if not specified
     if external_datasets is None:
-        external_datasets = sorted(DATASET_DIR.glob("hf_*.jsonl")) + sorted(
-            DATASET_DIR.glob("kaggle_*.jsonl")
-        )
+        external_datasets = sorted(DATASET_DIR.glob("hf_*.jsonl")) + sorted(DATASET_DIR.glob("kaggle_*.jsonl"))
 
     if pipeline_dataset is None:
         p = DATASET_DIR / "combined_dataset.jsonl"
@@ -177,11 +175,7 @@ def print_status():
         try:
             count = sum(1 for _ in open(f))
             size = f.stat().st_size
-            size_str = (
-                f"{size/1024/1024:.1f}MB"
-                if size > 1024 * 1024
-                else f"{size/1024:.1f}KB"
-            )
+            size_str = f"{size/1024/1024:.1f}MB" if size > 1024 * 1024 else f"{size/1024:.1f}KB"
             print(f"{f.name:<50} {count:>10,} {size_str:>10}")
             total += count
         except Exception:
@@ -196,24 +190,12 @@ def print_status():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Fetch and merge external training datasets"
-    )
-    parser.add_argument(
-        "--hf-only", action="store_true", help="Only fetch HuggingFace dataset"
-    )
-    parser.add_argument(
-        "--kaggle-only", action="store_true", help="Only fetch Kaggle datasets"
-    )
-    parser.add_argument(
-        "--merge-only", action="store_true", help="Only merge existing files"
-    )
-    parser.add_argument(
-        "--status", action="store_true", help="Show status of existing datasets"
-    )
-    parser.add_argument(
-        "--limit", type=int, default=30_000, help="Max samples per dataset"
-    )
+    parser = argparse.ArgumentParser(description="Fetch and merge external training datasets")
+    parser.add_argument("--hf-only", action="store_true", help="Only fetch HuggingFace dataset")
+    parser.add_argument("--kaggle-only", action="store_true", help="Only fetch Kaggle datasets")
+    parser.add_argument("--merge-only", action="store_true", help="Only merge existing files")
+    parser.add_argument("--status", action="store_true", help="Show status of existing datasets")
+    parser.add_argument("--limit", type=int, default=30_000, help="Max samples per dataset")
     args = parser.parse_args()
 
     if args.status:

@@ -217,9 +217,7 @@ def start_metrics_server(port: int | None = None) -> None:
             endpoint=f"http://0.0.0.0:{port}/metrics",
         )
 
-    _server_thread = threading.Thread(
-        target=_run, daemon=True, name="prometheus-metrics"
-    )
+    _server_thread = threading.Thread(target=_run, daemon=True, name="prometheus-metrics")
     _server_thread.start()
     _server_started = True
 
