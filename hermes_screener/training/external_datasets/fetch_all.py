@@ -28,8 +28,11 @@ import time
 from pathlib import Path
 
 from .utils import (
-    CACHE_DIR, DATASET_DIR, ensure_dirs, write_jsonl, read_jsonl,
+    DATASET_DIR,
     check_kaggle_credentials,
+    ensure_dirs,
+    read_jsonl,
+    write_jsonl,
 )
 
 MERGED_OUT = DATASET_DIR / "initial_training_dataset.jsonl"

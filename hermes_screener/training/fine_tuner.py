@@ -21,10 +21,8 @@ Hardware requirements:
 
 import json
 import logging
-import os
 import time
 from pathlib import Path
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -57,9 +55,12 @@ DEFAULT_TRAIN_CFG = {
 }
 
 
+from trl import SFTTrainer  # noqa: E402, I001, F401
+from transformers import TrainingArguments  # noqa: E402, I001, F401
+
 class FineTuner:
 
-    def __init__(self, cfg: Optional[dict] = None):
+    def __init__(self, cfg: dict | None = None):
         self.cfg = {**DEFAULT_TRAIN_CFG, **(cfg or {})}
 
     def _try_unsloth(self):
@@ -85,9 +86,9 @@ class FineTuner:
 
     def _try_hf_peft(self):
         """Returns (model, tokenizer) using HuggingFace PEFT as fallback."""
-        from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-        from peft import LoraConfig, get_peft_model, TaskType
         import torch
+        from peft import LoraConfig, TaskType, get_peft_model
+        from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
         bnb_config = BitsAndBytesConfig(
             load_in_4bit              = True,
@@ -154,101 +155,99 @@ class FineTuner:
                 samples.append({"text": text, "reward": obj.get("reward", 0.0)})
         return Dataset.from_list(samples)
 
-    def train(
+    def train(  # type: ignore[return]
         self,
-        dataset_path: Optional[Path] = None,
-        eval_path:    Optional[Path] = None,
+        dataset_path: Path | None = None,
+        eval_path:    Path | None = None,
         adapter_name: str = "latest",
         max_steps:    int = -1,
     ) -> dict:
         """
         Run one fine-tuning pass. Returns dict with train/eval loss + adapter path.
         """
-        from trl import SFTTrainer
-        from transformers import TrainingArguments
 
-    if dataset_path is None:
-        # Prefer the merged initial training dataset (external + pipeline)
-        for candidate in [
-            DEFAULT_DATASET_DIR / "initial_training_train.jsonl",
-            DEFAULT_DATASET_DIR / "combined_dataset_train.jsonl",
-            DEFAULT_DATASET_DIR / "initial_training_dataset.jsonl",
-            DEFAULT_DATASET_DIR / "combined_dataset.jsonl",
-        ]:
-            if candidate.exists() and candidate.stat().st_size > 0:
-                dataset_path = candidate
-                break
+        if dataset_path is None:
+                # Prefer the merged initial training dataset (external + pipeline)
+                for candidate in [
+                        DEFAULT_DATASET_DIR / "initial_training_train.jsonl",
+                        DEFAULT_DATASET_DIR / "combined_dataset_train.jsonl",
+                        DEFAULT_DATASET_DIR / "initial_training_dataset.jsonl",
+                        DEFAULT_DATASET_DIR / "combined_dataset.jsonl",
+                ]:
+                        if candidate.exists() and candidate.stat().st_size > 0:
+                                dataset_path = candidate
+                                break
 
-        if not Path(dataset_path).exists():
-            return {"status": "no_dataset", "path": str(dataset_path)}
+                if not Path(dataset_path).exists():
+                        return {"status": "no_dataset", "path": str(dataset_path)}
 
-        t0 = time.time()
-        logger.info(f"Loading model: {self.cfg['base_model']}")
-        model, tokenizer, backend = self._load_model()
-        logger.info(f"Model loaded via {backend}")
+                t0 = time.time()
+                logger.info(f"Loading model: {self.cfg['base_model']}")
+                model, tokenizer, backend = self._load_model()
+                logger.info(f"Model loaded via {backend}")
 
-        train_dataset = self._jsonl_to_hf_dataset(dataset_path, tokenizer)
-        eval_dataset  = (self._jsonl_to_hf_dataset(eval_path, tokenizer)
-                         if eval_path and Path(eval_path).exists() else None)
+                train_dataset = self._jsonl_to_hf_dataset(dataset_path, tokenizer)
+                eval_dataset  = (self._jsonl_to_hf_dataset(eval_path, tokenizer)
+                            if eval_path and Path(eval_path).exists() else None)
 
-        adapter_path = DEFAULT_ADAPTER_BASE / adapter_name
-        adapter_path.mkdir(parents=True, exist_ok=True)
+                adapter_path = DEFAULT_ADAPTER_BASE / adapter_name
+                adapter_path.mkdir(parents=True, exist_ok=True)
 
-        effective_max_steps = max_steps if max_steps > 0 else self.cfg["max_steps"]
+                effective_max_steps = max_steps if max_steps > 0 else self.cfg["max_steps"]
 
-        training_args = TrainingArguments(
-            output_dir                  = str(adapter_path / "checkpoints"),
-            num_train_epochs            = self.cfg["num_train_epochs"],
-            per_device_train_batch_size = self.cfg["per_device_train_batch_size"],
-            gradient_accumulation_steps = self.cfg["gradient_accumulation_steps"],
-            warmup_ratio                = self.cfg["warmup_ratio"],
-            learning_rate               = self.cfg["learning_rate"],
-            fp16                        = self.cfg["fp16"],
-            bf16                        = self.cfg["bf16"],
-            lr_scheduler_type           = self.cfg["lr_scheduler_type"],
-            logging_steps               = self.cfg["logging_steps"],
-            save_steps                  = self.cfg["save_steps"],
-            eval_steps                  = self.cfg["eval_steps"] if eval_dataset else None,
-            evaluation_strategy         = "steps" if eval_dataset else "no",
-            max_steps                   = effective_max_steps,
-            report_to                   = "none",
-            dataloader_num_workers      = 0,
-            remove_unused_columns       = False,
-        )
+                training_args = TrainingArguments(
+                        output_dir                  = str(adapter_path / "checkpoints"),
+                        num_train_epochs            = self.cfg["num_train_epochs"],
+                        per_device_train_batch_size = self.cfg["per_device_train_batch_size"],
+                        gradient_accumulation_steps = self.cfg["gradient_accumulation_steps"],
+                        warmup_ratio                = self.cfg["warmup_ratio"],
+                        learning_rate               = self.cfg["learning_rate"],
+                        fp16                        = self.cfg["fp16"],
+                        bf16                        = self.cfg["bf16"],
+                        lr_scheduler_type           = self.cfg["lr_scheduler_type"],
+                        logging_steps               = self.cfg["logging_steps"],
+                        save_steps                  = self.cfg["save_steps"],
+                        eval_steps                  = self.cfg["eval_steps"] if eval_dataset else None,
+                        evaluation_strategy         = "steps" if eval_dataset else "no",
+                        max_steps                   = effective_max_steps,
+                        report_to                   = "none",
+                        dataloader_num_workers      = 0,
+                        remove_unused_columns       = False,
+                )
 
-        trainer = SFTTrainer(
-            model           = model,
-            tokenizer       = tokenizer,
-            train_dataset   = train_dataset,
-            eval_dataset    = eval_dataset,
-            dataset_text_field = "text",
-            max_seq_length  = self.cfg["max_seq_length"],
-            args            = training_args,
-        )
+                trainer = SFTTrainer(
+                        model           = model,
+                        tokenizer       = tokenizer,
+                        train_dataset   = train_dataset,
+                        eval_dataset    = eval_dataset,
+                        dataset_text_field = "text",
+                        max_seq_length  = self.cfg["max_seq_length"],
+                        args            = training_args,
+                )
 
-        logger.info(f"Starting training: {len(train_dataset)} examples")
-        train_result = trainer.train()
-        train_loss   = train_result.training_loss
+                logger.info(f"Starting training: {len(train_dataset)} examples")
+                train_result = trainer.train()
+                train_loss   = train_result.training_loss
 
-        eval_loss = None
-        if eval_dataset:
-            eval_result = trainer.evaluate()
-            eval_loss   = eval_result.get("eval_loss")
+                eval_loss = None
+                if eval_dataset:
+                        eval_result = trainer.evaluate()
+                        eval_loss   = eval_result.get("eval_loss")
 
-        # Save adapter
-        model.save_pretrained(str(adapter_path))
-        tokenizer.save_pretrained(str(adapter_path))
+                # Save adapter
+                model.save_pretrained(str(adapter_path))
+                tokenizer.save_pretrained(str(adapter_path))
 
-        elapsed = time.time() - t0
-        result = {
-            "status":       "ok",
-            "backend":      backend,
-            "base_model":   self.cfg["base_model"],
-            "adapter_path": str(adapter_path),
-            "train_loss":   round(train_loss, 4),
-            "eval_loss":    round(eval_loss, 4) if eval_loss else None,
-            "examples":     len(train_dataset),
-            "elapsed_s":    round(elapsed, 1),
-        }
-        logger.info(f"Training complete: {result}")
-        return result
+                elapsed = time.time() - t0
+                result = {
+                        "status":       "ok",
+                        "backend":      backend,
+                        "base_model":   self.cfg["base_model"],
+                        "adapter_path": str(adapter_path),
+                        "train_loss":   round(train_loss, 4),
+                        "eval_loss":    round(eval_loss, 4) if eval_loss else None,
+                        "examples":     len(train_dataset),
+                        "elapsed_s":    round(elapsed, 1),
+                }
+                logger.info(f"Training complete: {result}")
+                return result

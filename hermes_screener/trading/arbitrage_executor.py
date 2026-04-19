@@ -12,7 +12,7 @@ import urllib.request
 from decimal import Decimal
 from typing import Optional
 
-from .arbitrage_scanner import ArbOpportunity, CHAIN_RPCS, ssl_ctx, _rpc_indices
+from .arbitrage_scanner import CHAIN_RPCS, ArbOpportunity, _rpc_indices, ssl_ctx
 
 logger = logging.getLogger(__name__)
 
@@ -108,11 +108,11 @@ def _execute_v2_swap(
     wallet_address: str,
     private_key: str,
     chain: str,
-) -> Optional[str]:
+) -> str | None:
     """Execute a V2 swapExactTokensForTokens. Returns tx_hash or None."""
     try:
-        from web3 import Web3
         from eth_account import Account
+        from web3 import Web3
 
         rpcs = CHAIN_RPCS.get(chain, [])
         w3 = None

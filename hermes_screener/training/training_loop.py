@@ -27,10 +27,8 @@ Cycle schedule:
 import argparse
 import json
 import logging
-import sys
 import time
 from pathlib import Path
-from typing import Optional
 
 logging.basicConfig(
     level   = logging.INFO,
@@ -62,16 +60,16 @@ def save_state(state: dict):
 def run_cycle(
     min_new_exp:    int = DEFAULT_MIN_NEW_EXP,
     max_steps:      int = -1,
-    adapter_name:   Optional[str] = None,
-    cfg_overrides:  Optional[dict] = None,
+    adapter_name:   str | None = None,
+    cfg_overrides:  dict | None = None,
 ) -> dict:
     """
     Run one full training cycle. Returns result dict.
     """
+    from .dataset_builder import DatasetBuilder
     from .experience_buffer import ExperienceBuffer
-    from .dataset_builder   import DatasetBuilder
-    from .fine_tuner        import FineTuner
-    from .model_updater     import ModelUpdater
+    from .fine_tuner import FineTuner
+    from .model_updater import ModelUpdater
 
     t0     = time.time()
     buf    = ExperienceBuffer()
@@ -192,8 +190,8 @@ def main():
 
     # Build-only mode
     if args.build_only:
+        from .dataset_builder import DatasetBuilder
         from .experience_buffer import ExperienceBuffer
-        from .dataset_builder   import DatasetBuilder
         buf    = ExperienceBuffer()
         builder = DatasetBuilder(buffer=buf)
         result  = builder.build_all()

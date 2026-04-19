@@ -14,7 +14,6 @@ All rewards are normalized to [-1.0, +1.0].
 """
 
 import math
-from typing import Tuple
 
 
 class RewardCalculator:
@@ -69,7 +68,7 @@ class RewardCalculator:
         pnl_pct: float,
         hold_hours: float,
         outcome_type: str,
-    ) -> Tuple[float, dict]:
+    ) -> tuple[float, dict]:
         """
         Primary reward for a closed trade.
         Returns (total_reward, component_dict).
@@ -93,8 +92,8 @@ class RewardCalculator:
         self,
         decision: str,
         confidence: float,
-        eventual_pnl_pct: Optional[float],
-    ) -> Tuple[float, dict]:
+        eventual_pnl_pct: float | None,
+    ) -> tuple[float, dict]:
         """
         Calibration reward: was the AI confident in the right direction?
         Used to create training signal for the decision stage before
@@ -125,8 +124,8 @@ class RewardCalculator:
     def compute_scoring_reward(
         self,
         score_given: float,
-        eventual_pnl_pct: Optional[float],
-    ) -> Tuple[float, dict]:
+        eventual_pnl_pct: float | None,
+    ) -> tuple[float, dict]:
         """
         Did the score correctly predict token quality?
         High score + pumped = reward. High score + dumped = penalty.
@@ -150,4 +149,3 @@ class RewardCalculator:
 
 
 # Make Optional available at module scope
-from typing import Optional

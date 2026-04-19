@@ -17,13 +17,11 @@ Usage in trade_monitor.py:
                                    outcome_type, pnl_pct)
 """
 
+import hashlib
 import json
 import time
-import hashlib
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from enum import Enum
-from pathlib import Path
-from typing import Any, Optional
 
 
 class PipelineStage(str, Enum):
@@ -53,7 +51,7 @@ class Experience:
     action: dict = field(default_factory=dict)
 
     # Reward signal (None until outcome is known; filled by RewardCalculator)
-    reward: Optional[float] = None
+    reward: float | None = None
     reward_components: dict = field(default_factory=dict)
 
     # Metadata
@@ -99,7 +97,7 @@ class ExperienceCollector:
     def _save(self, exp: Experience):
         try:
             self._buf.push(exp)
-        except Exception as e:
+        except Exception:
             # Never crash the main pipeline
             import traceback
             traceback.print_exc()
@@ -161,7 +159,7 @@ class ExperienceCollector:
     # Stage 3: Scoring
     # ------------------------------------------------------------------
     def record_token_scored(self, token: dict, score: float,
-                            breakdown: Optional[dict] = None):
+                            breakdown: dict | None = None):
         """Call after scoring (enhanced_scoring or cross_scoring)."""
         addr = token.get("contract_address", "")
         chain = token.get("chain", "")
@@ -286,7 +284,7 @@ class ExperienceCollector:
     # Stage 7: Execution result
     # ------------------------------------------------------------------
     def record_execution(self, address: str, chain: str, symbol: str,
-                         action: str, tx_hash: Optional[str],
+                         action: str, tx_hash: str | None,
                          success: bool, error: str = ""):
         """Call after contract_executor attempts a swap."""
         exp = Experience(

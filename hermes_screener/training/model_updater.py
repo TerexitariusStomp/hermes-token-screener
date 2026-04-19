@@ -18,14 +18,10 @@ to check the sentinel file on each request or restart automatically.
 
 import json
 import logging
-import os
-import signal
-import subprocess
 import time
-from pathlib import Path
-from typing import Optional
-import urllib.request
 import urllib.error
+import urllib.request
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +99,7 @@ class ModelUpdater:
         logger.info("Reload requested via sentinel file")
         return "sentinel_file"
 
-    def get_current_adapter(self) -> Optional[str]:
+    def get_current_adapter(self) -> str | None:
         """Return the currently active adapter path."""
         if POINTER_FILE.exists():
             return POINTER_FILE.read_text().strip()

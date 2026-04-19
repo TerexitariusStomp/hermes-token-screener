@@ -10,7 +10,8 @@ from datetime import datetime
 from pathlib import Path
 
 import yaml
-from hermes_screener.types.template_types import TemplateMetadata, TemplateEntry
+
+from hermes_screener.types.template_types import TemplateEntry, TemplateMetadata
 
 
 class TemplateStorage:
@@ -63,7 +64,7 @@ class TemplateStorage:
             # Archive current as variant
             variants = existing.get("variants", [])
             variants.append(
-                {
+                {  # type: ignore[typeddict-unknown-key]
                     "version": existing["metadata"].get("version", 0),
                     "content": existing["content"],
                     "archived_at": now,

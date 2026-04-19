@@ -12,13 +12,19 @@ Run standalone:
 """
 
 import json
-import sys
 from pathlib import Path
 
 from .utils import (
-    CACHE_DIR, DATASET_DIR, ensure_dirs, write_jsonl, chat_sample,
-    pct_change, fmt_price, fmt_vol, trend_label, reward_from_pct,
+    CACHE_DIR,
+    DATASET_DIR,
+    chat_sample,
+    ensure_dirs,
+    fmt_price,
+    fmt_vol,
     install_pkg,
+    reward_from_pct,
+    trend_label,
+    write_jsonl,
 )
 
 DATASET_ID = "0xscope/web3-trading-analysis"
@@ -33,7 +39,7 @@ Always respond with valid JSON."""
 
 def _ensure_datasets_lib():
     try:
-        import datasets
+        import datasets  # noqa: F401
         return True
     except ImportError:
         print("Installing 'datasets' library...")
@@ -48,8 +54,9 @@ def download(cache_path: Path = CACHE_PATH) -> object:
     """Download the dataset and cache it locally."""
     if not _ensure_datasets_lib():
         return None
-    from datasets import load_dataset
     import os
+
+    from datasets import load_dataset
 
     cache_path.mkdir(parents=True, exist_ok=True)
     hf_token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN")
@@ -158,7 +165,7 @@ def convert(ds, limit: int = 50_000) -> list:
     samples = []
     for split_name, split in ds.items():
         print(f"  Processing split '{split_name}': {len(split)} rows")
-        for i, row in enumerate(split):
+        for _i, row in enumerate(split):
             if len(samples) >= limit:
                 break
             row = dict(row)

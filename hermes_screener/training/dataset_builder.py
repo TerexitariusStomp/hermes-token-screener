@@ -18,11 +18,9 @@ the reward signal.
 """
 
 import json
-import math
 import random
 import time
 from pathlib import Path
-from typing import List, Optional
 
 from .experience_buffer import ExperienceBuffer
 from .experience_collector import PipelineStage
@@ -174,7 +172,7 @@ class DatasetBuilder:
 
     def __init__(
         self,
-        buffer: Optional[ExperienceBuffer] = None,
+        buffer: ExperienceBuffer | None = None,
         out_dir: Path = DEFAULT_OUT_DIR,
     ):
         self.buf     = buffer or ExperienceBuffer()

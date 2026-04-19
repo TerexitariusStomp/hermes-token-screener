@@ -19,9 +19,9 @@ import json
 import sqlite3
 import time
 from pathlib import Path
-from typing import TypedDict, Union
+from typing import TypedDict
 
-JsonValue = Union[dict[str, "JsonValue"], list["JsonValue"], str, int, float, bool, None]
+JsonValue = dict[str, "JsonValue"] | list["JsonValue"] | str | int | float | bool | None
 
 
 class WalletEnrichResult(TypedDict):
@@ -31,9 +31,9 @@ class WalletEnrichResult(TypedDict):
     elapsed: float
 
 
-from hermes_screener.config import settings
-from hermes_screener.logging import get_logger
-from hermes_screener.metrics import metrics
+from hermes_screener.config import settings  # noqa: E402
+from hermes_screener.logging import get_logger  # noqa: E402
+from hermes_screener.metrics import metrics  # noqa: E402
 
 log = get_logger("async_wallets")
 
@@ -283,15 +283,15 @@ async def enrich_wallets_async(
         cursor = conn.cursor()
         for w_addr, entries in wallet_appearances.items():
             source_tokens = list(set(e["token_address"] for e in entries))
-            total_profit = sum(e["profit"] for e in entries)
-            total_realized = sum(e["realized_profit"] for e in entries)
-            total_unrealized = sum(e["unrealized_profit"] for e in entries)
-            avg_roi = total_profit / len(entries) if entries else 0
-            total_trades = sum(e["total_trades"] for e in entries)
-            buy_count = sum(e["buy_tx_count"] for e in entries)
-            sell_count = sum(e["sell_tx_count"] for e in entries)
-            profitable = sum(e["is_profitable"] for e in entries)
-            win_rate = profitable / len(entries) if entries else 0
+            total_profit = sum(e["profit"] for e in entries)  # type: ignore[misc]
+            total_realized = sum(e["realized_profit"] for e in entries)  # type: ignore[misc]
+            total_unrealized = sum(e["unrealized_profit"] for e in entries)  # type: ignore[misc]
+            avg_roi = total_profit / len(entries) if entries else 0  # type: ignore[misc]
+            total_trades = sum(e["total_trades"] for e in entries)  # type: ignore[misc]
+            buy_count = sum(e["buy_tx_count"] for e in entries)  # type: ignore[misc]
+            sell_count = sum(e["sell_tx_count"] for e in entries)  # type: ignore[misc]
+            profitable = sum(e["is_profitable"] for e in entries)  # type: ignore[misc]
+            win_rate = profitable / len(entries) if entries else 0  # type: ignore[misc]
 
             cursor.execute(
                 """

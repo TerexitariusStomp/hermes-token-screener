@@ -4,9 +4,7 @@ Shared utilities for external dataset adapters.
 
 import json
 import os
-import time
 from pathlib import Path
-from typing import Iterator
 
 CACHE_DIR   = Path.home() / ".hermes" / "data" / "external"
 DATASET_DIR = Path.home() / ".hermes" / "data" / "training" / "datasets"
@@ -89,11 +87,16 @@ def fmt_vol(v):
 
 
 def trend_label(pct: float) -> str:
-    if pct > 10:   return "strong bullish"
-    if pct > 3:    return "bullish"
-    if pct > 0:    return "slightly bullish"
-    if pct > -3:   return "slightly bearish"
-    if pct > -10:  return "bearish"
+    if pct > 10:
+        return "strong bullish"
+    if pct > 3:
+        return "bullish"
+    if pct > 0:
+        return "slightly bullish"
+    if pct > -3:
+        return "slightly bearish"
+    if pct > -10:
+        return "bearish"
     return "strong bearish"
 
 
@@ -105,7 +108,8 @@ def reward_from_pct(pct: float) -> float:
 
 def install_pkg(pkg: str) -> bool:
     """pip install a package at runtime if missing."""
-    import subprocess, sys
+    import subprocess
+    import sys
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pip", "install", "--quiet",

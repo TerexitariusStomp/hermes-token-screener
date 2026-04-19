@@ -17,6 +17,7 @@ Key concepts from Holos paper:
 from __future__ import annotations
 
 import json
+import logging
 import os
 import textwrap
 from collections.abc import Callable
@@ -34,6 +35,7 @@ from .registry import (
     RoutingStrategy,
 )
 
+logger = logging.getLogger(__name__)
 
 # ── TypedDicts for structured return types ─────────────────────────────────
 
@@ -649,7 +651,7 @@ class DelegationRouter:
             for a in log.get("assignments", [])
             if a.get("status") is None
         )
-        return {
+        return {  # type: ignore[typeddict-item,typeddict-unknown-key]
             "registry_stats": self.registry.stats(),
             "recent_tasks": len(self._task_log),
             "active_assignments": active_tasks,

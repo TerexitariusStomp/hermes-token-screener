@@ -28,9 +28,9 @@ Max capacity: configurable, default 500k rows. Oldest rows pruned.
 import json
 import sqlite3
 import time
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterator, List, Optional
 
 from .experience_collector import Experience
 
@@ -155,7 +155,7 @@ class ExperienceBuffer:
                 VALUES (?, ?, ?, ?)
             """, (episode_id, reward, time.time(), rows))
 
-    def mark_trained(self, ids: List[int]):
+    def mark_trained(self, ids: list[int]):
         if not ids:
             return
         placeholders = ",".join("?" * len(ids))
@@ -189,12 +189,12 @@ class ExperienceBuffer:
     # ------------------------------------------------------------------
     def fetch_trainable(
         self,
-        min_reward: Optional[float] = None,
+        min_reward: float | None = None,
         limit: int = 10_000,
         only_with_reward: bool = True,
         exclude_trained: bool = True,
-        stages: Optional[List[str]] = None,
-    ) -> List[Experience]:
+        stages: list[str] | None = None,
+    ) -> list[Experience]:
         """Fetch experiences eligible for a training run."""
         clauses = ["quality_flag = 1"]
         params: list = []
@@ -223,7 +223,7 @@ class ExperienceBuffer:
             rows = conn.execute(query, params).fetchall()
         return [Experience.from_dict(dict(r)) for r in rows]
 
-    def fetch_episode(self, episode_id: str) -> List[Experience]:
+    def fetch_episode(self, episode_id: str) -> list[Experience]:
         with self._conn() as conn:
             rows = conn.execute(
                 "SELECT * FROM experiences WHERE episode_id=? ORDER BY timestamp",

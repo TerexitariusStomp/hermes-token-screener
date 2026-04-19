@@ -3,9 +3,10 @@ import os
 import sqlite3
 from datetime import datetime
 from pathlib import Path
-from hermes_screener.types.template_types import TemplateSuggestion
 
 import yaml
+
+from hermes_screener.types.template_types import TemplateSuggestion
 
 
 class DSPOptimizer:
@@ -189,7 +190,7 @@ class DSPOptimizer:
                     template=variant,
                     score=score,
                     rationale=rationale,
-                    examples=examples,
+                    examples=examples,  # type: ignore[typeddict-item]
                     metrics=metrics,
                 )
             )

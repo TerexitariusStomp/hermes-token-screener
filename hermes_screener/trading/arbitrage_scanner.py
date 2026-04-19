@@ -12,7 +12,7 @@ import urllib.request
 from dataclasses import dataclass, field
 from decimal import Decimal, getcontext
 from itertools import combinations
-from typing import List, Optional
+from typing import Optional
 
 getcontext().prec = 28
 
@@ -83,7 +83,7 @@ def _rpc_call(chain: str, method: str, params: list = None) -> dict:
     return {"error": "rpc_failed"}
 
 
-def _eth_call(chain: str, to: str, data: str) -> Optional[str]:
+def _eth_call(chain: str, to: str, data: str) -> str | None:
     """eth_call returning hex result or None."""
     r = _rpc_call(chain, "eth_call", [{"to": to, "data": data}, "latest"])
     result = r.get("result", "")
@@ -108,9 +108,9 @@ def _get_token_decimals(token: str, chain: str) -> int:
     return 18  # fallback
 
 
-def _check_v2_pool(factory: str, tA: str, tB: str, chain: str) -> Optional[str]:
+def _check_v2_pool(factory: str, token_a: str, token_b: str, chain: str) -> str | None:
     """Return V2 pool address or None."""
-    data = "0xe6a43905" + tA[2:].zfill(64) + tB[2:].zfill(64)
+    data = "0xe6a43905" + token_a[2:].zfill(64) + token_b[2:].zfill(64)
     result = _eth_call(chain, factory, data)
     if result and len(result) >= 66:
         addr = "0x" + result[-40:]
@@ -118,9 +118,9 @@ def _check_v2_pool(factory: str, tA: str, tB: str, chain: str) -> Optional[str]:
     return None
 
 
-def _check_v3_pool(factory: str, tA: str, tB: str, fee: int, chain: str) -> Optional[str]:
+def _check_v3_pool(factory: str, token_a: str, token_b: str, fee: int, chain: str) -> str | None:
     """Return V3 pool address or None."""
-    data = "0x1698ee82" + tA[2:].zfill(64) + tB[2:].zfill(64) + hex(fee)[2:].zfill(64)
+    data = "0x1698ee82" + token_a[2:].zfill(64) + token_b[2:].zfill(64) + hex(fee)[2:].zfill(64)
     result = _eth_call(chain, factory, data)
     if result and len(result) >= 66:
         addr = "0x" + result[-40:]
@@ -128,11 +128,11 @@ def _check_v3_pool(factory: str, tA: str, tB: str, fee: int, chain: str) -> Opti
     return None
 
 
-def _quote_v2(router: str, tA: str, tB: str, amount_wei: int, chain: str) -> Optional[int]:
+def _quote_v2(router: str, token_a: str, token_b: str, amount_wei: int, chain: str) -> int | None:
     """getAmountsOut quote from V2 router."""
     path_off = "0" * 62 + "40"
     path_len = "0" * 62 + "02"
-    data = "0xd06ca61f" + hex(amount_wei)[2:].zfill(64) + path_off + path_len + tA[2:].zfill(64) + tB[2:].zfill(64)
+    data = "0xd06ca61f" + hex(amount_wei)[2:].zfill(64) + path_off + path_len + token_a[2:].zfill(64) + token_b[2:].zfill(64)
     result = _eth_call(chain, router, data)
     if result and len(result) >= 258:
         try:
@@ -144,7 +144,7 @@ def _quote_v2(router: str, tA: str, tB: str, amount_wei: int, chain: str) -> Opt
     return None
 
 
-def _quote_v3_slot0(pool: str, dec_in: int, dec_out: int, chain: str) -> Optional[float]:
+def _quote_v3_slot0(pool: str, dec_in: int, dec_out: int, chain: str) -> float | None:
     """Spot price from V3 slot0 sqrtPriceX96."""
     result = _eth_call(chain, pool, "0x3850c7bd")
     if result and len(result) >= 66:
@@ -190,12 +190,12 @@ def fetch_all_pool_quotes(
     base_token: str,
     chain: str,
     amount: Decimal,
-) -> List[PoolQuote]:
+) -> list[PoolQuote]:
     """
     Query every known DEX factory for pools containing token_address/base_token pair.
     Returns price quotes from each discovered pool via direct RPC.
     """
-    quotes: List[PoolQuote] = []
+    quotes: list[PoolQuote] = []
     tA = token_address.lower()
     tB = base_token.lower()
 
@@ -340,7 +340,7 @@ def scan_arbitrage(
     eth_price_usd: float = 3000.0,
     min_profit_pct: float = 0.002,
     amount: Decimal = Decimal("0.01"),
-) -> List[ArbOpportunity]:
+) -> list[ArbOpportunity]:
     """
     Scan all known pools for token_address/base_token, return profitable arb opportunities
     sorted by net_profit_pct descending.
@@ -351,7 +351,7 @@ def scan_arbitrage(
         return []
 
     min_pct = Decimal(str(min_profit_pct))
-    opportunities: List[ArbOpportunity] = []
+    opportunities: list[ArbOpportunity] = []
 
     for q1, q2 in combinations(quotes, 2):
         # Try both directions

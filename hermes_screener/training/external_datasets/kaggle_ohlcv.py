@@ -21,17 +21,23 @@ Run single:
 
 import argparse
 import csv
-import io
 import json
-import os
-import zipfile
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 from .utils import (
-    CACHE_DIR, DATASET_DIR, ensure_dirs, write_jsonl, chat_sample,
-    pct_change, fmt_price, fmt_vol, trend_label, reward_from_pct,
-    install_pkg, check_kaggle_credentials,
+    CACHE_DIR,
+    DATASET_DIR,
+    chat_sample,
+    check_kaggle_credentials,
+    ensure_dirs,
+    fmt_price,
+    fmt_vol,
+    install_pkg,
+    pct_change,
+    reward_from_pct,
+    trend_label,
+    write_jsonl,
 )
 
 # -------------------------------------------------------------------
@@ -67,7 +73,7 @@ Respond with valid JSON."""
 
 def _ensure_kaggle_lib() -> bool:
     try:
-        import kaggle
+        import kaggle  # noqa: F401
         return True
     except ImportError:
         print("Installing 'kaggle' library...")
@@ -99,7 +105,7 @@ def download_dataset(dataset_id: str, cache_dir: Path) -> Path | None:
 
     dest.mkdir(parents=True, exist_ok=True)
     try:
-        import kaggle
+        import kaggle  # noqa: F401
         print(f"Downloading Kaggle dataset: {dataset_id}")
         kaggle.api.authenticate()
         kaggle.api.dataset_download_files(
@@ -177,16 +183,16 @@ def _candle_analysis_sample(rows: list, symbol: str) -> dict | None:
     today = rows[-1]
     prev  = rows[-2]
     try:
-        o, h, l, c = float(today["open"]), float(today["high"]), float(today["low"]), float(today["close"])
+        o, h, low, c = float(today["open"]), float(today["high"]), float(today["low"]), float(today["close"])
         pc = float(prev["close"])
     except (ValueError, KeyError):
         return None
 
     day_chg   = pct_change(o, c)
     vs_prev   = pct_change(pc, c)
-    body_pct  = abs(c - o) / (h - l) * 100 if (h - l) > 0 else 0
-    upper_wick = (h - max(o, c)) / (h - l) * 100 if (h - l) > 0 else 0
-    lower_wick = (min(o, c) - l) / (h - l) * 100 if (h - l) > 0 else 0
+    body_pct  = abs(c - o) / (h - low) * 100 if (h - low) > 0 else 0
+    upper_wick = (h - max(o, c)) / (h - low) * 100 if (h - low) > 0 else 0
+    lower_wick = (min(o, c) - low) / (h - low) * 100 if (h - low) > 0 else 0
     vol_str   = fmt_vol(today.get("volume", 0))
 
     user = (
@@ -194,7 +200,7 @@ def _candle_analysis_sample(rows: list, symbol: str) -> dict | None:
         f"Date: {today.get('date', 'unknown')}\n"
         f"Open:  {fmt_price(o)}\n"
         f"High:  {fmt_price(h)}\n"
-        f"Low:   {fmt_price(l)}\n"
+        f"Low:   {fmt_price(low)}\n"
         f"Close: {fmt_price(c)}\n"
         f"Volume: {vol_str}\n"
         f"Day change: {day_chg:+.2f}%\n"
