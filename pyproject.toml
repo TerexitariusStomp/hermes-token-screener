@@ -75,10 +75,7 @@ packages = ["hermes_screener"]
 [tool.black]
 target-version = ["py312"]
 line-length = 120
-["py312"]
-line-length = 120
-["py312"]
-line-length = 120
+
 
 [tool.ruff]
 line-length = 120
