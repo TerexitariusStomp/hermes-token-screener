@@ -39,9 +39,28 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
 
     # ── SYMBOL BLOCKLIST: fiat/stablecoins are not tradeable tokens ──
     BLOCKED_SYMBOLS = {
-        "usd", "usdt", "usdc", "dai", "busd", "tusd", "eur", "gbp",
-        "jpy", "cny", "btc", "eth", "sol", "bnb", "xrp", "wsol",
-        "weth", "wbtc", "steth", "cbeth", "sui", "matic",
+        "usd",
+        "usdt",
+        "usdc",
+        "dai",
+        "busd",
+        "tusd",
+        "eur",
+        "gbp",
+        "jpy",
+        "cny",
+        "btc",
+        "eth",
+        "sol",
+        "bnb",
+        "xrp",
+        "wsol",
+        "weth",
+        "wbtc",
+        "steth",
+        "cbeth",
+        "sui",
+        "matic",
     }
     symbol = (dex.get("symbol") or token.get("symbol") or "").lower().strip()
     if symbol in BLOCKED_SYMBOLS:
@@ -86,13 +105,13 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         elif vol_fdv_ratio > 1:
             fdv_vol_score = 12  # REDUCED from 22
         elif vol_fdv_ratio > 0.5:
-            fdv_vol_score = 9   # REDUCED from 18
+            fdv_vol_score = 9  # REDUCED from 18
         elif vol_fdv_ratio > 0.2:
-            fdv_vol_score = 6   # REDUCED from 14
+            fdv_vol_score = 6  # REDUCED from 14
         elif vol_fdv_ratio > 0.05:
-            fdv_vol_score = 3   # REDUCED from 10
+            fdv_vol_score = 3  # REDUCED from 10
         else:
-            fdv_vol_score = 1   # REDUCED from 5
+            fdv_vol_score = 1  # REDUCED from 5
         score += fdv_vol_score
     elif fdv > 0:
         # FDV but no volume data - very minor points only
@@ -132,15 +151,15 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     if smart >= 50:
         score += 12  # REDUCED from 15
     elif smart >= 30:
-        score += 9   # REDUCED from 12
+        score += 9  # REDUCED from 12
     elif smart >= 20:
-        score += 7   # REDUCED from 10
+        score += 7  # REDUCED from 10
     elif smart >= 10:
-        score += 5   # REDUCED from 7
+        score += 5  # REDUCED from 7
     elif smart >= 5:
-        score += 3   # REDUCED from 4
+        score += 3  # REDUCED from 4
     elif smart >= 1:
-        score += 1   # REDUCED from 2
+        score += 1  # REDUCED from 2
 
     # ── 4. DEV HOLDING (0-8 points) - REDUCED FROM 10 ──
     if token.get("gmgn_dev_hold"):
