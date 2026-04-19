@@ -1,0 +1,61 @@
+{
+  "count": 4,
+  "opportunities": [
+    {
+      "pair": "BROTHER/STRK",
+      "low_dex": "ekubo",
+      "low_price": "3.120E-9",
+      "high_dex": "ekubo",
+      "high_price": "3.275E-9",
+      "pct_diff": "4.967948717948717948717948718",
+      "low_liquidity_usd": "445.01",
+      "high_liquidity_usd": "21352.71",
+      "low_volume_h24": "2.27",
+      "high_volume_h24": "31.76",
+      "pairAddress_low": "0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-17014118346046923173168730371588410572-95310-0x0",
+      "pairAddress_high": "0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-1020847100762815390390123822295304634-5982-0x0"
+    },
+    {
+      "pair": "SURVIVOR/STRK",
+      "low_dex": "ekubo",
+      "low_price": "4.1381",
+      "high_dex": "ekubo",
+      "high_price": "4.2769",
+      "pct_diff": "3.354196370314878809115294459",
+      "low_liquidity_usd": "16990.49",
+      "high_liquidity_usd": "590.54",
+      "low_volume_h24": "133.85",
+      "high_volume_h24": "98.45",
+      "pairAddress_low": "0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-17014118346046923173168730371588410572-95310-0x0",
+      "pairAddress_high": "0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-3402823669209384634633746074317682114-354892-0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc"
+    },
+    {
+      "pair": "LORDS/STRK",
+      "low_dex": "ekubo",
+      "low_price": "0.1857",
+      "high_dex": "ekubo",
+      "high_price": "0.1903",
+      "pct_diff": "2.477113624124932687129779214",
+      "low_liquidity_usd": "4114.65",
+      "high_liquidity_usd": "10.12",
+      "low_volume_h24": "160.02",
+      "high_volume_h24": "0.14",
+      "pairAddress_low": "0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-3402823669209384634633746074317682114-19802-0x0",
+      "pairAddress_high": "0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-170141183460469235273462165868118016-354892-0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc"
+    },
+    {
+      "pair": "STRK/USDC",
+      "low_dex": "ekubo",
+      "low_price": "0.03462",
+      "high_dex": "ekubo",
+      "high_price": "0.03511",
+      "pct_diff": "1.415366839976891969959560947",
+      "low_liquidity_usd": "145.49",
+      "high_liquidity_usd": "14054.94",
+      "low_volume_h24": "6.42",
+      "high_volume_h24": "5206.64",
+      "pairAddress_low": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8-34028236692093847977029636859101184-200-0x0",
+      "pairAddress_high": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8-170141183460469235273462165868118016-1000-0x0"
+    }
+  ]
+}

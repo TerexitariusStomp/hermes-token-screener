@@ -1,0 +1,19 @@
+{
+  "chain": "tron",
+  "files": {
+    "sunswap_v1": "/home/terexitarius/.hermes/data/tron_sunswap_allpairs_v1.json",
+    "sunswap_v2": "/home/terexitarius/.hermes/data/tron_sunswap_allpairs_v2.json",
+    "sunswap_v3": "/home/terexitarius/.hermes/data/tron_sunswap_allpairs_v3.json",
+    "justswap": "/home/terexitarius/.hermes/data/tron_justswap_allpairs.json",
+    "poloniex_markets": "/home/terexitarius/.hermes/data/poloniex_markets.json",
+    "arb_opps": "/home/terexitarius/.hermes/data/tron_arb_opportunities_filtered.json"
+  },
+  "counts": {
+    "sunswap_v1": 20633,
+    "sunswap_v2": 399,
+    "sunswap_v3": 4952,
+    "justswap": 15233,
+    "poloniex_markets": 922,
+    "arb_opps": 3
+  }
+}

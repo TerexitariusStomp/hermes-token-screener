@@ -1,0 +1,7 @@
+{
+  "chain": "starknet",
+  "initial_pairs": 22,
+  "token_lookup_pairs": 63,
+  "unique_pairs": 65,
+  "out_file": "/home/terexitarius/.hermes/data/starknet_dex_pools_expanded.json"
+}

@@ -1,0 +1,162 @@
+{
+  "chain": "Starknet",
+  "total_dex_count": 14,
+  "total_dex_tvl": 43416783,
+  "dexes": [
+    {
+      "name": "Ekubo",
+      "slug": "ekubo",
+      "category": "Dexs",
+      "tvl": "$39.9M",
+      "tvl_raw": 39926049,
+      "chains": [
+        "Starknet",
+        "Ethereum"
+      ],
+      "address": "starknet:0x75afe6402ad5a5c20dd25e10ec3b3986acaa647b77e4ae24b0cbc9a54a27a87"
+    },
+    {
+      "name": "JediSwap V1",
+      "slug": "jediswap-v1",
+      "category": "Dexs",
+      "tvl": "$873K",
+      "tvl_raw": 872873,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "10KSwap",
+      "slug": "10kswap",
+      "category": "Dexs",
+      "tvl": "$682K",
+      "tvl_raw": 681859,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "mySwap V1",
+      "slug": "myswap-v1",
+      "category": "Dexs",
+      "tvl": "$611K",
+      "tvl_raw": 610949,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "Nostra Pools",
+      "slug": "nostra-pools",
+      "category": "Dexs",
+      "tvl": "$421K",
+      "tvl_raw": 421209,
+      "chains": [
+        "Starknet"
+      ],
+      "address": "0x610dbd98a28ebba525e9926b6aaf88f9159edbfd"
+    },
+    {
+      "name": "mySwap CL",
+      "slug": "myswap-cl",
+      "category": "Dexs",
+      "tvl": "$388K",
+      "tvl_raw": 387814,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "SithSwap",
+      "slug": "sithswap",
+      "category": "Dexs",
+      "tvl": "$163K",
+      "tvl_raw": 163207,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "StarkDeFI",
+      "slug": "starkdefi",
+      "category": "Dexs",
+      "tvl": "$152K",
+      "tvl_raw": 152087,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "AstroSwap AMM",
+      "slug": "astroswap-amm",
+      "category": "Dexs",
+      "tvl": "$70K",
+      "tvl_raw": 70192,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "Haiko",
+      "slug": "haiko",
+      "category": "Dexs",
+      "tvl": "$55K",
+      "tvl_raw": 55159,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "JediSwap V2",
+      "slug": "jediswap-v2",
+      "category": "Dexs",
+      "tvl": "$35K",
+      "tvl_raw": 35401,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "LayerAkira",
+      "slug": "layerakira",
+      "category": "Dexs",
+      "tvl": "$26K",
+      "tvl_raw": 25622,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "ProtossDex",
+      "slug": "protossdex",
+      "category": "Dexs",
+      "tvl": "$13K",
+      "tvl_raw": 12973,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    },
+    {
+      "name": "CairoFi",
+      "slug": "cairofi",
+      "category": "Dexs",
+      "tvl": "$1K",
+      "tvl_raw": 1389,
+      "chains": [
+        "Starknet"
+      ],
+      "address": null
+    }
+  ]
+}
