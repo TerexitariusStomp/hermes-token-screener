@@ -359,13 +359,9 @@ def main():
 
     # Extract actual token names (cleaner signal)
     token_names = extract_token_names(texts)
-    name_freq = Counter(
-        n.lower() for n in token_names if len(n) >= 2 and n.lower() not in STOPWORDS
-    )
+    name_freq = Counter(n.lower() for n in token_names if len(n) >= 2 and n.lower() not in STOPWORDS)
     token_keywords = [
-        {"keyword": name, "count": count, "type": "token"}
-        for name, count in name_freq.most_common(20)
-        if count >= 2
+        {"keyword": name, "count": count, "type": "token"} for name, count in name_freq.most_common(20) if count >= 2
     ]
 
     # Also extract general keywords from names only (not metadata)

@@ -89,9 +89,28 @@ def score_token(token: dict) -> tuple[float, list[str], list[str]]:
 
     # ── SYMBOL BLOCKLIST: fiat/stablecoins are not tradeable tokens ──
     BLOCKED_SYMBOLS = {
-        "usd", "usdt", "usdc", "dai", "busd", "tusd", "eur", "gbp",
-        "jpy", "cny", "btc", "eth", "sol", "bnb", "xrp", "wsol",
-        "weth", "wbtc", "steth", "cbeth", "sui", "matic",
+        "usd",
+        "usdt",
+        "usdc",
+        "dai",
+        "busd",
+        "tusd",
+        "eur",
+        "gbp",
+        "jpy",
+        "cny",
+        "btc",
+        "eth",
+        "sol",
+        "bnb",
+        "xrp",
+        "wsol",
+        "weth",
+        "wbtc",
+        "steth",
+        "cbeth",
+        "sui",
+        "matic",
     }
     symbol = (dex.get("symbol") or token.get("symbol") or "").lower().strip()
     if symbol in BLOCKED_SYMBOLS:
@@ -453,9 +472,7 @@ class EnricherResult:
 
         for name, result in self.layers.items():
             status = "✅" if result["success"] else "❌"
-            lines.append(
-                f"  {status} {name}: {result['enriched']}/{result['total']} ({result['elapsed']:.1f}s)"
-            )
+            lines.append(f"  {status} {name}: {result['enriched']}/{result['total']} ({result['elapsed']:.1f}s)")
             if result["error"]:
                 lines.append(f"    Error: {result['error']}")
 
@@ -482,9 +499,7 @@ class SocialSignalEnricher:
                     enriched_count += 1
             except Exception as e:
                 # Log error but continue with other tokens
-                log.debug(
-                    f"Social enrichment failed for {token.get('symbol', '?')}: {e}"
-                )
+                log.debug(f"Social enrichment failed for {token.get('symbol', '?')}: {e}")
                 continue
 
         return enriched_count, len(tokens)
@@ -534,9 +549,7 @@ class SocialSignalEnricher:
         if signals:
             # Calculate overall social momentum
             telegram_score = signals.get("social_score", 0)
-            twitter_score = (
-                signals.get("twitter_activity", 0) * 0.5
-            )  # Weight Twitter less
+            twitter_score = signals.get("twitter_activity", 0) * 0.5  # Weight Twitter less
 
             total_momentum = telegram_score + twitter_score
             if total_momentum >= 100:
@@ -579,9 +592,7 @@ def run_enricher():
 
     try:
         # Run async enrichment
-        enriched, layer_results = asyncio.run(
-            run_async_enrichment(candidates[:MAX_ENRICH], max_enrich=MAX_ENRICH)
-        )
+        enriched, layer_results = asyncio.run(run_async_enrichment(candidates[:MAX_ENRICH], max_enrich=MAX_ENRICH))
 
         # Record results from async enrichment
         for result in layer_results:
@@ -617,9 +628,7 @@ def run_enricher():
         token["positives"] = positives
         token["negatives"] = negatives
         try:
-            collector.record_token_scored(
-                token, score, {"positives": positives, "negatives": negatives}
-            )
+            collector.record_token_scored(token, score, {"positives": positives, "negatives": negatives})
         except Exception:
             pass
 
@@ -627,7 +636,7 @@ def run_enricher():
     def filter_duplicate_names(tokens: list[dict]) -> list[dict]:
         """Filter duplicate token names per chain, keeping only the highest-scoring one."""
         from collections import defaultdict
-        
+
         # Group tokens by (symbol, chain)
         groups = defaultdict(list)
         for token in tokens:
@@ -635,7 +644,7 @@ def run_enricher():
             chain = token.get("chain", "").lower()
             if symbol and chain:
                 groups[(symbol, chain)].append(token)
-        
+
         # Keep only the highest-scoring token per group
         filtered_tokens = []
         for (symbol, chain), group_tokens in groups.items():
@@ -646,7 +655,7 @@ def run_enricher():
                 group_tokens.sort(key=lambda t: t.get("score", 0), reverse=True)
                 top_token = group_tokens[0]
                 filtered_tokens.append(top_token)
-                
+
                 # Log the filtering
                 duplicates = group_tokens[1:]
                 if duplicates:
@@ -658,9 +667,9 @@ def run_enricher():
                         filtered_count=len(duplicates),
                         filtered_scores=[t.get("score", 0) for t in duplicates],
                     )
-        
+
         return filtered_tokens
-    
+
     # Apply duplicate name filtering before final sorting
     enriched = filter_duplicate_names(enriched)
 
@@ -683,13 +692,7 @@ def run_enricher():
         json.dump(output, f, indent=2, default=str)
 
     # Save as Phase 1 (initial enrichment scores)
-    phase1_path = (
-        Path.home()
-        / ".hermes"
-        / "data"
-        / "token_screener"
-        / "top100_phase1_initial.json"
-    )
+    phase1_path = Path.home() / ".hermes" / "data" / "token_screener" / "top100_phase1_initial.json"
     with open(phase1_path, "w") as f:
         json.dump({**output, "phase": "phase1_initial"}, f, indent=2, default=str)
 
@@ -728,12 +731,8 @@ def run_enricher():
 def main():
 
     parser = argparse.ArgumentParser(description="Token enrichment pipeline")
-    parser.add_argument(
-        "--max-tokens", type=int, default=None, help="Max tokens to enrich"
-    )
-    parser.add_argument(
-        "--min-channels", type=int, default=None, help="Min channel count"
-    )
+    parser.add_argument("--max-tokens", type=int, default=None, help="Max tokens to enrich")
+    parser.add_argument("--min-channels", type=int, default=None, help="Min channel count")
     parser.add_argument(
         "--async-mode",
         action="store_true",
@@ -767,10 +766,7 @@ def main():
         if enriched:
             scored = score_and_output(enriched)
             elapsed = time.time() - start
-            log.info(
-                f"\nAsync completed in {elapsed:.1f}s: {len(enriched)} tokens enriched, "
-                f"{len(scored)} scored"
-            )
+            log.info(f"\nAsync completed in {elapsed:.1f}s: {len(enriched)} tokens enriched, " f"{len(scored)} scored")
             result = {"status": "ok", "tokens": len(enriched), "scored": len(scored)}
         else:
             result = {"status": "no_enrichment"}

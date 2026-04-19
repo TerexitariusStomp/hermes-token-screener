@@ -104,10 +104,7 @@ class CallChannelTracker:
 
         # Find the RickBurp channel
         async for dialog in self.client.iter_dialogs():
-            if (
-                hasattr(dialog.entity, "title")
-                and "rickburp" in dialog.entity.title.lower()
-            ):
+            if hasattr(dialog.entity, "title") and "rickburp" in dialog.entity.title.lower():
                 self.channel = dialog.entity
                 print(f"Found channel: {self.channel.title} (ID: {self.channel.id})")
                 break
@@ -222,10 +219,7 @@ class CallChannelTracker:
             for msg in messages_after:
                 if msg.id > last_msg_id_before and msg.message:
                     # Check if this is from the bot (Rick)
-                    if (
-                        msg.sender_id
-                        and msg.sender_id != (await self.client.get_me()).id
-                    ):
+                    if msg.sender_id and msg.sender_id != (await self.client.get_me()).id:
                         # This is likely the bot's response
                         bot_response = msg.message
                         break
@@ -265,9 +259,7 @@ class CallChannelTracker:
             # Or: "15h 🌐 HONESTRUG @ 238K ⇨ 581K"
             if "⇨" in line:
                 # Extract token name and performance
-                token_match = re.search(
-                    r"([A-Za-z0-9]+) @ ([0-9.]+[KMB]?) ⇨ ([0-9.]+[KMB]?)", line
-                )
+                token_match = re.search(r"([A-Za-z0-9]+) @ ([0-9.]+[KMB]?) ⇨ ([0-9.]+[KMB]?)", line)
                 if token_match:
                     token_name = token_match.group(1)
                     first_cap = token_match.group(2)
@@ -361,9 +353,7 @@ class CallChannelTracker:
             # Format: "🥇 🌐 BOAR @ 145K ⋅ 93d"
             # Or: "🥈 🌐 SPRINGULAR @ 96K ⋅ 3h"
             if "🌐" in line and "@" in line:
-                token_match = re.search(
-                    r"([A-Za-z0-9]+) @ ([0-9.]+[KMB]?) ⋅ ([0-9]+[dhm])", line
-                )
+                token_match = re.search(r"([A-Za-z0-9]+) @ ([0-9.]+[KMB]?) ⋅ ([0-9]+[dhm])", line)
                 if token_match:
                     token_name = token_match.group(1)
                     market_cap = token_match.group(2)
@@ -390,9 +380,7 @@ class CallChannelTracker:
             # Format: "🥇 💊 BANG @ 11K ⋅ 30m"
             # Or: "🥈 💊 POMPOM @ 13K ⋅ 10m"
             if "💊" in line and "@" in line:
-                token_match = re.search(
-                    r"([A-Za-z0-9]+) @ ([0-9.]+[KMB]?) ⋅ ([0-9]+[dhm])", line
-                )
+                token_match = re.search(r"([A-Za-z0-9]+) @ ([0-9.]+[KMB]?) ⋅ ([0-9]+[dhm])", line)
                 if token_match:
                     token_name = token_match.group(1)
                     market_cap = token_match.group(2)
@@ -423,9 +411,7 @@ class CallChannelTracker:
                     author = tweet_match.group(1)
                     age = tweet_match.group(2)
 
-                    tweets.append(
-                        {"author": author, "age": age, "source": "trending_tweets"}
-                    )
+                    tweets.append({"author": author, "age": age, "source": "trending_tweets"})
 
         return tweets
 
@@ -562,9 +548,7 @@ class CallChannelTracker:
         social_links = {"twitter": [], "telegram": [], "discord": [], "website": []}
 
         # Twitter/X links
-        twitter_pattern = re.compile(
-            r"(?:https?://)?(?:www\.)?(?:twitter\.com|x\.com)/(\w+)"
-        )
+        twitter_pattern = re.compile(r"(?:https?://)?(?:www\.)?(?:twitter\.com|x\.com)/(\w+)")
         twitter_matches = twitter_pattern.findall(text)
         social_links["twitter"] = twitter_matches
 
@@ -574,9 +558,7 @@ class CallChannelTracker:
         social_links["telegram"] = telegram_matches
 
         # Discord links
-        discord_pattern = re.compile(
-            r"(?:https?://)?(?:www\.)?discord\.gg/([a-zA-Z0-9]+)"
-        )
+        discord_pattern = re.compile(r"(?:https?://)?(?:www\.)?discord\.gg/([a-zA-Z0-9]+)")
         discord_matches = discord_pattern.findall(text)
         social_links["discord"] = discord_matches
 
@@ -587,9 +569,7 @@ class CallChannelTracker:
 
         return social_links
 
-    def get_token_address_from_name(
-        self, token_name: str, chain: str = "solana"
-    ) -> Dict:
+    def get_token_address_from_name(self, token_name: str, chain: str = "solana") -> Dict:
         """Get token address from token name using external APIs."""
         result = {
             "name": token_name,
@@ -616,17 +596,14 @@ class CallChannelTracker:
                             base_token = pair["baseToken"]
                             if (
                                 base_token.get("name", "").lower() == token_name.lower()
-                                or base_token.get("symbol", "").lower()
-                                == token_name.lower()
+                                or base_token.get("symbol", "").lower() == token_name.lower()
                             ):
                                 result["address"] = base_token.get("address")
                                 result["chain"] = pair.get("chainId", chain)
                                 result["source"] = "dexscreener"
                                 result["dex"] = pair.get("dexId", "")
                                 result["price"] = pair.get("priceUsd", "")
-                                result["liquidity"] = pair.get("liquidity", {}).get(
-                                    "usd", ""
-                                )
+                                result["liquidity"] = pair.get("liquidity", {}).get("usd", "")
                                 result["volume"] = pair.get("volume", {}).get("h24", "")
                                 break
         except Exception as e:
@@ -745,9 +722,7 @@ class CallChannelTracker:
                     # Extract token addresses and social links
                     addresses = self.extract_token_addresses(response)
                     social_links = self.extract_social_links(response)
-                    print(
-                        f"  Found {len(addresses)} token addresses, {len(social_links['telegram'])} Telegram links"
-                    )
+                    print(f"  Found {len(addresses)} token addresses, {len(social_links['telegram'])} Telegram links")
 
                     # Store token information
                     if addresses:
@@ -792,9 +767,7 @@ class CallChannelTracker:
                 addresses = self.extract_token_addresses(response)
                 social_links = self.extract_social_links(response)
                 if addresses or social_links["telegram"]:
-                    print(
-                        f"  Extracted {len(addresses)} addresses, {len(social_links['telegram'])} Telegram links"
-                    )
+                    print(f"  Extracted {len(addresses)} addresses, {len(social_links['telegram'])} Telegram links")
 
                     # Store social links in database
                     for telegram_link in social_links["telegram"]:
@@ -813,20 +786,14 @@ class CallChannelTracker:
                         )
                         self.db_conn.commit()
 
-                print(
-                    f"  Processed {command}: found {len(tokens) if 'tokens' in locals() else 0} tokens"
-                )
+                print(f"  Processed {command}: found {len(tokens) if 'tokens' in locals() else 0} tokens")
 
             # Wait between commands to avoid rate limits
             await asyncio.sleep(2)
 
         # Get token addresses for tokens that don't have them (limit to top 20)
         print("\n=== Getting token addresses from external APIs ===")
-        tokens_to_enrich = [
-            token
-            for token in all_tokens
-            if not token.get("address") and token.get("name")
-        ][:20]
+        tokens_to_enrich = [token for token in all_tokens if not token.get("address") and token.get("name")][:20]
         print(f"Enriching {len(tokens_to_enrich)} tokens with addresses...")
 
         for i, token in enumerate(tokens_to_enrich):
@@ -849,9 +816,7 @@ class CallChannelTracker:
             if i < len(tokens_to_enrich) - 1:
                 await asyncio.sleep(0.5)
 
-        print(
-            f"Successfully enriched {len([t for t in tokens_to_enrich if t.get('address')])} tokens with addresses"
-        )
+        print(f"Successfully enriched {len([t for t in tokens_to_enrich if t.get('address')])} tokens with addresses")
 
         # Calculate channel performance
         channel_performance = {}
@@ -942,18 +907,12 @@ class CallChannelTracker:
         print(f"\n=== Enriching {len(token_addresses)} unique token addresses ===")
 
         # For each unique address, run token-specific commands
-        for i, address in enumerate(
-            list(token_addresses)[:10]
-        ):  # Limit to 10 addresses
-            print(
-                f"  Processing address {i+1}/{min(10, len(token_addresses))}: {address[:20]}..."
-            )
+        for i, address in enumerate(list(token_addresses)[:10]):  # Limit to 10 addresses
+            print(f"  Processing address {i+1}/{min(10, len(token_addresses))}: {address[:20]}...")
 
             # Run /x command for detailed scan
             try:
-                response = await self.send_command(
-                    f"/x {address}", f"Detailed scan for {address[:10]}..."
-                )
+                response = await self.send_command(f"/x {address}", f"Detailed scan for {address[:10]}...")
                 if response:
                     # Parse detailed scan
                     token_info = self.parse_x_response(response)
@@ -1029,20 +988,14 @@ class CallChannelTracker:
                     await asyncio.sleep(1)
 
                 except Exception as e:
-                    print(
-                        f"  Error getting socials for {token.get('name', 'unknown')}: {e}"
-                    )
+                    print(f"  Error getting socials for {token.get('name', 'unknown')}: {e}")
 
         # Get addresses for tokens that don't have them
         print("\n=== Getting addresses for tokens without addresses ===")
-        tokens_without_addresses = [
-            token for token in tokens if not token.get("address") and token.get("name")
-        ][:10]
+        tokens_without_addresses = [token for token in tokens if not token.get("address") and token.get("name")][:10]
 
         for i, token in enumerate(tokens_without_addresses):
-            print(
-                f"  {i+1}/{len(tokens_without_addresses)}: Looking up {token['name']}..."
-            )
+            print(f"  {i+1}/{len(tokens_without_addresses)}: Looking up {token['name']}...")
 
             # Get address from external API
             token_info = self.get_token_address_from_name(token["name"])
@@ -1066,9 +1019,7 @@ class CallChannelTracker:
                         social_links = self.extract_social_links(response)
                         if social_links["telegram"]:
                             token["social_links"] = social_links
-                            print(
-                                f"    Found {len(social_links['telegram'])} Telegram links"
-                            )
+                            print(f"    Found {len(social_links['telegram'])} Telegram links")
 
                             # Store social links
                             for telegram_link in social_links["telegram"]:
@@ -1090,9 +1041,7 @@ class CallChannelTracker:
                     await asyncio.sleep(1)
 
                 except Exception as e:
-                    print(
-                        f"    Error getting socials for {token.get('name', 'unknown')}: {e}"
-                    )
+                    print(f"    Error getting socials for {token.get('name', 'unknown')}: {e}")
             else:
                 print(f"    No address found")
 
@@ -1100,16 +1049,12 @@ class CallChannelTracker:
 
         return tokens
 
-    def generate_weekly_report(
-        self, tokens: List[Dict], channel_performance: Dict
-    ) -> str:
+    def generate_weekly_report(self, tokens: List[Dict], channel_performance: Dict) -> str:
         """Generate a weekly report of call channel performance."""
         report_lines = []
         report_lines.append("=" * 60)
         report_lines.append("WEEKLY CALL CHANNEL PERFORMANCE REPORT")
-        report_lines.append(
-            f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-        )
+        report_lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         report_lines.append("=" * 60)
 
         # Top performing tokens
@@ -1138,9 +1083,7 @@ class CallChannelTracker:
 
         for source, data in channel_performance.items():
             avg_gain = data["total_gain"] / data["count"] if data["count"] > 0 else 0
-            report_lines.append(
-                f"{source:20} | Tokens: {data['count']:3d} | Avg Gain: {avg_gain:.2f}x"
-            )
+            report_lines.append(f"{source:20} | Tokens: {data['count']:3d} | Avg Gain: {avg_gain:.2f}x")
 
         # Recommendations
         report_lines.append("\nRECOMMENDATIONS:")
@@ -1151,14 +1094,10 @@ class CallChannelTracker:
         if channel_performance:
             best_source = max(
                 channel_performance.items(),
-                key=lambda x: (
-                    x[1]["total_gain"] / x[1]["count"] if x[1]["count"] > 0 else 0
-                ),
+                key=lambda x: (x[1]["total_gain"] / x[1]["count"] if x[1]["count"] > 0 else 0),
             )
             report_lines.append(f"1. Best performing source: {best_source[0]}")
-            report_lines.append(
-                f"   Average gain: {best_source[1]['total_gain'] / best_source[1]['count']:.2f}x"
-            )
+            report_lines.append(f"   Average gain: {best_source[1]['total_gain'] / best_source[1]['count']:.2f}x")
 
         report_lines.append("\n2. Recommended call channels to join:")
         for channel_name, info in KNOWN_CHANNELS.items():
@@ -1166,9 +1105,7 @@ class CallChannelTracker:
 
         report_lines.append("\n3. Suggested actions:")
         report_lines.append("   - Monitor top-performing tokens daily")
-        report_lines.append(
-            "   - Use /runners command for real-time performance tracking"
-        )
+        report_lines.append("   - Use /runners command for real-time performance tracking")
         report_lines.append("   - Check /ga 7d weekly for ATH leaderboard")
         report_lines.append("   - Join recommended call channels for early signals")
 
@@ -1199,9 +1136,7 @@ class CallChannelTracker:
             """,
                 (
                     "weekly_report",
-                    json.dumps(
-                        {"report": report, "timestamp": datetime.now().isoformat()}
-                    ),
+                    json.dumps({"report": report, "timestamp": datetime.now().isoformat()}),
                 ),
             )
             self.db_conn.commit()

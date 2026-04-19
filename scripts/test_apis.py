@@ -38,9 +38,7 @@ async def test_solscan():
 
             if resp.status_code == 200:
                 data = resp.json()
-                print(
-                    f"  ✅ Solscan API working - Token: {data.get('name', 'Unknown')}"
-                )
+                print(f"  ✅ Solscan API working - Token: {data.get('name', 'Unknown')}")
                 return True
             else:
                 print(f"  ❌ Solscan API error: {resp.status_code}")
@@ -78,9 +76,7 @@ async def test_helius():
             if resp.status_code == 200:
                 data = resp.json()
                 result = data.get("result", {})
-                name = (
-                    result.get("content", {}).get("metadata", {}).get("name", "Unknown")
-                )
+                name = result.get("content", {}).get("metadata", {}).get("name", "Unknown")
                 print(f"  ✅ Helius API working - Token: {name}")
                 return True
             else:
@@ -142,9 +138,7 @@ async def main():
     if all(results):
         print("\n🎉 All API integrations are working!")
     else:
-        print(
-            "\n⚠️  Some API integrations failed. Check your API keys and network connectivity."
-        )
+        print("\n⚠️  Some API integrations failed. Check your API keys and network connectivity.")
 
     print("=" * 80)
 

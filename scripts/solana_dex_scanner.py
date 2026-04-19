@@ -86,9 +86,7 @@ class SolanaRPC:
 # ═══════════════════════════════════════════════════════════════
 
 
-def read_sqrt_price(
-    data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0
-) -> Optional[float]:
+def read_sqrt_price(data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0) -> Optional[float]:
     """Read sqrt_price_x64 from on-chain CLMM/Whirlpool account."""
     if not data or len(data) < 56:
         return None
@@ -166,9 +164,7 @@ def read_amm_reserves(data: bytes, dec_a: int, dec_b: int) -> Optional[float]:
 # ═══════════════════════════════════════════════════════════════
 
 
-def jupiter_quote(
-    mint_a: str, mint_b: str, amount: int, dec_a: int, dec_b: int
-) -> List[PriceResult]:
+def jupiter_quote(mint_a: str, mint_b: str, amount: int, dec_a: int, dec_b: int) -> List[PriceResult]:
     """Get prices via Jupiter aggregator (discovers all routed DEXs)."""
     results = []
     try:
@@ -271,9 +267,7 @@ def raydium_pools(mint_a: str, mint_b: str) -> List[PriceResult]:
     return results
 
 
-def raydium_quote(
-    mint_a: str, mint_b: str, amount: int, dec_b: int
-) -> Optional[PriceResult]:
+def raydium_quote(mint_a: str, mint_b: str, amount: int, dec_b: int) -> Optional[PriceResult]:
     """Get real-time swap quote from Raydium."""
     try:
         resp = requests.get(
@@ -336,11 +330,7 @@ def orca_pools(mint_a: str, mint_b: str, dec_a: int, dec_b: int) -> List[PriceRe
                             pool=addr,
                             source="orca_onchain",
                             tvl=float(tvl),
-                            volume_24h=(
-                                float(vol_day)
-                                if isinstance(vol_day, (int, float))
-                                else 0
-                            ),
+                            volume_24h=(float(vol_day) if isinstance(vol_day, (int, float)) else 0),
                         )
                     )
     except Exception:
@@ -585,22 +575,16 @@ if __name__ == "__main__":
             print("  No prices found.")
             continue
 
-        print(
-            f"  {'DEX':<35} | {'Price':>18} | {'TVL':>14} | {'Vol 24h':>14} | {'Source':<15} | {'Hops'}"
-        )
+        print(f"  {'DEX':<35} | {'Price':>18} | {'TVL':>14} | {'Vol 24h':>14} | {'Source':<15} | {'Hops'}")
         print(f"  {'-'*105}")
 
         for r in results:
             tvl = f"${r.tvl:,.0f}" if r.tvl > 0 else ""
             vol = f"${r.volume_24h:,.0f}" if r.volume_24h > 0 else ""
-            print(
-                f"  {r.dex:<35} | {r.price:>18.8f} | {tvl:>14} | {vol:>14} | {r.source:<15} | {r.hops}"
-            )
+            print(f"  {r.dex:<35} | {r.price:>18.8f} | {tvl:>14} | {vol:>14} | {r.source:<15} | {r.hops}")
 
         prices = [r.price for r in results]
-        print(
-            f"\n  Pools: {len(results)} | Range: {min(prices):.8f} — {max(prices):.8f}"
-        )
+        print(f"\n  Pools: {len(results)} | Range: {min(prices):.8f} — {max(prices):.8f}")
 
         arbs = find_arbs(results, min_pct=0.05)
         if arbs:

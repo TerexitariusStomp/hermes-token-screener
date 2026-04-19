@@ -33,9 +33,7 @@ SEL_FACTORY = "0xc45a0155"
 
 
 def rpc_call(url: str, method: str, params: list, timeout: int = 8):
-    payload = json.dumps(
-        {"jsonrpc": "2.0", "id": 1, "method": method, "params": params}
-    ).encode()
+    payload = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params}).encode()
     req = urllib.request.Request(
         url,
         data=payload,
@@ -149,9 +147,7 @@ def main():
             fac = verified_factories[vf_key].get("factory")
             if is_addr(fac):
                 code = rpc_call(live_rpc, "eth_getCode", [fac, "latest"])
-                apl = rpc_call(
-                    live_rpc, "eth_call", [{"to": fac, "data": SEL_ALL_PAIRS}, "latest"]
-                )
+                apl = rpc_call(live_rpc, "eth_call", [{"to": fac, "data": SEL_ALL_PAIRS}, "latest"])
                 pairs = to_int(apl) if apl else None
                 chain_out["known_factory_verified"] = {
                     "factory": fac,
@@ -180,9 +176,7 @@ def main():
             chain_out["registry_addresses_with_code"] += 1
 
             # router -> factory probe
-            fac = rpc_call(
-                live_rpc, "eth_call", [{"to": addr, "data": SEL_FACTORY}, "latest"]
-            )
+            fac = rpc_call(live_rpc, "eth_call", [{"to": addr, "data": SEL_FACTORY}, "latest"])
             if fac and fac != "0x" and len(fac) >= 42:
                 faddr = "0x" + fac[-40:]
                 if is_addr(faddr):
@@ -194,14 +188,10 @@ def main():
                     p = to_int(apl) if apl else None
                     if p and p > 0:
                         chain_out["router_factory_hits"] += 1
-                        chain_out["notes"].append(
-                            f"{name}: router.factory() -> {faddr} pairs={p}"
-                        )
+                        chain_out["notes"].append(f"{name}: router.factory() -> {faddr} pairs={p}")
 
         if chain_out["registry_addresses_scanned"] == 0:
-            chain_out["notes"].append(
-                "No hex contract addresses in top registry DEX entries"
-            )
+            chain_out["notes"].append("No hex contract addresses in top registry DEX entries")
         elif chain_out["registry_addresses_with_code"] == 0:
             chain_out["notes"].append(
                 "Registry addresses are not deployed contracts on this chain (likely token/global addresses)"

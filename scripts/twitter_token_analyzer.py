@@ -304,10 +304,7 @@ def goto_nitter(page, path: str) -> bool:
             body = page.inner_text("body")
             if "bot" in body.lower() or "verif" in body.lower():
                 time.sleep(8)
-                if (
-                    "timeline-item" in page.content()
-                    or "profile-card" in page.content()
-                ):
+                if "timeline-item" in page.content() or "profile-card" in page.content():
                     return True
         except Exception:
             continue
@@ -506,9 +503,7 @@ def main():
     results = []
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"]
-        )
+        browser = p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
         ctx = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
             viewport={"width": 1280, "height": 2000},
@@ -616,9 +611,7 @@ def main():
         f"{'Sym':>10} {'Profile':>10} {'Follow':>8} {'Twt':>5} {'7d':>4} {'AvgLike':>8} "
         f"{'$Search':>8} {'$N':>4} {'NameQ':>6} {'Comb':>6}"
     )
-    print(
-        f"{'-'*10} {'-'*10} {'-'*8} {'-'*5} {'-'*4} {'-'*8} {'-'*8} {'-'*4} {'-'*6} {'-'*6}"
-    )
+    print(f"{'-'*10} {'-'*10} {'-'*8} {'-'*5} {'-'*4} {'-'*8} {'-'*8} {'-'*4} {'-'*6} {'-'*6}")
     for r in sorted(results, key=lambda x: -x["combined_score"]):
         p, ts, ns = r["profile"], r["ticker_search"], r["name_search"]
         print(

@@ -413,9 +413,7 @@ def compute_round_trips(conn: sqlite3.Connection) -> Dict[str, int]:
 # ── Discovery ───────────────────────────────────────────────────────────────
 
 
-def get_holders_for_token(
-    chain: str, address: str, limit: int = HOLDERS_PER_TOKEN
-) -> List[dict]:
+def get_holders_for_token(chain: str, address: str, limit: int = HOLDERS_PER_TOKEN) -> List[dict]:
     """Get top holders/traders for a token via GMGN.
 
     GMGN CLI max is 100 per call. To reach 1000, makes multiple calls
@@ -477,9 +475,7 @@ def get_holders_for_token(
                 break
 
         if added > 0:
-            log.debug(
-                f"    {order_by}/{direction}: +{added} wallets (total {len(all_holders)})"
-            )
+            log.debug(f"    {order_by}/{direction}: +{added} wallets (total {len(all_holders)})")
 
     return all_holders[:limit]
 
@@ -577,11 +573,7 @@ def enrich_wallets_from_tokens(
         total_sells = sum(a["sell_tx_count"] for a in appearances)
 
         # ROI: average across tokens (weighted by trade count)
-        rois = [
-            a["profit_change"]
-            for a in appearances
-            if a["profit_change"] and a["profit_change"] > 0
-        ]
+        rois = [a["profit_change"] for a in appearances if a["profit_change"] and a["profit_change"] > 0]
         avg_roi = sum(rois) / len(rois) if rois else 0
 
         # Win rate
@@ -607,9 +599,7 @@ def enrich_wallets_from_tokens(
         best_tag = (
             min(
                 all_tags,
-                key=lambda t: (
-                    int(t.replace("TOP", "99")) if t.startswith("TOP") else 99
-                ),
+                key=lambda t: (int(t.replace("TOP", "99")) if t.startswith("TOP") else 99),
             )
             if all_tags
             else ""
@@ -624,9 +614,7 @@ def enrich_wallets_from_tokens(
         # Score
         # Compute wallet age in days
         now_ts = time.time()
-        entry_times = [
-            a["start_holding_at"] for a in appearances if a.get("start_holding_at")
-        ]
+        entry_times = [a["start_holding_at"] for a in appearances if a.get("start_holding_at")]
         age_days = (now_ts - min(entry_times)) / 86400 if entry_times else 0
 
         wallet_score = score_wallet_v3(
@@ -795,9 +783,7 @@ def report(conn: sqlite3.Connection, limit: int = 20):
     print(
         f"{'Score':>6} {'PnL':>12} {'ROI':>8} {'WinRate':>8} {'Trades':>7} {'Tokens':>7} {'Tag':>6} {'Pattern':>8} {'Flags':>6} {'Wallet'}"
     )
-    print(
-        f"{'-'*6} {'-'*12} {'-'*8} {'-'*8} {'-'*7} {'-'*7} {'-'*6} {'-'*8} {'-'*6} {'-'*25}"
-    )
+    print(f"{'-'*6} {'-'*12} {'-'*8} {'-'*8} {'-'*7} {'-'*7} {'-'*6} {'-'*8} {'-'*6} {'-'*25}")
 
     for r in cursor.fetchall():
         (
@@ -840,9 +826,7 @@ def report(conn: sqlite3.Connection, limit: int = 20):
         "SELECT count(*), avg(wallet_score), max(wallet_score), count(CASE WHEN win_rate > 0.5 THEN 1 END) FROM tracked_wallets"
     )
     total, avg_s, max_s, high_wr = cursor.fetchone()
-    print(
-        f"\nTotal: {total} wallets | Avg score: {avg_s:.1f} | Max: {max_s:.1f} | Win rate >50%: {high_wr}"
-    )
+    print(f"\nTotal: {total} wallets | Avg score: {avg_s:.1f} | Max: {max_s:.1f} | Win rate >50%: {high_wr}")
 
 
 # ── Zerion Wallet Enrichment ────────────────────────────────────────────────
@@ -876,9 +860,7 @@ class ZerionWalletEnricher:
 
         self._rate_limit()
         try:
-            r = self.session.get(
-                f"https://api.zerion.io/v1/wallets/{address}/portfolio", timeout=15
-            )
+            r = self.session.get(f"https://api.zerion.io/v1/wallets/{address}/portfolio", timeout=15)
             if r.status_code == 429:
                 time.sleep(5)
                 return {}
@@ -1069,9 +1051,7 @@ def detect_insiders(conn: sqlite3.Connection) -> int:
     """
     )
     for (wallet,) in c.fetchall():
-        c.execute(
-            "UPDATE tracked_wallets SET insider_flag = 1 WHERE address = ?", (wallet,)
-        )
+        c.execute("UPDATE tracked_wallets SET insider_flag = 1 WHERE address = ?", (wallet,))
         flagged += c.rowcount
 
     conn.commit()
@@ -1105,11 +1085,7 @@ def detect_rug_history(conn: sqlite3.Connection) -> int:
             with open(top100_path) as f:
                 data = json.load(f)
             for t in data.get("tokens", []):
-                if (
-                    t.get("gmgn_honeypot")
-                    or t.get("rugcheck_rugged")
-                    or t.get("goplus_is_honeypot")
-                ):
+                if t.get("gmgn_honeypot") or t.get("rugcheck_rugged") or t.get("goplus_is_honeypot"):
                     rugged_tokens.add(t.get("contract_address", ""))
     except Exception:
         pass

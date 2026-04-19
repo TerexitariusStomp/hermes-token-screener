@@ -72,9 +72,7 @@ async def test_solscan_auth_methods():
 
                 if resp.status_code == 200:
                     data = resp.json()
-                    print(
-                        f"    ✅ Success - Response: {json.dumps(data, indent=2)[:200]}..."
-                    )
+                    print(f"    ✅ Success - Response: {json.dumps(data, indent=2)[:200]}...")
                     return True
                 else:
                     print(f"    ❌ Error: {resp.status_code} - {resp.text[:100]}")

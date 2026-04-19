@@ -102,9 +102,7 @@ def base58(data: bytes) -> str:
 # ═══════════════════════════════════════════════════════════════
 
 
-def read_sqrt_price(
-    data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0
-) -> Optional[float]:
+def read_sqrt_price(data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0) -> Optional[float]:
     """Read sqrt_price_x64 from on-chain account and compute price."""
     if not data:
         return None
@@ -211,11 +209,7 @@ def fetch_orca_api(pair_name: str) -> List[PriceQuote]:
                                 pair=pair_name,
                                 source="on_chain",
                                 tvl=float(tvl),
-                                volume_24h=(
-                                    float(vol_day)
-                                    if isinstance(vol_day, (int, float))
-                                    else 0
-                                ),
+                                volume_24h=(float(vol_day) if isinstance(vol_day, (int, float)) else 0),
                                 timestamp=time.time(),
                             )
                         )
@@ -337,9 +331,7 @@ def fetch_all_pairs(pairs: List[str] = None) -> List[PriceQuote]:
     return all_quotes
 
 
-def find_arbitrage(
-    quotes: List[PriceQuote], min_spread_pct: float = 0.05
-) -> List[dict]:
+def find_arbitrage(quotes: List[PriceQuote], min_spread_pct: float = 0.05) -> List[dict]:
     """Find arbitrage opportunities within each pair."""
     opps = []
     by_pair = {}
@@ -388,9 +380,7 @@ if __name__ == "__main__":
             print(f"\n{'─'*95}")
             print(f"  {q.pair}")
             print(f"{'─'*95}")
-            print(
-                f"  {'DEX':<25} | {'Price':>16} | {'TVL':>14} | {'Vol 24h':>14} | {'Source'}"
-            )
+            print(f"  {'DEX':<25} | {'Price':>16} | {'TVL':>14} | {'Vol 24h':>14} | {'Source'}")
             print(f"  {'-'*85}")
 
         tvl = f"${q.tvl:,.0f}" if q.tvl > 0 else ""

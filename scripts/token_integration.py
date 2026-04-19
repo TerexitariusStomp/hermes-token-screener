@@ -207,9 +207,7 @@ class TokenIntegrationPipeline:
 
         return tokens
 
-    def merge_and_deduplicate(
-        self, rick_tokens: List[Dict], telegram_tokens: List[Dict]
-    ) -> List[Dict]:
+    def merge_and_deduplicate(self, rick_tokens: List[Dict], telegram_tokens: List[Dict]) -> List[Dict]:
         """Merge tokens from both sources and deduplicate."""
         merged = {}
 
@@ -289,10 +287,7 @@ class TokenIntegrationPipeline:
             # Find the RickBurp channel
             channel = None
             async for dialog in client.iter_dialogs():
-                if (
-                    hasattr(dialog.entity, "title")
-                    and "rickburp" in dialog.entity.title.lower()
-                ):
+                if hasattr(dialog.entity, "title") and "rickburp" in dialog.entity.title.lower():
                     channel = dialog.entity
                     log.info(f"Found channel: {channel.title}")
                     break
@@ -339,10 +334,7 @@ class TokenIntegrationPipeline:
                         # Fallback: look for any message with relevant keywords
                         for msg in messages_after:
                             if msg.message and len(msg.message) > 50:
-                                if any(
-                                    keyword in msg.message.lower()
-                                    for keyword in ["lore", name.lower()]
-                                ):
+                                if any(keyword in msg.message.lower() for keyword in ["lore", name.lower()]):
                                     bot_response = msg.message
                                     break
 
@@ -351,10 +343,7 @@ class TokenIntegrationPipeline:
                         # Check if it's a successful lore response
                         # Successful lore responses are typically longer than 50 characters
                         # and don't contain "No token found"
-                        if (
-                            "No token found" not in bot_response
-                            and len(bot_response) > 50
-                        ):
+                        if "No token found" not in bot_response and len(bot_response) > 50:
                             lore_data[address.lower()] = {
                                 "lore_response": bot_response,
                                 "has_lore": True,
@@ -395,9 +384,7 @@ class TokenIntegrationPipeline:
 
         return lore_data
 
-    async def enrich_tokens(
-        self, tokens: List[Dict], max_enrich: int = 50
-    ) -> List[Dict]:
+    async def enrich_tokens(self, tokens: List[Dict], max_enrich: int = 50) -> List[Dict]:
         """Enrich tokens using the existing enrichment pipeline and Rick Burp bot lore."""
         enriched_tokens = []
 
@@ -407,9 +394,7 @@ class TokenIntegrationPipeline:
 
         # First, try to get lore data from Rick Burp bot for top tokens
         log.info("Getting lore data from Rick Burp bot for top tokens...")
-        lore_data = await self.get_lore_data_from_rick(
-            tokens_to_enrich[:10]
-        )  # Top 10 tokens
+        lore_data = await self.get_lore_data_from_rick(tokens_to_enrich[:10])  # Top 10 tokens
 
         # Add lore data to tokens
         for token in tokens_to_enrich:
@@ -442,9 +427,7 @@ class TokenIntegrationPipeline:
                 return tokens_to_enrich
 
             # Write addresses to temporary file
-            with tempfile.NamedTemporaryFile(
-                mode="w", suffix=".json", delete=False
-            ) as f:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
                 json.dump(addresses, f)
                 temp_file = f.name
 
@@ -475,13 +458,7 @@ class TokenIntegrationPipeline:
                     log.info("Token enrichment completed successfully")
 
                     # Try to read enrichment results
-                    output_path = (
-                        Path.home()
-                        / ".hermes"
-                        / "data"
-                        / "token_screener"
-                        / "top100.json"
-                    )
+                    output_path = Path.home() / ".hermes" / "data" / "token_screener" / "top100.json"
                     if output_path.exists():
                         with open(output_path, "r") as f:
                             enrichment_data = json.load(f)
@@ -497,17 +474,11 @@ class TokenIntegrationPipeline:
                         for token in tokens_to_enrich:
                             address = token.get("address", "").lower()
                             if address in enrichment_map:
-                                token["enrichment_data"] = enrichment_map[address].get(
-                                    "enrichment_data", {}
-                                )
-                                token["enrichment_data"][
-                                    "enriched_by"
-                                ] = "token_enricher.py"
+                                token["enrichment_data"] = enrichment_map[address].get("enrichment_data", {})
+                                token["enrichment_data"]["enriched_by"] = "token_enricher.py"
                             enriched_tokens.append(token)
                     else:
-                        log.warning(
-                            "No enrichment output found, using basic enrichment"
-                        )
+                        log.warning("No enrichment output found, using basic enrichment")
                         # Fallback to basic enrichment
                         for token in tokens_to_enrich:
                             enriched = self._basic_enrichment(token)
@@ -627,9 +598,7 @@ class TokenIntegrationPipeline:
                             reasons.append(f"Good liquidity (Rick): ${liq_val:,.0f}")
                         elif liq_val > 10000:
                             score += 20  # Increased from 10
-                            reasons.append(
-                                f"Moderate liquidity (Rick): ${liq_val:,.0f}"
-                            )
+                            reasons.append(f"Moderate liquidity (Rick): ${liq_val:,.0f}")
                     except:
                         pass
 
@@ -776,9 +745,7 @@ class TokenIntegrationPipeline:
 
             # Update token
             token["priority_score"] = score
-            token["priority_reason"] = (
-                "; ".join(reasons) if reasons else "No specific criteria"
-            )
+            token["priority_reason"] = "; ".join(reasons) if reasons else "No specific criteria"
 
         # Sort by priority score
         tokens.sort(key=lambda x: x.get("priority_score", 0), reverse=True)
@@ -957,9 +924,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Token Integration Pipeline")
-    parser.add_argument(
-        "--max-enrich", type=int, default=50, help="Maximum tokens to enrich"
-    )
+    parser.add_argument("--max-enrich", type=int, default=50, help="Maximum tokens to enrich")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
 
     args = parser.parse_args()
