@@ -120,7 +120,8 @@ class ExperienceBuffer:
     def push(self, exp: Experience):
         d = exp.to_dict()
         with self._conn() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO experiences
                   (episode_id, stage, token_address, chain, symbol,
                    state, action, reward, reward_components,
@@ -129,7 +130,9 @@ class ExperienceBuffer:
                   (:episode_id, :stage, :token_address, :chain, :symbol,
                    :state, :action, :reward, :reward_components,
                    :timestamp, :source_script)
-            """, d)
+            """,
+                d,
+            )
         self._maybe_prune()
 
     def backfill_reward(
@@ -141,19 +144,25 @@ class ExperienceBuffer:
         """Propagate outcome reward to all earlier stages in the same episode."""
         rc_json = json.dumps(reward_components)
         with self._conn() as conn:
-            cur = conn.execute("""
+            cur = conn.execute(
+                """
                 UPDATE experiences
                    SET reward            = ?,
                        reward_components = ?
                  WHERE episode_id = ?
                    AND reward IS NULL
-            """, (reward, rc_json, episode_id))
+            """,
+                (reward, rc_json, episode_id),
+            )
             rows = cur.rowcount
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT OR REPLACE INTO reward_backfill_log
                   (episode_id, reward, backfilled_at, rows_updated)
                 VALUES (?, ?, ?, ?)
-            """, (episode_id, reward, time.time(), rows))
+            """,
+                (episode_id, reward, time.time(), rows),
+            )
 
     def mark_trained(self, ids: list[int]):
         if not ids:
@@ -176,13 +185,24 @@ class ExperienceBuffer:
         notes: str = "",
     ):
         with self._conn() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO training_runs
                   (started_at, finished_at, examples_used, base_model,
                    adapter_path, train_loss, eval_loss, notes)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (started_at, time.time(), examples_used, base_model,
-                  adapter_path, train_loss, eval_loss, notes))
+            """,
+                (
+                    started_at,
+                    time.time(),
+                    examples_used,
+                    base_model,
+                    adapter_path,
+                    train_loss,
+                    eval_loss,
+                    notes,
+                ),
+            )
 
     # ------------------------------------------------------------------
     # Read
@@ -233,13 +253,19 @@ class ExperienceBuffer:
 
     def stats(self) -> dict:
         with self._conn() as conn:
-            total     = conn.execute("SELECT COUNT(*) FROM experiences").fetchone()[0]
-            with_rew  = conn.execute("SELECT COUNT(*) FROM experiences WHERE reward IS NOT NULL").fetchone()[0]
-            trained   = conn.execute("SELECT COUNT(*) FROM experiences WHERE used_in_train=1").fetchone()[0]
-            runs      = conn.execute("SELECT COUNT(*) FROM training_runs").fetchone()[0]
-            by_stage  = dict(conn.execute(
-                "SELECT stage, COUNT(*) FROM experiences GROUP BY stage"
-            ).fetchall())
+            total = conn.execute("SELECT COUNT(*) FROM experiences").fetchone()[0]
+            with_rew = conn.execute(
+                "SELECT COUNT(*) FROM experiences WHERE reward IS NOT NULL"
+            ).fetchone()[0]
+            trained = conn.execute(
+                "SELECT COUNT(*) FROM experiences WHERE used_in_train=1"
+            ).fetchone()[0]
+            runs = conn.execute("SELECT COUNT(*) FROM training_runs").fetchone()[0]
+            by_stage = dict(
+                conn.execute(
+                    "SELECT stage, COUNT(*) FROM experiences GROUP BY stage"
+                ).fetchall()
+            )
         return {
             "total": total,
             "with_reward": with_rew,
@@ -257,14 +283,17 @@ class ExperienceBuffer:
             if count > self.max_rows:
                 # Delete oldest untrained rows to stay under cap
                 excess = count - self.max_rows
-                conn.execute("""
+                conn.execute(
+                    """
                     DELETE FROM experiences WHERE id IN (
                         SELECT id FROM experiences
                          WHERE used_in_train = 0
                          ORDER BY timestamp ASC
                          LIMIT ?
                     )
-                """, (excess,))
+                """,
+                    (excess,),
+                )
 
     def vacuum(self):
         with self._conn() as conn:

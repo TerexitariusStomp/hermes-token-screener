@@ -25,10 +25,10 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-ADAPTER_BASE    = Path.home() / ".hermes" / "models" / "trading-lora"
-POINTER_FILE    = ADAPTER_BASE / "adapter_latest.txt"
-SENTINEL_FILE   = ADAPTER_BASE / "reload_requested"
-INFERENCE_PORT  = 8082
+ADAPTER_BASE = Path.home() / ".hermes" / "models" / "trading-lora"
+POINTER_FILE = ADAPTER_BASE / "adapter_latest.txt"
+SENTINEL_FILE = ADAPTER_BASE / "reload_requested"
+INFERENCE_PORT = 8082
 RELOAD_ENDPOINT = f"http://localhost:{INFERENCE_PORT}/reload_adapter"
 
 
@@ -39,7 +39,7 @@ class ModelUpdater:
         adapter_base: Path = ADAPTER_BASE,
         inference_port: int = INFERENCE_PORT,
     ):
-        self.adapter_base   = Path(adapter_base)
+        self.adapter_base = Path(adapter_base)
         self.inference_port = inference_port
         self.adapter_base.mkdir(parents=True, exist_ok=True)
 
@@ -60,7 +60,7 @@ class ModelUpdater:
         manifest = {
             "adapter_path": str(adapter_path),
             "published_at": time.time(),
-            "version_tag":  version_tag or str(int(time.time())),
+            "version_tag": version_tag or str(int(time.time())),
         }
         manifest_path = self.adapter_base / "manifest.json"
         with open(manifest_path, "w") as f:
@@ -70,10 +70,10 @@ class ModelUpdater:
         reload_result = self._signal_reload(str(adapter_path))
 
         return {
-            "status":        "ok",
-            "adapter_path":  str(adapter_path),
+            "status": "ok",
+            "adapter_path": str(adapter_path),
             "reload_method": reload_result,
-            "manifest":      manifest_path,
+            "manifest": manifest_path,
         }
 
     def _signal_reload(self, adapter_path: str) -> str:
@@ -81,11 +81,11 @@ class ModelUpdater:
         # Method 1: HTTP POST to inference server
         try:
             body = json.dumps({"adapter_path": adapter_path}).encode()
-            req  = urllib.request.Request(
+            req = urllib.request.Request(
                 RELOAD_ENDPOINT,
-                data    = body,
-                headers = {"Content-Type": "application/json"},
-                method  = "POST",
+                data=body,
+                headers={"Content-Type": "application/json"},
+                method="POST",
             )
             with urllib.request.urlopen(req, timeout=5) as resp:
                 resp.read()
@@ -110,22 +110,25 @@ class ModelUpdater:
         adapters = []
         for d in sorted(self.adapter_base.iterdir()):
             if d.is_dir() and (d / "adapter_config.json").exists():
-                adapters.append({
-                    "path":    str(d),
-                    "name":    d.name,
-                    "mtime":   d.stat().st_mtime,
-                    "current": str(d) == self.get_current_adapter(),
-                })
+                adapters.append(
+                    {
+                        "path": str(d),
+                        "name": d.name,
+                        "mtime": d.stat().st_mtime,
+                        "current": str(d) == self.get_current_adapter(),
+                    }
+                )
         return sorted(adapters, key=lambda x: x["mtime"], reverse=True)
 
     def cleanup_old_adapters(self, keep: int = 5):
         """Keep only the N most recent adapters."""
         adapters = self.list_adapters()
-        current  = self.get_current_adapter()
-        removed  = []
+        current = self.get_current_adapter()
+        removed = []
         for adapter in adapters[keep:]:
             if adapter["path"] != current:
                 import shutil
+
                 shutil.rmtree(adapter["path"], ignore_errors=True)
                 removed.append(adapter["path"])
         logger.info(f"Cleaned up {len(removed)} old adapters")

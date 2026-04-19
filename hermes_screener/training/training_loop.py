@@ -31,16 +31,16 @@ import time
 from pathlib import Path
 
 logging.basicConfig(
-    level   = logging.INFO,
-    format  = "%(asctime)s %(levelname)s %(name)s: %(message)s",
-    datefmt = "%Y-%m-%d %H:%M:%S",
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger("training_loop")
 
-DEFAULT_INTERVAL_S      = 3600      # 1 hour
-DEFAULT_MIN_NEW_EXP     = 50        # minimum new experiences before training
-DEFAULT_MAX_TRAIN_TIME  = 1800      # 30 min max per cycle
-STATE_FILE              = Path.home() / ".hermes" / "data" / "training" / "loop_state.json"
+DEFAULT_INTERVAL_S = 3600  # 1 hour
+DEFAULT_MIN_NEW_EXP = 50  # minimum new experiences before training
+DEFAULT_MAX_TRAIN_TIME = 1800  # 30 min max per cycle
+STATE_FILE = Path.home() / ".hermes" / "data" / "training" / "loop_state.json"
 
 
 def load_state() -> dict:
@@ -58,10 +58,10 @@ def save_state(state: dict):
 
 
 def run_cycle(
-    min_new_exp:    int = DEFAULT_MIN_NEW_EXP,
-    max_steps:      int = -1,
-    adapter_name:   str | None = None,
-    cfg_overrides:  dict | None = None,
+    min_new_exp: int = DEFAULT_MIN_NEW_EXP,
+    max_steps: int = -1,
+    adapter_name: str | None = None,
+    cfg_overrides: dict | None = None,
 ) -> dict:
     """
     Run one full training cycle. Returns result dict.
@@ -71,9 +71,9 @@ def run_cycle(
     from .fine_tuner import FineTuner
     from .model_updater import ModelUpdater
 
-    t0     = time.time()
-    buf    = ExperienceBuffer()
-    stats  = buf.stats()
+    t0 = time.time()
+    buf = ExperienceBuffer()
+    stats = buf.stats()
     logger.info(f"Buffer stats: {stats}")
 
     new_labelled = stats["with_reward"] - stats["trained"]
@@ -81,9 +81,9 @@ def run_cycle(
 
     if new_labelled < min_new_exp:
         return {
-            "status":   "skipped",
-            "reason":   f"only {new_labelled} new experiences (min={min_new_exp})",
-            "stats":    stats,
+            "status": "skipped",
+            "reason": f"only {new_labelled} new experiences (min={min_new_exp})",
+            "stats": stats,
         }
 
     # Step 1: Build datasets
@@ -102,14 +102,14 @@ def run_cycle(
 
     # Step 3: Fine-tune
     tuner_cfg = cfg_overrides or {}
-    tuner  = FineTuner(cfg=tuner_cfg)
-    tag    = adapter_name or f"cycle-{int(t0)}"
+    tuner = FineTuner(cfg=tuner_cfg)
+    tag = adapter_name or f"cycle-{int(t0)}"
     logger.info(f"Starting fine-tuning, adapter tag: {tag}")
     train_result = tuner.train(
-        dataset_path = train_path,
-        eval_path    = eval_path,
-        adapter_name = tag,
-        max_steps    = max_steps,
+        dataset_path=train_path,
+        eval_path=eval_path,
+        adapter_name=tag,
+        max_steps=max_steps,
     )
     logger.info(f"Training result: {train_result}")
 
@@ -119,8 +119,8 @@ def run_cycle(
     # Step 4: Publish adapter
     updater = ModelUpdater()
     pub_result = updater.publish_adapter(
-        adapter_path = train_result["adapter_path"],
-        version_tag  = tag,
+        adapter_path=train_result["adapter_path"],
+        version_tag=tag,
     )
     logger.info(f"Adapter published: {pub_result}")
 
@@ -131,59 +131,74 @@ def run_cycle(
     # We use episode_ids from dataset build (all that were used)
     # For simplicity, mark all experiences that have rewards and haven't been trained
     with buf._conn() as conn:
-        ids = [r[0] for r in conn.execute(
-            "SELECT id FROM experiences WHERE reward IS NOT NULL AND used_in_train=0"
-        ).fetchall()]
+        ids = [
+            r[0]
+            for r in conn.execute(
+                "SELECT id FROM experiences WHERE reward IS NOT NULL AND used_in_train=0"
+            ).fetchall()
+        ]
     buf.mark_trained(ids)
     logger.info(f"Marked {len(ids)} experiences as trained")
 
     # Step 6: Log run to buffer
     buf.log_training_run(
-        examples_used  = train_result["examples"],
-        base_model     = train_result["base_model"],
-        adapter_path   = train_result["adapter_path"],
-        train_loss     = train_result["train_loss"],
-        eval_loss      = train_result.get("eval_loss") or 0.0,
-        started_at     = t0,
-        notes          = f"cycle={tag} backend={train_result['backend']}",
+        examples_used=train_result["examples"],
+        base_model=train_result["base_model"],
+        adapter_path=train_result["adapter_path"],
+        train_loss=train_result["train_loss"],
+        eval_loss=train_result.get("eval_loss") or 0.0,
+        started_at=t0,
+        notes=f"cycle={tag} backend={train_result['backend']}",
     )
 
     elapsed = time.time() - t0
     return {
-        "status":          "ok",
-        "cycle_tag":       tag,
+        "status": "ok",
+        "cycle_tag": tag,
         "new_experiences": new_labelled,
         "examples_trained": train_result["examples"],
-        "train_loss":      train_result["train_loss"],
-        "eval_loss":       train_result.get("eval_loss"),
-        "adapter_path":    train_result["adapter_path"],
-        "reload_method":   pub_result.get("reload_method"),
-        "elapsed_s":       round(elapsed, 1),
+        "train_loss": train_result["train_loss"],
+        "eval_loss": train_result.get("eval_loss"),
+        "adapter_path": train_result["adapter_path"],
+        "reload_method": pub_result.get("reload_method"),
+        "elapsed_s": round(elapsed, 1),
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description="Continuous trading AI training loop")
-    parser.add_argument("--interval",    type=int, default=DEFAULT_INTERVAL_S,
-                        help="Seconds between cycles (default 3600)")
-    parser.add_argument("--min-exp",     type=int, default=DEFAULT_MIN_NEW_EXP,
-                        help="Minimum new experiences required to train")
-    parser.add_argument("--max-steps",   type=int, default=-1,
-                        help="Max training steps (-1 = full epoch)")
-    parser.add_argument("--once",        action="store_true",
-                        help="Run one cycle then exit")
-    parser.add_argument("--status",      action="store_true",
-                        help="Print buffer stats and exit")
-    parser.add_argument("--build-only",  action="store_true",
-                        help="Only build datasets, don't train")
-    parser.add_argument("--base-model",  type=str, default=None,
-                        help="Override base model name")
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=DEFAULT_INTERVAL_S,
+        help="Seconds between cycles (default 3600)",
+    )
+    parser.add_argument(
+        "--min-exp",
+        type=int,
+        default=DEFAULT_MIN_NEW_EXP,
+        help="Minimum new experiences required to train",
+    )
+    parser.add_argument(
+        "--max-steps", type=int, default=-1, help="Max training steps (-1 = full epoch)"
+    )
+    parser.add_argument("--once", action="store_true", help="Run one cycle then exit")
+    parser.add_argument(
+        "--status", action="store_true", help="Print buffer stats and exit"
+    )
+    parser.add_argument(
+        "--build-only", action="store_true", help="Only build datasets, don't train"
+    )
+    parser.add_argument(
+        "--base-model", type=str, default=None, help="Override base model name"
+    )
     args = parser.parse_args()
 
     # Status check
     if args.status:
         from .experience_buffer import ExperienceBuffer
-        buf   = ExperienceBuffer()
+
+        buf = ExperienceBuffer()
         stats = buf.stats()
         print(json.dumps(stats, indent=2))
         return
@@ -192,9 +207,10 @@ def main():
     if args.build_only:
         from .dataset_builder import DatasetBuilder
         from .experience_buffer import ExperienceBuffer
-        buf    = ExperienceBuffer()
+
+        buf = ExperienceBuffer()
         builder = DatasetBuilder(buffer=buf)
-        result  = builder.build_all()
+        result = builder.build_all()
         print(json.dumps(result, indent=2))
         return
 
@@ -203,21 +219,23 @@ def main():
         cfg_overrides["base_model"] = args.base_model
 
     state = load_state()
-    logger.info(f"Training loop starting. Interval: {args.interval}s, "
-                f"min_exp: {args.min_exp}")
+    logger.info(
+        f"Training loop starting. Interval: {args.interval}s, "
+        f"min_exp: {args.min_exp}"
+    )
 
     while True:
         logger.info(f"=== Cycle {state['total_cycles'] + 1} ===")
         try:
             result = run_cycle(
-                min_new_exp   = args.min_exp,
-                max_steps     = args.max_steps,
-                cfg_overrides = cfg_overrides,
+                min_new_exp=args.min_exp,
+                max_steps=args.max_steps,
+                cfg_overrides=cfg_overrides,
             )
             logger.info(f"Cycle result: {result['status']}")
             if result["status"] == "ok":
-                state["total_cycles"]            += 1
-                state["total_examples_trained"]  += result.get("examples_trained", 0)
+                state["total_cycles"] += 1
+                state["total_examples_trained"] += result.get("examples_trained", 0)
             state["last_run"] = time.time()
             state["last_result"] = result
             save_state(state)

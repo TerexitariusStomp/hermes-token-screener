@@ -117,7 +117,9 @@ class TemplateStorage:
                 )
         return results
 
-    def score_template(self, name: str, metric_value: float, metric_name: str = "quality") -> bool:
+    def score_template(
+        self, name: str, metric_value: float, metric_name: str = "quality"
+    ) -> bool:
         """Record a performance score for a template. Returns True if found."""
         entry = self.load_template(name)
         if not entry:
@@ -192,7 +194,9 @@ class TemplateStorage:
         """Generate a standardized variant name."""
         return f"{base_name}_v{index}"
 
-    def copy_as_variant(self, name: str, variant_name: str, modifications: str = "") -> str | None:
+    def copy_as_variant(
+        self, name: str, variant_name: str, modifications: str = ""
+    ) -> str | None:
         """Copy current template as a new variant with optional modifications note."""
         entry = self.load_template(name)
         if not entry:

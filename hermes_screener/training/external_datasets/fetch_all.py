@@ -52,8 +52,9 @@ def merge_datasets(
 
     # Auto-discover if not specified
     if external_datasets is None:
-        external_datasets = sorted(DATASET_DIR.glob("hf_*.jsonl")) + \
-                            sorted(DATASET_DIR.glob("kaggle_*.jsonl"))
+        external_datasets = sorted(DATASET_DIR.glob("hf_*.jsonl")) + sorted(
+            DATASET_DIR.glob("kaggle_*.jsonl")
+        )
 
     if pipeline_dataset is None:
         p = DATASET_DIR / "combined_dataset.jsonl"
@@ -91,19 +92,19 @@ def merge_datasets(
     # Also write train/eval split (90/10)
     split = int(len(all_samples) * 0.9)
     train_path = DATASET_DIR / "initial_training_train.jsonl"
-    eval_path  = DATASET_DIR / "initial_training_eval.jsonl"
+    eval_path = DATASET_DIR / "initial_training_eval.jsonl"
     write_jsonl(train_path, all_samples[:split])
-    write_jsonl(eval_path,  all_samples[split:])
+    write_jsonl(eval_path, all_samples[split:])
     print(f"Train: {split:,} samples -> {train_path.name}")
     print(f"Eval:  {len(all_samples)-split:,} samples -> {eval_path.name}")
 
     return {
-        "status":      "ok",
-        "total":       written,
-        "sources":     sources,
-        "out_file":    str(MERGED_OUT),
-        "train_file":  str(train_path),
-        "eval_file":   str(eval_path),
+        "status": "ok",
+        "total": written,
+        "sources": sources,
+        "out_file": str(MERGED_OUT),
+        "train_file": str(train_path),
+        "eval_file": str(eval_path),
     }
 
 
@@ -120,11 +121,12 @@ def run(
     if not merge_only:
         # 1. HuggingFace dataset
         if not skip_hf:
-            print("\n" + "="*60)
+            print("\n" + "=" * 60)
             print("Fetching HuggingFace: 0xscope/web3-trading-analysis")
-            print("="*60)
+            print("=" * 60)
             try:
                 from .hf_web3_trading import run as hf_run
+
                 results["hf_web3_trading"] = hf_run(limit=limit_each)
             except Exception as e:
                 results["hf_web3_trading"] = {"status": "error", "error": str(e)}
@@ -140,6 +142,7 @@ def run(
                 print("\nFetching Kaggle datasets...")
                 try:
                     from .kaggle_ohlcv import run_all
+
                     kaggle_results = run_all(limit_each=limit_each)
                     for r in kaggle_results:
                         key = r["dataset"].split("/")[-1]
@@ -148,9 +151,9 @@ def run(
                     results["kaggle"] = {"status": "error", "error": str(e)}
 
     # 3. Merge everything
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Merging all datasets...")
-    print("="*60)
+    print("=" * 60)
     merge_result = merge_datasets()
     results["merge"] = merge_result
 
@@ -173,8 +176,12 @@ def print_status():
     for f in files:
         try:
             count = sum(1 for _ in open(f))
-            size  = f.stat().st_size
-            size_str = f"{size/1024/1024:.1f}MB" if size > 1024*1024 else f"{size/1024:.1f}KB"
+            size = f.stat().st_size
+            size_str = (
+                f"{size/1024/1024:.1f}MB"
+                if size > 1024 * 1024
+                else f"{size/1024:.1f}KB"
+            )
             print(f"{f.name:<50} {count:>10,} {size_str:>10}")
             total += count
         except Exception:
@@ -189,22 +196,34 @@ def print_status():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Fetch and merge external training datasets")
-    parser.add_argument("--hf-only",    action="store_true", help="Only fetch HuggingFace dataset")
-    parser.add_argument("--kaggle-only",action="store_true", help="Only fetch Kaggle datasets")
-    parser.add_argument("--merge-only", action="store_true", help="Only merge existing files")
-    parser.add_argument("--status",     action="store_true", help="Show status of existing datasets")
-    parser.add_argument("--limit",      type=int, default=30_000, help="Max samples per dataset")
+    parser = argparse.ArgumentParser(
+        description="Fetch and merge external training datasets"
+    )
+    parser.add_argument(
+        "--hf-only", action="store_true", help="Only fetch HuggingFace dataset"
+    )
+    parser.add_argument(
+        "--kaggle-only", action="store_true", help="Only fetch Kaggle datasets"
+    )
+    parser.add_argument(
+        "--merge-only", action="store_true", help="Only merge existing files"
+    )
+    parser.add_argument(
+        "--status", action="store_true", help="Show status of existing datasets"
+    )
+    parser.add_argument(
+        "--limit", type=int, default=30_000, help="Max samples per dataset"
+    )
     args = parser.parse_args()
 
     if args.status:
         print_status()
     else:
         result = run(
-            skip_hf      = args.kaggle_only,
-            skip_kaggle  = args.hf_only,
-            limit_each   = args.limit,
-            merge_only   = args.merge_only,
+            skip_hf=args.kaggle_only,
+            skip_kaggle=args.hf_only,
+            limit_each=args.limit,
+            merge_only=args.merge_only,
         )
         print("\n\nFinal Summary:")
         print(json.dumps(result, indent=2))

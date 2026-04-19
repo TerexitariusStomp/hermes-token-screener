@@ -45,19 +45,19 @@ from .utils import (
 # -------------------------------------------------------------------
 KAGGLE_DATASETS = {
     "top50_daily": {
-        "id":       "ranodipghosh/top-50-crypto-market-data-daily-usd",
+        "id": "ranodipghosh/top-50-crypto-market-data-daily-usd",
         "out_name": "kaggle_top50_daily_dataset",
-        "desc":     "Top 50 crypto daily USD market data",
+        "desc": "Top 50 crypto daily USD market data",
     },
     "ohlcv_multi": {
-        "id":       "abdullahkhan70/daily-multi-year-ohlcv-crypto-market-data",
+        "id": "abdullahkhan70/daily-multi-year-ohlcv-crypto-market-data",
         "out_name": "kaggle_ohlcv_multiyear_dataset",
-        "desc":     "Multi-year daily OHLCV crypto data",
+        "desc": "Multi-year daily OHLCV crypto data",
     },
     "top100_2025": {
-        "id":       "mihikaajayjadhav/top-100-cryptocurrencies-daily-price-data-2025",
+        "id": "mihikaajayjadhav/top-100-cryptocurrencies-daily-price-data-2025",
         "out_name": "kaggle_top100_2025_dataset",
-        "desc":     "Top 100 crypto daily price data 2025",
+        "desc": "Top 100 crypto daily price data 2025",
     },
 }
 
@@ -74,6 +74,7 @@ Respond with valid JSON."""
 def _ensure_kaggle_lib() -> bool:
     try:
         import kaggle  # noqa: F401
+
         return True
     except ImportError:
         print("Installing 'kaggle' library...")
@@ -106,13 +107,14 @@ def download_dataset(dataset_id: str, cache_dir: Path) -> Path | None:
     dest.mkdir(parents=True, exist_ok=True)
     try:
         import kaggle  # noqa: F401
+
         print(f"Downloading Kaggle dataset: {dataset_id}")
         kaggle.api.authenticate()
         kaggle.api.dataset_download_files(
             dataset_id,
-            path   = str(dest),
-            unzip  = True,
-            quiet  = False,
+            path=str(dest),
+            unzip=True,
+            quiet=False,
         )
         print(f"Downloaded to: {dest}")
         return dest
@@ -135,11 +137,11 @@ def _infer_columns(header: list) -> dict:
     mapping = {}
 
     for canon, candidates in {
-        "date":   ["date", "time", "timestamp", "day"],
-        "open":   ["open", "open_price", "open_usd"],
-        "high":   ["high", "high_price", "high_usd"],
-        "low":    ["low",  "low_price",  "low_usd"],
-        "close":  ["close", "close_price", "close_usd", "price", "price_usd"],
+        "date": ["date", "time", "timestamp", "day"],
+        "open": ["open", "open_price", "open_usd"],
+        "high": ["high", "high_price", "high_usd"],
+        "low": ["low", "low_price", "low_usd"],
+        "close": ["close", "close_price", "close_usd", "price", "price_usd"],
         "volume": ["volume", "vol", "volume_usd", "volume_24h"],
         "symbol": ["symbol", "name", "coin", "cryptocurrency", "asset", "ticker"],
         "market_cap": ["market_cap", "marketcap", "market cap"],
@@ -174,6 +176,7 @@ def _parse_csv_rows(csv_path: Path) -> Iterator[dict]:
 # Sample generators
 # -------------------------------------------------------------------
 
+
 def _candle_analysis_sample(rows: list, symbol: str) -> dict | None:
     """
     Single candle analysis: given today's OHLCV, what does it mean?
@@ -181,19 +184,24 @@ def _candle_analysis_sample(rows: list, symbol: str) -> dict | None:
     if len(rows) < 2:
         return None
     today = rows[-1]
-    prev  = rows[-2]
+    prev = rows[-2]
     try:
-        o, h, low, c = float(today["open"]), float(today["high"]), float(today["low"]), float(today["close"])
+        o, h, low, c = (
+            float(today["open"]),
+            float(today["high"]),
+            float(today["low"]),
+            float(today["close"]),
+        )
         pc = float(prev["close"])
     except (ValueError, KeyError):
         return None
 
-    day_chg   = pct_change(o, c)
-    vs_prev   = pct_change(pc, c)
-    body_pct  = abs(c - o) / (h - low) * 100 if (h - low) > 0 else 0
+    day_chg = pct_change(o, c)
+    vs_prev = pct_change(pc, c)
+    body_pct = abs(c - o) / (h - low) * 100 if (h - low) > 0 else 0
     upper_wick = (h - max(o, c)) / (h - low) * 100 if (h - low) > 0 else 0
     lower_wick = (min(o, c) - low) / (h - low) * 100 if (h - low) > 0 else 0
-    vol_str   = fmt_vol(today.get("volume", 0))
+    vol_str = fmt_vol(today.get("volume", 0))
 
     user = (
         f"Analyze today's candle for {symbol}.\n\n"
@@ -210,17 +218,35 @@ def _candle_analysis_sample(rows: list, symbol: str) -> dict | None:
         '"signal": "buy|sell|hold|watch", "confidence": 0-100, '
         '"pattern": "candle pattern name", "reasoning": "brief"}'
     )
-    signal  = "buy" if vs_prev > 3 else ("sell" if vs_prev < -3 else "hold")
-    pattern = "doji" if body_pct < 10 else ("hammer" if lower_wick > 60 else ("shooting_star" if upper_wick > 60 else "marubozu" if body_pct > 80 else "standard"))
-    assistant = json.dumps({
-        "trend":      trend_label(vs_prev),
-        "signal":     signal,
-        "confidence": min(90, int(abs(vs_prev) * 4 + 40)),
-        "pattern":    pattern,
-        "reasoning":  f"{vs_prev:+.1f}% vs prior close, {body_pct:.0f}% body candle",
-    })
-    return chat_sample(SYSTEM_PRICE, user, assistant,
-                       {"source": "kaggle_ohlcv", "reward": reward_from_pct(vs_prev)})
+    signal = "buy" if vs_prev > 3 else ("sell" if vs_prev < -3 else "hold")
+    pattern = (
+        "doji"
+        if body_pct < 10
+        else (
+            "hammer"
+            if lower_wick > 60
+            else (
+                "shooting_star"
+                if upper_wick > 60
+                else "marubozu" if body_pct > 80 else "standard"
+            )
+        )
+    )
+    assistant = json.dumps(
+        {
+            "trend": trend_label(vs_prev),
+            "signal": signal,
+            "confidence": min(90, int(abs(vs_prev) * 4 + 40)),
+            "pattern": pattern,
+            "reasoning": f"{vs_prev:+.1f}% vs prior close, {body_pct:.0f}% body candle",
+        }
+    )
+    return chat_sample(
+        SYSTEM_PRICE,
+        user,
+        assistant,
+        {"source": "kaggle_ohlcv", "reward": reward_from_pct(vs_prev)},
+    )
 
 
 def _prediction_sample(rows: list, symbol: str, lookback: int = 7) -> dict | None:
@@ -231,11 +257,11 @@ def _prediction_sample(rows: list, symbol: str, lookback: int = 7) -> dict | Non
     if len(rows) < lookback + 1:
         return None
 
-    history = rows[-(lookback + 1):-1]
-    actual  = rows[-1]
+    history = rows[-(lookback + 1) : -1]
+    actual = rows[-1]
     try:
         actual_close = float(actual["close"])
-        prev_close   = float(history[-1]["close"])
+        prev_close = float(history[-1]["close"])
     except (ValueError, KeyError):
         return None
 
@@ -244,10 +270,12 @@ def _prediction_sample(rows: list, symbol: str, lookback: int = 7) -> dict | Non
     hist_lines = []
     for r in history:
         try:
-            line = (f"  {r.get('date','?')}: "
-                    f"O={fmt_price(r['open'])} H={fmt_price(r['high'])} "
-                    f"L={fmt_price(r['low'])} C={fmt_price(r['close'])} "
-                    f"Vol={fmt_vol(r.get('volume',0))}")
+            line = (
+                f"  {r.get('date','?')}: "
+                f"O={fmt_price(r['open'])} H={fmt_price(r['high'])} "
+                f"L={fmt_price(r['low'])} C={fmt_price(r['close'])} "
+                f"Vol={fmt_vol(r.get('volume',0))}"
+            )
             hist_lines.append(line)
         except Exception:
             pass
@@ -255,22 +283,29 @@ def _prediction_sample(rows: list, symbol: str, lookback: int = 7) -> dict | Non
     user = (
         f"Predict the next day's price direction for {symbol} "
         f"based on the last {lookback} days.\n\n"
-        f"Historical OHLCV:\n" + "\n".join(hist_lines) +
-        '\n\nRespond with JSON: {"direction": "up|down|sideways", '
+        f"Historical OHLCV:\n"
+        + "\n".join(hist_lines)
+        + '\n\nRespond with JSON: {"direction": "up|down|sideways", '
         '"confidence": 0-100, '
         '"predicted_change_pct": float, '
         '"reasoning": "brief technical analysis"}'
     )
-    direction  = "up" if actual_chg > 1 else ("down" if actual_chg < -1 else "sideways")
-    pred_chg   = round(actual_chg * 0.8, 2)   # regressed estimate
-    assistant  = json.dumps({
-        "direction":             direction,
-        "confidence":            min(85, int(abs(actual_chg) * 3 + 35)),
-        "predicted_change_pct":  pred_chg,
-        "reasoning":             f"Actual next-day change was {actual_chg:+.2f}%",
-    })
-    return chat_sample(SYSTEM_PREDICT, user, assistant,
-                       {"source": "kaggle_ohlcv", "reward": reward_from_pct(actual_chg)})
+    direction = "up" if actual_chg > 1 else ("down" if actual_chg < -1 else "sideways")
+    pred_chg = round(actual_chg * 0.8, 2)  # regressed estimate
+    assistant = json.dumps(
+        {
+            "direction": direction,
+            "confidence": min(85, int(abs(actual_chg) * 3 + 35)),
+            "predicted_change_pct": pred_chg,
+            "reasoning": f"Actual next-day change was {actual_chg:+.2f}%",
+        }
+    )
+    return chat_sample(
+        SYSTEM_PREDICT,
+        user,
+        assistant,
+        {"source": "kaggle_ohlcv", "reward": reward_from_pct(actual_chg)},
+    )
 
 
 def _entry_timing_sample(rows: list, symbol: str) -> dict | None:
@@ -285,18 +320,21 @@ def _entry_timing_sample(rows: list, symbol: str) -> dict | None:
     except (ValueError, KeyError):
         return None
 
-    ma7    = sum(closes[-7:]) / 7
-    ma14   = sum(closes) / 14
+    ma7 = sum(closes[-7:]) / 7
+    ma14 = sum(closes) / 14
     latest = closes[-1]
-    momentum_7  = pct_change(closes[-8], closes[-1])
-    volatility  = (max(closes[-7:]) - min(closes[-7:])) / ma7 * 100
+    momentum_7 = pct_change(closes[-8], closes[-1])
+    volatility = (max(closes[-7:]) - min(closes[-7:])) / ma7 * 100
 
-    above_ma7  = latest > ma7
+    above_ma7 = latest > ma7
     above_ma14 = latest > ma14
-    trending   = momentum_7 > 5
+    trending = momentum_7 > 5
 
-    verdict = "good_entry" if (above_ma7 and above_ma14 and trending) else \
-              "wait"       if (not above_ma7 and not above_ma14) else "caution"
+    verdict = (
+        "good_entry"
+        if (above_ma7 and above_ma14 and trending)
+        else "wait" if (not above_ma7 and not above_ma14) else "caution"
+    )
 
     user = (
         f"Is now a good entry point for {symbol}?\n\n"
@@ -310,20 +348,26 @@ def _entry_timing_sample(rows: list, symbol: str) -> dict | None:
         '\nRespond with JSON: {"verdict": "good_entry|caution|wait|avoid", '
         '"confidence": 0-100, "reasoning": "brief"}'
     )
-    assistant = json.dumps({
-        "verdict":    verdict,
-        "confidence": 65 if verdict == "caution" else 75,
-        "reasoning":  (f"Price {'above' if above_ma7 else 'below'} 7d MA, "
-                       f"{momentum_7:+.1f}% momentum, {volatility:.1f}% vol"),
-    })
+    assistant = json.dumps(
+        {
+            "verdict": verdict,
+            "confidence": 65 if verdict == "caution" else 75,
+            "reasoning": (
+                f"Price {'above' if above_ma7 else 'below'} 7d MA, "
+                f"{momentum_7:+.1f}% momentum, {volatility:.1f}% vol"
+            ),
+        }
+    )
     reward = 0.4 if verdict == "good_entry" else (-0.2 if verdict == "avoid" else 0.0)
-    return chat_sample(SYSTEM_PRICE, user, assistant,
-                       {"source": "kaggle_ohlcv", "reward": reward})
+    return chat_sample(
+        SYSTEM_PRICE, user, assistant, {"source": "kaggle_ohlcv", "reward": reward}
+    )
 
 
 # -------------------------------------------------------------------
 # Main conversion
 # -------------------------------------------------------------------
+
 
 def convert_csv_dir(data_dir: Path, dataset_id: str, limit: int = 30_000) -> list:
     """Convert all CSVs in a directory to training samples."""
@@ -353,7 +397,7 @@ def convert_csv_dir(data_dir: Path, dataset_id: str, limit: int = 30_000) -> lis
             for i in range(1, len(rows)):
                 if len(samples) >= limit:
                     break
-                window = rows[max(0, i - 20): i + 1]
+                window = rows[max(0, i - 20) : i + 1]
 
                 s = _candle_analysis_sample(window, sym)
                 if s:
@@ -381,7 +425,7 @@ def run_single(key: str, limit: int = 30_000) -> dict:
     ensure_dirs()
     cfg = KAGGLE_DATASETS[key]
     dataset_id = cfg["id"]
-    out_name   = cfg["out_name"]
+    out_name = cfg["out_name"]
 
     print(f"\n{'='*60}")
     print(f"Dataset: {dataset_id}")
@@ -398,9 +442,9 @@ def run_single(key: str, limit: int = 30_000) -> dict:
     out = DATASET_DIR / f"{out_name}.jsonl"
     written = write_jsonl(out, samples)
     return {
-        "status":   "ok",
-        "dataset":  dataset_id,
-        "samples":  written,
+        "status": "ok",
+        "dataset": dataset_id,
+        "samples": written,
         "out_file": str(out),
     }
 
@@ -416,10 +460,15 @@ def run_all(limit_each: int = 30_000) -> list:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", choices=list(KAGGLE_DATASETS.keys()) + ["all"],
-                        default="all", help="Which dataset to process")
-    parser.add_argument("--limit", type=int, default=30_000,
-                        help="Max samples per dataset")
+    parser.add_argument(
+        "--dataset",
+        choices=list(KAGGLE_DATASETS.keys()) + ["all"],
+        default="all",
+        help="Which dataset to process",
+    )
+    parser.add_argument(
+        "--limit", type=int, default=30_000, help="Max samples per dataset"
+    )
     args = parser.parse_args()
 
     if args.dataset == "all":

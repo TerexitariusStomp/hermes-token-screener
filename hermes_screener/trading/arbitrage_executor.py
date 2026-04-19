@@ -31,10 +31,16 @@ def _rpc_call_exec(chain: str, method: str, params: list = None) -> dict:
     for _ in range(len(rpcs) * 2):
         url = rpcs[idx % len(rpcs)]
         try:
-            payload = json.dumps({"jsonrpc": "2.0", "method": method, "params": params, "id": 1}).encode()
+            payload = json.dumps(
+                {"jsonrpc": "2.0", "method": method, "params": params, "id": 1}
+            ).encode()
             req = urllib.request.Request(
-                url, data=payload,
-                headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"},
+                url,
+                data=payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                },
                 method="POST",
             )
             with urllib.request.urlopen(req, timeout=15, context=ssl_ctx) as resp:
@@ -57,13 +63,17 @@ def get_eth_price_usd(chain: str) -> float:
         rpcs = CHAIN_RPCS.get(chain, [])
         for rpc in rpcs:
             try:
-                payload = json.dumps({
-                    "jsonrpc": "2.0", "method": "eth_call",
-                    "params": [{"to": pool, "data": "0x3850c7bd"}, "latest"],
-                    "id": 1
-                }).encode()
+                payload = json.dumps(
+                    {
+                        "jsonrpc": "2.0",
+                        "method": "eth_call",
+                        "params": [{"to": pool, "data": "0x3850c7bd"}, "latest"],
+                        "id": 1,
+                    }
+                ).encode()
                 req = urllib.request.Request(
-                    rpc, data=payload,
+                    rpc,
+                    data=payload,
                     headers={"Content-Type": "application/json"},
                     method="POST",
                 )
@@ -79,7 +89,7 @@ def get_eth_price_usd(chain: str) -> float:
             sqrt = int(result_raw[:66], 16)
             if sqrt > 0:
                 # WETH (dec=18) / USDC (dec=6): dec0=18, dec1=6 => adjust by 10^(18-6)=10^12
-                price_raw = (sqrt / (2 ** 96)) ** 2 * (10 ** (18 - 6))
+                price_raw = (sqrt / (2**96)) ** 2 * (10 ** (18 - 6))
                 # slot0 gives USDC per WETH in this pool orientation; invert if needed
                 # Uniswap V3: token0 < token1. USDC < WETH by address, so token0=USDC, token1=WETH
                 # price = (sqrt/2^96)^2 * 10^(dec0-dec1) = WETH per USDC * 10^(6-18) correction
@@ -87,7 +97,7 @@ def get_eth_price_usd(chain: str) -> float:
                 # price_token1_per_token0 = (sqrt/2^96)^2
                 # token0=USDC(6), token1=WETH(18)
                 # adjusted = price_token1_per_token0 * 10^(dec0-dec1) = WETH/USDC * 10^(6-18)
-                price_weth_per_usdc = (sqrt / (2 ** 96)) ** 2 * (10 ** (6 - 18))
+                price_weth_per_usdc = (sqrt / (2**96)) ** 2 * (10 ** (6 - 18))
                 if price_weth_per_usdc > 0:
                     eth_usd = 1.0 / price_weth_per_usdc
                     if 100 < eth_usd < 100_000:
@@ -134,25 +144,34 @@ def _execute_v2_swap(
         chain_ids = {"base": 8453, "ethereum": 1, "arbitrum": 42161}
         chain_id = chain_ids.get(chain, 8453)
 
-        V2_ABI = [{
-            "type": "function", "name": "swapExactTokensForTokens",
-            "stateMutability": "nonpayable",
-            "inputs": [
-                {"name": "amountIn", "type": "uint256"},
-                {"name": "amountOutMin", "type": "uint256"},
-                {"name": "path", "type": "address[]"},
-                {"name": "to", "type": "address"},
-                {"name": "deadline", "type": "uint256"},
-            ],
-            "outputs": [{"name": "amounts", "type": "uint256[]"}],
-        }]
+        V2_ABI = [
+            {
+                "type": "function",
+                "name": "swapExactTokensForTokens",
+                "stateMutability": "nonpayable",
+                "inputs": [
+                    {"name": "amountIn", "type": "uint256"},
+                    {"name": "amountOutMin", "type": "uint256"},
+                    {"name": "path", "type": "address[]"},
+                    {"name": "to", "type": "address"},
+                    {"name": "deadline", "type": "uint256"},
+                ],
+                "outputs": [{"name": "amounts", "type": "uint256[]"}],
+            }
+        ]
 
-        ERC20_APPROVE_ABI = [{
-            "type": "function", "name": "approve",
-            "stateMutability": "nonpayable",
-            "inputs": [{"name": "spender", "type": "address"}, {"name": "amount", "type": "uint256"}],
-            "outputs": [{"name": "", "type": "bool"}],
-        }]
+        ERC20_APPROVE_ABI = [
+            {
+                "type": "function",
+                "name": "approve",
+                "stateMutability": "nonpayable",
+                "inputs": [
+                    {"name": "spender", "type": "address"},
+                    {"name": "amount", "type": "uint256"},
+                ],
+                "outputs": [{"name": "", "type": "bool"}],
+            }
+        ]
 
         # Approve
         token_contract = w3.eth.contract(
@@ -160,14 +179,16 @@ def _execute_v2_swap(
         )
         approve_tx = token_contract.functions.approve(
             Web3.to_checksum_address(router), amount_in_wei
-        ).build_transaction({
-            "from": account.address,
-            "nonce": w3.eth.get_transaction_count(account.address, "pending"),
-            "gas": 60000,
-            "maxFeePerGas": w3.eth.gas_price,
-            "maxPriorityFeePerGas": w3.eth.max_priority_fee,
-            "chainId": chain_id,
-        })
+        ).build_transaction(
+            {
+                "from": account.address,
+                "nonce": w3.eth.get_transaction_count(account.address, "pending"),
+                "gas": 60000,
+                "maxFeePerGas": w3.eth.gas_price,
+                "maxPriorityFeePerGas": w3.eth.max_priority_fee,
+                "chainId": chain_id,
+            }
+        )
         signed_approve = account.sign_transaction(approve_tx)
         approve_hash = w3.eth.send_raw_transaction(signed_approve.raw_transaction)
         w3.eth.wait_for_transaction_receipt(approve_hash, timeout=60)
@@ -176,18 +197,21 @@ def _execute_v2_swap(
             address=Web3.to_checksum_address(router), abi=V2_ABI
         )
         tx = router_contract.functions.swapExactTokensForTokens(
-            amount_in_wei, min_out_wei,
+            amount_in_wei,
+            min_out_wei,
             [Web3.to_checksum_address(token_in), Web3.to_checksum_address(token_out)],
             Web3.to_checksum_address(wallet_address),
             deadline,
-        ).build_transaction({
-            "from": account.address,
-            "nonce": w3.eth.get_transaction_count(account.address, "pending"),
-            "gas": 200000,
-            "maxFeePerGas": w3.eth.gas_price,
-            "maxPriorityFeePerGas": w3.eth.max_priority_fee,
-            "chainId": chain_id,
-        })
+        ).build_transaction(
+            {
+                "from": account.address,
+                "nonce": w3.eth.get_transaction_count(account.address, "pending"),
+                "gas": 200000,
+                "maxFeePerGas": w3.eth.gas_price,
+                "maxPriorityFeePerGas": w3.eth.max_priority_fee,
+                "chainId": chain_id,
+            }
+        )
         signed = account.sign_transaction(tx)
         tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
@@ -226,7 +250,7 @@ def execute_arbitrage(
     # For simplicity: if base_token is USDC (dec=6), amount_out target = trade_usd
     amount_in_usd = Decimal(str(trade_usd))
     amount_in_tokens = amount_in_usd / buy.price  # tokens of token_in
-    amount_in_wei = int(amount_in_tokens * Decimal(10 ** dec_in))
+    amount_in_wei = int(amount_in_tokens * Decimal(10**dec_in))
     min_out_wei = int(
         amount_in_usd * Decimal("1000000") * (Decimal("1") - opp.estimated_slippage_pct)
     )
@@ -267,10 +291,18 @@ def execute_arbitrage(
             chain=chain,
         )
     else:
-        logger.warning(f"V3 direct execution not yet implemented; buy leg skipped for {buy.dex}")
+        logger.warning(
+            f"V3 direct execution not yet implemented; buy leg skipped for {buy.dex}"
+        )
 
     if not tx_buy:
-        return {"success": False, "tx_buy": None, "tx_sell": None, "actual_profit_usd": 0.0, "error": "buy_leg_failed"}
+        return {
+            "success": False,
+            "tx_buy": None,
+            "tx_sell": None,
+            "actual_profit_usd": 0.0,
+            "error": "buy_leg_failed",
+        }
 
     # --- Leg 2: Sell ---
     tx_sell = None
@@ -286,7 +318,9 @@ def execute_arbitrage(
             chain=chain,
         )
     else:
-        logger.warning(f"V3 direct execution not yet implemented; sell leg skipped for {sell.dex}")
+        logger.warning(
+            f"V3 direct execution not yet implemented; sell leg skipped for {sell.dex}"
+        )
 
     success = bool(tx_buy and tx_sell)
     actual_profit = float(opp.net_profit_pct) * trade_usd if success else 0.0

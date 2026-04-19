@@ -81,6 +81,7 @@ class DelegationState(TypedDict):
     active_tasks: int
     task_log_path: str
 
+
 # ── Constants ──────────────────────────────────────────────────────────────
 
 HERMES_HOME = os.environ.get(
@@ -391,7 +392,9 @@ class TaskClassifier:
             try:
                 return json.loads(raw)
             except json.JSONDecodeError:
-                logger.warning("LLM classify_llm returned non-JSON response; falling back to empty result")
+                logger.warning(
+                    "LLM classify_llm returned non-JSON response; falling back to empty result"
+                )
         return {}
 
     def classify(self, text: str) -> ClassificationResult:
@@ -446,8 +449,7 @@ class TaskDecomposer:
     def decompose_llm(self, text: str) -> list[dict[str, str]]:
         """Use LLM to decompose a complex task into sub-tasks."""
         categories = self.classifier.classify(text)
-        prompt = textwrap.dedent(
-            f"""\
+        prompt = textwrap.dedent(f"""\
             Decompose this complex task into 2-5 specific, independent sub-tasks
             that can each be handled by a specialized agent.
 
@@ -458,15 +460,16 @@ class TaskDecomposer:
             [
               {{"description": "sub-task 1", "category": "coding", "dependencies": []}},
               {{"description": "sub-task 2", "category": "review", "dependencies": ["task-1"]}}
-            ]"""
-        )
+            ]""")
 
         raw = _call_llm(prompt)
         if raw:
             try:
                 return json.loads(raw)
             except json.JSONDecodeError:
-                logger.warning("LLM decompose_llm returned non-JSON response; falling back to empty subtask list")
+                logger.warning(
+                    "LLM decompose_llm returned non-JSON response; falling back to empty subtask list"
+                )
         return []
 
     def decompose_keyword(

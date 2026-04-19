@@ -79,7 +79,9 @@ class DSPOptimizer:
         scored.sort(reverse=True, key=lambda x: x[0])
         return [h for (_, h) in scored[:n]]
 
-    def _generate_template_variants(self, tool_name: str, current_template: str) -> list[str]:
+    def _generate_template_variants(
+        self, tool_name: str, current_template: str
+    ) -> list[str]:
         """Generate prompt template variants for A/B testing."""
         variants = []
 
@@ -119,7 +121,9 @@ class DSPOptimizer:
 
         return variants
 
-    def _score_template(self, template: str, history: list[dict], metrics: dict[str, float]) -> float:
+    def _score_template(
+        self, template: str, history: list[dict], metrics: dict[str, float]
+    ) -> float:
         """Score a template based on historical performance and structure."""
         score = 0.0
 
@@ -219,27 +223,39 @@ class DSPOptimizer:
             "task_id": task_id,
         }
 
-    def _generate_rationale(self, template: str, metrics: dict[str, float], examples: list[dict]) -> str:
+    def _generate_rationale(
+        self, template: str, metrics: dict[str, float], examples: list[dict]
+    ) -> str:
         """Generate rationale for why a template might perform well."""
         rationale = []
 
         if metrics["success_rate"] > 0.7:
-            rationale.append("High success rate in historical executions suggests this approach is reliable.")
+            rationale.append(
+                "High success rate in historical executions suggests this approach is reliable."
+            )
 
         if "{{parameters}}" in template:
-            rationale.append("Explicit parameter placeholders help ensure all required inputs are considered.")
+            rationale.append(
+                "Explicit parameter placeholders help ensure all required inputs are considered."
+            )
 
         if "{{context}}" in template:
-            rationale.append("Context placeholders allow for better situational adaptation.")
+            rationale.append(
+                "Context placeholders allow for better situational adaptation."
+            )
 
         if "step" in template.lower() or "analysis" in template.lower():
             rationale.append("Chain-of-thought elements may improve reasoning quality.")
 
         if len(template.split("\n")) > 5:
-            rationale.append("Detailed templates provide clearer guidance for execution.")
+            rationale.append(
+                "Detailed templates provide clearer guidance for execution."
+            )
 
         if not rationale:
-            rationale.append("This template provides a balanced approach to tool execution.")
+            rationale.append(
+                "This template provides a balanced approach to tool execution."
+            )
 
         return " ".join(rationale)
 
@@ -248,6 +264,3 @@ def dspy_optimize_tool(tool_name: str, task_id: str | None = None) -> dict:
     """Tool handler for DSPy-inspired prompt optimization."""
     optimizer = DSPOptimizer()
     return optimizer.optimize_tool(tool_name, task_id)
-
-
-

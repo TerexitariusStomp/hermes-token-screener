@@ -55,7 +55,9 @@ def open_sqlite_rw(db_path: str | Path, timeout: float = 30.0) -> sqlite3.Connec
     return conn
 
 
-def ensure_telegram_contract_tables(conn: sqlite3.Connection, *, commit: bool = True) -> None:
+def ensure_telegram_contract_tables(
+    conn: sqlite3.Connection, *, commit: bool = True
+) -> None:
     """Ensure canonical contract-ingestion tables/indexes exist."""
     conn.executescript(TELEGRAM_CONTRACT_TABLES_SQL)
     if commit:

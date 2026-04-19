@@ -6,7 +6,7 @@ import json
 import os
 from pathlib import Path
 
-CACHE_DIR   = Path.home() / ".hermes" / "data" / "external"
+CACHE_DIR = Path.home() / ".hermes" / "data" / "external"
 DATASET_DIR = Path.home() / ".hermes" / "data" / "training" / "datasets"
 
 
@@ -38,8 +38,8 @@ def chat_sample(system: str, user: str, assistant: str, meta: dict = None) -> di
     """Create a standard chat training sample."""
     s = {
         "messages": [
-            {"role": "system",    "content": system},
-            {"role": "user",      "content": user},
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
             {"role": "assistant", "content": assistant},
         ],
         "source": meta.get("source", "") if meta else "",
@@ -103,6 +103,7 @@ def trend_label(pct: float) -> str:
 def reward_from_pct(pct: float) -> float:
     """Map price change pct to a training reward signal."""
     import math
+
     return round(max(-1.0, min(1.0, math.tanh(pct / 25.0))), 4)
 
 
@@ -110,11 +111,20 @@ def install_pkg(pkg: str) -> bool:
     """pip install a package at runtime if missing."""
     import subprocess
     import sys
+
     try:
         result = subprocess.run(
-            [sys.executable, "-m", "pip", "install", "--quiet",
-             "--break-system-packages", pkg],
-            capture_output=True, timeout=120,
+            [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                "--quiet",
+                "--break-system-packages",
+                pkg,
+            ],
+            capture_output=True,
+            timeout=120,
         )
         return result.returncode == 0
     except Exception:
@@ -127,7 +137,7 @@ def check_kaggle_credentials() -> tuple:
     if cred_file.exists():
         return True, str(cred_file)
     env_user = os.environ.get("KAGGLE_USERNAME")
-    env_key  = os.environ.get("KAGGLE_KEY")
+    env_key = os.environ.get("KAGGLE_KEY")
     if env_user and env_key:
         return True, "env vars"
     return False, (

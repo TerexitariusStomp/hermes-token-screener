@@ -28,7 +28,7 @@ from .utils import (
 )
 
 DATASET_ID = "0xscope/web3-trading-analysis"
-OUT_NAME   = "hf_web3_trading_dataset"
+OUT_NAME = "hf_web3_trading_dataset"
 CACHE_PATH = CACHE_DIR / "hf_web3_trading"
 
 SYSTEM = """You are an expert DeFi trading analyst with deep knowledge of
@@ -40,6 +40,7 @@ Always respond with valid JSON."""
 def _ensure_datasets_lib():
     try:
         import datasets  # noqa: F401
+
         return True
     except ImportError:
         print("Installing 'datasets' library...")
@@ -65,9 +66,9 @@ def download(cache_path: Path = CACHE_PATH) -> object:
     try:
         ds = load_dataset(
             DATASET_ID,
-            cache_dir    = str(cache_path),
-            token        = hf_token,
-            trust_remote_code = True,
+            cache_dir=str(cache_path),
+            token=hf_token,
+            trust_remote_code=True,
         )
         print(f"Downloaded. Splits: {list(ds.keys())}")
         return ds
@@ -87,10 +88,23 @@ def _row_to_wallet_sample(row: dict) -> dict | None:
 
     # Build state description from available fields
     fields = {}
-    for k in ["profit", "pnl", "realized_pnl", "unrealized_pnl",
-              "win_rate", "total_trades", "avg_roi", "buy_count", "sell_count",
-              "tokens_profitable", "total_profit", "entry_timing_score",
-              "smart_money_tag", "whale_flag", "insider_flag"]:
+    for k in [
+        "profit",
+        "pnl",
+        "realized_pnl",
+        "unrealized_pnl",
+        "win_rate",
+        "total_trades",
+        "avg_roi",
+        "buy_count",
+        "sell_count",
+        "tokens_profitable",
+        "total_profit",
+        "entry_timing_score",
+        "smart_money_tag",
+        "whale_flag",
+        "insider_flag",
+    ]:
         if k in row and row[k] is not None:
             fields[k] = row[k]
 
@@ -104,7 +118,7 @@ def _row_to_wallet_sample(row: dict) -> dict | None:
 
     # Infer a quality score from PnL signals
     pnl = float(row.get("profit") or row.get("realized_pnl") or 0)
-    wr  = float(row.get("win_rate") or 0)
+    wr = float(row.get("win_rate") or 0)
     raw_score = min(100, max(0, (pnl / 1000 * 30) + (wr * 50) + 20))
 
     classification = "retail"
@@ -115,13 +129,17 @@ def _row_to_wallet_sample(row: dict) -> dict | None:
     elif row.get("insider_flag"):
         classification = "smart_money"
 
-    assistant = json.dumps({
-        "wallet_score":   round(raw_score, 1),
-        "classification": classification,
-        "reasoning":      f"Based on PnL ${pnl:,.0f} and win rate {wr:.1%}",
-    })
+    assistant = json.dumps(
+        {
+            "wallet_score": round(raw_score, 1),
+            "classification": classification,
+            "reasoning": f"Based on PnL ${pnl:,.0f} and win rate {wr:.1%}",
+        }
+    )
     reward = min(1.0, max(-0.5, (raw_score - 50) / 50))
-    return chat_sample(SYSTEM, user, assistant, {"source": DATASET_ID, "reward": reward})
+    return chat_sample(
+        SYSTEM, user, assistant, {"source": DATASET_ID, "reward": reward}
+    )
 
 
 def _row_to_token_sample(row: dict) -> dict | None:
@@ -131,8 +149,8 @@ def _row_to_token_sample(row: dict) -> dict | None:
         return None
 
     price_change = float(row.get("price_change_24h") or row.get("pct_change") or 0)
-    volume       = row.get("volume_24h", row.get("volume", 0))
-    price        = row.get("price", row.get("close", 0))
+    volume = row.get("volume_24h", row.get("volume", 0))
+    price = row.get("price", row.get("close", 0))
 
     user = (
         f"Analyze this token and decide whether to buy, hold, or sell.\n\n"
@@ -141,21 +159,31 @@ def _row_to_token_sample(row: dict) -> dict | None:
         f"24h Change: {price_change:+.2f}%\n"
         f"Volume: {fmt_vol(volume)}\n"
     )
-    for k in ["market_cap", "fdv", "liquidity", "smart_holders",
-              "whale_activity", "social_score"]:
+    for k in [
+        "market_cap",
+        "fdv",
+        "liquidity",
+        "smart_holders",
+        "whale_activity",
+        "social_score",
+    ]:
         if row.get(k):
             user += f"{k}: {row[k]}\n"
     user += '\nRespond with JSON: {"decision": "buy"|"hold"|"sell", "confidence": 0-100, "reason": "brief"}'
 
-    decision   = "buy" if price_change > 5 else ("sell" if price_change < -5 else "hold")
+    decision = "buy" if price_change > 5 else ("sell" if price_change < -5 else "hold")
     confidence = min(95, int(abs(price_change) * 3 + 40))
-    assistant  = json.dumps({
-        "decision":   decision,
-        "confidence": confidence,
-        "reason":     f"{trend_label(price_change)} momentum, {price_change:+.1f}% 24h",
-    })
+    assistant = json.dumps(
+        {
+            "decision": decision,
+            "confidence": confidence,
+            "reason": f"{trend_label(price_change)} momentum, {price_change:+.1f}% 24h",
+        }
+    )
     return chat_sample(
-        SYSTEM, user, assistant,
+        SYSTEM,
+        user,
+        assistant,
         {"source": DATASET_ID, "reward": reward_from_pct(price_change)},
     )
 
@@ -185,14 +213,18 @@ def run(limit: int = 50_000) -> dict:
 
     samples = convert(ds, limit=limit)
     if not samples:
-        return {"status": "failed", "reason": "no samples converted", "dataset": DATASET_ID}
+        return {
+            "status": "failed",
+            "reason": "no samples converted",
+            "dataset": DATASET_ID,
+        }
 
     out = DATASET_DIR / f"{OUT_NAME}.jsonl"
     written = write_jsonl(out, samples)
     return {
-        "status":   "ok",
-        "dataset":  DATASET_ID,
-        "samples":  written,
+        "status": "ok",
+        "dataset": DATASET_ID,
+        "samples": written,
         "out_file": str(out),
     }
 

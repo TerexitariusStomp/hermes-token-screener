@@ -31,6 +31,7 @@ class RegistryStats(TypedDict):
     overall_success_rate: str
     registry_path: str
 
+
 # ── Constants ──────────────────────────────────────────────────────────────
 
 HERMES_HOME = os.environ.get(
