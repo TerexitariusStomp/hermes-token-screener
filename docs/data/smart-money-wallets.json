@@ -115,6 +115,53 @@
       "mcap_tier": "< $50K"
     },
     {
+      "address": "CqF3gUDojKuVdd6zBk2GZBTG84aAQ2b7tYeeyS18Sd2Z",
+      "chain": "solana",
+      "wallet_score": 8.0,
+      "total_profit": 1236.843530456476,
+      "win_rate": 1.0,
+      "avg_roi": 0.09853930673369506,
+      "total_trades": 41,
+      "wallet_tags": "TOP65,smart_degen",
+      "avg_hold_hours": null,
+      "insider_flag": 0,
+      "copy_trade_flag": 1,
+      "realized_pnl": 1236.8435313596792,
+      "rug_history_count": 0,
+      "trading_pattern": "SNIPER",
+      "sm_tokens_held": 2,
+      "top_tokens": [
+        "S&P500",
+        "LAYOFF"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "92MZw35nSRYbyVFZEu8XwB7U2Ta2mUxzN1FvDLYHEVmc",
+      "chain": "solana",
+      "wallet_score": 4.0,
+      "total_profit": -169.49131194306,
+      "win_rate": 0.0,
+      "avg_roi": 0.0,
+      "total_trades": 8,
+      "wallet_tags": "TOP67",
+      "avg_hold_hours": null,
+      "insider_flag": 0,
+      "copy_trade_flag": 1,
+      "realized_pnl": -169.49131194306,
+      "rug_history_count": 0,
+      "trading_pattern": "SNIPER",
+      "sm_tokens_held": 3,
+      "top_tokens": [
+        "ASTROID",
+        "Hyrax",
+        "ASTEROID"
+      ],
+      "avg_fdv": 307210,
+      "mcap_tier": "$250K - $1M"
+    },
+    {
       "address": "2nHsHJpkXmHb43BqSjnQFMbUcU2kWEqFqoXsbe2zv2Wi",
       "chain": "solana",
       "wallet_score": 1.0,
@@ -129,12 +176,37 @@
       "realized_pnl": 45.15231843308,
       "rug_history_count": 0,
       "trading_pattern": "SNIPER",
-      "sm_tokens_held": 1,
+      "sm_tokens_held": 2,
       "top_tokens": [
-        "\u53d1\u8d22"
+        "\u53d1\u8d22",
+        "ASTEROID"
       ],
-      "avg_fdv": 97751,
-      "mcap_tier": "$50K - $250K"
+      "avg_fdv": 460814,
+      "mcap_tier": "$250K - $1M"
+    },
+    {
+      "address": "HV56TXHsEzNd1bpia84zGkrhvSVuBayG5vh9KjneoYMf",
+      "chain": "solana",
+      "wallet_score": 0,
+      "total_profit": 84.52926442127,
+      "win_rate": 1.0,
+      "avg_roi": 0.1169081830835305,
+      "total_trades": 10,
+      "wallet_tags": "smart_degen,bullx,TOP99",
+      "avg_hold_hours": null,
+      "insider_flag": 0,
+      "copy_trade_flag": 1,
+      "realized_pnl": 84.52926442127,
+      "rug_history_count": 0,
+      "trading_pattern": "SNIPER",
+      "sm_tokens_held": 3,
+      "top_tokens": [
+        "pigeon",
+        "zoomer",
+        "dreams"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
     },
     {
       "address": "6nBi2HFVZHJF6Kn2zvr1ninZkjZNrc1XiQhGzXjg4GF",
@@ -179,29 +251,6 @@
         "luck",
         "ascend"
       ],
-      "avg_fdv": 2030,
-      "mcap_tier": "< $50K"
-    },
-    {
-      "address": "HV56TXHsEzNd1bpia84zGkrhvSVuBayG5vh9KjneoYMf",
-      "chain": "solana",
-      "wallet_score": 0,
-      "total_profit": 84.52926442127,
-      "win_rate": 1.0,
-      "avg_roi": 0.1169081830835305,
-      "total_trades": 10,
-      "wallet_tags": "smart_degen,bullx,TOP99",
-      "avg_hold_hours": null,
-      "insider_flag": 0,
-      "copy_trade_flag": 1,
-      "realized_pnl": 84.52926442127,
-      "rug_history_count": 0,
-      "trading_pattern": "SNIPER",
-      "sm_tokens_held": 2,
-      "top_tokens": [
-        "pigeon",
-        "dreams"
-      ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
     },
@@ -224,7 +273,7 @@
       "top_tokens": [
         "ascend"
       ],
-      "avg_fdv": 4061,
+      "avg_fdv": 0,
       "mcap_tier": "< $50K"
     },
     {
@@ -267,6 +316,35 @@
       "sm_tokens_held": 1,
       "top_tokens": [
         "dreams"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "FrZHQpVnDWppBn5BGVMZJ3Ub5txnnoymEsiBae6ZAZRb",
+      "chain": "solana",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 8,
+      "top_tokens": [
+        "BabyBull",
+        "worth",
+        "income",
+        "DUMBMONEY",
+        "bio/acc",
+        "Peepa",
+        "PIZZA",
+        "SuccessKid"
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
@@ -327,33 +405,6 @@
       "mcap_tier": "< $50K"
     },
     {
-      "address": "FrZHQpVnDWppBn5BGVMZJ3Ub5txnnoymEsiBae6ZAZRb",
-      "chain": "solana",
-      "wallet_score": 0,
-      "total_profit": 0,
-      "win_rate": 0,
-      "avg_roi": 0,
-      "total_trades": 0,
-      "wallet_tags": "",
-      "avg_hold_hours": 0,
-      "insider_flag": 0,
-      "copy_trade_flag": 0,
-      "realized_pnl": 0,
-      "rug_history_count": 0,
-      "trading_pattern": "",
-      "sm_tokens_held": 6,
-      "top_tokens": [
-        "BabyBull",
-        "worth",
-        "income",
-        "DUMBMONEY",
-        "bio/acc",
-        "Peepa"
-      ],
-      "avg_fdv": 0,
-      "mcap_tier": "< $50K"
-    },
-    {
       "address": "0xae22a2f01e181c5e34decf95d67a39d0d52335e0",
       "chain": "base",
       "wallet_score": 0,
@@ -368,9 +419,10 @@
       "realized_pnl": 0,
       "rug_history_count": 0,
       "trading_pattern": "",
-      "sm_tokens_held": 5,
+      "sm_tokens_held": 6,
       "top_tokens": [
         "flETH",
+        "Asteroid",
         "CLIPBRAIN",
         "PILLED",
         "VEIN",
@@ -394,12 +446,63 @@
       "realized_pnl": 0,
       "rug_history_count": 0,
       "trading_pattern": "",
-      "sm_tokens_held": 4,
+      "sm_tokens_held": 5,
       "top_tokens": [
         "\u8774\u8776PEPE",
+        "\u9f99\u65cf",
         "dmt-nat",
         "\u6708\u5883\u63a2\u7d22",
         "AI\u4e4b\u773c"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0x7668236f5333d8ac6e4e9f662208966ba5d6b4ed",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 4,
+      "top_tokens": [
+        "\u9f99\u65cf",
+        "ASTEROID",
+        "\u5e01\u5708\u8036\u7a23",
+        "\u5e01\u5708\u8036\u7a23"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0x84b9d311099df7bd6340441cd821015a0dacadeb",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 4,
+      "top_tokens": [
+        "\u5723\u7532\u866b",
+        "ATM\u534f\u8bae",
+        "WINVAULT",
+        "\u9f99\u9b42"
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
@@ -454,8 +557,8 @@
       "mcap_tier": "< $50K"
     },
     {
-      "address": "0x84b9d311099df7bd6340441cd821015a0dacadeb",
-      "chain": "BNB",
+      "address": "BkC8T3b8y67ALXkbjK9sqwzyWaqa8b3nWkfhkiKsLoaY",
+      "chain": "solana",
       "wallet_score": 0,
       "total_profit": 0,
       "win_rate": 0,
@@ -470,9 +573,9 @@
       "trading_pattern": "",
       "sm_tokens_held": 3,
       "top_tokens": [
-        "\u5723\u7532\u866b",
-        "ATM\u534f\u8bae",
-        "WINVAULT"
+        "FOMO",
+        "NASH",
+        "CRAFT"
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
@@ -497,6 +600,29 @@
         "ELON",
         "BULL",
         "WSOL"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0x0393d50ce1ff3ce9e82873a13e6f29c27dfd4884",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 2,
+      "top_tokens": [
+        "ASTEROID",
+        "\u5b89\u5c0f\u5c06"
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
@@ -548,6 +674,29 @@
       "mcap_tier": "< $50K"
     },
     {
+      "address": "0x57e3635fea0fccea3254d4b78b5692b7ec31f01f",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 2,
+      "top_tokens": [
+        "ASTER",
+        "ASTEROID"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
       "address": "0x68e195687c041cba055c948d6b7cda2311537367",
       "chain": "base",
       "wallet_score": 0,
@@ -566,29 +715,6 @@
       "top_tokens": [
         "SUPERGEMMA",
         "COLONY"
-      ],
-      "avg_fdv": 0,
-      "mcap_tier": "< $50K"
-    },
-    {
-      "address": "0x7668236f5333d8ac6e4e9f662208966ba5d6b4ed",
-      "chain": "BNB",
-      "wallet_score": 0,
-      "total_profit": 0,
-      "win_rate": 0,
-      "avg_roi": 0,
-      "total_trades": 0,
-      "wallet_tags": "",
-      "avg_hold_hours": 0,
-      "insider_flag": 0,
-      "copy_trade_flag": 0,
-      "realized_pnl": 0,
-      "rug_history_count": 0,
-      "trading_pattern": "",
-      "sm_tokens_held": 2,
-      "top_tokens": [
-        "\u5e01\u5708\u8036\u7a23",
-        "\u5e01\u5708\u8036\u7a23"
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
@@ -617,6 +743,29 @@
       "mcap_tier": "< $50K"
     },
     {
+      "address": "0xaaba221f7e04e87bea90f7c332324fcc2f7e3aae",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 2,
+      "top_tokens": [
+        "ASTEROID",
+        "ASTEROID"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
       "address": "0xe88b895873883431b1ac49ede8e8194be8967e0b",
       "chain": "BNB",
       "wallet_score": 0,
@@ -640,7 +789,7 @@
       "mcap_tier": "< $50K"
     },
     {
-      "address": "BkC8T3b8y67ALXkbjK9sqwzyWaqa8b3nWkfhkiKsLoaY",
+      "address": "6qudAN2kV8mtCcYJxb5QQ6Vr15itdHHdeVbYm99NKMhy",
       "chain": "solana",
       "wallet_score": 0,
       "total_profit": 0,
@@ -656,8 +805,31 @@
       "trading_pattern": "",
       "sm_tokens_held": 2,
       "top_tokens": [
-        "FOMO",
-        "CRAFT"
+        "Tsuki",
+        "WSOL"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "AA4CroVKXUi7fro5gJ7SYD3TR8G1DwVri4LE97rVZvJi",
+      "chain": "solana",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 2,
+      "top_tokens": [
+        "ascend",
+        "Dric"
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
@@ -682,7 +854,7 @@
         "\u53d1\u8d22",
         "WSOL"
       ],
-      "avg_fdv": 48876,
+      "avg_fdv": 0,
       "mcap_tier": "< $50K"
     },
     {
@@ -705,7 +877,29 @@
         "\u53d1\u8d22",
         "WSOL"
       ],
-      "avg_fdv": 48876,
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0x07cdaf0140c60a0c34681065abf49bb8d85b8cbe",
+      "chain": "base",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "HEATR"
+      ],
+      "avg_fdv": 0,
       "mcap_tier": "< $50K"
     },
     {
@@ -726,6 +920,28 @@
       "sm_tokens_held": 1,
       "top_tokens": [
         "BNBELIEF"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0x1b6567a0066ed49d202e17a861542ed4c4cc151c",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "\u5723\u7532\u866b"
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
@@ -775,6 +991,94 @@
       "mcap_tier": "< $50K"
     },
     {
+      "address": "0x29b5f6915e99a9dbaa35e3ef4588ae8ec0736fe5",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "ASTEROID"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0x41769899189f8cd3f97a8943e74a754ea4b11989",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "ASTEROID"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0x46aba83c207a925cf5907ab76e3a2d8fb5d6a612",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "\u718a\u732b\u70e7\u9999"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0x54597d5a4a11133d8c76bbbb336c39205e6a1a44",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "ASTEROID"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
       "address": "0x67411c465c0761efbcb48f6947cdeddaabab9da5",
       "chain": "BNB",
       "wallet_score": 0,
@@ -797,6 +1101,28 @@
       "mcap_tier": "< $50K"
     },
     {
+      "address": "0x6761ca0e564af0186746f12cbedee43e2fa6a99f",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "\u9f99\u65cf"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
       "address": "0x740cfe0bb5d83539a487f76b09f997ab5606d554",
       "chain": "BNB",
       "wallet_score": 0,
@@ -814,6 +1140,28 @@
       "sm_tokens_held": 1,
       "top_tokens": [
         "\u6cb9\u7ba1\u732b"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0x77723974c254bf8ef1e0f1f9a0be45a9f2eb95b8",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "ASTEROID"
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
@@ -885,6 +1233,28 @@
       "mcap_tier": "< $50K"
     },
     {
+      "address": "0xa83b73f5644cde337b61da79589f10ea15548811",
+      "chain": "base",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "Asteroid"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
       "address": "0xb74c5797e301522bc86c3ced29ada4b3aa6b08a9",
       "chain": "BNB",
       "wallet_score": 0,
@@ -951,6 +1321,50 @@
       "mcap_tier": "< $50K"
     },
     {
+      "address": "0xcd73db2af182c243d7c3143af839279e051ce0e3",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "ASTEROID"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0xce4cf6e004b584c27538e8c2ef38cdf6698f1128",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "ASTEROID"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
       "address": "0xd67adadc5eb552b2621414cf913a8743f313ce0b",
       "chain": "BNB",
       "wallet_score": 0,
@@ -973,6 +1387,28 @@
       "mcap_tier": "< $50K"
     },
     {
+      "address": "0xe2b947c9e95329ab6c943f7abf697a50784eb266",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "\u9f99\u65cf"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
       "address": "0xe612d98b683c0e6f87bc1311e3ed523085184b65",
       "chain": "BNB",
       "wallet_score": 0,
@@ -990,6 +1426,50 @@
       "sm_tokens_held": 1,
       "top_tokens": [
         "\u5947\u8ff9"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0xe699459dfbc3964b8fba7bc131fc09ffaa8c969d",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "\u9f99\u65cf"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "0xeede67b0bcc414840fd3e00a77aba4746347abb3",
+      "chain": "BNB",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "\u9f99\u65cf"
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
@@ -1061,6 +1541,28 @@
       "mcap_tier": "< $50K"
     },
     {
+      "address": "4CH1wgHqyirN8KR3o9L8oYNpDtRmDccCtiRJjnjLtnYp",
+      "chain": "solana",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "ASTROID"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
       "address": "5GGqDQVr2LasfmWFXSH54V6ryVrXGwkZSjkK6xR473XJ",
       "chain": "solana",
       "wallet_score": 0,
@@ -1080,50 +1582,6 @@
         "MIM"
       ],
       "avg_fdv": 0,
-      "mcap_tier": "< $50K"
-    },
-    {
-      "address": "92MZw35nSRYbyVFZEu8XwB7U2Ta2mUxzN1FvDLYHEVmc",
-      "chain": "solana",
-      "wallet_score": 0,
-      "total_profit": 262.0370154793312,
-      "win_rate": 0.5,
-      "avg_roi": 0.027037046249383228,
-      "total_trades": 105,
-      "wallet_tags": "TOP59,TOP76,smart_degen",
-      "avg_hold_hours": null,
-      "insider_flag": 0,
-      "copy_trade_flag": 1,
-      "realized_pnl": 307.32835258565,
-      "rug_history_count": 0,
-      "trading_pattern": "SNIPER",
-      "sm_tokens_held": 1,
-      "top_tokens": [
-        "Hyrax"
-      ],
-      "avg_fdv": 0,
-      "mcap_tier": "< $50K"
-    },
-    {
-      "address": "AA4CroVKXUi7fro5gJ7SYD3TR8G1DwVri4LE97rVZvJi",
-      "chain": "solana",
-      "wallet_score": 0,
-      "total_profit": 0,
-      "win_rate": 0,
-      "avg_roi": 0,
-      "total_trades": 0,
-      "wallet_tags": "",
-      "avg_hold_hours": 0,
-      "insider_flag": 0,
-      "copy_trade_flag": 0,
-      "realized_pnl": 0,
-      "rug_history_count": 0,
-      "trading_pattern": "",
-      "sm_tokens_held": 1,
-      "top_tokens": [
-        "ascend"
-      ],
-      "avg_fdv": 4061,
       "mcap_tier": "< $50K"
     },
     {
@@ -1147,6 +1605,28 @@
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
+    },
+    {
+      "address": "AGBeezMQfr2m9ZKyw8npDVFpJzjf1He9fRB25gtQ9zAk",
+      "chain": "solana",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "ASTEROID"
+      ],
+      "avg_fdv": 921629,
+      "mcap_tier": "$250K - $1M"
     },
     {
       "address": "BUjNTwwiwX6r5pcJqy27BQNstLo93Vu7HZNkoeApct6q",
@@ -1193,28 +1673,6 @@
       "mcap_tier": "< $50K"
     },
     {
-      "address": "CqF3gUDojKuVdd6zBk2GZBTG84aAQ2b7tYeeyS18Sd2Z",
-      "chain": "solana",
-      "wallet_score": 0,
-      "total_profit": 1236.843530456476,
-      "win_rate": 1.0,
-      "avg_roi": 0.09853930673369506,
-      "total_trades": 41,
-      "wallet_tags": "TOP65,smart_degen",
-      "avg_hold_hours": null,
-      "insider_flag": 0,
-      "copy_trade_flag": 1,
-      "realized_pnl": 1236.8435313596792,
-      "rug_history_count": 0,
-      "trading_pattern": "SNIPER",
-      "sm_tokens_held": 1,
-      "top_tokens": [
-        "S&P500"
-      ],
-      "avg_fdv": 0,
-      "mcap_tier": "< $50K"
-    },
-    {
       "address": "DH2karT59SbVQzQKjtNomMLpdPJgvkp5NX9b2VcUvhBP",
       "chain": "solana",
       "wallet_score": 0,
@@ -1232,6 +1690,28 @@
       "sm_tokens_held": 1,
       "top_tokens": [
         "moar"
+      ],
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
+    },
+    {
+      "address": "DmQHhGGxQRhZzW3xnNWu3yDtNCpLcqQvQXa7RzWauJYa",
+      "chain": "solana",
+      "wallet_score": 0,
+      "total_profit": 0,
+      "win_rate": 0,
+      "avg_roi": 0,
+      "total_trades": 0,
+      "wallet_tags": "",
+      "avg_hold_hours": 0,
+      "insider_flag": 0,
+      "copy_trade_flag": 0,
+      "realized_pnl": 0,
+      "rug_history_count": 0,
+      "trading_pattern": "",
+      "sm_tokens_held": 1,
+      "top_tokens": [
+        "aun"
       ],
       "avg_fdv": 0,
       "mcap_tier": "< $50K"
@@ -1347,5 +1827,5 @@
       "mcap_tier": "< $50K"
     }
   ],
-  "generated_at_iso": "2026-04-17T05:31:07.413258+00:00"
+  "generated_at_iso": "2026-04-19T20:20:28.434586+00:00"
 }

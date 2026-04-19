@@ -1,642 +1,3270 @@
 [
   {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "2tUNjQa2BNnCPenypph22gPVVWacJ5EgmtetSMXdpump",
-    "score": 8.05,
-    "fdv": 1918,
-    "volume_h24": 13.46,
-    "price_change_h1": null,
-    "price_change_h6": 1.11,
-    "age_hours": 65.6,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 1918,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "5aKvh7uwKNn5CQcXd5hxKJLp7wR1GE4HcgigvhL3pump",
-    "score": 7.5,
-    "fdv": 22770,
-    "volume_h24": 18336.79,
-    "price_change_h1": -15.76,
-    "price_change_h6": -6.66,
-    "age_hours": 75.04,
-    "channel_count": 4,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 22770,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "5yRShdLDqfHpoRAVBmuk827A526K1aa5E7gqusf2pump",
-    "score": 7.35,
-    "fdv": 1931,
-    "volume_h24": 54.04,
-    "price_change_h1": null,
-    "price_change_h6": -2.23,
-    "age_hours": 103.6,
-    "channel_count": 4,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 1931,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump",
-    "score": 6.9,
-    "fdv": 6648351,
-    "volume_h24": 2542720.82,
-    "price_change_h1": -2.41,
-    "price_change_h6": -4.15,
-    "age_hours": 283.68,
-    "channel_count": 6,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 6648351,
-    "mcap_tier": "$1M-$10M",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "ETwNkTGnjimmC6YyuDkh4bsgMGdHCtCHPABh69z6pump",
-    "score": 6.82,
-    "fdv": 2159,
-    "volume_h24": 6.18,
-    "price_change_h1": null,
-    "price_change_h6": 0.38,
-    "age_hours": 97.63,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 2159,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "5QKJsBaAKweGpeNPxPF5EgvLD2hhPPeezdtkhZdpump",
-    "score": 6.3,
-    "fdv": 1640,
-    "volume_h24": 59.4,
-    "price_change_h1": null,
-    "price_change_h6": -7.14,
-    "age_hours": 73.96,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 1640,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "2V6DFHSsT5MxH3uKQHW8hVM2esYPvoMMXFwwPECFpump",
-    "score": 5.46,
-    "fdv": 8331,
-    "volume_h24": 34511.62,
-    "price_change_h1": -14.64,
-    "price_change_h6": -3.09,
-    "age_hours": 64.19,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 8331,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
     "chain": "solana",
     "contract_address": "3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
+    "channel_count": 17,
+    "channels_seen": "-1001835320066,-1002032946187,-1001927494975,-1001863620956,-1001164734593,-1001810124798,-1001609073900,-1002080773882,-1001869777491,-1002176880533,-1001451577025,-1001905125715,-1001924457034,-1001979271631,discovery:dexscreener_boost,discovery:dexscreener_trending_solana,-1003718928928",
+    "mentions": 111,
+    "first_seen_at": 1776148591.0770848,
+    "last_seen_at": 1776629103.57802,
+    "dex": {
+      "fdv": 3879791,
+      "market_cap": 3879791,
+      "liquidity_usd": 229157.16,
+      "volume_m5": 3448.17,
+      "volume_h1": 47792.14,
+      "volume_h6": 314527.1,
+      "volume_h24": 1504378.73,
+      "txns_m5": {
+        "buys": 47,
+        "sells": 45
+      },
+      "txns_h1": {
+        "buys": 670,
+        "sells": 640
+      },
+      "txns_h6": {
+        "buys": 3516,
+        "sells": 3292
+      },
+      "txns_h24": {
+        "buys": 13639,
+        "sells": 13710
+      },
+      "price_change_m5": 0.02,
+      "price_change_h1": 3.25,
+      "price_change_h6": -13.94,
+      "price_change_h24": 15.52,
+      "age_hours": 653.25,
+      "dex": "pumpswap",
+      "symbol": "BULL",
+      "name": "Bull",
+      "pair_address": "HNGjLLZkWx2mNwhWdKFYcMowz8FTh2bXxdpJ1vBVkjNB",
+      "twitter_url": "https://x.com/bullthemarket",
+      "telegram_url": "https://t.me/bulltheleader",
+      "website_url": "https://bulltheleader.com"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.0591,
+      "liq_risk": "moderate"
+    },
+    "social_score": 100,
+    "mention_velocity": 0.83,
+    "social_quality": "high",
+    "social_momentum": "very_high",
+    "coingecko": {
+      "sentiment_up": 100.0,
+      "sentiment_down": 0.0,
+      "ath": 0.01074324,
+      "ath_change_pct": -64.68197,
+      "exchanges": 0,
+      "categories": [
+        "Solana Ecosystem",
+        "Meme",
+        "Solana Meme",
+        "Pump.fun Ecosystem"
+      ]
+    },
+    "rugcheck": {
+      "score": 1,
+      "risk_level": null,
+      "risks": [],
+      "insider_percentage": 0,
+      "top_holders_pct": 17.619675202437847,
+      "lp_locked": 4193388288625
+    },
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
     "score": 4.77,
+    "positives": [],
+    "negatives": [
+      "stagnant volume"
+    ],
+    "symbol": "BULL",
     "fdv": 3879791,
     "volume_h24": 1504378.73,
+    "volume_h1": 47792.14,
     "price_change_h1": 3.25,
     "price_change_h6": -13.94,
     "age_hours": 653.25,
-    "channel_count": 17,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 3879791,
-    "mcap_tier": "$1M-$10M",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
+    "dex_url": "https://dexscreener.com/solana/3TYgKwkE2Y3rxdw9osLRSpxpXmSC1C1oo19W9KHspump",
+    "wallet_count": 32,
+    "holding_wallets": [
+      "8mxU68RBQmLcEN1AzzScC2eym2Kxg3WaGSjJPnh2Ctu8",
+      "3jkDdP5Y3F78fzGBS6E4tYocEmzyU9q2wgTa49w2HxtF",
+      "3JgqUZvQbcXRV7LGMaQaYSrdoTj4ftSTM85CwJsmKYYy",
+      "7UZXa24PHSQ7tegcEnrc45WS1yMVRf5NEcgX7MGLw4BE",
+      "4f8zLbnCWKjm9QPap1PZQH7isyfG9dSN1Feq1hK92cXq",
+      "5BBW7evNt3FNFj1By1yeMJXSMhCJhKAicwmUymLWCaVS",
+      "jCWyeTWN9H3RNAVN65k46gJ9bSFLf8g5B7hruYx2ij8",
+      "3sVXcQc7JFHnxohj1aEgskivzrMxAYaWwMzH99oNokPU",
+      "4NoLr3D6sPYu99BF8m75vQfGEmxGRxuCJSoWUkhCJyJ6",
+      "6MAaLHAmxywRGcx6p2L9q6kEHoam1GBwSoggjiGq8XqH"
+    ],
+    "mcap_tier": "$1M - $10M"
   },
   {
-    "symbol": "?",
-    "chain": "polkadot",
-    "contract_address": "5",
-    "score": 4.2,
-    "fdv": 8904621,
-    "volume_h24": 311243.76,
-    "price_change_h1": -0.39,
-    "price_change_h6": -1.1,
-    "age_hours": null,
-    "channel_count": 4,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 8904621,
-    "mcap_tier": "$1M-$10M",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
-    "score": 4.2,
-    "fdv": 1860633,
-    "volume_h24": 697775.37,
-    "price_change_h1": -0.1,
-    "price_change_h6": -15.42,
-    "age_hours": 764.34,
-    "channel_count": 4,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 1860633,
-    "mcap_tier": "$1M-$10M",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump",
-    "score": 4.14,
-    "fdv": 403282,
-    "volume_h24": 568854.69,
-    "price_change_h1": -10.64,
-    "price_change_h6": -10.73,
-    "age_hours": 214.58,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 403282,
-    "mcap_tier": "$250K-$1M",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "bsc",
-    "contract_address": "0xb29de8455acd47bb10755a133c54d0e595c6ffff",
-    "score": 3.96,
-    "fdv": 835658,
-    "volume_h24": 406399.67,
-    "price_change_h1": 12.97,
-    "price_change_h6": -3.86,
-    "age_hours": 259.19,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 835658,
-    "mcap_tier": "$250K-$1M",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
     "chain": "solana",
     "contract_address": "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump",
+    "channel_count": 4,
+    "channels_seen": "-1003589341619,-1001198046393,-1001903316574,-1003544951490",
+    "mentions": 19,
+    "first_seen_at": 1776148590.7160025,
+    "last_seen_at": 1776537792.40221,
+    "dex": {
+      "fdv": 6012224,
+      "market_cap": 6012224,
+      "liquidity_usd": 438494.84,
+      "volume_m5": 807.62,
+      "volume_h1": 66976.15,
+      "volume_h6": 301744.37,
+      "volume_h24": 2189118.19,
+      "txns_m5": {
+        "buys": 2,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 83,
+        "sells": 35
+      },
+      "txns_h6": {
+        "buys": 400,
+        "sells": 416
+      },
+      "txns_h24": {
+        "buys": 2430,
+        "sells": 1672
+      },
+      "price_change_m5": 0.06,
+      "price_change_h1": 2.7,
+      "price_change_h6": -1.38,
+      "price_change_h24": -35.85,
+      "age_hours": 69.37,
+      "dex": "meteora",
+      "symbol": "unc",
+      "name": "unc",
+      "pair_address": "7AqRdscJbVd2m3o3kPnNQHSMHNwFUyWNU2NRctyteADb",
+      "twitter_url": "https://x.com/search?q=unc&src=typed_query&f=top",
+      "website_url": "https://uncmode.xyz/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.0729,
+      "liq_risk": "moderate"
+    },
+    "social_score": 78,
+    "mention_velocity": 0.18,
+    "social_quality": "medium",
+    "social_momentum": "high",
+    "rugcheck": {
+      "score": 1,
+      "risk_level": null,
+      "risks": [],
+      "insider_percentage": 0,
+      "top_holders_pct": 12.948299516121187,
+      "lp_locked": 0
+    },
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
     "score": 3.3,
+    "positives": [],
+    "negatives": [
+      "down h24 (-36%)",
+      "stagnant volume"
+    ],
+    "symbol": "unc",
     "fdv": 6012224,
     "volume_h24": 2189118.19,
+    "volume_h1": 66976.15,
     "price_change_h1": 2.7,
     "price_change_h6": -1.38,
     "age_hours": 69.37,
+    "dex_url": "https://dexscreener.com/solana/ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump",
+    "wallet_count": 76,
+    "holding_wallets": [
+      "3ZVXKmPyverUuXgBCNawHKqKSrjokBZbASGev2omwLHY",
+      "5fkAwNVpT8A1UHEnY62VEFpqgagdoP8FYrv5ideiQp5c",
+      "5NBhBhGe78Vonx1zJyV1wBjkZDtAAwLJzrFYaZmf2xLe",
+      "7VMaZFSVjCvpiRfeW1DZJtMsweLMarEY9nipEd8E4crc",
+      "EuWbAc5zTpRzTpxx89RhQGZnvPntyrTSQozkLs5QwyH1",
+      "8ywWnooJjPCeHeYdy1Ek8YXipMoYrfrTj7puQxFhrzez",
+      "6nbx3SVv83899msiSze1Zp9VfLRmxiRGwCcKcdjiof5B",
+      "9nzMbowKkDUGyipxzgLsH6Qj74U77pMP8QUDezVP7BPh",
+      "FLoChKM3sp59ZkfyUm7npWYE5W72nEtqKCEwSvq6te4y",
+      "ALPBqLwzNKZP7586RjTFKSW8Yvk2y5bSSk7JCwTmP8Tp"
+    ],
+    "mcap_tier": "$1M - $10M"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump",
+    "channel_count": 6,
+    "channels_seen": "-1003544951490,-1001810124798,-1001451577025,discovery:dexscreener_boost,discovery:dexscreener_trending_solana,-1003813684709",
+    "mentions": 21,
+    "first_seen_at": 1776148590.2345684,
+    "last_seen_at": 1776551704.1806283,
+    "dex": {
+      "fdv": 6648351,
+      "market_cap": 6648351,
+      "liquidity_usd": 264452.72,
+      "volume_m5": 14499.86,
+      "volume_h1": 161956.36,
+      "volume_h6": 797191.99,
+      "volume_h24": 2542720.82,
+      "txns_m5": {
+        "buys": 36,
+        "sells": 26
+      },
+      "txns_h1": {
+        "buys": 328,
+        "sells": 308
+      },
+      "txns_h6": {
+        "buys": 1846,
+        "sells": 1676
+      },
+      "txns_h24": {
+        "buys": 7767,
+        "sells": 6978
+      },
+      "price_change_m5": -0.27,
+      "price_change_h1": -2.41,
+      "price_change_h6": -4.15,
+      "price_change_h24": -21.17,
+      "age_hours": 283.68,
+      "dex": "pumpswap",
+      "symbol": "SPIKE",
+      "name": "SPIKE ",
+      "pair_address": "DeSYSGeEj9ytT55E9AmdFs9p2cm5fryXt61kGCammCrB",
+      "twitter_url": "https://x.com/spikeorigin",
+      "telegram_url": "https://t.me/SpikeOnSolanaPortal",
+      "website_url": "https://spikemattfurie.com"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.0398,
+      "liq_risk": "high"
+    },
+    "social_score": 100,
+    "mention_velocity": 0.19,
+    "social_quality": "high",
+    "social_momentum": "very_high",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "coingecko": {
+      "sentiment_up": 50.0,
+      "sentiment_down": 50.0,
+      "ath": 0.01102296,
+      "ath_change_pct": -40.70859,
+      "exchanges": 0,
+      "categories": [
+        "Solana Ecosystem",
+        "Meme",
+        "Solana Meme",
+        "Pump.fun Ecosystem"
+      ]
+    },
+    "rugcheck": {
+      "score": 501,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Missing file metadata",
+          "value": "",
+          "description": "No file metadata found associated to this token",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 109.6913912967779,
+      "lp_locked": 4193388283469
+    },
+    "score": 6.9,
+    "positives": [],
+    "negatives": [
+      "down h24 (-21%)"
+    ],
+    "symbol": "SPIKE",
+    "fdv": 6648351,
+    "volume_h24": 2542720.82,
+    "volume_h1": 161956.36,
+    "price_change_h1": -2.41,
+    "price_change_h6": -4.15,
+    "age_hours": 283.68,
+    "dex_url": "https://dexscreener.com/solana/BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump",
+    "wallet_count": 17,
+    "holding_wallets": [
+      "HD98rDehDa4HJogTq3QRKGcC9A1AE9cSoEV3SgVSds8U",
+      "4UYSuQMRTGmqzH62iE66QQ5KqYuCfRRWAJxE1myrBG42",
+      "DL4sCkgLD8NhKVixeoafdVjzqAX1R7vvifzbW6eRod5G",
+      "FdKmnZF3osMNj7VisxJiKZNx5cMCX6tv47d2ChWnenPG",
+      "9wUxp26YeoiT1AxL6sfCjow1Z4EcLsSJD3xkMs3bgUeP",
+      "AeA5wrUt1L7gkbDfzQfUUmzWJfd3kodNQpBTVN4R2Fdw",
+      "HKmDFH74wi5fg6N3xtMfM5FwEiNBYEW2g8C15q4VVpvr",
+      "6rKWwcGaJCM4xHQvAicPqNPvDYHwCLZNqcbKYLELXsAu",
+      "DK2YYYf4jdKryLTD861MPAip9dUPA32JrBeD4qjCBYB",
+      "4LuMD3Ymp1WvddSJpW1qDkvhh3CzCLd277Umyvnr9j8t"
+    ],
+    "mcap_tier": "$1M - $10M"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
     "channel_count": 4,
-    "gmgn_smart_wallets": 0,
+    "channels_seen": "-1001810124798,discovery:dexscreener_boost,discovery:dexscreener_trending_solana,-1003625994962",
+    "mentions": 15,
+    "first_seen_at": 1776148596.3500996,
+    "last_seen_at": 1776537784.685479,
+    "dex": {
+      "fdv": 1860633,
+      "market_cap": 1860633,
+      "liquidity_usd": 206724.84,
+      "volume_m5": 1095.44,
+      "volume_h1": 36898.37,
+      "volume_h6": 249201.76,
+      "volume_h24": 697775.37,
+      "txns_m5": {
+        "buys": 26,
+        "sells": 14
+      },
+      "txns_h1": {
+        "buys": 300,
+        "sells": 199
+      },
+      "txns_h6": {
+        "buys": 1496,
+        "sells": 1041
+      },
+      "txns_h24": {
+        "buys": 4796,
+        "sells": 3885
+      },
+      "price_change_m5": 0.22,
+      "price_change_h1": -0.1,
+      "price_change_h6": -15.42,
+      "price_change_h24": -32.56,
+      "age_hours": 764.34,
+      "dex": "pumpswap",
+      "symbol": "LOL",
+      "name": "LOL",
+      "pair_address": "Dx5wFoszXvND6XYYAjAjUQrGLqDAUrTVH2JmHz6eJDNt",
+      "twitter_url": "https://x.com/lolonsollol",
+      "telegram_url": "https://t.me/lolonsol_lol",
+      "website_url": "https://lolonsol.lol"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.1111,
+      "liq_risk": "healthy"
+    },
+    "social_score": 70,
+    "mention_velocity": 0.14,
+    "social_quality": "medium",
+    "social_momentum": "high",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1,
+      "risk_level": null,
+      "risks": [],
+      "insider_percentage": 0,
+      "top_holders_pct": 18.15426050545666,
+      "lp_locked": 4193388282605
+    },
+    "coingecko": {
+      "sentiment_up": 100.0,
+      "sentiment_down": 0.0,
+      "ath": 0.01201011,
+      "ath_change_pct": -84.30274,
+      "exchanges": 0,
+      "categories": [
+        "Solana Ecosystem",
+        "Meme",
+        "Solana Meme",
+        "Pump.fun Ecosystem"
+      ]
+    },
+    "score": 4.2,
     "positives": [],
-    "dex_url": "",
-    "market_cap": 6012224,
-    "mcap_tier": "$1M-$10M",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
+    "negatives": [
+      "down h24 (-33%)"
+    ],
+    "symbol": "LOL",
+    "fdv": 1860633,
+    "volume_h24": 697775.37,
+    "volume_h1": 36898.37,
+    "price_change_h1": -0.1,
+    "price_change_h6": -15.42,
+    "age_hours": 764.34,
+    "dex_url": "https://dexscreener.com/solana/34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
+    "wallet_count": 51,
+    "holding_wallets": [
+      "6sYRmBUsuTVQForYcGZNuKPcj1edzZFo7Jmnp9WSF1M1",
+      "3TchpxjnoxneW2QrfhYEK9fZRaMEWvezQ5Z8vD3bHBVW",
+      "6aWXxk1QKzrpZVNXVXsDhjh2usqcNFNHvrY33WpQxk3j",
+      "D9NKx3SkKfJzXENgdPbTDxdvxTM7p6ckxoXmHwkgugVy",
+      "f4CpFrPgQquyWaHHrcQ7dCsdLSDhJCooyjyXZrHWU9d",
+      "Cp9JejUQsPKCaQpEc6XAHFz9W1JEo9AUeVtSYtLcKX7C",
+      "7rqFQwnz1pGHLTCTMsk17RYXFtRujokrCtdgWKaoedar",
+      "Ho3dYsEZ5ssU82fm7bV7L45sQknijPYyDGrS1pD5ZMzY",
+      "6icXjmobk7zx1eLnfnSNKsZCMYHfW4CaeybKrSNzTifg",
+      "82vDRwsebqxJWJPcnT9w6ECny8r2ry5EovP4Dkkt6phB"
+    ],
+    "mcap_tier": "$1M - $10M"
   },
   {
-    "symbol": "?",
-    "chain": "base",
-    "contract_address": "0x557E8f1cd9fB4e9dfEcA817b15B737328D90821A",
-    "score": 3.15,
-    "fdv": 27046,
-    "volume_h24": 2613.23,
-    "price_change_h1": -0.32,
-    "price_change_h6": -1.89,
-    "age_hours": 76.32,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 27046,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "EU6VhieS2iAq9ffNTz3CUrV1neVhwT8cV8haQb6zswrm",
-    "score": 3.04,
-    "fdv": 19920,
-    "volume_h24": 39788.26,
-    "price_change_h1": -7.71,
-    "price_change_h6": 29.55,
-    "age_hours": 105.07,
-    "channel_count": 4,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 19920,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "Dd6BsUKK6Xcy993eipGdgXmB1xhdQ4JTbDTw3yUipump",
-    "score": 2.81,
-    "fdv": 11772,
-    "volume_h24": 17542.39,
-    "price_change_h1": -5.75,
-    "price_change_h6": 52.4,
-    "age_hours": 94.61,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 11772,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "aHER4UoYSDvS8Dqd8aZWtW7WDfPZ2wpKyFHETt6pump",
-    "score": 2.8,
-    "fdv": 4152.96,
-    "volume_h24": 2124.16,
-    "price_change_h1": null,
-    "price_change_h6": -2.26,
-    "age_hours": 71.79,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 4152.96,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "6X1W4ffwhB6Ptko5Y8BFveap8BoyjvtH29kuykDLpump",
-    "score": 1.99,
-    "fdv": 2539,
-    "volume_h24": 607.93,
-    "price_change_h1": -6.19,
-    "price_change_h6": -1.88,
-    "age_hours": 93.83,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 2539,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
     "chain": "solana",
     "contract_address": "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump",
+    "channel_count": 10,
+    "channels_seen": "-1001697697574,-1002032946187,-1001810124798,-1002080773882,discovery:dexscreener_boost,discovery:dexscreener_trending_solana,-1001451577025,-1001835320066,-1001732329117,-1001924457034",
+    "mentions": 27,
+    "first_seen_at": 1776148591.2153776,
+    "last_seen_at": 1776629103.5778399,
+    "dex": {
+      "fdv": 2439922,
+      "market_cap": 2439922,
+      "liquidity_usd": 167756.28,
+      "volume_m5": 4061.81,
+      "volume_h1": 72096.26,
+      "volume_h6": 712786.97,
+      "volume_h24": 2894409.25,
+      "txns_m5": {
+        "buys": 100,
+        "sells": 110
+      },
+      "txns_h1": {
+        "buys": 1255,
+        "sells": 1419
+      },
+      "txns_h6": {
+        "buys": 8858,
+        "sells": 9921
+      },
+      "txns_h24": {
+        "buys": 35925,
+        "sells": 43396
+      },
+      "price_change_m5": 1.86,
+      "price_change_h1": 0.72,
+      "price_change_h6": -15.9,
+      "price_change_h24": -52.34,
+      "age_hours": 141.0,
+      "dex": "pumpswap",
+      "symbol": "DUMBMONEY",
+      "name": "Dumb Money",
+      "pair_address": "6zZHQtPqiBzwm4qR21BHaKp5VJEYhzjccamfd6x8cjsP",
+      "twitter_url": "https://x.com/Dumb__Money",
+      "telegram_url": "https://t.me/DUMBMONEY_ENTRY",
+      "website_url": "https://dumbmoneycoin.org/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.0688,
+      "liq_risk": "moderate"
+    },
+    "social_score": 100,
+    "mention_velocity": 0.2,
+    "social_quality": "high",
+    "social_momentum": "very_high",
+    "rugcheck": {
+      "score": 1,
+      "risk_level": null,
+      "risks": [],
+      "insider_percentage": 0,
+      "top_holders_pct": 23.91942077095571,
+      "lp_locked": 4193388282753
+    },
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "coingecko": {
+      "sentiment_up": 75.0,
+      "sentiment_down": 25.0,
+      "ath": 0.00633211,
+      "ath_change_pct": -61.59082,
+      "exchanges": 0,
+      "categories": [
+        "Solana Ecosystem",
+        "Meme",
+        "Solana Meme",
+        "Pump.fun Ecosystem"
+      ]
+    },
     "score": 1.8,
+    "positives": [],
+    "negatives": [
+      "collapsed h24 (-52%)",
+      "stagnant volume"
+    ],
+    "symbol": "DUMBMONEY",
     "fdv": 2439922,
     "volume_h24": 2894409.25,
+    "volume_h1": 72096.26,
     "price_change_h1": 0.72,
     "price_change_h6": -15.9,
     "age_hours": 141.0,
-    "channel_count": 10,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 2439922,
-    "mcap_tier": "$1M-$10M",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
+    "dex_url": "https://dexscreener.com/solana/CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump",
+    "wallet_count": 11,
+    "holding_wallets": [
+      "9qhkWvC7K2wtsn3H8sbEWAGv82LD12uKxmyN7YdmxS8D",
+      "95rwF14CWBfCgbWbiME5HKC2fc7iXrycVvodVXSnwzzV",
+      "Ew5rWyoonD9MYuArCpoc2D65HDyhzqa9P8B5aeDzaCuq",
+      "E6ic8e94V5hsrdyFrgxkdcNL3qFkHEdBFCfFT7Teg74W",
+      "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
+      "Ap1ctYVBvdbDphaSpn97d9PVbkArC4YnZxPJRYrD4so1",
+      "87v4fB1RVHwfkTx2vtF6Bes8QbegMVbzczJEpb6ipp5C",
+      "5sAmbApNwQZxHidauscmq1PPPjfcZQk2za85DEtXvmZn",
+      "3P51mfjg52mdjnKWW5FBxcmToiJ9xtsQV8XkbLxT4aFP",
+      "7Qvhc1r3Y1q5XUQ8Gt7DJFT8UMXsjRDNeTbBAZ8UqHBk"
+    ],
+    "mcap_tier": "$1M - $10M"
   },
   {
-    "symbol": "?",
     "chain": "solana",
-    "contract_address": "HYd3WpmCzbofEyoBeh2g5WsSXi5GYhYEoQKFLKudpump",
-    "score": 1.68,
-    "fdv": 2059,
-    "volume_h24": 141.65,
-    "price_change_h1": null,
-    "price_change_h6": null,
-    "age_hours": 41.59,
+    "contract_address": "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump",
     "channel_count": 3,
-    "gmgn_smart_wallets": 0,
+    "channels_seen": "-1003544951490,discovery:dexscreener_boost,discovery:dexscreener_trending_solana",
+    "mentions": 3,
+    "first_seen_at": 1776148590.2298968,
+    "last_seen_at": 1776629103.5814013,
+    "dex": {
+      "fdv": 403282,
+      "market_cap": 403282,
+      "liquidity_usd": 62785.06,
+      "volume_m5": 46.18,
+      "volume_h1": 6977.92,
+      "volume_h6": 99576.36,
+      "volume_h24": 568854.69,
+      "txns_m5": {
+        "buys": 1,
+        "sells": 2
+      },
+      "txns_h1": {
+        "buys": 43,
+        "sells": 40
+      },
+      "txns_h6": {
+        "buys": 1306,
+        "sells": 1198
+      },
+      "txns_h24": {
+        "buys": 8069,
+        "sells": 7539
+      },
+      "price_change_m5": -0.16,
+      "price_change_h1": -10.64,
+      "price_change_h6": -10.73,
+      "price_change_h24": -5.64,
+      "age_hours": 214.58,
+      "dex": "pumpswap",
+      "symbol": "Skibidi",
+      "name": "Skibidi Toilet",
+      "pair_address": "DyBES1yrnSRHS4TKaABfG82LJ2Qifx6jmVUcLYh9XiGa",
+      "twitter_url": "https://x.com/i/communities/1955071570566615400",
+      "telegram_url": "https://t.me/skibidibrainrott",
+      "website_url": "https://solskibidi.fun/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.1557,
+      "liq_risk": "healthy"
+    },
+    "social_score": 36,
+    "mention_velocity": 0.02,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 13917,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Large Amount of LP Unlocked",
+          "value": "100.00%",
+          "description": "A large amount of LP tokens are unlocked, allowing the owner to remove liquidity at any point.",
+          "score": 11000,
+          "level": "danger"
+        },
+        {
+          "name": "Low Liquidity",
+          "value": "$83.91",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 2916,
+          "level": "danger"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 30.76580779104398,
+      "lp_locked": 0
+    },
+    "coingecko": {
+      "sentiment_up": 100.0,
+      "sentiment_down": 0.0,
+      "ath": 0.00071098,
+      "ath_change_pct": -42.43514,
+      "exchanges": 0,
+      "categories": [
+        "Solana Ecosystem",
+        "Meme",
+        "Solana Meme",
+        "Pump.fun Ecosystem",
+        "TikTok Meme"
+      ]
+    },
+    "score": 4.14,
     "positives": [],
-    "dex_url": "",
-    "market_cap": 2059,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
+    "negatives": [
+      "stagnant volume"
+    ],
+    "symbol": "Skibidi",
+    "fdv": 403282,
+    "volume_h24": 568854.69,
+    "volume_h1": 6977.92,
+    "price_change_h1": -10.64,
+    "price_change_h6": -10.73,
+    "age_hours": 214.58,
+    "dex_url": "https://dexscreener.com/solana/FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump",
     "wallet_count": 0,
-    "holders": 0
+    "holding_wallets": [],
+    "mcap_tier": "$250K - $1M"
   },
   {
-    "symbol": "?",
+    "chain": "BNB",
+    "contract_address": "0xb29de8455acd47bb10755a133c54d0e595c6ffff",
+    "channel_count": 3,
+    "channels_seen": "-1001758611100,-1001541757109,-1001763265784",
+    "mentions": 5,
+    "first_seen_at": 1776537785.5693066,
+    "last_seen_at": 1776537792.175963,
+    "dex": {
+      "fdv": 835658,
+      "market_cap": 835658,
+      "liquidity_usd": 105214.37,
+      "volume_m5": 0,
+      "volume_h1": 20016.57,
+      "volume_h6": 55536.77,
+      "volume_h24": 406399.67,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 32,
+        "sells": 35
+      },
+      "txns_h6": {
+        "buys": 159,
+        "sells": 152
+      },
+      "txns_h24": {
+        "buys": 1044,
+        "sells": 971
+      },
+      "price_change_m5": null,
+      "price_change_h1": 12.97,
+      "price_change_h6": -3.86,
+      "price_change_h24": 67.28,
+      "age_hours": 259.19,
+      "dex": "pancakeswap",
+      "symbol": "PP",
+      "name": "Prison Professors",
+      "pair_address": "0x34CF09d7b916B99D45aaB30C3095387d64c1648f",
+      "twitter_url": "https://x.com/PrisonProf_BNB",
+      "telegram_url": "https://t.me/PrisonProfessors",
+      "website_url": "https://www.prisonprofessors.org/donate"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.1259,
+      "liq_risk": "healthy"
+    },
+    "social_score": 40,
+    "mention_velocity": 2724.52,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "goplus": {
+      "is_honeypot": false,
+      "buy_tax": 0.03,
+      "sell_tax": 0.03,
+      "can_take_back_ownership": false,
+      "is_mintable": false,
+      "owner_can_change_balance": false,
+      "holder_count": 1775
+    },
+    "score": 3.96,
+    "positives": [],
+    "negatives": [
+      "stagnant volume"
+    ],
+    "symbol": "PP",
+    "fdv": 835658,
+    "volume_h24": 406399.67,
+    "volume_h1": 20016.57,
+    "price_change_h1": 12.97,
+    "price_change_h6": -3.86,
+    "age_hours": 259.19,
+    "dex_url": "https://dexscreener.com/bnb/0xb29de8455acd47bb10755a133c54d0e595c6ffff",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "$250K - $1M"
+  },
+  {
+    "chain": "polkadot",
+    "contract_address": "5",
+    "channel_count": 4,
+    "channels_seen": "-1003544951490,-1001578710430,-1002202241417,-1002115686230",
+    "mentions": 8,
+    "first_seen_at": 1776148590.2362442,
+    "last_seen_at": 1776537785.4282942,
+    "dex": {
+      "fdv": 8904621,
+      "market_cap": 8904621,
+      "liquidity_usd": 5057827.38,
+      "volume_m5": 1139.27,
+      "volume_h1": 3299.5,
+      "volume_h6": 36359.31,
+      "volume_h24": 311243.76,
+      "txns_m5": {
+        "buys": 4,
+        "sells": 2
+      },
+      "txns_h1": {
+        "buys": 12,
+        "sells": 12
+      },
+      "txns_h6": {
+        "buys": 71,
+        "sells": 82
+      },
+      "txns_h24": {
+        "buys": 190,
+        "sells": 554
+      },
+      "price_change_m5": -0.24,
+      "price_change_h1": -0.39,
+      "price_change_h6": -1.1,
+      "price_change_h24": -1.25,
+      "age_hours": null,
+      "dex": "hydration",
+      "symbol": "aDOT",
+      "name": "aDOT",
+      "pair_address": "0x4554480002639ec01313c8775fae74f2dad1118c8a8a86da0000000000000000-5-0x02639ec01313c8775fae74f2dad1118c8a8a86da"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.568,
+      "liq_risk": "healthy"
+    },
+    "social_score": 56,
+    "mention_velocity": 0.07,
+    "social_quality": "low",
+    "social_momentum": "high",
+    "coingecko": {
+      "sentiment_up": null,
+      "sentiment_down": null,
+      "ath": 26.03,
+      "ath_change_pct": -81.38998,
+      "exchanges": 0,
+      "categories": [
+        "Artificial Intelligence (AI)",
+        "Bittensor Ecosystem",
+        "Bittensor Subnets"
+      ]
+    },
+    "score": 4.2,
+    "positives": [],
+    "negatives": [
+      "stagnant volume"
+    ],
+    "symbol": "aDOT",
+    "fdv": 8904621,
+    "volume_h24": 311243.76,
+    "volume_h1": 3299.5,
+    "price_change_h1": -0.39,
+    "price_change_h6": -1.1,
+    "age_hours": null,
+    "dex_url": "https://dexscreener.com/polkadot/5",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "$1M - $10M"
+  },
+  {
     "chain": "solana",
     "contract_address": "GEr3mpSoqQiQsxYKUH8GZqyMConyJSNz3uVRL9bmpump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:The first ASTEROID that ever created onchain, @a1lon9 bought.,discovery:dexscreener_profile,discovery:dexscreener_boost",
+    "mentions": 2,
+    "first_seen_at": 1776400503.3924668,
+    "last_seen_at": 1776629103.5785906,
+    "dex": {
+      "fdv": 298319,
+      "market_cap": 298319,
+      "liquidity_usd": 49307.16,
+      "volume_m5": 1147.89,
+      "volume_h1": 20276.25,
+      "volume_h6": 147336.33,
+      "volume_h24": 1178571.8,
+      "txns_m5": {
+        "buys": 4,
+        "sells": 6
+      },
+      "txns_h1": {
+        "buys": 146,
+        "sells": 111
+      },
+      "txns_h6": {
+        "buys": 1415,
+        "sells": 921
+      },
+      "txns_h24": {
+        "buys": 8070,
+        "sells": 6648
+      },
+      "price_change_m5": 4.18,
+      "price_change_h1": 9.6,
+      "price_change_h6": 20.75,
+      "price_change_h24": -25.99,
+      "age_hours": 14074.08,
+      "dex": "raydium",
+      "symbol": "$ASTR",
+      "name": "Asteroid",
+      "pair_address": "8m1LUe3kmaGTDkHwagJ1ap2muWFpWXAzdvmCCK8KxfzV",
+      "twitter_url": "https://x.com/firstasteroid",
+      "telegram_url": "https://t.me/firstasteroid",
+      "website_url": "https://firstasteroid.xyz/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.1653,
+      "liq_risk": "healthy"
+    },
+    "social_score": 34,
+    "mention_velocity": 0.03,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 501,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Missing file metadata",
+          "value": "",
+          "description": "No file metadata found associated to this token",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 40.75754913073576,
+      "lp_locked": 4043044496782
+    },
     "score": 1.62,
+    "positives": [],
+    "negatives": [
+      "down h24 (-26%)",
+      "stagnant volume"
+    ],
+    "symbol": "$ASTR",
     "fdv": 298319,
     "volume_h24": 1178571.8,
+    "volume_h1": 20276.25,
     "price_change_h1": 9.6,
     "price_change_h6": 20.75,
     "age_hours": 14074.08,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 298319,
-    "mcap_tier": "$250K-$1M",
-    "holding_wallets": [],
+    "dex_url": "https://dexscreener.com/solana/GEr3mpSoqQiQsxYKUH8GZqyMConyJSNz3uVRL9bmpump",
     "wallet_count": 0,
-    "holders": 0
+    "holding_wallets": [],
+    "mcap_tier": "$250K - $1M"
   },
   {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "4wZHAQbikY42reY44gvEU2yRhzrdzVbVS2rkayyQpump",
-    "score": 1.47,
-    "fdv": 1611,
-    "volume_h24": 300.54,
-    "price_change_h1": null,
-    "price_change_h6": null,
-    "age_hours": 73.89,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 1611,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "QHbZKZWXNYoma8ggwrkn3gff8WN1dq1kPL7Synapump",
-    "score": 1.29,
-    "fdv": 1763,
-    "volume_h24": 0.37,
-    "price_change_h1": null,
-    "price_change_h6": null,
-    "age_hours": 64.29,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 1763,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
     "chain": "solana",
     "contract_address": "5552z6Qp2xr596ox1UVN4ppDwwyjCfY8cXwzHMXgMcaS",
+    "channel_count": 4,
+    "channels_seen": "-1001164734593,discovery:dexscreener_boost,-1001835320066,-1001712204022",
+    "mentions": 4,
+    "first_seen_at": 1776148596.1169512,
+    "last_seen_at": 1776537790.4147203,
+    "dex": {
+      "fdv": 423425,
+      "market_cap": 423425,
+      "liquidity_usd": 61911.48,
+      "volume_m5": 1.04,
+      "volume_h1": 2637.78,
+      "volume_h6": 15555.63,
+      "volume_h24": 176887.76,
+      "txns_m5": {
+        "buys": 3,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 17,
+        "sells": 14
+      },
+      "txns_h6": {
+        "buys": 172,
+        "sells": 102
+      },
+      "txns_h24": {
+        "buys": 1456,
+        "sells": 1360
+      },
+      "price_change_m5": 0.06,
+      "price_change_h1": -3.01,
+      "price_change_h6": -18.93,
+      "price_change_h24": -27.22,
+      "age_hours": 1881.09,
+      "dex": "orca",
+      "symbol": "MOLTING",
+      "name": "Molting",
+      "pair_address": "EAzwsTfbdPmjW5eEWtxNpXaHLzVJmpTUGzkTPnCPrTHd",
+      "twitter_url": "https://x.com/molting_cmi",
+      "telegram_url": "https://t.me/moltingonsol",
+      "website_url": "https://moltycmi.xyz"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.1462,
+      "liq_risk": "healthy"
+    },
+    "social_score": 48,
+    "mention_velocity": 0.04,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 101,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Mutable metadata",
+          "value": "",
+          "description": "Token metadata can be changed by the owner",
+          "score": 100,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 40.71007561492975,
+      "lp_locked": 158730158730158
+    },
+    "coingecko": {
+      "sentiment_up": null,
+      "sentiment_down": null,
+      "ath": 0.00221196,
+      "ath_change_pct": -80.63101,
+      "exchanges": 0,
+      "categories": [
+        "Solana Ecosystem"
+      ]
+    },
     "score": 1.02,
+    "positives": [],
+    "negatives": [
+      "down h24 (-27%)",
+      "stagnant volume"
+    ],
+    "symbol": "MOLTING",
     "fdv": 423425,
     "volume_h24": 176887.76,
+    "volume_h1": 2637.78,
     "price_change_h1": -3.01,
     "price_change_h6": -18.93,
     "age_hours": 1881.09,
-    "channel_count": 4,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 423425,
-    "mcap_tier": "$250K-$1M",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
+    "dex_url": "https://dexscreener.com/solana/5552z6Qp2xr596ox1UVN4ppDwwyjCfY8cXwzHMXgMcaS",
+    "wallet_count": 16,
+    "holding_wallets": [
+      "FEDnR9WFHVC72nwo7KZfsgfNaspRsG5JT464AmK7rUkz",
+      "2gv65LZTq9s8hFmyHuJmLcoTv5Fnh3gj9LJ6fuzBx756",
+      "8FHsiu8PVYgpZPANGAKMb98Z9oeBfNKyQT7puxGWbkaQ",
+      "75uYdSzscTypH5bs6LRN2LSn4AUn1mDqGaMVwcumwxMX",
+      "HMbSdMHK35sm9tiQk2qJoZ5W9S7gLKYbsjnZ2A1KwCkD",
+      "5d8tDay1ZDV4XVUBtTvFvQiLxDe8dz2ZCdsrkmTDcbm5",
+      "6hAD3gHzEhiPPgM76Myk3AKHHP7nAtuneh4PL6CXLYJT",
+      "EPtjWEJS2SnWuhd9aENW8FXpvj75LnsmMTV8pT3Hcaq1",
+      "ERruSW7Tcos34v5kvEfCd2D54Uk1CB9c3xb92GnvyGUS",
+      "DpN2MzcABP32FeWiT6Hkqw3QbiD6h3FYRsQ6ojec2Pxs"
+    ],
+    "mcap_tier": "$250K - $1M"
   },
   {
-    "symbol": "?",
-    "chain": "solana",
-    "contract_address": "4aqZVnuUwcxPQDsyFEbXeKbM4KG5XLnhYeKoTNVApump",
-    "score": 0.89,
-    "fdv": 3287,
-    "volume_h24": 795.74,
-    "price_change_h1": null,
-    "price_change_h6": null,
-    "age_hours": 93.31,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 3287,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
-    "wallet_count": 0,
-    "holders": 0
-  },
-  {
-    "symbol": "?",
     "chain": "solana",
     "contract_address": "F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2",
+    "channel_count": 4,
+    "channels_seen": "discovery:dexscreener_profile:,discovery:dexscreener_profile:Asteroid,discovery:dexscreener_profile,discovery:dexscreener_boost",
+    "mentions": 3,
+    "first_seen_at": 1776398702.7182372,
+    "last_seen_at": 1776501303.7691064,
+    "dex": {
+      "fdv": 921629,
+      "market_cap": 921629,
+      "liquidity_usd": 125488.15,
+      "volume_m5": 897.52,
+      "volume_h1": 32789.27,
+      "volume_h6": 585331,
+      "volume_h24": 3620677.9,
+      "txns_m5": {
+        "buys": 5,
+        "sells": 6
+      },
+      "txns_h1": {
+        "buys": 185,
+        "sells": 190
+      },
+      "txns_h6": {
+        "buys": 3878,
+        "sells": 3111
+      },
+      "txns_h24": {
+        "buys": 21072,
+        "sells": 17613
+      },
+      "price_change_m5": -0.11,
+      "price_change_h1": -8.01,
+      "price_change_h6": -39.84,
+      "price_change_h24": -53.04,
+      "age_hours": 64.46,
+      "dex": "pumpswap",
+      "symbol": "ASTEROID",
+      "name": "ASTEROID",
+      "pair_address": "91tDWyGdurPekG8JCWCfzJn7aGfLgb9zb711fHpyGR2j",
+      "twitter_url": "https://x.com/i/communities/2019568206269280468",
+      "website_url": "https://www.asteroidcoin.fun/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.1362,
+      "liq_risk": "healthy"
+    },
+    "social_score": 46,
+    "mention_velocity": 0.11,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1,
+      "risk_level": null,
+      "risks": [],
+      "insider_percentage": 0,
+      "top_holders_pct": 26.158540627583307,
+      "lp_locked": 4193388283123
+    },
+    "coingecko": {
+      "sentiment_up": 71.43,
+      "sentiment_down": 28.57,
+      "ath": 0.00557428,
+      "ath_change_pct": -82.02098,
+      "exchanges": 0,
+      "categories": [
+        "Solana Ecosystem"
+      ]
+    },
     "score": 0.78,
+    "positives": [],
+    "negatives": [
+      "declining h6 (-40%)",
+      "collapsed h24 (-53%)",
+      "stagnant volume"
+    ],
+    "symbol": "ASTEROID",
     "fdv": 921629,
     "volume_h24": 3620677.9,
+    "volume_h1": 32789.27,
     "price_change_h1": -8.01,
     "price_change_h6": -39.84,
     "age_hours": 64.46,
-    "channel_count": 4,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 921629,
-    "mcap_tier": "$250K-$1M",
-    "holding_wallets": [],
+    "dex_url": "https://dexscreener.com/solana/F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2",
     "wallet_count": 0,
-    "holders": 0
+    "holding_wallets": [],
+    "mcap_tier": "$250K - $1M"
   },
   {
-    "symbol": "?",
     "chain": "solana",
-    "contract_address": "7ro7WwhwqgBh794AtHZJgj7HXU3ExgkeMCq2tB8pump",
-    "score": 0.56,
-    "fdv": 52299,
-    "volume_h24": 67600.81,
-    "price_change_h1": -3.71,
-    "price_change_h6": -26.97,
-    "age_hours": 97.32,
-    "channel_count": 4,
-    "gmgn_smart_wallets": 0,
+    "contract_address": "2V6DFHSsT5MxH3uKQHW8hVM2esYPvoMMXFwwPECFpump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:,discovery:dexscreener_profile:The dog's name is Astroid according to Liv!,discovery:dexscreener_profile",
+    "mentions": 3,
+    "first_seen_at": 1776400503.3929622,
+    "last_seen_at": 1776404669.5495625,
+    "dex": {
+      "fdv": 8331,
+      "market_cap": 8331,
+      "liquidity_usd": 8049.65,
+      "volume_m5": 20.17,
+      "volume_h1": 640,
+      "volume_h6": 8914.75,
+      "volume_h24": 34511.62,
+      "txns_m5": {
+        "buys": 1,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 6,
+        "sells": 9
+      },
+      "txns_h6": {
+        "buys": 105,
+        "sells": 102
+      },
+      "txns_h24": {
+        "buys": 407,
+        "sells": 358
+      },
+      "price_change_m5": 0.91,
+      "price_change_h1": -14.64,
+      "price_change_h6": -3.09,
+      "price_change_h24": -4.44,
+      "age_hours": 64.19,
+      "dex": "pumpswap",
+      "symbol": "ASTROID",
+      "name": "ASTROID",
+      "pair_address": "DS9bEiXYs9mLVnVco2S2yUonYB13UeYJDh1QKGRTCUN",
+      "twitter_url": "https://x.com/rookisaacman/status/1954953306406785433",
+      "website_url": "https://glennbeck.com/read/articles/cancer-tried-to-steal-my-daughters-space-dreams-elon-musk-and-jared-isaacman-gave-them-back"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.9662,
+      "liq_risk": "healthy"
+    },
+    "social_score": 36,
+    "mention_velocity": 2.59,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1,
+      "risk_level": null,
+      "risks": [],
+      "insider_percentage": 0,
+      "top_holders_pct": 83.43304541161496,
+      "lp_locked": 4193388282803
+    },
+    "score": 5.46,
     "positives": [],
-    "dex_url": "",
-    "market_cap": 52299,
-    "mcap_tier": "$50K-$250K",
-    "holding_wallets": [],
+    "negatives": [
+      "stagnant volume",
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "ASTROID",
+    "fdv": 8331,
+    "volume_h24": 34511.62,
+    "volume_h1": 640,
+    "price_change_h1": -14.64,
+    "price_change_h6": -3.09,
+    "age_hours": 64.19,
+    "dex_url": "https://dexscreener.com/solana/2V6DFHSsT5MxH3uKQHW8hVM2esYPvoMMXFwwPECFpump",
     "wallet_count": 0,
-    "holders": 0
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
   },
   {
-    "symbol": "?",
     "chain": "solana",
     "contract_address": "HX38toQHZzxxeY82uvSHVgfBP77aWqk3mv4ZtwEVpump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:Sharon the DoorDash Grandma works just to pay for her husband's cancer treatments, and we've decided,discovery:dexscreener_profile:,discovery:dexscreener_boost",
+    "mentions": 1,
+    "first_seen_at": 1776542704.1022992,
+    "last_seen_at": 1776629103.5787482,
+    "dex": {
+      "fdv": 21638,
+      "market_cap": 21638,
+      "liquidity_usd": 11867.72,
+      "volume_m5": 339.47,
+      "volume_h1": 3137.42,
+      "volume_h6": 58738.22,
+      "volume_h24": 542254.81,
+      "txns_m5": {
+        "buys": 10,
+        "sells": 3
+      },
+      "txns_h1": {
+        "buys": 75,
+        "sells": 62
+      },
+      "txns_h6": {
+        "buys": 940,
+        "sells": 721
+      },
+      "txns_h24": {
+        "buys": 6973,
+        "sells": 5205
+      },
+      "price_change_m5": 6.11,
+      "price_change_h1": -25.18,
+      "price_change_h6": -68.11,
+      "price_change_h24": 12.56,
+      "age_hours": 24.37,
+      "dex": "pumpswap",
+      "symbol": "Sharon",
+      "name": "The Doordash Grandma",
+      "pair_address": "H9qyfVdexVt5ZC7sZeoYorBRH9kgsMwvsa71NNr2fLax",
+      "twitter_url": "https://x.com/i/communities/1926392413917962662",
+      "website_url": "https://www.instagram.com/simmonsshar/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.5485,
+      "liq_risk": "healthy"
+    },
+    "social_score": 32,
+    "mention_velocity": 0.04,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 501,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 77.48546986418114,
+      "lp_locked": 4193388295335
+    },
     "score": 0.44,
+    "positives": [],
+    "negatives": [
+      "decline h1 (-25%)",
+      "crashed h6 (-68%)",
+      "stagnant volume"
+    ],
+    "symbol": "Sharon",
     "fdv": 21638,
     "volume_h24": 542254.81,
+    "volume_h1": 3137.42,
     "price_change_h1": -25.18,
     "price_change_h6": -68.11,
     "age_hours": 24.37,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 21638,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
+    "dex_url": "https://dexscreener.com/solana/HX38toQHZzxxeY82uvSHVgfBP77aWqk3mv4ZtwEVpump",
     "wallet_count": 0,
-    "holders": 0
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
   },
   {
-    "symbol": "?",
     "chain": "solana",
-    "contract_address": "CZ2hPzievWCsceVFkYdzTzhxxnb5eTMS6JuoMQodbrrr",
-    "score": 0.42,
-    "fdv": 1504.1,
-    "volume_h24": 14.88,
-    "price_change_h1": -1.14,
-    "price_change_h6": -2.19,
-    "age_hours": 66.44,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
+    "contract_address": "5aKvh7uwKNn5CQcXd5hxKJLp7wR1GE4HcgigvhL3pump",
+    "channel_count": 4,
+    "channels_seen": "discovery:dexscreener_profile:,discovery:dexscreener_profile:Pandcoin,discovery:dexscreener_boost,discovery:dexscreener_trending_solana",
+    "mentions": 3,
+    "first_seen_at": 1776360906.9926414,
+    "last_seen_at": 1776562503.9004831,
+    "dex": {
+      "fdv": 22770,
+      "market_cap": 22770,
+      "liquidity_usd": 12497.38,
+      "volume_m5": 647.48,
+      "volume_h1": 1556.77,
+      "volume_h6": 4523.06,
+      "volume_h24": 18336.79,
+      "txns_m5": {
+        "buys": 21,
+        "sells": 1
+      },
+      "txns_h1": {
+        "buys": 34,
+        "sells": 12
+      },
+      "txns_h6": {
+        "buys": 62,
+        "sells": 58
+      },
+      "txns_h24": {
+        "buys": 272,
+        "sells": 253
+      },
+      "price_change_m5": 1.74,
+      "price_change_h1": -15.76,
+      "price_change_h6": -6.66,
+      "price_change_h24": -26.1,
+      "age_hours": 75.04,
+      "dex": "pumpswap",
+      "symbol": "PND",
+      "name": "PandaCoin",
+      "pair_address": "HcjzaKv4a8RHZVS8FrXzJQwURbvgQo3Wg6B1mNQwgp2D",
+      "twitter_url": "https://x.com/PandaCoinPND",
+      "website_url": "https://bitcointalk.org/index.php?topic=1960307.0"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.5489,
+      "liq_risk": "healthy"
+    },
+    "social_score": 46,
+    "mention_velocity": 0.05,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 501,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 78.15177049733958,
+      "lp_locked": 4193388300639
+    },
+    "score": 7.5,
     "positives": [],
-    "dex_url": "",
-    "market_cap": 1504.1,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
+    "negatives": [
+      "down h24 (-26%)"
+    ],
+    "symbol": "PND",
+    "fdv": 22770,
+    "volume_h24": 18336.79,
+    "volume_h1": 1556.77,
+    "price_change_h1": -15.76,
+    "price_change_h6": -6.66,
+    "age_hours": 75.04,
+    "dex_url": "https://dexscreener.com/solana/5aKvh7uwKNn5CQcXd5hxKJLp7wR1GE4HcgigvhL3pump",
     "wallet_count": 0,
-    "holders": 0
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
   },
   {
-    "symbol": "?",
     "chain": "solana",
-    "contract_address": "Cm8G3wxvH6YPxNRvx4f3PkHJdCnwvLhBjhoKTa2ypump",
-    "score": 0.15,
-    "fdv": 13304,
-    "volume_h24": 376.61,
-    "price_change_h1": -0.36,
-    "price_change_h6": -4.79,
-    "age_hours": 68.16,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
+    "contract_address": "EU6VhieS2iAq9ffNTz3CUrV1neVhwT8cV8haQb6zswrm",
+    "channel_count": 4,
+    "channels_seen": "-1002611628536,-1002170989480,-1001214026963,-1001609073900",
+    "mentions": 6,
+    "first_seen_at": 1776537784.4059007,
+    "last_seen_at": 1776537790.7537858,
+    "dex": {
+      "fdv": 19920,
+      "market_cap": 19920,
+      "liquidity_usd": 9169.29,
+      "volume_m5": 0,
+      "volume_h1": 1091.43,
+      "volume_h6": 6648.21,
+      "volume_h24": 39788.26,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 6,
+        "sells": 8
+      },
+      "txns_h6": {
+        "buys": 79,
+        "sells": 59
+      },
+      "txns_h24": {
+        "buys": 425,
+        "sells": 318
+      },
+      "price_change_m5": null,
+      "price_change_h1": -7.71,
+      "price_change_h6": 29.55,
+      "price_change_h24": -45.53,
+      "age_hours": 105.07,
+      "dex": "meteora",
+      "symbol": "CLAWPAY",
+      "name": "ClawPay",
+      "pair_address": "DHJ7XYVqnmyrVC4ChaUUc9x8bSKUKHQCk24aSUpuNiPk"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.4603,
+      "liq_risk": "healthy"
+    },
+    "social_score": 52,
+    "mention_velocity": 3402.71,
+    "social_quality": "low",
+    "social_momentum": "high",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1,
+      "risk_level": null,
+      "risks": [],
+      "insider_percentage": 0,
+      "top_holders_pct": 66.5791312137819,
+      "lp_locked": 13943500551834829031
+    },
+    "score": 3.04,
     "positives": [],
-    "dex_url": "",
-    "market_cap": 13304,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
+    "negatives": [
+      "down h24 (-46%)",
+      "stagnant volume"
+    ],
+    "symbol": "CLAWPAY",
+    "fdv": 19920,
+    "volume_h24": 39788.26,
+    "volume_h1": 1091.43,
+    "price_change_h1": -7.71,
+    "price_change_h6": 29.55,
+    "age_hours": 105.07,
+    "dex_url": "https://dexscreener.com/solana/EU6VhieS2iAq9ffNTz3CUrV1neVhwT8cV8haQb6zswrm",
     "wallet_count": 0,
-    "holders": 0
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
   },
   {
-    "symbol": "?",
     "chain": "solana",
-    "contract_address": "9LMrDLZG4BcE6ConP8tCD4bUpny8o9cRynAjRaHpump",
-    "score": 0.09,
-    "fdv": 2363,
-    "volume_h24": 8,
-    "price_change_h1": -0.93,
-    "price_change_h6": -0.93,
-    "age_hours": 72.24,
+    "contract_address": "Dd6BsUKK6Xcy993eipGdgXmB1xhdQ4JTbDTw3yUipump",
     "channel_count": 3,
-    "gmgn_smart_wallets": 0,
+    "channels_seen": "-1003544951490,-1002115686230,-1001578710430",
+    "mentions": 4,
+    "first_seen_at": 1776537784.9990215,
+    "last_seen_at": 1776537786.391668,
+    "dex": {
+      "fdv": 11772,
+      "market_cap": 11772,
+      "liquidity_usd": 8461.6,
+      "volume_m5": 0,
+      "volume_h1": 600.98,
+      "volume_h6": 8815.8,
+      "volume_h24": 17542.39,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 8,
+        "sells": 5
+      },
+      "txns_h6": {
+        "buys": 132,
+        "sells": 116
+      },
+      "txns_h24": {
+        "buys": 241,
+        "sells": 230
+      },
+      "price_change_m5": null,
+      "price_change_h1": -5.75,
+      "price_change_h6": 52.4,
+      "price_change_h24": -22.69,
+      "age_hours": 94.61,
+      "dex": "pumpswap",
+      "symbol": "coomer",
+      "name": "coomer",
+      "pair_address": "3635QZCuNNCdnA5TCnP3c3RwgVCt3vRoX9nS793GuVBg",
+      "twitter_url": "https://x.com/i/communities/2030284949522379206",
+      "website_url": "https://iamcoomer.xyz/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.7188,
+      "liq_risk": "healthy"
+    },
+    "social_score": 38,
+    "mention_velocity": 10340.02,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 501,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 118.23672510147226,
+      "lp_locked": 4193388323532
+    },
+    "score": 2.81,
     "positives": [],
-    "dex_url": "",
-    "market_cap": 2363,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
+    "negatives": [
+      "down h24 (-23%)",
+      "stagnant volume"
+    ],
+    "symbol": "coomer",
+    "fdv": 11772,
+    "volume_h24": 17542.39,
+    "volume_h1": 600.98,
+    "price_change_h1": -5.75,
+    "price_change_h6": 52.4,
+    "age_hours": 94.61,
+    "dex_url": "https://dexscreener.com/solana/Dd6BsUKK6Xcy993eipGdgXmB1xhdQ4JTbDTw3yUipump",
     "wallet_count": 0,
-    "holders": 0
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
   },
   {
-    "symbol": "?",
+    "chain": "solana",
+    "contract_address": "7ro7WwhwqgBh794AtHZJgj7HXU3ExgkeMCq2tB8pump",
+    "channel_count": 4,
+    "channels_seen": "discovery:dexscreener_boost,-1002170989480,-1002587001587,-1001863620956",
+    "mentions": 7,
+    "first_seen_at": 1776359212.298296,
+    "last_seen_at": 1776537791.906612,
+    "dex": {
+      "fdv": 52299,
+      "market_cap": 52299,
+      "liquidity_usd": 21255.57,
+      "volume_m5": 33.7,
+      "volume_h1": 1423.09,
+      "volume_h6": 8739.39,
+      "volume_h24": 67600.81,
+      "txns_m5": {
+        "buys": 3,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 20,
+        "sells": 13
+      },
+      "txns_h6": {
+        "buys": 113,
+        "sells": 85
+      },
+      "txns_h24": {
+        "buys": 906,
+        "sells": 763
+      },
+      "price_change_m5": 0.62,
+      "price_change_h1": -3.71,
+      "price_change_h6": -26.97,
+      "price_change_h24": -55.62,
+      "age_hours": 97.32,
+      "dex": "pumpswap",
+      "symbol": "NORMIE",
+      "name": "Normie",
+      "pair_address": "2DWWbkvtAPSPZfYAgGxswxvJdJ5gzs9PZxEsLzjSchKg",
+      "twitter_url": "https://x.com/normieguysol",
+      "website_url": "https://normie.technology/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.4064,
+      "liq_risk": "healthy"
+    },
+    "social_score": 54,
+    "mention_velocity": 0.14,
+    "social_quality": "low",
+    "social_momentum": "high",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1,
+      "risk_level": null,
+      "risks": [],
+      "insider_percentage": 0,
+      "top_holders_pct": 58.645873176108886,
+      "lp_locked": 4193388291560
+    },
+    "coingecko": {
+      "sentiment_up": 100.0,
+      "sentiment_down": 0.0,
+      "ath": 0.00073684,
+      "ath_change_pct": -93.0573,
+      "exchanges": 0,
+      "categories": [
+        "Solana Ecosystem",
+        "Meme",
+        "Solana Meme",
+        "Pump.fun Ecosystem"
+      ]
+    },
+    "score": 0.56,
+    "positives": [],
+    "negatives": [
+      "declining h6 (-27%)",
+      "collapsed h24 (-56%)",
+      "stagnant volume"
+    ],
+    "symbol": "NORMIE",
+    "fdv": 52299,
+    "volume_h24": 67600.81,
+    "volume_h1": 1423.09,
+    "price_change_h1": -3.71,
+    "price_change_h6": -26.97,
+    "age_hours": 97.32,
+    "dex_url": "https://dexscreener.com/solana/7ro7WwhwqgBh794AtHZJgj7HXU3ExgkeMCq2tB8pump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "$50K - $250K"
+  },
+  {
+    "chain": "base",
+    "contract_address": "0x557E8f1cd9fB4e9dfEcA817b15B737328D90821A",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:From Retard to GOAT \ud83d\udc10\u2697\ufe0f\nOn-chain intelligence oracle on \n@base.\nTurn noise into alpha with 1 click. ,discovery:dexscreener_boost,discovery:dexscreener_trending_base",
+    "mentions": 3,
+    "first_seen_at": 1776371703.6361668,
+    "last_seen_at": 1776411303.3389776,
+    "dex": {
+      "fdv": 27046,
+      "market_cap": 27046,
+      "liquidity_usd": 22798.96,
+      "volume_m5": 0,
+      "volume_h1": 6.08,
+      "volume_h6": 105.62,
+      "volume_h24": 2613.23,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 3,
+        "sells": 0
+      },
+      "txns_h6": {
+        "buys": 4,
+        "sells": 4
+      },
+      "txns_h24": {
+        "buys": 20,
+        "sells": 28
+      },
+      "price_change_m5": null,
+      "price_change_h1": -0.32,
+      "price_change_h6": -1.89,
+      "price_change_h24": -7.91,
+      "age_hours": 76.32,
+      "dex": "uniswap",
+      "symbol": "TRANSMUTE",
+      "name": "TRANSMUTE ORACLE",
+      "pair_address": "0xceb8a72040d3dc1790ecf92702f0bfd64008465f6532d7cc4d2df0ddb5efa9e1",
+      "twitter_url": "https://x.com/Chainriffs",
+      "website_url": "https://transmute-ten.vercel.app/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.843,
+      "liq_risk": "healthy"
+    },
+    "social_score": 36,
+    "mention_velocity": 0.27,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "goplus": {
+      "is_honeypot": false,
+      "buy_tax": 0.0,
+      "sell_tax": 0.0,
+      "can_take_back_ownership": false,
+      "is_mintable": false,
+      "owner_can_change_balance": false,
+      "holder_count": 261
+    },
+    "etherscan": {
+      "is_verified": true,
+      "compiler": "v0.8.27+commit.40a35a09",
+      "optimization": true,
+      "contract_name": "Memecoin"
+    },
+    "score": 3.15,
+    "positives": [],
+    "negatives": [
+      "stagnant volume"
+    ],
+    "symbol": "TRANSMUTE",
+    "fdv": 27046,
+    "volume_h24": 2613.23,
+    "volume_h1": 6.08,
+    "price_change_h1": -0.32,
+    "price_change_h6": -1.89,
+    "age_hours": 76.32,
+    "dex_url": "https://dexscreener.com/base/0x557E8f1cd9fB4e9dfEcA817b15B737328D90821A",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "6X1W4ffwhB6Ptko5Y8BFveap8BoyjvtH29kuykDLpump",
+    "channel_count": 3,
+    "channels_seen": "-1002115686230,-1001578710430,-1002587001587",
+    "mentions": 5,
+    "first_seen_at": 1776537785.424826,
+    "last_seen_at": 1776537787.960161,
+    "dex": {
+      "fdv": 2539,
+      "market_cap": 2539,
+      "liquidity_usd": 4167.29,
+      "volume_m5": 0,
+      "volume_h1": 72.75,
+      "volume_h6": 572.26,
+      "volume_h24": 607.93,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 1,
+        "sells": 5
+      },
+      "txns_h6": {
+        "buys": 15,
+        "sells": 21
+      },
+      "txns_h24": {
+        "buys": 16,
+        "sells": 28
+      },
+      "price_change_m5": null,
+      "price_change_h1": -6.19,
+      "price_change_h6": -1.88,
+      "price_change_h24": -4.23,
+      "age_hours": 93.83,
+      "dex": "pumpswap",
+      "symbol": "FOMO",
+      "name": "Fomo Coin",
+      "pair_address": "DErB39JRPpwfsUpaYZQZtCqiqBkXKXEH44JFaaWdyrHW",
+      "twitter_url": "https://x.com/i/communities/2039330117231477134",
+      "website_url": "https://x.com/ayushquantt/status/2044548626056143145"
+    },
+    "derived": {
+      "liq_fdv_ratio": 1.6413,
+      "liq_risk": "healthy"
+    },
+    "social_score": 40,
+    "mention_velocity": 7099.65,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 4031,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Single holder ownership",
+          "value": "20.70%",
+          "description": "One user holds a large amount of the token supply",
+          "score": 2069,
+          "level": "warn"
+        },
+        {
+          "name": "High holder concentration",
+          "value": "",
+          "description": "The top 10 users hold more than 50% token supply",
+          "score": 1045,
+          "level": "warn"
+        },
+        {
+          "name": "Low Liquidity",
+          "value": "$2083.61",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 916,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 136.46937038401916,
+      "lp_locked": 4193388299085
+    },
+    "score": 1.99,
+    "positives": [],
+    "negatives": [
+      "HEAVY SELLS (83%)",
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "FOMO",
+    "fdv": 2539,
+    "volume_h24": 607.93,
+    "volume_h1": 72.75,
+    "price_change_h1": -6.19,
+    "price_change_h6": -1.88,
+    "age_hours": 93.83,
+    "dex_url": "https://dexscreener.com/solana/6X1W4ffwhB6Ptko5Y8BFveap8BoyjvtH29kuykDLpump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "aHER4UoYSDvS8Dqd8aZWtW7WDfPZ2wpKyFHETt6pump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:this shit is flying,discovery:dexscreener_boost,discovery:dexscreener_trending_solana",
+    "mentions": 3,
+    "first_seen_at": 1776373502.9287162,
+    "last_seen_at": 1776414903.4509742,
+    "dex": {
+      "fdv": 4152.96,
+      "market_cap": 4152.96,
+      "liquidity_usd": null,
+      "volume_m5": 0,
+      "volume_h1": 0,
+      "volume_h6": 274.99,
+      "volume_h24": 2124.16,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h6": {
+        "buys": 3,
+        "sells": 4
+      },
+      "txns_h24": {
+        "buys": 11,
+        "sells": 31
+      },
+      "price_change_m5": null,
+      "price_change_h1": null,
+      "price_change_h6": -2.26,
+      "price_change_h24": -48.67,
+      "age_hours": 71.79,
+      "dex": "pumpfun",
+      "symbol": "fertilizer",
+      "name": "fertilizer coin",
+      "pair_address": "2MEnGB7TWdEviras38wWBjEbCj8oK5iE9Z9i85Ft1jG6"
+    },
+    "social_score": 36,
+    "mention_velocity": 0.26,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1,
+      "risk_level": null,
+      "risks": [],
+      "insider_percentage": 0,
+      "top_holders_pct": 108.1530566425962,
+      "lp_locked": 9465683340
+    },
+    "score": 2.8,
+    "positives": [],
+    "negatives": [
+      "down h24 (-49%)",
+      "on bonding curve",
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "fertilizer",
+    "fdv": 4152.96,
+    "volume_h24": 2124.16,
+    "volume_h1": 0,
+    "price_change_h1": null,
+    "price_change_h6": -2.26,
+    "age_hours": 71.79,
+    "dex_url": "https://dexscreener.com/solana/aHER4UoYSDvS8Dqd8aZWtW7WDfPZ2wpKyFHETt6pump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
     "chain": "solana",
     "contract_address": "J5TLrxnr1F7GzM8YwE1LngHvoxgLXnNdb6YdQBvepump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:,discovery:dexscreener_profile:Facepalm Baby,discovery:dexscreener_boost",
+    "mentions": 1,
+    "first_seen_at": 1776549903.9180613,
+    "last_seen_at": 1776593103.9837875,
+    "dex": {
+      "fdv": 4451,
+      "market_cap": 4451,
+      "liquidity_usd": 5211.68,
+      "volume_m5": 0,
+      "volume_h1": 2.91,
+      "volume_h6": 564.89,
+      "volume_h24": 136815.67,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 2
+      },
+      "txns_h6": {
+        "buys": 11,
+        "sells": 26
+      },
+      "txns_h24": {
+        "buys": 2258,
+        "sells": 1761
+      },
+      "price_change_m5": null,
+      "price_change_h1": -0.84,
+      "price_change_h6": -4.08,
+      "price_change_h24": -87.6,
+      "age_hours": 20.93,
+      "dex": "pumpswap",
+      "symbol": "FACEPALM",
+      "name": "Facepalm Baby",
+      "pair_address": "3MuGNQK7K12gH8MLf6rKGD6TZerdShKNHdxUBn75gePR",
+      "twitter_url": "https://x.com/i/communities/1974260983880204591"
+    },
+    "derived": {
+      "liq_fdv_ratio": 1.1709,
+      "liq_risk": "healthy"
+    },
+    "social_score": 32,
+    "mention_velocity": 0.08,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 883,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        },
+        {
+          "name": "Low Liquidity",
+          "value": "$2617.69",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 382,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 123.39111457670725,
+      "lp_locked": 4193388356516
+    },
     "score": 0.01,
+    "positives": [],
+    "negatives": [
+      "DEAD h24 (-88%)",
+      "ONLY SELLS",
+      "stagnant volume",
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "FACEPALM",
     "fdv": 4451,
     "volume_h24": 136815.67,
+    "volume_h1": 2.91,
     "price_change_h1": -0.84,
     "price_change_h6": -4.08,
     "age_hours": 20.93,
-    "channel_count": 3,
-    "gmgn_smart_wallets": 0,
-    "positives": [],
-    "dex_url": "",
-    "market_cap": 4451,
-    "mcap_tier": "<$50K",
-    "holding_wallets": [],
+    "dex_url": "https://dexscreener.com/solana/J5TLrxnr1F7GzM8YwE1LngHvoxgLXnNdb6YdQBvepump",
     "wallet_count": 0,
-    "holders": 0
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "4wZHAQbikY42reY44gvEU2yRhzrdzVbVS2rkayyQpump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:unc vance, serving president trump and making america great again with unc and vice presidential ene,discovery:dexscreener_boost,discovery:dexscreener_trending_solana",
+    "mentions": 3,
+    "first_seen_at": 1776366302.9255521,
+    "last_seen_at": 1776407702.7937286,
+    "dex": {
+      "fdv": 1611,
+      "market_cap": 1611,
+      "liquidity_usd": 3192.13,
+      "volume_m5": 0,
+      "volume_h1": 0,
+      "volume_h6": 0,
+      "volume_h24": 300.54,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h6": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h24": {
+        "buys": 2,
+        "sells": 3
+      },
+      "price_change_m5": null,
+      "price_change_h1": null,
+      "price_change_h6": null,
+      "price_change_h24": -2.19,
+      "age_hours": 73.89,
+      "dex": "pumpswap",
+      "symbol": "uncvance",
+      "name": "unc vance",
+      "pair_address": "FDv2iojLar76xRsk7ADWif2XPoLdi4jPP6jUe6oeNCoo",
+      "twitter_url": "https://x.com/uncvance",
+      "website_url": "https://uncvance.lol/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 1.9815,
+      "liq_risk": "healthy"
+    },
+    "social_score": 36,
+    "mention_velocity": 0.26,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 5560,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Single holder ownership",
+          "value": "25.56%",
+          "description": "One user holds a large amount of the token supply",
+          "score": 2556,
+          "level": "warn"
+        },
+        {
+          "name": "Low Liquidity",
+          "value": "$1611.54",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 1388,
+          "level": "warn"
+        },
+        {
+          "name": "High holder concentration",
+          "value": "",
+          "description": "The top 10 users hold more than 50% token supply",
+          "score": 1115,
+          "level": "warn"
+        },
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 159.9881802837388,
+      "lp_locked": 4193388297086
+    },
+    "score": 1.47,
+    "positives": [],
+    "negatives": [
+      "no txns in 6h",
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "uncvance",
+    "fdv": 1611,
+    "volume_h24": 300.54,
+    "volume_h1": 0,
+    "price_change_h1": null,
+    "price_change_h6": null,
+    "age_hours": 73.89,
+    "dex_url": "https://dexscreener.com/solana/4wZHAQbikY42reY44gvEU2yRhzrdzVbVS2rkayyQpump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "5yRShdLDqfHpoRAVBmuk827A526K1aa5E7gqusf2pump",
+    "channel_count": 4,
+    "channels_seen": "-1001523523939,-1001810124798,-1001609073900,-1001763265784",
+    "mentions": 6,
+    "first_seen_at": 1776537785.6874158,
+    "last_seen_at": 1776537792.1754136,
+    "dex": {
+      "fdv": 1931,
+      "market_cap": 1931,
+      "liquidity_usd": 3476.33,
+      "volume_m5": 0,
+      "volume_h1": 0,
+      "volume_h6": 4.96,
+      "volume_h24": 54.04,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h6": {
+        "buys": 0,
+        "sells": 6
+      },
+      "txns_h24": {
+        "buys": 1,
+        "sells": 17
+      },
+      "price_change_m5": null,
+      "price_change_h1": null,
+      "price_change_h6": -2.23,
+      "price_change_h24": -7.04,
+      "age_hours": 103.6,
+      "dex": "pumpswap",
+      "symbol": "YUNC",
+      "name": "lil yang unc",
+      "pair_address": "7CJEh6J4A9VjpCb3iH8Z1sSAu3ipzGDxXHAC9wotSxRd",
+      "twitter_url": "https://x.com/i/communities/2033149638572749281",
+      "telegram_url": "https://t.me/LilYoungUnc"
+    },
+    "derived": {
+      "liq_fdv_ratio": 1.8003,
+      "liq_risk": "healthy"
+    },
+    "social_score": 52,
+    "mention_velocity": 3329.22,
+    "social_quality": "low",
+    "social_momentum": "high",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 3820,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Single holder ownership",
+          "value": "20.69%",
+          "description": "One user holds a large amount of the token supply",
+          "score": 2069,
+          "level": "warn"
+        },
+        {
+          "name": "Low Liquidity",
+          "value": "$1749.39",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 1250,
+          "level": "warn"
+        },
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 134.19620596669563,
+      "lp_locked": 4193388292547
+    },
+    "score": 7.35,
+    "positives": [],
+    "negatives": [
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "YUNC",
+    "fdv": 1931,
+    "volume_h24": 54.04,
+    "volume_h1": 0,
+    "price_change_h1": null,
+    "price_change_h6": -2.23,
+    "age_hours": 103.6,
+    "dex_url": "https://dexscreener.com/solana/5yRShdLDqfHpoRAVBmuk827A526K1aa5E7gqusf2pump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "5QKJsBaAKweGpeNPxPF5EgvLD2hhPPeezdtkhZdpump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_boost,discovery:dexscreener_profile:Created by Quentin Dupieux for Levi's ads promoting Sta-Prest One Crease Denim.,discovery:dexscreener_trending_solana",
+    "mentions": 3,
+    "first_seen_at": 1776366302.9227693,
+    "last_seen_at": 1776407702.7937918,
+    "dex": {
+      "fdv": 1640,
+      "market_cap": 1640,
+      "liquidity_usd": 3280.3,
+      "volume_m5": 0,
+      "volume_h1": 0,
+      "volume_h6": 51.47,
+      "volume_h24": 59.4,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h6": {
+        "buys": 0,
+        "sells": 3
+      },
+      "txns_h24": {
+        "buys": 2,
+        "sells": 6
+      },
+      "price_change_m5": null,
+      "price_change_h1": null,
+      "price_change_h6": -7.14,
+      "price_change_h24": -8.29,
+      "age_hours": 73.96,
+      "dex": "pumpswap",
+      "symbol": "ERIC",
+      "name": "Flat Eric",
+      "pair_address": "Ar9XnmZcU2YQGhWmxkQ5dhhB9A2u3L8bFDBZiqiX5sto",
+      "twitter_url": "https://x.com/Solflateric",
+      "website_url": "https://flatericsol.xyz"
+    },
+    "derived": {
+      "liq_fdv_ratio": 2.0002,
+      "liq_risk": "healthy"
+    },
+    "social_score": 36,
+    "mention_velocity": 0.26,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 5688,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Single holder ownership",
+          "value": "27.82%",
+          "description": "One user holds a large amount of the token supply",
+          "score": 2782,
+          "level": "warn"
+        },
+        {
+          "name": "Low Liquidity",
+          "value": "$1644.03",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 1355,
+          "level": "warn"
+        },
+        {
+          "name": "High holder concentration",
+          "value": "",
+          "description": "The top 10 users hold more than 50% token supply",
+          "score": 1050,
+          "level": "warn"
+        },
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 154.39190406559862,
+      "lp_locked": 4193388290549
+    },
+    "score": 6.3,
+    "positives": [],
+    "negatives": [
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "ERIC",
+    "fdv": 1640,
+    "volume_h24": 59.4,
+    "volume_h1": 0,
+    "price_change_h1": null,
+    "price_change_h6": -7.14,
+    "age_hours": 73.96,
+    "dex_url": "https://dexscreener.com/solana/5QKJsBaAKweGpeNPxPF5EgvLD2hhPPeezdtkhZdpump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "HYd3WpmCzbofEyoBeh2g5WsSXi5GYhYEoQKFLKudpump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:,discovery:dexscreener_profile:The OG Solana cult termed by Toly.,discovery:dexscreener_boost",
+    "mentions": 1,
+    "first_seen_at": 1776481503.0214791,
+    "last_seen_at": 1776521103.7332735,
+    "dex": {
+      "fdv": 2059,
+      "market_cap": 2059,
+      "liquidity_usd": 3537.85,
+      "volume_m5": 0,
+      "volume_h1": 0,
+      "volume_h6": 0,
+      "volume_h24": 141.65,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h6": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h24": {
+        "buys": 0,
+        "sells": 13
+      },
+      "price_change_m5": null,
+      "price_change_h1": null,
+      "price_change_h6": null,
+      "price_change_h24": -14.15,
+      "age_hours": 41.59,
+      "dex": "pumpswap",
+      "symbol": "Solmates",
+      "name": "Solmates",
+      "pair_address": "HGVfBRqGt5qAmXpP965bcsMgcJLc38he14ybmJZ7FZYn"
+    },
+    "derived": {
+      "liq_fdv_ratio": 1.7182,
+      "liq_risk": "healthy"
+    },
+    "social_score": 32,
+    "mention_velocity": 0.09,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1746,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Low Liquidity",
+          "value": "$1754.63",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 1245,
+          "level": "warn"
+        },
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 136.38286473474957,
+      "lp_locked": 4193388305745
+    },
+    "score": 1.68,
+    "positives": [],
+    "negatives": [
+      "no txns in 6h",
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "Solmates",
+    "fdv": 2059,
+    "volume_h24": 141.65,
+    "volume_h1": 0,
+    "price_change_h1": null,
+    "price_change_h6": null,
+    "age_hours": 41.59,
+    "dex_url": "https://dexscreener.com/solana/HYd3WpmCzbofEyoBeh2g5WsSXi5GYhYEoQKFLKudpump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "4aqZVnuUwcxPQDsyFEbXeKbM4KG5XLnhYeKoTNVApump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_boost,-1003544951490,-1002115686230",
+    "mentions": 4,
+    "first_seen_at": 1776359212.2988374,
+    "last_seen_at": 1776537785.4206758,
+    "dex": {
+      "fdv": 3287,
+      "market_cap": 3287,
+      "liquidity_usd": 4828.56,
+      "volume_m5": 0,
+      "volume_h1": 0,
+      "volume_h6": 0,
+      "volume_h24": 795.74,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h6": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h24": {
+        "buys": 13,
+        "sells": 25
+      },
+      "price_change_m5": null,
+      "price_change_h1": null,
+      "price_change_h6": null,
+      "price_change_h24": -21.78,
+      "age_hours": 93.31,
+      "dex": "pumpswap",
+      "symbol": "MARVIN",
+      "name": "Marvin Beak",
+      "pair_address": "7ZgDJx7uTXFXuG7wdEoAhAaA2z14NmddA7Go1gLu43qR",
+      "twitter_url": "https://x.com/i/communities/2025827542620332274",
+      "website_url": "https://www.gov.il/he/pages/antisemitism_report_2025_full"
+    },
+    "derived": {
+      "liq_fdv_ratio": 1.469,
+      "liq_risk": "healthy"
+    },
+    "social_score": 38,
+    "mention_velocity": 0.08,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 3616,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Single holder ownership",
+          "value": "20.70%",
+          "description": "One user holds a large amount of the token supply",
+          "score": 2069,
+          "level": "warn"
+        },
+        {
+          "name": "High holder concentration",
+          "value": "",
+          "description": "The top 10 users hold more than 50% token supply",
+          "score": 1005,
+          "level": "warn"
+        },
+        {
+          "name": "Low Liquidity",
+          "value": "$2458.59",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 541,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 122.60631973336753,
+      "lp_locked": 4193388345044
+    },
+    "score": 0.89,
+    "positives": [],
+    "negatives": [
+      "down h24 (-22%)",
+      "no txns in 6h",
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "MARVIN",
+    "fdv": 3287,
+    "volume_h24": 795.74,
+    "volume_h1": 0,
+    "price_change_h1": null,
+    "price_change_h6": null,
+    "age_hours": 93.31,
+    "dex_url": "https://dexscreener.com/solana/4aqZVnuUwcxPQDsyFEbXeKbM4KG5XLnhYeKoTNVApump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "2tUNjQa2BNnCPenypph22gPVVWacJ5EgmtetSMXdpump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:Uncle Habibi is not your average billionaire. He is the embodiment of old-world power meeting new-wo,discovery:dexscreener_profile,discovery:dexscreener_boost",
+    "mentions": 2,
+    "first_seen_at": 1776398702.7189858,
+    "last_seen_at": 1776429303.2448616,
+    "dex": {
+      "fdv": 1918,
+      "market_cap": 1918,
+      "liquidity_usd": 3554.32,
+      "volume_m5": 0,
+      "volume_h1": 0,
+      "volume_h6": 1.7,
+      "volume_h24": 13.46,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h6": {
+        "buys": 2,
+        "sells": 1
+      },
+      "txns_h24": {
+        "buys": 3,
+        "sells": 6
+      },
+      "price_change_m5": null,
+      "price_change_h1": null,
+      "price_change_h6": 1.11,
+      "price_change_h24": 1.89,
+      "age_hours": 65.6,
+      "dex": "pumpswap",
+      "symbol": "habibi",
+      "name": "uncle habibi",
+      "pair_address": "47y1ZJrKCyHkeGD24zKt5VBfozpAuxoMev9UWWkWikJL",
+      "twitter_url": "https://x.com/unclehabibirich",
+      "website_url": "https://unclehabibi.fun/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 1.8531,
+      "liq_risk": "healthy"
+    },
+    "social_score": 34,
+    "mention_velocity": 0.24,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1745,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Low Liquidity",
+          "value": "$1755.07",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 1244,
+          "level": "warn"
+        },
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 162.51273506453325,
+      "lp_locked": 4193388286651
+    },
+    "score": 8.05,
+    "positives": [],
+    "negatives": [
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "habibi",
+    "fdv": 1918,
+    "volume_h24": 13.46,
+    "volume_h1": 0,
+    "price_change_h1": null,
+    "price_change_h6": 1.11,
+    "age_hours": 65.6,
+    "dex_url": "https://dexscreener.com/solana/2tUNjQa2BNnCPenypph22gPVVWacJ5EgmtetSMXdpump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "ETwNkTGnjimmC6YyuDkh4bsgMGdHCtCHPABh69z6pump",
+    "channel_count": 3,
+    "channels_seen": "[\"pumpportal\"],-1001810124798,-1001609073900",
+    "mentions": 3,
+    "first_seen_at": 1776230089.4365857,
+    "last_seen_at": 1776537790.7540486,
+    "dex": {
+      "fdv": 2159,
+      "market_cap": 2159,
+      "liquidity_usd": 3598.05,
+      "volume_m5": 0,
+      "volume_h1": 0,
+      "volume_h6": 0.84,
+      "volume_h24": 6.18,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h6": {
+        "buys": 0,
+        "sells": 2
+      },
+      "txns_h24": {
+        "buys": 0,
+        "sells": 6
+      },
+      "price_change_m5": null,
+      "price_change_h1": null,
+      "price_change_h6": 0.38,
+      "price_change_h24": -1.84,
+      "age_hours": 97.63,
+      "dex": "pumpswap",
+      "symbol": "SOLAMA",
+      "name": "Solama",
+      "pair_address": "ToEUGGJSBHnuUZK7PV9raziyxyGnyoAzU5etWM8hEo1",
+      "twitter_url": "https://x.com/SOLAMAPUMPFUN",
+      "telegram_url": "https://t.me/SOLAMAPUMPFUN",
+      "website_url": "https://solamasolana.com/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 1.6665,
+      "liq_risk": "healthy"
+    },
+    "social_score": 36,
+    "mention_velocity": 0.04,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 4803,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Single holder ownership",
+          "value": "20.69%",
+          "description": "One user holds a large amount of the token supply",
+          "score": 2069,
+          "level": "warn"
+        },
+        {
+          "name": "Low Liquidity",
+          "value": "$1810.51",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 1189,
+          "level": "warn"
+        },
+        {
+          "name": "High holder concentration",
+          "value": "",
+          "description": "The top 10 users hold more than 50% token supply",
+          "score": 1044,
+          "level": "warn"
+        },
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 147.2312975590892,
+      "lp_locked": 4193388328368
+    },
+    "score": 6.82,
+    "positives": [],
+    "negatives": [
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "SOLAMA",
+    "fdv": 2159,
+    "volume_h24": 6.18,
+    "volume_h1": 0,
+    "price_change_h1": null,
+    "price_change_h6": 0.38,
+    "age_hours": 97.63,
+    "dex_url": "https://dexscreener.com/solana/ETwNkTGnjimmC6YyuDkh4bsgMGdHCtCHPABh69z6pump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "Cm8G3wxvH6YPxNRvx4f3PkHJdCnwvLhBjhoKTa2ypump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:,discovery:dexscreener_profile:BONER,discovery:dexscreener_profile:$BONER",
+    "mentions": 1,
+    "first_seen_at": 1776386103.366924,
+    "last_seen_at": 1776393302.8927512,
+    "dex": {
+      "fdv": 13304,
+      "market_cap": 13304,
+      "liquidity_usd": 9199.8,
+      "volume_m5": 0,
+      "volume_h1": 1.39,
+      "volume_h6": 18.07,
+      "volume_h24": 376.61,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 1
+      },
+      "txns_h6": {
+        "buys": 5,
+        "sells": 4
+      },
+      "txns_h24": {
+        "buys": 9,
+        "sells": 12
+      },
+      "price_change_m5": null,
+      "price_change_h1": -0.36,
+      "price_change_h6": -4.79,
+      "price_change_h24": -2.53,
+      "age_hours": 68.16,
+      "dex": "pumpswap",
+      "symbol": "BONER",
+      "name": "BONER",
+      "pair_address": "HxZNPLaSjSQD8GHTyeWeTnheaVdsBb5dx9yei3jpxGwP",
+      "twitter_url": "https://x.com/igniteBTW/status/2044930778992177182"
+    },
+    "derived": {
+      "liq_fdv_ratio": 0.6915,
+      "liq_risk": "healthy"
+    },
+    "social_score": 32,
+    "mention_velocity": 0.5,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1,
+      "risk_level": null,
+      "risks": [],
+      "insider_percentage": 0,
+      "top_holders_pct": 116.03465171435087,
+      "lp_locked": 4193388282704
+    },
+    "score": 0.15,
+    "positives": [],
+    "negatives": [
+      "ONLY SELLS",
+      "stagnant volume"
+    ],
+    "symbol": "BONER",
+    "fdv": 13304,
+    "volume_h24": 376.61,
+    "volume_h1": 1.39,
+    "price_change_h1": -0.36,
+    "price_change_h6": -4.79,
+    "age_hours": 68.16,
+    "dex_url": "https://dexscreener.com/solana/Cm8G3wxvH6YPxNRvx4f3PkHJdCnwvLhBjhoKTa2ypump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "CZ2hPzievWCsceVFkYdzTzhxxnb5eTMS6JuoMQodbrrr",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:bulief the bul,discovery:dexscreener_boost,discovery:dexscreener_trending_solana",
+    "mentions": 3,
+    "first_seen_at": 1776391503.0541353,
+    "last_seen_at": 1776483308.1187809,
+    "dex": {
+      "fdv": 1504.1,
+      "market_cap": 1504.1,
+      "liquidity_usd": null,
+      "volume_m5": 0,
+      "volume_h1": 1.31,
+      "volume_h6": 8.06,
+      "volume_h24": 14.88,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 1
+      },
+      "txns_h6": {
+        "buys": 0,
+        "sells": 2
+      },
+      "txns_h24": {
+        "buys": 0,
+        "sells": 3
+      },
+      "price_change_m5": null,
+      "price_change_h1": -1.14,
+      "price_change_h6": -2.19,
+      "price_change_h24": -2.19,
+      "age_hours": 66.44,
+      "dex": "meteoradbc",
+      "symbol": "bulief",
+      "name": "bulief",
+      "pair_address": "7qycdY6HJgA4KtrdukAi51of3PCGtpMdw3dCUUUb6Br",
+      "twitter_url": "https://x.com/icallaths/status/2044958885191033157"
+    },
+    "social_score": 36,
+    "mention_velocity": 0.12,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1010,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "High holder concentration",
+          "value": "",
+          "description": "The top 10 users hold more than 50% token supply",
+          "score": 1009,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 142.78198512900505,
+      "lp_locked": 778399795041640145
+    },
+    "score": 0.42,
+    "positives": [],
+    "negatives": [
+      "ONLY SELLS",
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "bulief",
+    "fdv": 1504.1,
+    "volume_h24": 14.88,
+    "volume_h1": 1.31,
+    "price_change_h1": -1.14,
+    "price_change_h6": -2.19,
+    "age_hours": 66.44,
+    "dex_url": "https://dexscreener.com/solana/CZ2hPzievWCsceVFkYdzTzhxxnb5eTMS6JuoMQodbrrr",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "9LMrDLZG4BcE6ConP8tCD4bUpny8o9cRynAjRaHpump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:we believe in human beings.,discovery:dexscreener_boost,discovery:dexscreener_trending_solana",
+    "mentions": 3,
+    "first_seen_at": 1776373502.9276235,
+    "last_seen_at": 1776413102.592987,
+    "dex": {
+      "fdv": 2363,
+      "market_cap": 2363,
+      "liquidity_usd": 4681.71,
+      "volume_m5": 0,
+      "volume_h1": 0.03,
+      "volume_h6": 0.03,
+      "volume_h24": 8,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 1
+      },
+      "txns_h6": {
+        "buys": 0,
+        "sells": 1
+      },
+      "txns_h24": {
+        "buys": 1,
+        "sells": 4
+      },
+      "price_change_m5": null,
+      "price_change_h1": -0.93,
+      "price_change_h6": -0.93,
+      "price_change_h24": -2.07,
+      "age_hours": 72.24,
+      "dex": "pumpswap",
+      "symbol": "human",
+      "name": "We believe in human beings",
+      "pair_address": "6K7gaVgSDL3h9iKz4Tpzf25m6LhPhvrEZST3U1Ee3G4x"
+    },
+    "derived": {
+      "liq_fdv_ratio": 1.9813,
+      "liq_risk": "healthy"
+    },
+    "social_score": 36,
+    "mention_velocity": 0.27,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 25708,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Top 10 holders high ownership",
+          "value": "",
+          "description": "The top 10 users hold more than 70% token supply",
+          "score": 12790,
+          "level": "danger"
+        },
+        {
+          "name": "Single holder ownership",
+          "value": "100.02%",
+          "description": "One user holds a large amount of the token supply",
+          "score": 10001,
+          "level": "danger"
+        },
+        {
+          "name": "High ownership",
+          "value": "",
+          "description": "The top users hold more than 80% token supply",
+          "score": 1769,
+          "level": "danger"
+        },
+        {
+          "name": "Low Liquidity",
+          "value": "$2352.17",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 647,
+          "level": "warn"
+        },
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 225.36848523007097,
+      "lp_locked": 4193388285960
+    },
+    "score": 0.09,
+    "positives": [],
+    "negatives": [
+      "ONLY SELLS",
+      "stagnant volume",
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "human",
+    "fdv": 2363,
+    "volume_h24": 8,
+    "volume_h1": 0.03,
+    "price_change_h1": -0.93,
+    "price_change_h6": -0.93,
+    "age_hours": 72.24,
+    "dex_url": "https://dexscreener.com/solana/9LMrDLZG4BcE6ConP8tCD4bUpny8o9cRynAjRaHpump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
+  },
+  {
+    "chain": "solana",
+    "contract_address": "QHbZKZWXNYoma8ggwrkn3gff8WN1dq1kPL7Synapump",
+    "channel_count": 3,
+    "channels_seen": "discovery:dexscreener_profile:,discovery:dexscreener_profile,discovery:dexscreener_boost",
+    "mentions": 2,
+    "first_seen_at": 1776400503.3931699,
+    "last_seen_at": 1776411303.3391376,
+    "dex": {
+      "fdv": 1763,
+      "market_cap": 1763,
+      "liquidity_usd": 3533.91,
+      "volume_m5": 0,
+      "volume_h1": 0,
+      "volume_h6": 0,
+      "volume_h24": 0.37,
+      "txns_m5": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h1": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h6": {
+        "buys": 0,
+        "sells": 0
+      },
+      "txns_h24": {
+        "buys": 0,
+        "sells": 1
+      },
+      "price_change_m5": null,
+      "price_change_h1": null,
+      "price_change_h6": null,
+      "price_change_h24": null,
+      "age_hours": 64.29,
+      "dex": "pumpswap",
+      "symbol": "UNCS",
+      "name": "UNCS",
+      "pair_address": "G9DacWBs9rcfKRJoa1JNbZ2BPWaJTKBD48FqxsXpAUCp",
+      "twitter_url": "https://x.com/UNCSmeme",
+      "website_url": "https://uncs.bolt.host/"
+    },
+    "derived": {
+      "liq_fdv_ratio": 2.0045,
+      "liq_risk": "healthy"
+    },
+    "social_score": 34,
+    "mention_velocity": 0.67,
+    "social_quality": "low",
+    "social_momentum": "medium",
+    "helius": {
+      "name": "",
+      "symbol": "",
+      "decimals": 0,
+      "supply": 0,
+      "price_per_token": 0,
+      "total_price": 0,
+      "currency": "",
+      "holder_count": 10
+    },
+    "rugcheck": {
+      "score": 1739,
+      "risk_level": null,
+      "risks": [
+        {
+          "name": "Low Liquidity",
+          "value": "$1761.67",
+          "description": "Low amount of liquidity in the token pool",
+          "score": 1238,
+          "level": "warn"
+        },
+        {
+          "name": "Low amount of LP Providers",
+          "value": "",
+          "description": "Only a few users are providing liquidity",
+          "score": 500,
+          "level": "warn"
+        }
+      ],
+      "insider_percentage": 0,
+      "top_holders_pct": 114.36623898419586,
+      "lp_locked": 4193388282655
+    },
+    "score": 1.29,
+    "positives": [],
+    "negatives": [
+      "stale data",
+      "no txns in 6h",
+      "micro-cap (<$10K FDV)"
+    ],
+    "symbol": "UNCS",
+    "fdv": 1763,
+    "volume_h24": 0.37,
+    "volume_h1": 0,
+    "price_change_h1": null,
+    "price_change_h6": null,
+    "age_hours": 64.29,
+    "dex_url": "https://dexscreener.com/solana/QHbZKZWXNYoma8ggwrkn3gff8WN1dq1kPL7Synapump",
+    "wallet_count": 0,
+    "holding_wallets": [],
+    "mcap_tier": "< $50K"
   }
 ]
