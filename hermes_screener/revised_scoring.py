@@ -20,10 +20,7 @@ Key Changes:
 
 from __future__ import annotations
 
-import json
-import time
 import logging
-from typing import List, Tuple
 
 # Use standard logging instead of hermes_screener.logging to avoid circular import
 log = logging.getLogger("revised_scoring")
@@ -32,14 +29,14 @@ log = logging.getLogger("revised_scoring")
 def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     """
     Revised token scoring with more conservative methodology.
-    
+
     Returns: (score, positives, negatives)
     """
     dex = token.get("dex", {})
     score = 0.0
     positives = []
     negatives = []
-    
+
     # ── SYMBOL BLOCKLIST: fiat/stablecoins are not tradeable tokens ──
     BLOCKED_SYMBOLS = {
         "usd", "usdt", "usdc", "dai", "busd", "tusd", "eur", "gbp",
@@ -49,7 +46,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     symbol = (dex.get("symbol") or token.get("symbol") or "").lower().strip()
     if symbol in BLOCKED_SYMBOLS:
         return 0, [], [f"BLOCKED: {symbol.upper()} is not a tradeable token"]
-    
+
     # ── DISQUALIFIERS (return 0 immediately) ──
     if token.get("gmgn_honeypot"):
         return 0, [], ["HONEYPOT"]
@@ -63,7 +60,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         return 0, [], ["POSSIBLE RUG"]
     if token.get("derived_massive_dump"):
         return 0, [], ["MASSIVE DUMP"]
-    
+
     pc_h1 = dex.get("price_change_h1")
     pc_h6 = dex.get("price_change_h6")
     pc_h24 = dex.get("price_change_h24")
@@ -74,7 +71,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     channel_count = token.get("channel_count", 0)
     mentions = token.get("mentions", 0)
     smart = token.get("gmgn_smart_wallets", 0)
-    
+
     # ── 1. FDV/VOLUME RATIO (0-15 points) - REDUCED FROM 25 ──
     # Conservative scoring for turnover
     if vol_h24 <= 0:
@@ -105,12 +102,12 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
             score += 1  # REDUCED from 3
         else:
             score += 0.5  # REDUCED from 1
-    
+
     # ── STALE DATA PENALTY: no price changes = dead ──
     if pc_h1 is None and pc_h6 is None and pc_h24 is None:
         score *= 0.2  # REDUCED from 0.3
         negatives.append("stale data")
-    
+
     # ── 2. CHANNELS + MENTIONS (0-15 points) - REDUCED FROM 20 ──
     # More conservative social scoring
     if channel_count >= 10:
@@ -121,7 +118,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         score += 4  # REDUCED from 6
     elif channel_count >= 2:
         score += 2  # REDUCED from 3
-    
+
     if mentions >= 10:
         score += 7  # REDUCED from 8
     elif mentions >= 5:
@@ -130,7 +127,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         score += 3  # REDUCED from 4
     elif mentions >= 1:
         score += 1  # REDUCED from 2
-    
+
     # ── 3. SMART WALLETS (0-12 points) - REDUCED FROM 15 ──
     if smart >= 50:
         score += 12  # REDUCED from 15
@@ -144,14 +141,14 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         score += 3   # REDUCED from 4
     elif smart >= 1:
         score += 1   # REDUCED from 2
-    
+
     # ── 4. DEV HOLDING (0-8 points) - REDUCED FROM 10 ──
     if token.get("gmgn_dev_hold"):
         score += 8  # REDUCED from 10
     dev_rate = token.get("gmgn_dev_team_hold_rate")
     if dev_rate is not None and dev_rate > 0.05:
         score += 2  # REDUCED from 3
-    
+
     # ── 5. SOCIAL SIGNALS (0-8 points) - REDUCED FROM 10 ──
     tw_sent = token.get("tw_sentiment_score", 0) or 0
     social = token.get("social_score", 0) or 0
@@ -165,33 +162,26 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         score += 2  # REDUCED from 3
     elif social > 5:
         score += 1
-    
+
     # ── 6. PRICE MOMENTUM (0-5 points) - REDUCED FROM 10 ──
     # Much more conservative momentum scoring
-    all_positive = True
     if pc_h1 is not None:
         if pc_h1 > 10:  # Only give points for >10% gains
             score += 2  # REDUCED from 3
         elif pc_h1 > 0:
             score += 1  # REDUCED from 3
-        else:
-            all_positive = False
     if pc_h6 is not None:
         if pc_h6 > 20:  # Only give points for >20% gains
             score += 2  # REDUCED from 3
         elif pc_h6 > 0:
             score += 1  # REDUCED from 3
-        else:
-            all_positive = False
     if pc_h24 is not None:
         if pc_h24 > 30:  # Only give points for >30% gains
             score += 1  # REDUCED from 2
         elif pc_h24 > 0:
             score += 0.5  # REDUCED from 2
-        else:
-            all_positive = False
     # Remove bonus for all-positive (was +2)
-    
+
     # ── 7. AGE PENALTY (older = harder to move) ──
     if age_hours is not None:
         if age_hours > 720:  # >30 days
@@ -201,7 +191,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         elif age_hours > 72:  # >3 days
             score *= 0.75  # REDUCED from 0.85
         # Note: Fresh tokens are desirable for pump potential - no penalty
-    
+
     # ── STEEP DECLINE PENALTIES (>20% loss on any timeframe) ──
     if pc_h1 is not None:
         if pc_h1 < -60:
@@ -213,7 +203,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         elif pc_h1 < -20:
             score *= 0.4  # REDUCED from 0.5
             negatives.append(f"decline h1 ({pc_h1:+.0f}%)")
-    
+
     if pc_h6 is not None:
         if pc_h6 < -70:
             score *= 0.05  # REDUCED from 0.1
@@ -224,7 +214,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         elif pc_h6 < -20:
             score *= 0.4  # REDUCED from 0.5
             negatives.append(f"declining h6 ({pc_h6:+.0f}%)")
-    
+
     if pc_h24 is not None:
         if pc_h24 < -80:
             score *= 0.05  # REDUCED from 0.1
@@ -235,31 +225,30 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         elif pc_h24 < -20:
             score *= 0.5  # REDUCED from 0.6
             negatives.append(f"down h24 ({pc_h24:+.0f}%)")
-    
+
     # Death spiral
-    if vol_h24 > 0 and vol_h1 < vol_h24 * 0.005:
-        if pc_h6 is not None and pc_h6 < -10:
-            score *= 0.2  # REDUCED from 0.3
-            negatives.append("death spiral")
-    
+    if vol_h24 > 0 and vol_h1 < vol_h24 * 0.005 and pc_h6 is not None and pc_h6 < -10:
+        score *= 0.2  # REDUCED from 0.3
+        negatives.append("death spiral")
+
     # ── MULTIPLIERS (positive only) ──
     if token.get("etherscan_verified"):
         score *= 1.10  # REDUCED from 1.15
-    
+
     if token.get("gmgn_renounced_mint") is True:
         score *= 1.05  # REDUCED from 1.10
     elif token.get("gmgn_renounced_mint") is False:
         score *= 0.2  # REDUCED from 0.3
         negatives.append("mint not renounced")
-    
+
     if token.get("rugcheck_freeze_renounced") is False:
         score *= 0.4  # REDUCED from 0.5
-    
+
     # ── BONDING CURVE DETECTION ──
     dex_name = (dex.get("dex") or "").lower()
     liq = dex.get("liquidity_usd") or 0
     on_bonding_curve = False
-    
+
     # Pump.fun tokens that haven't graduated to PumpSwap
     if dex_name in ("pumpfun", "pump.fun"):
         on_bonding_curve = True
@@ -268,34 +257,34 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         liq_ratio = liq / fdv
         if liq_ratio < 0.02:  # Less than 2% liquidity ratio
             on_bonding_curve = True
-    
+
     if on_bonding_curve:
         score *= 0.4  # REDUCED from 0.5
         negatives.append("on bonding curve")
-    
+
     if token.get("rugcheck_freeze_renounced") is False:
         score *= 0.4  # REDUCED from 0.5
         negatives.append("freeze not renounced")
-    
+
     if token.get("gmgn_burn_status") == "burn":
         score *= 1.10  # REDUCED from 1.15
         if "burned" not in str(positives).lower():
             positives.append("burned")
-    
+
     if token.get("gmgn_cto_flag"):
         score *= 1.05  # REDUCED from 1.10
         positives.append("CTO")
-    
+
     if token.get("gmgn_dev_token_farmer"):
         score *= 0.5  # REDUCED from 0.6
         negatives.append("token farmer")
-    
+
     if token.get("derived_has_mint_authority"):
         score *= 0.2  # REDUCED from 0.3
         negatives.append("HAS MINT AUTHORITY")
     if token.get("derived_has_freeze_authority"):
         score *= 0.4  # REDUCED from 0.5
-    
+
     # CoinGecko listings (unique signals)
     if token.get("cg_is_listed"):
         score *= 1.05  # REDUCED from 1.08
@@ -306,7 +295,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     elif token.get("cg_listed_on_coinbase"):
         score *= 1.05  # REDUCED from 1.08
         positives.append("COINBASE")
-    
+
     # Volume penalties
     buys_h1 = (dex.get("txns_h1", {}) or {}).get("buys", 0) or 0
     sells_h1 = (dex.get("txns_h1", {}) or {}).get("sells", 0) or 0
@@ -319,37 +308,37 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         if sell_ratio > SELL_RATIO_THRESHOLD:
             score *= 0.2  # REDUCED from 0.3
             negatives.append(f"HEAVY SELLS ({sell_ratio:.0%})")
-    
+
     if vol_h24 > 0 and vol_h1 > 0:
         STAGNANT_VOLUME_RATIO = 0.05  # Keep same threshold
         if vol_h1 < vol_h24 * STAGNANT_VOLUME_RATIO:
             score *= 0.3  # REDUCED from 0.5
             negatives.append("stagnant volume")
-    
+
     buys_h6 = (dex.get("txns_h6", {}) or {}).get("buys", 0) or 0
     sells_h6 = (dex.get("txns_h6", {}) or {}).get("sells", 0) or 0
     total_h6 = buys_h6 + sells_h6
     if total_h6 == 0 and age_hours and age_hours > 1:
         score *= 0.2  # REDUCED from 0.4
         negatives.append("no txns in 6h")
-    
+
     # RugCheck
     rc_score = token.get("rugcheck_score", 0)
     if rc_score > 10:
         score *= 0.1  # REDUCED from 0.2
     elif rc_score > 5:
         score *= 0.4  # REDUCED from 0.5
-    
+
     # ── NEW: PENALTY FOR ZERO SOCIAL SIGNALS ──
     if channel_count == 0 and mentions == 0 and social == 0 and tw_sent == 0:
         score *= 0.5  # NEW penalty
         negatives.append("no social signals")
-    
+
     # ── NEW: PENALTY FOR VERY LOW FDV ──
     if fdv > 0 and fdv < 10_000:
         score *= 0.7  # NEW penalty for micro-cap tokens
         negatives.append("micro-cap (<$10K FDV)")
-    
+
     return round(score, 2), positives, negatives
 
 
@@ -388,12 +377,12 @@ def test_revised_scoring():
             "gmgn_smart_wallets": 0,
         },
     ]
-    
+
     print("Testing revised scoring:")
     for token in test_tokens:
         score, positives, negatives = revised_score_token(token)
         print(f"\n{token['symbol']}:")
-        print(f"  Old score: ~37.0 (StarReach) or ~16.0 (GiGi)")
+        print("  Old score: ~37.0 (StarReach) or ~16.0 (GiGi)")
         print(f"  New score: {score}")
         print(f"  Positives: {positives}")
         print(f"  Negatives: {negatives}")
