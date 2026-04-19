@@ -26,7 +26,7 @@ from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 
 # Import enhanced scoring
-from enhanced_cross_scoring import compute_enhanced_token_score
+from revised_enhanced_scoring import revised_compute_enhanced_token_score
 
 log = get_logger("cross_scoring")
 
@@ -307,7 +307,7 @@ def rescore_tokens(
             1 for w in tw if "sniper" in (w.get("wallet_tags") or "").lower()
         )
 
-        new_score = compute_enhanced_token_score(
+        new_score = revised_compute_enhanced_token_score(
             token=token,
             smart_wallet_count=smart_count,
             smart_wallet_score_sum=smart_score_sum,
@@ -337,6 +337,47 @@ def rescore_tokens(
             if smart_signal not in existing:
                 existing.insert(0, smart_signal)
                 token["positives"] = existing
+
+    # Filter duplicate token names per chain - keep only top-scoring one per (name, chain)
+    def filter_duplicate_names(tokens: List[dict]) -> List[dict]:
+        """Filter duplicate token names per chain, keeping only the highest-scoring one."""
+        from collections import defaultdict
+        
+        # Group tokens by (symbol, chain)
+        groups = defaultdict(list)
+        for token in tokens:
+            symbol = (token.get("symbol") or "").upper().strip()
+            chain = token.get("chain", "").lower()
+            if symbol and chain:
+                groups[(symbol, chain)].append(token)
+        
+        # Keep only the highest-scoring token per group
+        filtered_tokens = []
+        for (symbol, chain), group_tokens in groups.items():
+            if len(group_tokens) == 1:
+                filtered_tokens.append(group_tokens[0])
+            else:
+                # Sort by score (descending) and keep the top one
+                group_tokens.sort(key=lambda t: t.get("score", 0), reverse=True)
+                top_token = group_tokens[0]
+                filtered_tokens.append(top_token)
+                
+                # Log the filtering
+                duplicates = group_tokens[1:]
+                if duplicates:
+                    log.info(
+                        "filtered_duplicate_names_phase3",
+                        symbol=symbol,
+                        chain=chain,
+                        kept_score=top_token.get("score", 0),
+                        filtered_count=len(duplicates),
+                        filtered_scores=[t.get("score", 0) for t in duplicates],
+                    )
+        
+        return filtered_tokens
+    
+    # Apply duplicate name filtering before final sorting
+    tokens = filter_duplicate_names(tokens)
 
     # Sort by new composite score
     tokens.sort(key=lambda t: t.get("score", 0), reverse=True)
