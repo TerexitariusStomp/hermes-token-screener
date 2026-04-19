@@ -47,7 +47,7 @@ CHAIN_ALIASES = {
     'avalanche': 'avalanche', 'avax': 'avalanche',
     'fantom': 'fantom', 'ftm': 'fantom',
     'arbitrum': 'arbitrum', 'arb': 'arbitrum',
-    'optimism': 'optimism', 'op': 'optimism',
+    'optimism': 'optimism', 'op': 'optimism', 'op mainnet': 'optimism', 'op_mainnet': 'optimism',
     'base': 'base',
     'xdai': 'xdai', 'gnosis': 'xdai', 'gno': 'xdai',
     'solana': 'solana', 'sol': 'solana',
