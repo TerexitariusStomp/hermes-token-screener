@@ -206,12 +206,12 @@ function renderWallets(){
   $('#wallets-table').innerHTML=html;
 }
 
-fetch('dashboard_data.json').then(r=>r.json()).then(d=>{
-  DATA=d;
+fetch('data/tokens.json').then(r=>r.json()).then(d=>{
+  DATA=d; DATA.wallets=DATA.wallets||[]; DATA.wallets_total=DATA.wallets_total||0;
   const chainCounts=d.tokens.reduce((a,t)=>{a[t.chain]=(a[t.chain]||0)+1;return a},{});
   const chainBtns=['solana','base'].map(c=>'<button data="'+c+'" onclick="setFilter(\''+c+'\')">'+c+' ('+(chainCounts[c]||0)+')</button>').join('');
   $('#stats-bar').innerHTML=`
-    <span>Generated: <span class="v">${d.generated_at}</span></span>
+    <span>Generated: <span class="v">${d.generated_at_iso}</span></span>
     <span>Tokens: <span class="v">${d.tokens.length}</span></span>
     <span>Wallets: <span class="v">${d.wallets_total.toLocaleString()}</span></span>
     <div class="filter">
