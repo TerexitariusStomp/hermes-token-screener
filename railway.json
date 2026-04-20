@@ -1,3 +1,4 @@
+# Railway configuration for deployment
 build:
   dockerfile: Dockerfile
   context: .
@@ -27,3 +28,6 @@ services:
       timeout: 5
       interval: 30
       threshold: 3
+
+# Railway will automatically create:
+# - https://hermes-token-screener.up.railway.app
