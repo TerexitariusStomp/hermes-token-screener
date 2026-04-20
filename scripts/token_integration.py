@@ -13,14 +13,14 @@ Workflow:
 6. Output prioritized tokens for trading/screener
 """
 
-import sqlite3
-import json
 import asyncio
-import sys
+import json
 import os
-from pathlib import Path
+import sqlite3
+import sys
 from datetime import datetime
-from typing import Dict, List
+from pathlib import Path
+
 import requests
 
 from hermes_screener.config import settings
@@ -115,7 +115,7 @@ class TokenIntegrationPipeline:
 
         self.integration_conn.commit()
 
-    def get_rick_burp_tokens(self) -> List[Dict]:
+    def get_rick_burp_tokens(self) -> list[dict]:
         """Get tokens from Rick Burp bot database."""
         tokens = []
 
@@ -163,7 +163,7 @@ class TokenIntegrationPipeline:
 
         return tokens
 
-    def get_telegram_tokens(self) -> List[Dict]:
+    def get_telegram_tokens(self) -> list[dict]:
         """Get tokens from existing Telegram scraper database."""
         tokens = []
 
@@ -207,7 +207,7 @@ class TokenIntegrationPipeline:
 
         return tokens
 
-    def merge_and_deduplicate(self, rick_tokens: List[Dict], telegram_tokens: List[Dict]) -> List[Dict]:
+    def merge_and_deduplicate(self, rick_tokens: list[dict], telegram_tokens: list[dict]) -> list[dict]:
         """Merge tokens from both sources and deduplicate."""
         merged = {}
 
@@ -260,7 +260,7 @@ class TokenIntegrationPipeline:
 
         return merged_list
 
-    async def get_lore_data_from_rick(self, tokens: List[Dict]) -> Dict[str, Dict]:
+    async def get_lore_data_from_rick(self, tokens: list[dict]) -> dict[str, dict]:
         """Get lore data from Rick Burp bot for tokens."""
         lore_data = {}
 
@@ -384,7 +384,7 @@ class TokenIntegrationPipeline:
 
         return lore_data
 
-    async def enrich_tokens(self, tokens: List[Dict], max_enrich: int = 50) -> List[Dict]:
+    async def enrich_tokens(self, tokens: list[dict], max_enrich: int = 50) -> list[dict]:
         """Enrich tokens using the existing enrichment pipeline and Rick Burp bot lore."""
         enriched_tokens = []
 
@@ -406,8 +406,8 @@ class TokenIntegrationPipeline:
         # Try to use existing token_enricher.py via subprocess
         try:
             # Create a temporary file with token addresses
-            import tempfile
             import json
+            import tempfile
 
             # Prepare token addresses for enrichment
             addresses = []
@@ -460,7 +460,7 @@ class TokenIntegrationPipeline:
                     # Try to read enrichment results
                     output_path = Path.home() / ".hermes" / "data" / "token_screener" / "top100.json"
                     if output_path.exists():
-                        with open(output_path, "r") as f:
+                        with open(output_path) as f:
                             enrichment_data = json.load(f)
 
                         # Create a mapping of addresses to enrichment data
@@ -512,7 +512,7 @@ class TokenIntegrationPipeline:
         log.info(f"Enriched {len(enriched_tokens)} tokens")
         return enriched_tokens
 
-    def _basic_enrichment(self, token: Dict) -> Dict:
+    def _basic_enrichment(self, token: dict) -> dict:
         """Basic enrichment using DexScreener API, merged with Rick Burp data and lore."""
         enrichment = {}
 
@@ -576,7 +576,7 @@ class TokenIntegrationPipeline:
 
         return enrichment
 
-    def prioritize_tokens(self, tokens: List[Dict]) -> List[Dict]:
+    def prioritize_tokens(self, tokens: list[dict]) -> list[dict]:
         """Prioritize tokens based on Rick Burp data, Telegram data, enrichment, and lore."""
         for token in tokens:
             score = 0
@@ -626,7 +626,7 @@ class TokenIntegrationPipeline:
                         price_val = float(price)
                         if price_val > 0:
                             score += 5
-                            reasons.append(f"Price data available (Rick)")
+                            reasons.append("Price data available (Rick)")
                     except:
                         pass
 
@@ -638,24 +638,23 @@ class TokenIntegrationPipeline:
 
             # Lore data scoring (from Rick Burp bot)
             lore_data = token.get("lore_data", {})
-            if lore_data:
-                if lore_data.get("has_lore", False):
-                    score += 15  # Bonus for having lore
-                    reasons.append("Has token lore (Rick)")
+            if lore_data and lore_data.get("has_lore", False):
+                score += 15  # Bonus for having lore
+                reasons.append("Has token lore (Rick)")
 
-                    # Parse lore response for additional info
-                    lore_response = lore_data.get("lore_response", "")
-                    if lore_response:
-                        # Look for specific information in lore
-                        if "🔥" in lore_response or "hot" in lore_response.lower():
-                            score += 5
-                            reasons.append("Hot token (lore)")
-                        if "🛡️" in lore_response or "safe" in lore_response.lower():
-                            score += 5
-                            reasons.append("Safe token (lore)")
-                        if "💀" in lore_response or "risk" in lore_response.lower():
-                            score -= 5
-                            reasons.append("Risky token (lore)")
+                # Parse lore response for additional info
+                lore_response = lore_data.get("lore_response", "")
+                if lore_response:
+                    # Look for specific information in lore
+                    if "🔥" in lore_response or "hot" in lore_response.lower():
+                        score += 5
+                        reasons.append("Hot token (lore)")
+                    if "🛡️" in lore_response or "safe" in lore_response.lower():
+                        score += 5
+                        reasons.append("Safe token (lore)")
+                    if "💀" in lore_response or "risk" in lore_response.lower():
+                        score -= 5
+                        reasons.append("Risky token (lore)")
 
             # Telegram data scoring
             telegram_data = token.get("telegram_data", {})
@@ -752,7 +751,7 @@ class TokenIntegrationPipeline:
 
         return tokens
 
-    def store_integrated_tokens(self, tokens: List[Dict]):
+    def store_integrated_tokens(self, tokens: list[dict]):
         """Store integrated tokens in database."""
         cursor = self.integration_conn.cursor()
 
@@ -795,7 +794,7 @@ class TokenIntegrationPipeline:
         self.integration_conn.commit()
         log.info(f"Stored {len(tokens)} integrated tokens")
 
-    def generate_output(self, tokens: List[Dict]):
+    def generate_output(self, tokens: list[dict]):
         """Generate output file for token screener."""
         # Create output directory
         OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -895,7 +894,7 @@ class TokenIntegrationPipeline:
             print(f"Enriched tokens: {len(enriched_tokens)}")
             print(f"Prioritized tokens: {len(prioritized_tokens)}")
             print(f"Duration: {duration:.1f} seconds")
-            print(f"\nTop 10 Prioritized Tokens:")
+            print("\nTop 10 Prioritized Tokens:")
 
             for i, token in enumerate(prioritized_tokens[:10]):
                 print(

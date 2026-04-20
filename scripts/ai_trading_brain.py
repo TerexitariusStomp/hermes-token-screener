@@ -23,7 +23,7 @@ import json
 import subprocess
 import sys
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import requests
 
@@ -59,7 +59,7 @@ MIN_POSITIONS = 1  # always maintain at least this many open positions
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def call_bonsai(system: str, prompt: str, max_tokens: int = 150) -> Optional[str]:
+def call_bonsai(system: str, prompt: str, max_tokens: int = 150) -> str | None:
     """Call Bonsai-8B for trading analysis."""
     try:
         resp = requests.post(
@@ -87,7 +87,7 @@ def call_bonsai(system: str, prompt: str, max_tokens: int = 150) -> Optional[str
     return None
 
 
-def analyze_token_with_ai(token: dict) -> Optional[dict]:
+def analyze_token_with_ai(token: dict) -> dict | None:
     """
     Send token data to Bonsai-8B for trade decision.
 
@@ -158,7 +158,7 @@ Current market context: BTC trending, Solana active, memecoin season."""
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
+def rank_tokens_for_ai(tokens: list[dict]) -> list[dict]:
     """Rank tokens for AI review. No filtering — AI decides what's tradeable."""
     ranked = []
     for t in tokens:
@@ -167,10 +167,10 @@ def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
             continue
         ranked.append(t)
     for t in tokens:
-        score = t.get("score", 0) or 0
-        fdv = t.get("fdv", 0) or 0
-        vol = t.get("volume_h24", 0) or 0
-        smart = t.get("smart_wallet_count", t.get("gmgn_smart_wallets", 0)) or 0
+        t.get("score", 0) or 0
+        t.get("fdv", 0) or 0
+        t.get("volume_h24", 0) or 0
+        t.get("smart_wallet_count", t.get("gmgn_smart_wallets", 0)) or 0
 
         # Skip obvious honeypots only (safety)
         if t.get("goplus_is_honeypot"):
@@ -189,7 +189,7 @@ def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def load_positions() -> List[dict]:
+def load_positions() -> list[dict]:
     """Load current active positions."""
     if POSITIONS_PATH.exists():
         with open(POSITIONS_PATH) as f:
@@ -197,7 +197,7 @@ def load_positions() -> List[dict]:
     return []
 
 
-def save_positions(positions: List[dict]):
+def save_positions(positions: list[dict]):
     """Save active positions."""
     POSITIONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(POSITIONS_PATH, "w") as f:
@@ -320,7 +320,7 @@ def run_trading_brain(
     execute: bool = False,
     dry_run: bool = True,
     max_trades: int = 3,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Run the AI trading analysis pipeline."""
     start = time.time()
 

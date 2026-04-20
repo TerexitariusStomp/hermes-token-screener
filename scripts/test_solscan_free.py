@@ -4,6 +4,7 @@ Test Solscan free tier endpoints.
 """
 
 import asyncio
+
 import httpx
 
 

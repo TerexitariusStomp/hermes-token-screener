@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import json
 import time
-from typing import List
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
@@ -489,7 +488,7 @@ def compute_enhanced_token_score(token: dict) -> float:
     return round(max(0, min(100, score)), 2)
 
 
-def enhance_existing_tokens(tokens: List[dict]) -> List[dict]:
+def enhance_existing_tokens(tokens: list[dict]) -> list[dict]:
     """
     Enhance existing tokens with better scoring using available data.
 

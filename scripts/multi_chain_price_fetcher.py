@@ -128,14 +128,14 @@ def main():
         }
         time.sleep(0.15)
 
-    print(f"\n\nDone!")
+    print("\n\nDone!")
     print(f"Chains fetched: {len(results)}")
     print(f"Total pairs: {total_pairs}")
     print(f"Total liquidity: ${total_liq:,.0f}")
 
     # Summary table
     print(f"\n{'='*80}")
-    print(f" TOP 30 CHAINS BY LIQUIDITY")
+    print(" TOP 30 CHAINS BY LIQUIDITY")
     print(f"{'='*80}")
     sorted_results = sorted(
         results.items(), key=lambda x: x[1]["total_liquidity_usd"], reverse=True

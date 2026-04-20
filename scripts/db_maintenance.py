@@ -19,10 +19,9 @@ Usage:
 """
 
 import json
-import time
 import sqlite3
 import sys
-from typing import Dict, List, Tuple
+import time
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
@@ -43,7 +42,7 @@ start_metrics_server()
 # MARKET CAP TIERS
 # ═══════════════════════════════════════════════════════════════════════════════
 
-MARKET_CAP_TIERS: List[Tuple[float, float, str]] = [
+MARKET_CAP_TIERS: list[tuple[float, float, str]] = [
     (0, 50_000, "micro"),  # < $50K
     (50_000, 100_000, "tiny"),  # $50K - $100K
     (100_000, 250_000, "small_low"),  # $100K - $250K
@@ -69,7 +68,7 @@ def get_market_cap(token: dict) -> float:
     )
 
 
-def get_tier(market_cap: float) -> Tuple[float, float, str]:
+def get_tier(market_cap: float) -> tuple[float, float, str]:
     """Return the tier (low, high, name) for a given market cap."""
     for low, high, name in MARKET_CAP_TIERS:
         if low <= market_cap < high:
@@ -77,9 +76,9 @@ def get_tier(market_cap: float) -> Tuple[float, float, str]:
     return MARKET_CAP_TIERS[-1]  # mega tier fallback
 
 
-def classify_tokens(tokens: List[dict]) -> Dict[str, List[dict]]:
+def classify_tokens(tokens: list[dict]) -> dict[str, list[dict]]:
     """Classify tokens into market cap tiers."""
-    tiers: Dict[str, List[dict]] = {name: [] for _, _, name in MARKET_CAP_TIERS}
+    tiers: dict[str, list[dict]] = {name: [] for _, _, name in MARKET_CAP_TIERS}
 
     for token in tokens:
         mcap = get_market_cap(token)
@@ -94,7 +93,7 @@ def classify_tokens(tokens: List[dict]) -> Dict[str, List[dict]]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str, int]:
+def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> dict[str, int]:
     """
     Prune contracts by market cap tier.
 
@@ -150,7 +149,7 @@ def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str
         )
 
     # Group by tier
-    tiered: Dict[str, List[dict]] = {}
+    tiered: dict[str, list[dict]] = {}
     for t in all_tokens:
         tier = t["tier"]
         if tier not in tiered:
@@ -218,7 +217,7 @@ def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def prune_wallets_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str, int]:
+def prune_wallets_tiered(max_per_tier: int, dry_run: bool = False) -> dict[str, int]:
     """
     Prune wallets based on the market cap tier of their source tokens.
 
@@ -244,7 +243,7 @@ def prune_wallets_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str, 
     wallets = c.fetchall()
 
     # Classify wallets by their primary token's market cap tier
-    wallet_tiers: Dict[str, List[dict]] = {}
+    wallet_tiers: dict[str, list[dict]] = {}
     for addr, source_json, score in wallets:
         try:
             sources = json.loads(source_json) if source_json else []

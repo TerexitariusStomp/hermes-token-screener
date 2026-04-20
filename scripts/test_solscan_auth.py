@@ -4,10 +4,11 @@ Test Solscan API with different authentication methods.
 """
 
 import asyncio
-import httpx
 import json
 import os
 from pathlib import Path
+
+import httpx
 
 # Load environment variables
 env_path = Path(__file__).parent.parent / ".env"

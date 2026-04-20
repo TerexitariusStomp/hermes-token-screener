@@ -24,7 +24,7 @@ services:
       retries: 3
       start_period: 10s
 
-  # Caddy reverse proxy (automatic HTTPS)
+  # Caddy reverse proxy (automatic HTTPS with Cloudflare)
   caddy:
     image: caddy:2-alpine
     container_name: hermes-caddy
@@ -38,31 +38,14 @@ services:
       - ./caddy-data:/data
       - ./caddy-config:/config
     environment:
-      - DOMAIN=${DOMAIN:-hermes-token-screener.com}
-      - EMAIL=${EMAIL:-hermeticsintellegencia@proton.me}
+      - DOMAIN=${DOMAIN:-localhost}
+      - CF_API_TOKEN=${CF_API_TOKEN:-}
+      - CF_EMAIL=${CF_EMAIL:-}
     networks:
       - hermes-network
     depends_on:
       hermes-dashboard:
         condition: service_healthy
-
-  # Nginx alternative (if Caddy fails)
-  nginx:
-    image: nginx:alpine
-    container_name: hermes-nginx
-    restart: unless-stopped
-    ports:
-      - "8080:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx-data:/usr/share/nginx/html
-    networks:
-      - hermes-network
-    depends_on:
-      hermes-dashboard:
-        condition: service_healthy
-    profiles:
-      - nginx  # Only start with --profile nginx
 
 networks:
   hermes-network:
@@ -73,4 +56,3 @@ volumes:
   logs:
   caddy-data:
   caddy-config:
-  nginx-data:

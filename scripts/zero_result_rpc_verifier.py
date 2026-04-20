@@ -20,7 +20,7 @@ import json
 import re
 import ssl
 import urllib.request
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 DATA = "/home/terexitarius/.hermes/data"
 
@@ -207,9 +207,7 @@ def main():
     verified = 0
     for c in report["chains"].values():
         kf = c.get("known_factory_verified")
-        if kf and kf.get("pairs") and kf.get("pairs") > 0:
-            verified += 1
-        elif c.get("router_factory_hits", 0) > 0:
+        if kf and kf.get("pairs") and kf.get("pairs") > 0 or c.get("router_factory_hits", 0) > 0:
             verified += 1
 
     report["summary"] = {

@@ -5,11 +5,11 @@ Finds real-time prices across 37+ DEX programs for any token pair.
 Uses Jupiter routing to discover pools, reads on-chain state for direct quotes.
 """
 import base64
-import requests
 import time
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
+
+import requests
 
 SOLANA_RPC = "https://api.mainnet-beta.solana.com"
 
@@ -57,7 +57,7 @@ class SolanaRPC:
         self.s = requests.Session()
         self._cache = {}
 
-    def get_account(self, addr: str) -> Optional[bytes]:
+    def get_account(self, addr: str) -> bytes | None:
         if addr in self._cache:
             return self._cache[addr]
         try:
@@ -86,7 +86,7 @@ class SolanaRPC:
 # ═══════════════════════════════════════════════════════════════
 
 
-def read_sqrt_price(data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0) -> Optional[float]:
+def read_sqrt_price(data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0) -> float | None:
     """Read sqrt_price_x64 from on-chain CLMM/Whirlpool account."""
     if not data or len(data) < 56:
         return None
@@ -108,7 +108,7 @@ def read_sqrt_price(data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0) -
     return None
 
 
-def read_amm_reserves(data: bytes, dec_a: int, dec_b: int) -> Optional[float]:
+def read_amm_reserves(data: bytes, dec_a: int, dec_b: int) -> float | None:
     """Try reading AMM vault reserves from pool account."""
     if not data or len(data) < 104:
         return None
@@ -164,7 +164,7 @@ def read_amm_reserves(data: bytes, dec_a: int, dec_b: int) -> Optional[float]:
 # ═══════════════════════════════════════════════════════════════
 
 
-def jupiter_quote(mint_a: str, mint_b: str, amount: int, dec_a: int, dec_b: int) -> List[PriceResult]:
+def jupiter_quote(mint_a: str, mint_b: str, amount: int, dec_a: int, dec_b: int) -> list[PriceResult]:
     """Get prices via Jupiter aggregator (discovers all routed DEXs)."""
     results = []
     try:
@@ -230,7 +230,7 @@ def jupiter_quote(mint_a: str, mint_b: str, amount: int, dec_a: int, dec_b: int)
 # ═══════════════════════════════════════════════════════════════
 
 
-def raydium_pools(mint_a: str, mint_b: str) -> List[PriceResult]:
+def raydium_pools(mint_a: str, mint_b: str) -> list[PriceResult]:
     """Get all pools from Raydium API."""
     results = []
     try:
@@ -267,7 +267,7 @@ def raydium_pools(mint_a: str, mint_b: str) -> List[PriceResult]:
     return results
 
 
-def raydium_quote(mint_a: str, mint_b: str, amount: int, dec_b: int) -> Optional[PriceResult]:
+def raydium_quote(mint_a: str, mint_b: str, amount: int, dec_b: int) -> PriceResult | None:
     """Get real-time swap quote from Raydium."""
     try:
         resp = requests.get(
@@ -300,7 +300,7 @@ def raydium_quote(mint_a: str, mint_b: str, amount: int, dec_b: int) -> Optional
 # ═══════════════════════════════════════════════════════════════
 
 
-def orca_pools(mint_a: str, mint_b: str, dec_a: int, dec_b: int) -> List[PriceResult]:
+def orca_pools(mint_a: str, mint_b: str, dec_a: int, dec_b: int) -> list[PriceResult]:
     """Get Orca Whirlpool prices (on-chain sqrt_price)."""
     results = []
     rpc = SolanaRPC()
@@ -343,7 +343,7 @@ def orca_pools(mint_a: str, mint_b: str, dec_a: int, dec_b: int) -> List[PriceRe
 # ═══════════════════════════════════════════════════════════════
 
 
-def meteora_pools(mint_a: str, mint_b: str) -> List[PriceResult]:
+def meteora_pools(mint_a: str, mint_b: str) -> list[PriceResult]:
     """Try Meteora API for pool discovery."""
     results = []
     # Meteora AMM v2 API
@@ -416,7 +416,7 @@ SQRT_OFFSETS = {
 }
 
 
-def scan_known_pools(pair_name: str, dec_a: int, dec_b: int) -> List[PriceResult]:
+def scan_known_pools(pair_name: str, dec_a: int, dec_b: int) -> list[PriceResult]:
     """Read prices from known on-chain pool addresses."""
     results = []
     rpc = SolanaRPC()
@@ -464,7 +464,7 @@ def scan_known_pools(pair_name: str, dec_a: int, dec_b: int) -> List[PriceResult
 # ═══════════════════════════════════════════════════════════════
 
 
-def scan_pair(token_a: str, token_b: str, amount_a: float = 1.0) -> List[PriceResult]:
+def scan_pair(token_a: str, token_b: str, amount_a: float = 1.0) -> list[PriceResult]:
     """
     Scan all DEXs for prices of token_a/token_b.
     Returns all discovered prices sorted by value.
@@ -515,7 +515,7 @@ def scan_pair(token_a: str, token_b: str, amount_a: float = 1.0) -> List[PriceRe
     return sorted(unique, key=lambda x: x.price)
 
 
-def find_arbs(results: List[PriceResult], min_pct: float = 0.1) -> List[Dict]:
+def find_arbs(results: list[PriceResult], min_pct: float = 0.1) -> list[dict]:
     """Find arbitrage between any two price sources."""
     opps = []
     for i in range(len(results)):
@@ -588,7 +588,7 @@ if __name__ == "__main__":
 
         arbs = find_arbs(results, min_pct=0.05)
         if arbs:
-            print(f"\n  ARBITRAGE (>0.05%):")
+            print("\n  ARBITRAGE (>0.05%):")
             for a in arbs[:5]:
                 print(
                     f"    Buy {a['buy_dex']:<30} @ {a['buy_price']:.8f} → "
@@ -596,4 +596,4 @@ if __name__ == "__main__":
                     f"= {a['spread_pct']:.3f}%"
                 )
         else:
-            print(f"\n  No arbitrage opportunities.")
+            print("\n  No arbitrage opportunities.")

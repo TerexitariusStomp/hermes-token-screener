@@ -1,4 +1,8 @@
-import json, re, time, urllib.request, concurrent.futures
+import concurrent.futures
+import json
+import re
+import time
+import urllib.request
 from collections import defaultdict
 from pathlib import Path
 

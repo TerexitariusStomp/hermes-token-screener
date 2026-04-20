@@ -11,13 +11,12 @@ Uses nitter.tiekoetter.com + nitter.poast.org via Playwright selectors.
 """
 
 import json
+import math
 import re
 import time
-import math
-from pathlib import Path
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
-from dataclasses import dataclass, field, asdict
-from typing import List
+from pathlib import Path
 
 DATA_DIR = Path.home() / ".hermes" / "data" / "token_screener"
 TOP100_PATH = DATA_DIR / "top100.json"
@@ -214,7 +213,6 @@ BEARISH_WORDS = {
     "garbage",
     "red",
     "down",
-    "falling",
     "loss",
     "losses",
     "bag",
@@ -311,7 +309,7 @@ def goto_nitter(page, path: str) -> bool:
     return False
 
 
-def extract_tweets(page) -> List[Tweet]:
+def extract_tweets(page) -> list[Tweet]:
     """Extract tweets from current nitter page using Playwright selectors."""
     tweets = []
     items = page.query_selector_all(".timeline-item")
@@ -407,7 +405,7 @@ def analyze_profile(handle: str, page) -> ProfileAnalysis:
     tweets = extract_tweets(page)
     a.tweets_scraped = len(tweets)
 
-    now = datetime.now(timezone.utc)
+    datetime.now(timezone.utc)
     all_ages = []
     for t in tweets:
         d = time_ago_days(t.timestamp)
@@ -456,7 +454,7 @@ def analyze_profile(handle: str, page) -> ProfileAnalysis:
     return a
 
 
-def analyze_search(query: str, tweets: List[Tweet]) -> SearchAnalysis:
+def analyze_search(query: str, tweets: list[Tweet]) -> SearchAnalysis:
     a = SearchAnalysis(query=query, tweets_found=len(tweets))
     if not tweets:
         return a
@@ -496,7 +494,7 @@ def main():
     data = json.loads(TOP100_PATH.read_text())
     tokens = data.get("tokens", [])[:10]
 
-    print(f"=== Twitter Profile & Search Analyzer ===")
+    print("=== Twitter Profile & Search Analyzer ===")
     print(f"Instances: {', '.join(NITTER_INSTANCES)}")
     print(f"Tokens: {len(tokens)}\n")
 
@@ -565,7 +563,7 @@ def main():
                     f"7d={ts.tweets_last_7d}  quality={ts.search_quality_score}"
                 )
             else:
-                print(f"    nitter unavailable")
+                print("    nitter unavailable")
 
             # 3. Name search
             name_tweets = []
@@ -590,7 +588,7 @@ def main():
             print(
                 f"  Sentiment: {ss} ({sl})  [{sent['bullish']}B/{sent['bearish']}R/{sent['neutral']}N of {sent['analyzed']}]"
                 if ss is not None
-                else f"  Sentiment: no data"
+                else "  Sentiment: no data"
             )
 
             analysis.combined_score = round(

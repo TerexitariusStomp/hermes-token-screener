@@ -9,10 +9,9 @@ Merges:
 """
 
 import json
-import sqlite3
 import re
+import sqlite3
 from pathlib import Path
-from typing import Dict
 
 DATA_DIR = Path.home() / ".hermes" / "data" / "token_screener"
 TWITTER_JSON = DATA_DIR / "twitter_token_analysis.json"
@@ -137,7 +136,6 @@ BEARISH_WORDS = {
     "garbage",
     "red",
     "down",
-    "falling",
     "loss",
     "losses",
     "bag",
@@ -239,7 +237,7 @@ def compute_tweet_sentiment(tweets: list) -> dict:
     }
 
 
-def load_telegram_data() -> Dict:
+def load_telegram_data() -> dict:
     """Load Telegram sentiment + metrics from top10_tokens.db."""
     tg = {}
     if not TOP10_DB.exists():
@@ -298,7 +296,7 @@ def load_telegram_data() -> Dict:
     return tg
 
 
-def load_twitter_data() -> Dict:
+def load_twitter_data() -> dict:
     """Load Twitter analysis from JSON."""
     if not TWITTER_JSON.exists():
         return {}
@@ -379,7 +377,7 @@ def main():
 
     # Summary table
     print(f"\n{'='*95}")
-    print(f"  TELEGRAM + TWITTER ANALYSIS (sentiments kept separate)")
+    print("  TELEGRAM + TWITTER ANALYSIS (sentiments kept separate)")
     print(f"{'='*95}")
     print(
         f"{'Rank':>4} {'Sym':>10} {'TG_Mbr':>7} {'TG_Sent':>8} {'TW_Fll':>7} {'TW_Prof':>7} "

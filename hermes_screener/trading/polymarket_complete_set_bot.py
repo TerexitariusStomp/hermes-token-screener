@@ -17,10 +17,11 @@ import math
 import os
 import signal
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Optional
 
 import requests
 from dotenv import load_dotenv
@@ -55,7 +56,7 @@ class MarketCandidate:
     no: Leg
     edge: float
     cost: float
-    end_date: Optional[str]
+    end_date: str | None
     poly_volume: float = 0.0
     subgraph_trades_24h: int = 0
     score: float = 0.0
@@ -141,7 +142,7 @@ def fetch_markets_pmxt(query: str, limit: int = 200) -> list[dict]:
     return out
 
 
-def top_ask_clob(client, token_id: str) -> Optional[float]:
+def top_ask_clob(client, token_id: str) -> float | None:
     try:
         book = client.get_order_book(token_id)
     except Exception:
@@ -159,7 +160,7 @@ def top_ask_clob(client, token_id: str) -> Optional[float]:
     return min(prices) if prices else None
 
 
-def top_ask_pmxt(exchange, token_id: str) -> Optional[float]:
+def top_ask_pmxt(exchange, token_id: str) -> float | None:
     try:
         from pmxt.models import MarketOutcome
 
@@ -216,7 +217,7 @@ query Q($ts: String!, $ids: [String!]) {
         return 0
 
 
-def build_candidate(market: dict, top_ask_fn: Callable[[str], Optional[float]]) -> Optional[MarketCandidate]:
+def build_candidate(market: dict, top_ask_fn: Callable[[str], float | None]) -> MarketCandidate | None:
     outcomes = market.get("outcomes", [])
     token_ids = market.get("token_ids", [])
     if len(outcomes) != 2 or len(token_ids) != 2:
@@ -255,7 +256,7 @@ def choose_best_candidate(
     poly_volume_weight: float,
     use_subgraph: bool,
     subgraph_endpoint: str,
-) -> Optional[MarketCandidate]:
+) -> MarketCandidate | None:
     best = None
     for m in markets:
         c = build_candidate(m, top_ask_fn)
@@ -305,7 +306,8 @@ def init_live_client_v1(host: str):
 
 def init_live_client_v2(host: str):
     try:
-        from py_clob_client_v2 import ApiCreds, ClobClient as ClobClientV2
+        from py_clob_client_v2 import ApiCreds
+        from py_clob_client_v2 import ClobClient as ClobClientV2
     except Exception as e:
         raise RuntimeError("py-clob-client-v2 is not installed. Install with: pip install py-clob-client-v2") from e
 
@@ -407,14 +409,16 @@ def run_cycle(args: argparse.Namespace, state: dict) -> dict:
 
     if args.quote_source == "clob":
         client = init_live_client_v1(args.host) if args.mode == "live" else __import__("py_clob_client.client", fromlist=["ClobClient"]).ClobClient(args.host)
-        top_ask_fn = lambda tok: top_ask_clob(client, tok)
+        def top_ask_fn(tok):
+            return top_ask_clob(client, tok)
     else:
         try:
             import pmxt
         except Exception as e:
             raise RuntimeError("pmxt is not installed. Install with: pip install pmxt") from e
         ex = pmxt.Polymarket()
-        top_ask_fn = lambda tok: top_ask_pmxt(ex, tok)
+        def top_ask_fn(tok):
+            return top_ask_pmxt(ex, tok)
 
     candidate = choose_best_candidate(
         markets=markets,

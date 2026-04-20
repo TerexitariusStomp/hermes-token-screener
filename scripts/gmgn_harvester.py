@@ -13,7 +13,6 @@ Inserts into telegram_contracts_unique in central_contracts.db
 import json
 import sqlite3
 import time
-from typing import List, Dict
 
 from hermes_screener.config import settings
 from hermes_screener.contract_db import open_sqlite_rw
@@ -93,7 +92,7 @@ def upsert_contract(
     )
 
 
-def harvest_trenches(chain: str) -> List[Dict]:
+def harvest_trenches(chain: str) -> list[dict]:
     """Harvest pump alerts from GMGN trenches."""
     tokens = []
 
@@ -146,7 +145,7 @@ def harvest_trenches(chain: str) -> List[Dict]:
     return tokens
 
 
-def harvest_trending(chain: str) -> List[Dict]:
+def harvest_trending(chain: str) -> list[dict]:
     """Harvest featured signals from GMGN trending."""
     tokens = []
 
@@ -198,12 +197,11 @@ def harvest_trending(chain: str) -> List[Dict]:
 
 
 def main():
-    print(f"=== GMGN Harvester ===")
+    print("=== GMGN Harvester ===")
     print(f"Chains: {CHAINS}")
     print()
 
     conn = get_db()
-    total_new = 0
     total_seen = 0
 
     for chain in CHAINS:

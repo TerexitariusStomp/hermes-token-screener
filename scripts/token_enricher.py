@@ -39,8 +39,8 @@ from hermes_screener.async_enrichment import run_async_enrichment
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 from hermes_screener.metrics import start_metrics_server
-from hermes_screener.training import ExperienceCollector
 from hermes_screener.revised_scoring import revised_score_token
+from hermes_screener.training import ExperienceCollector
 
 # ── Config (from centralized settings) ───────────────────────────────────────
 DB_PATH = settings.db_path
@@ -326,10 +326,9 @@ def score_token(token: dict) -> tuple[float, list[str], list[str]]:
             negatives.append(f"down h24 ({pc_h24:+.0f}%)")
 
     # Death spiral
-    if vol_h24 > 0 and vol_h1 < vol_h24 * 0.005:
-        if pc_h6 is not None and pc_h6 < -10:
-            score *= 0.3
-            negatives.append("death spiral")
+    if vol_h24 > 0 and vol_h1 < vol_h24 * 0.005 and pc_h6 is not None and pc_h6 < -10:
+        score *= 0.3
+        negatives.append("death spiral")
 
     # ── MULTIPLIERS (positive only) ──
     if token.get("etherscan_verified"):
@@ -408,10 +407,9 @@ def score_token(token: dict) -> tuple[float, list[str], list[str]]:
             score *= 0.3
             negatives.append(f"HEAVY SELLS ({sell_ratio:.0%})")
 
-    if vol_h24 > 0 and vol_h1 > 0:
-        if vol_h1 < vol_h24 * STAGNANT_VOLUME_RATIO:
-            score *= 0.5
-            negatives.append("stagnant volume")
+    if vol_h24 > 0 and vol_h1 > 0 and vol_h1 < vol_h24 * STAGNANT_VOLUME_RATIO:
+        score *= 0.5
+        negatives.append("stagnant volume")
 
     buys_h6 = (dex.get("txns_h6", {}) or {}).get("buys", 0) or 0
     sells_h6 = (dex.get("txns_h6", {}) or {}).get("sells", 0) or 0

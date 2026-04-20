@@ -94,7 +94,12 @@ ignore = ["E501", "E722", "N806", "B905", "SIM105", "SIM108", "SIM115"]
 "hermes_screener/agents/*.py" = ["UP035", "SIM103", "F841"]
 "hermes_screener/memory/*.py" = ["F401", "F841"]
 "hermes_screener/models/*.py" = ["F401"]
-"tests/*.py" = ["SIM102"]
+"tests/*.py" = ["SIM102", "B011", "N805", "N802", "N803"]
+"scripts/*.py" = [
+    "UP006", "UP035", "UP045", "I001", "F541", "F841", "F401",
+    "SIM102", "SIM113", "SIM114", "N803", "N805", "N802",
+    "E402", "E741", "B007", "B033", "W293", "W291",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

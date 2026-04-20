@@ -20,13 +20,13 @@ import json
 import sqlite3
 import sys
 import time
-from typing import Any, Dict, List
-
-from hermes_screener.config import settings
-from hermes_screener.logging import get_logger
+from typing import Any
 
 # Import enhanced scoring
 from revised_enhanced_scoring import revised_compute_enhanced_token_score
+
+from hermes_screener.config import settings
+from hermes_screener.logging import get_logger
 
 log = get_logger("cross_scoring")
 
@@ -45,7 +45,7 @@ PHASE3_OUTPUT = DATA_DIR / "token_screener" / "top100_phase3_smartmoney.json"
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def load_tokens() -> List[dict]:
+def load_tokens() -> list[dict]:
     """Load current token scores from top100.json."""
     if not OUTPUT_PATH.exists():
         log.error("top100_not_found", path=str(OUTPUT_PATH))
@@ -55,7 +55,7 @@ def load_tokens() -> List[dict]:
     return data.get("tokens", data.get("top_tokens", []))
 
 
-def load_wallets(min_score: float = 30) -> List[dict]:
+def load_wallets(min_score: float = 30) -> list[dict]:
     """Load top wallets from wallet_tracker.db."""
     conn = sqlite3.connect(f"file:{WALLETS_DB}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
@@ -67,14 +67,14 @@ def load_wallets(min_score: float = 30) -> List[dict]:
     return [dict(r) for r in rows]
 
 
-def load_wallet_token_map() -> Dict[str, List[dict]]:
+def load_wallet_token_map() -> dict[str, list[dict]]:
     """Load wallet → token entries mapping."""
     conn = sqlite3.connect(f"file:{WALLETS_DB}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
     rows = conn.execute("SELECT * FROM wallet_token_entries").fetchall()
     conn.close()
 
-    mapping: Dict[str, List[dict]] = {}
+    mapping: dict[str, list[dict]] = {}
     for r in rows:
         d = dict(r)
         addr = d["wallet_address"]
@@ -267,15 +267,15 @@ def _compute_token_composite_score(
 
 
 def rescore_tokens(
-    tokens: List[dict],
-    wallets: List[dict],
-    wallet_token_map: Dict[str, List[dict]],
-) -> List[dict]:
+    tokens: list[dict],
+    wallets: list[dict],
+    wallet_token_map: dict[str, list[dict]],
+) -> list[dict]:
     """Re-score tokens based on smart money presence + all enrichment data."""
 
     # Build token → smart wallet mapping
-    token_wallets: Dict[str, List[dict]] = {}
-    wallet_by_addr = {w["address"]: w for w in wallets}
+    token_wallets: dict[str, list[dict]] = {}
+    {w["address"]: w for w in wallets}
 
     for wallet in wallets:
         w_addr = wallet["address"]
@@ -339,10 +339,10 @@ def rescore_tokens(
                 token["positives"] = existing
 
     # Filter duplicate token names per chain - keep only top-scoring one per (name, chain)
-    def filter_duplicate_names(tokens: List[dict]) -> List[dict]:
+    def filter_duplicate_names(tokens: list[dict]) -> list[dict]:
         """Filter duplicate token names per chain, keeping only the highest-scoring one."""
         from collections import defaultdict
-        
+
         # Group tokens by (symbol, chain)
         groups = defaultdict(list)
         for token in tokens:
@@ -350,7 +350,7 @@ def rescore_tokens(
             chain = token.get("chain", "").lower()
             if symbol and chain:
                 groups[(symbol, chain)].append(token)
-        
+
         # Keep only the highest-scoring token per group
         filtered_tokens = []
         for (symbol, chain), group_tokens in groups.items():
@@ -361,7 +361,7 @@ def rescore_tokens(
                 group_tokens.sort(key=lambda t: t.get("score", 0), reverse=True)
                 top_token = group_tokens[0]
                 filtered_tokens.append(top_token)
-                
+
                 # Log the filtering
                 duplicates = group_tokens[1:]
                 if duplicates:
@@ -373,9 +373,9 @@ def rescore_tokens(
                         filtered_count=len(duplicates),
                         filtered_scores=[t.get("score", 0) for t in duplicates],
                     )
-        
+
         return filtered_tokens
-    
+
     # Apply duplicate name filtering before final sorting
     tokens = filter_duplicate_names(tokens)
 
@@ -449,7 +449,7 @@ def _compute_wallet_composite_score(
     # ── Win Rate (0-15) ──
     win_rate = wallet.get("win_rate") or 0
     tokens_profitable = wallet.get("tokens_profitable") or 0
-    tokens_total = wallet.get("tokens_total") or 0
+    wallet.get("tokens_total") or 0
 
     if win_rate >= 0.8:
         score += 10
@@ -522,10 +522,10 @@ def _compute_wallet_composite_score(
 
 
 def rescore_wallets(
-    wallets: List[dict],
-    scored_tokens: List[dict],
-    wallet_token_map: Dict[str, List[dict]],
-) -> List[dict]:
+    wallets: list[dict],
+    scored_tokens: list[dict],
+    wallet_token_map: dict[str, list[dict]],
+) -> list[dict]:
     """Re-score wallets based on how many top tokens they hold."""
     token_by_addr = {t["contract_address"]: t for t in scored_tokens}
 
@@ -578,7 +578,7 @@ def run_cross_scoring(
     min_wallet_score: float = 30,
     iterations: int = 1,
     top_n: int = 100,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Run the iterative cross-scoring pipeline."""
     start = time.time()
 
@@ -663,7 +663,7 @@ def run_cross_scoring(
     return result
 
 
-def _write_output(tokens: List[dict]) -> None:
+def _write_output(tokens: list[dict]) -> None:
     """Write re-scored tokens to phase3 + latest output."""
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
 

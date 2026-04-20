@@ -43,12 +43,12 @@ def cleanup_contracts_db():
     ).fetchall()
 
     if not dead:
-        print(f"  contracts_db: no dead GMGN tokens")
+        print("  contracts_db: no dead GMGN tokens")
         db.close()
         return 0
 
     print(f"  contracts_db: removing {len(dead)} dead GMGN tokens")
-    for chain, addr, src, msg in dead:
+    for chain, addr, _src, _msg in dead:
         db.execute(
             "DELETE FROM telegram_contract_calls WHERE chain=? AND contract_address=?",
             (chain, addr),
@@ -97,7 +97,7 @@ def cleanup_top10_db():
     bad_syms = [r[0].upper() for r in bad if r[0]]
 
     if not bad_syms:
-        print(f"  top10: no zero-liq tokens")
+        print("  top10: no zero-liq tokens")
         db.close()
         return 0
 

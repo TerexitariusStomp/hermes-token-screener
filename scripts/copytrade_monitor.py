@@ -26,7 +26,7 @@ import json
 import sqlite3
 import sys
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import requests
 
@@ -113,7 +113,7 @@ def init_discoveries_db() -> sqlite3.Connection:
 # WALLET POSITION SCANNING (via GMGN + existing data)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def scan_wallet_positions(min_wallet_score: float = 30) -> Dict[str, List[dict]]:
+def scan_wallet_positions(min_wallet_score: float = 30) -> dict[str, list[dict]]:
     """
     Scan top wallets for their current token positions.
 
@@ -138,7 +138,7 @@ def scan_wallet_positions(min_wallet_score: float = 30) -> Dict[str, List[dict]]
     conn2.close()
 
     # Build wallet → positions map
-    positions: Dict[str, List[dict]] = {}
+    positions: dict[str, list[dict]] = {}
     for entry in all_entries:
         addr = entry["wallet_address"]
         if addr not in positions:
@@ -154,9 +154,9 @@ def scan_wallet_positions(min_wallet_score: float = 30) -> Dict[str, List[dict]]
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def detect_new_positions(
-    wallet_positions: Dict[str, List[dict]],
+    wallet_positions: dict[str, list[dict]],
     disc_conn: sqlite3.Connection,
-) -> List[dict]:
+) -> list[dict]:
     """
     Detect new token positions from top wallets.
 
@@ -219,7 +219,7 @@ def detect_new_positions(
     return unique
 
 
-def save_discoveries(discoveries: List[dict], conn: sqlite3.Connection):
+def save_discoveries(discoveries: list[dict], conn: sqlite3.Connection):
     """Save discovered tokens to the copytrade database."""
     now = time.time()
     for d in discoveries:
@@ -279,7 +279,7 @@ def save_discoveries(discoveries: List[dict], conn: sqlite3.Connection):
 # WEBHOOK SETUP
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def setup_alchemy_webhook(wallets: List[dict], webhook_url: str = "") -> Optional[str]:
+def setup_alchemy_webhook(wallets: list[dict], webhook_url: str = "") -> str | None:
     """
     Create Alchemy webhook for wallet activity monitoring.
 
@@ -305,7 +305,7 @@ def setup_alchemy_webhook(wallets: List[dict], webhook_url: str = "") -> Optiona
                 "network": "ETH_MAINNET",  # Base uses same webhook
                 "webhook_type": "ADDRESS_ACTIVITY",
                 "addresses": addresses,
-                "webhook_url": webhook_url or f"https://your-server.com/alchemy/webhook",
+                "webhook_url": webhook_url or "https://your-server.com/alchemy/webhook",
             },
             headers={"X-Alchemy-Token": api_key},
             timeout=15,
@@ -323,7 +323,7 @@ def setup_alchemy_webhook(wallets: List[dict], webhook_url: str = "") -> Optiona
     return None
 
 
-def setup_helius_webhook(wallets: List[dict], webhook_url: str = "") -> Optional[str]:
+def setup_helius_webhook(wallets: list[dict], webhook_url: str = "") -> str | None:
     """
     Create Helius webhook for Solana wallet monitoring.
     """
@@ -342,7 +342,7 @@ def setup_helius_webhook(wallets: List[dict], webhook_url: str = "") -> Optional
         resp = requests.post(
             f"https://api.helius.xyz/v0/webhooks?api-key={api_key}",
             json={
-                "webhookURL": webhook_url or f"https://your-server.com/helius/webhook",
+                "webhookURL": webhook_url or "https://your-server.com/helius/webhook",
                 "transactionTypes": ["SWAP", "TRANSFER"],
                 "accountAddresses": addresses,
                 "webhookType": "enhanced",
@@ -362,7 +362,7 @@ def setup_helius_webhook(wallets: List[dict], webhook_url: str = "") -> Optional
     return None
 
 
-def setup_quicknode_webhook(wallets: List[dict], webhook_url: str = "") -> Optional[str]:
+def setup_quicknode_webhook(wallets: list[dict], webhook_url: str = "") -> str | None:
     """
     Create QuickNode webhook for EVM wallet monitoring.
     """
@@ -382,7 +382,7 @@ def setup_quicknode_webhook(wallets: List[dict], webhook_url: str = "") -> Optio
             "https://api.quicknode.com/quickalerts/rest/v1/destinations",
             json={
                 "name": "hermes-copytrade-monitor",
-                "to_url": webhook_url or f"https://your-server.com/quicknode/webhook",
+                "to_url": webhook_url or "https://your-server.com/quicknode/webhook",
             },
             headers={"x-api-key": api_key, "Content-Type": "application/json"},
             timeout=15,
@@ -429,7 +429,7 @@ ANKR_CHAINS = {
 }
 
 
-def poll_ankr_balances(wallets: List[dict]) -> List[dict]:
+def poll_ankr_balances(wallets: list[dict]) -> list[dict]:
     """
     Poll Ankr for multi-chain token balances.
 
@@ -581,7 +581,7 @@ def run_copytrade_monitor(
     min_wallet_score: float = 30,
     setup_webhooks: bool = False,
     poll_ankr: bool = True,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Run the copytrade monitoring pipeline."""
     start = time.time()
 

@@ -12,10 +12,9 @@ Usage:
 """
 
 import json
-import time
 import sqlite3
 import sys
-from typing import List, Set, Tuple
+import time
 
 import requests
 
@@ -107,7 +106,7 @@ def insert_discovery(conn, chain: str, address: str, source: str, description: s
         return False
 
 
-def fetch_dexscreener_boosted() -> List[Tuple[str, str, str]]:
+def fetch_dexscreener_boosted() -> list[tuple[str, str, str]]:
     try:
         r = requests.get("https://api.dexscreener.com/token-boosts/top/v1", timeout=15)
         if r.status_code != 200:
@@ -121,7 +120,7 @@ def fetch_dexscreener_boosted() -> List[Tuple[str, str, str]]:
         return []
 
 
-def fetch_dexscreener_profiles() -> List[Tuple[str, str, str]]:
+def fetch_dexscreener_profiles() -> list[tuple[str, str, str]]:
     try:
         r = requests.get("https://api.dexscreener.com/token-profiles/latest/v1", timeout=15)
         if r.status_code != 200:
@@ -139,7 +138,7 @@ def fetch_dexscreener_profiles() -> List[Tuple[str, str, str]]:
         return []
 
 
-def run_discovery(chains: Set[str] = None):
+def run_discovery(chains: set[str] = None):
     chains = chains or DEFAULT_CHAINS
     conn = get_db()
     ensure_tables(conn)

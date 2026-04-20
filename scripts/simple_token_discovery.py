@@ -5,25 +5,23 @@ Focuses on getting token addresses from Rick Burp Bot responses.
 """
 
 import asyncio
-import os
 import re
 import sqlite3
 import sys
 from pathlib import Path
-from typing import Dict, List
 
 # Add the scripts directory to path
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Import the Telegram client
 from telethon import TelegramClient
-
-from hermes_screener.config import settings
 from token_discovery_shared import (
     ensure_discovered_tokens_table,
     insert_discovered_token,
     lookup_token_address,
 )
+
+from hermes_screener.config import settings
 
 # Configuration
 SESSION_PATH = settings.session_path
@@ -40,11 +38,11 @@ class SimpleTokenDiscovery:
         self.channel = None
         self.db_conn = None
 
-    def get_token_address_from_name(self, token_name: str) -> Dict:
+    def get_token_address_from_name(self, token_name: str) -> dict:
         """Get token address from token name using DexScreener API."""
         return lookup_token_address(token_name)
 
-    async def get_trending_tokens(self) -> List[str]:
+    async def get_trending_tokens(self) -> list[str]:
         """Get trending token names from Rick Burp Bot."""
         token_names = []
 
@@ -117,7 +115,7 @@ class SimpleTokenDiscovery:
         ensure_discovered_tokens_table(self.db_conn)
         print("Database initialized")
 
-    def store_token(self, token_info: Dict, discovery_method: str = "rick_bot"):
+    def store_token(self, token_info: dict, discovery_method: str = "rick_bot"):
         """Store token information in database."""
         insert_discovered_token(self.db_conn, token_info, discovery_method)
 
@@ -157,7 +155,7 @@ class SimpleTokenDiscovery:
                 self.store_token(token_info)
                 discovered_tokens.append(token_info)
             else:
-                print(f"  No address found")
+                print("  No address found")
 
             # Small delay to avoid rate limits
             if i < len(token_names) - 1:

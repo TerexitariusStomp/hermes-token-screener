@@ -12,14 +12,14 @@ Usage:
   python3 pumpportal_harvester.py --count      # show DB stats
 """
 
+import argparse
 import asyncio
 import json
-import sqlite3
 import signal
+import sqlite3
 import time
-import argparse
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
 
 # ── Config ──────────────────────────────────────────────────────────────────
 DATA_DIR = Path.home() / ".hermes" / "data"
@@ -68,8 +68,8 @@ class PumpPortalHarvester:
         sol_amount = data.get("solAmount", 0)
         market_cap_sol = data.get("marketCapSol", 0)
         initial_buy = data.get("initialBuy", 0)
-        pool = data.get("pool", "pump")
-        signature = data.get("signature", "")
+        data.get("pool", "pump")
+        data.get("signature", "")
 
         now = time.time()
         chain = "solana"
@@ -225,7 +225,7 @@ class PumpPortalHarvester:
         """Main loop with auto-reconnect."""
         import websockets
 
-        print(f"=== PumpPortal Harvester ===")
+        print("=== PumpPortal Harvester ===")
         print(f"URL: {WS_URL[:50]}...")
         print(f"DB: {self.db_path}")
         print()
@@ -289,7 +289,7 @@ class PumpPortalHarvester:
         self._print_stats()
 
     def _print_stats(self):
-        print(f"\n=== Stats ===")
+        print("\n=== Stats ===")
         print(f"Received:  {self.stats['received']}")
         print(f"New:       {self.stats['new']}")
         print(f"Duplicates:{self.stats['duplicates']}")
@@ -340,7 +340,7 @@ def show_stats():
     """
     ).fetchall()
     if rows:
-        print(f"\nRecent pumpportal tokens:")
+        print("\nRecent pumpportal tokens:")
         for addr, msg, ts in rows:
             age = int(time.time() - ts)
             print(f"  {addr[:20]}...  {msg}  ({age}s ago)")

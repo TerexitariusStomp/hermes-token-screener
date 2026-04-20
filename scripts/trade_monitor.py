@@ -26,7 +26,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import requests
 
@@ -58,14 +58,14 @@ STAGNANT_HOURS = 6  # no price movement for 6h = stagnant
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def load_positions() -> List[dict]:
+def load_positions() -> list[dict]:
     if POSITIONS_PATH.exists():
         with open(POSITIONS_PATH) as f:
             return json.load(f).get("positions", [])
     return []
 
 
-def save_positions(positions: List[dict]):
+def save_positions(positions: list[dict]):
     POSITIONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(POSITIONS_PATH, "w") as f:
         json.dump(
@@ -76,14 +76,14 @@ def save_positions(positions: List[dict]):
         )
 
 
-def load_market_history() -> Dict[str, list]:
+def load_market_history() -> dict[str, list]:
     if MARKET_HISTORY.exists():
         with open(MARKET_HISTORY) as f:
             return json.load(f)
     return {}
 
 
-def save_market_history(history: Dict[str, list]):
+def save_market_history(history: dict[str, list]):
     MARKET_HISTORY.parent.mkdir(parents=True, exist_ok=True)
     # Keep last 1000 entries per token
     for key in history:
@@ -113,7 +113,7 @@ def log_monitor_decision(decision: dict):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def fetch_token_market_data(address: str, chain: str) -> Optional[dict]:
+def fetch_token_market_data(address: str, chain: str) -> dict | None:
     """Fetch current market data from Dexscreener."""
     try:
         resp = requests.get(
@@ -157,7 +157,7 @@ def fetch_token_market_data(address: str, chain: str) -> Optional[dict]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def detect_decay(symbol: str, current: dict, history: list) -> Dict[str, Any]:
+def detect_decay(symbol: str, current: dict, history: list) -> dict[str, Any]:
     """
     Detect if a token is decaying.
 
@@ -229,7 +229,7 @@ def detect_decay(symbol: str, current: dict, history: list) -> Dict[str, Any]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def call_bonsai(system: str, prompt: str, max_tokens: int = 120) -> Optional[str]:
+def call_bonsai(system: str, prompt: str, max_tokens: int = 120) -> str | None:
     try:
         resp = requests.post(
             BONSAI_URL,
@@ -352,7 +352,7 @@ def execute_sell(position: dict, dry_run: bool = True) -> dict:
     return result
 
 
-def find_rotation_candidate(current_symbol: str) -> Optional[dict]:
+def find_rotation_candidate(current_symbol: str) -> dict | None:
     """Find a new token to rotate into."""
     if not TOP_TOKENS_PATH.exists():
         return None
@@ -372,7 +372,7 @@ def find_rotation_candidate(current_symbol: str) -> Optional[dict]:
     return None
 
 
-def evaluate_reentry(position: dict, market: dict, decay: dict) -> Optional[dict]:
+def evaluate_reentry(position: dict, market: dict, decay: dict) -> dict | None:
     """
     After a take-profit exit, evaluate whether to re-enter the token.
 
@@ -460,7 +460,7 @@ def evaluate_reentry(position: dict, market: dict, decay: dict) -> Optional[dict
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def run_trade_monitor(execute: bool = False, dry_run: bool = True) -> Dict[str, Any]:
+def run_trade_monitor(execute: bool = False, dry_run: bool = True) -> dict[str, Any]:
     """Run the trade monitoring loop."""
     start = time.time()
 
@@ -525,9 +525,9 @@ def run_trade_monitor(execute: bool = False, dry_run: bool = True) -> Dict[str, 
         log_monitor_decision(decision)
         # Record monitor signal for training
         try:
-            market_snap = market_history.get(address, [{}])[-1] if market_history else {}
+            market_snap = history.get(addr, [{}])[-1] if history else {}
             collector.record_monitor_signal(
-                address=address,
+                address=addr,
                 chain=position.get("chain", ""),
                 symbol=symbol,
                 market_snapshot=market_snap,
@@ -579,7 +579,7 @@ def run_trade_monitor(execute: bool = False, dry_run: bool = True) -> Dict[str, 
                             pnl_pct = ((exit_p - entry_p) / entry_p * 100) if entry_p else 0
                             hold_h = (time.time() - float(position.get("entry_time") or time.time())) / 3600
                             collector.record_trade_outcome(
-                                address=address,
+                                address=addr,
                                 chain=position.get("chain", ""),
                                 symbol=symbol,
                                 entry_price=entry_p,

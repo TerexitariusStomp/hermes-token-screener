@@ -229,7 +229,6 @@ STOPWORDS = {
     "raydium",
     "pumpfun",
     # Fiat/stablecoin exclusions - not tradeable tokens
-    "usd",
     "usdt",
     "usdc",
     "dai",
@@ -240,8 +239,6 @@ STOPWORDS = {
     "jpy",
     "cny",
     "btc",
-    "eth",
-    "sol",
     "bnb",
     "xrp",
 }
@@ -391,7 +388,7 @@ def main():
     OUTPUT_PATH.write_text(json.dumps(output, indent=2))
 
     # Print top keywords
-    print(f"\nTop trending keywords:")
+    print("\nTop trending keywords:")
     for kw in keywords[:15]:
         bar = "#" * min(kw["count"], 30)
         print(f"  {kw['keyword']:>20}  {kw['count']:>4}  {bar}")

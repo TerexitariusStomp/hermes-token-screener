@@ -4,9 +4,10 @@ Test API integrations for Solscan, Helius, and Birdeye.
 """
 
 import asyncio
-import httpx
 import os
 from pathlib import Path
+
+import httpx
 
 # Load environment variables
 env_path = Path(__file__).parent.parent / ".env"

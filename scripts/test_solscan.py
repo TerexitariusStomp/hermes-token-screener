@@ -4,9 +4,10 @@ Test Solscan API with different endpoints.
 """
 
 import asyncio
-import httpx
 import os
 from pathlib import Path
+
+import httpx
 
 # Load environment variables
 env_path = Path(__file__).parent.parent / ".env"

@@ -13,9 +13,7 @@ Usage:
   python3 dexscreener_discovery.py --chain base  # Base only
 """
 
-import json
 import sqlite3
-import sys
 import time
 from pathlib import Path
 
@@ -129,7 +127,7 @@ def fetch_trending(chain_id: str):
     try:
         # Use search API with chain filter for trending tokens
         resp = requests.get(
-            f"https://api.dexscreener.com/token-boosts/top/v1",
+            "https://api.dexscreener.com/token-boosts/top/v1",
             timeout=15,
         )
         if resp.status_code != 200:
@@ -145,7 +143,7 @@ def fetch_trending(chain_id: str):
                     f"Trending on {chain_id}: {t.get('description', '')[:80]}"
                 ))
         return results
-    except Exception as e:
+    except Exception:
         return []
 
 

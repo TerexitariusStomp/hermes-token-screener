@@ -7,19 +7,18 @@ Pattern: API (route) → instruction construction → simulate → sign → send
 NOT:     API (route) → API (build tx) → sign → send
 """
 
-import os
 import base64
 import logging
-from typing import Dict, Optional, Tuple
+import os
 
 import requests
-from solders.keypair import Keypair
-from solders.pubkey import Pubkey
-from solders.transaction import VersionedTransaction
-from solders.message import MessageV0
-from solders.instruction import Instruction, AccountMeta
 from solana.rpc.api import Client
 from solana.rpc.types import TxOpts
+from solders.instruction import AccountMeta, Instruction
+from solders.keypair import Keypair
+from solders.message import MessageV0
+from solders.pubkey import Pubkey
+from solders.transaction import VersionedTransaction
 
 logger = logging.getLogger(__name__)
 
@@ -140,7 +139,7 @@ class SolanaProgramAdapter:
 
     def jupiter_quote(
         self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    ) -> dict:
         """Get quote from Jupiter API v1."""
         try:
             resp = requests.get(
@@ -162,8 +161,8 @@ class SolanaProgramAdapter:
     # ==================== JUPITER ROUTE → DIRECT TX ====================
 
     def jupiter_build_tx(
-        self, quote: Dict, wrap_unwrap: bool = True
-    ) -> Optional[VersionedTransaction]:
+        self, quote: dict, wrap_unwrap: bool = True
+    ) -> VersionedTransaction | None:
         """
         Build a VersionedTransaction from Jupiter quote.
 
@@ -267,7 +266,7 @@ class SolanaProgramAdapter:
             traceback.print_exc()
             return None
 
-    def _parse_jupiter_instruction(self, ix_data: Dict) -> Optional[Instruction]:
+    def _parse_jupiter_instruction(self, ix_data: dict) -> Instruction | None:
         """Parse a Jupiter instruction dict into a solders Instruction."""
         try:
             program_id = Pubkey.from_string(ix_data["programId"])
@@ -288,7 +287,7 @@ class SolanaProgramAdapter:
 
     # ==================== SIMULATE ====================
 
-    def simulate_tx(self, tx: VersionedTransaction) -> Tuple[bool, str]:
+    def simulate_tx(self, tx: VersionedTransaction) -> tuple[bool, str]:
         """Simulate a transaction. Returns (success, error_msg)."""
         try:
             resp = self.client.simulate_transaction(tx)
@@ -309,7 +308,7 @@ class SolanaProgramAdapter:
 
     def send_tx(
         self, tx: VersionedTransaction, skip_preflight: bool = False
-    ) -> Optional[str]:
+    ) -> str | None:
         """Send a signed transaction. Returns signature or None."""
         try:
             opts = TxOpts(
@@ -338,7 +337,7 @@ class SolanaProgramAdapter:
 
     def swap(
         self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Execute swap: quote → build → simulate → sign → send → confirm.
         Returns signature or None.
@@ -384,7 +383,7 @@ class SolanaProgramAdapter:
 
     def swap_by_symbol(
         self, from_symbol: str, to_symbol: str, amount_ui: float, slippage_bps: int = 50
-    ) -> Optional[str]:
+    ) -> str | None:
         """Swap using token symbols and UI amount."""
         from_token = TOKENS.get(from_symbol.upper())
         to_token = TOKENS.get(to_symbol.upper())
@@ -402,7 +401,7 @@ class SolanaProgramAdapter:
 
     def raydium_cpmm_quote(
         self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    ) -> dict:
         """Get quote from Raydium CPMM API."""
         try:
             resp = requests.get(
@@ -424,7 +423,7 @@ class SolanaProgramAdapter:
             logger.error(f"Raydium quote error: {e}")
         return {}
 
-    def raydium_build_tx(self, quote_data: Dict) -> Optional[VersionedTransaction]:
+    def raydium_build_tx(self, quote_data: dict) -> VersionedTransaction | None:
         """
         Build VersionedTransaction from Raydium swap data.
         Raydium API returns serialized instructions - we decode and rebuild.
@@ -468,7 +467,7 @@ class SolanaProgramAdapter:
             logger.error(f"Raydium build error: {e}")
             return None
 
-    def _parse_raydium_instruction(self, ix_data: Dict) -> Optional[Instruction]:
+    def _parse_raydium_instruction(self, ix_data: dict) -> Instruction | None:
         """Parse Raydium instruction data."""
         try:
             program_id = Pubkey.from_string(ix_data["programId"])
@@ -492,7 +491,7 @@ class SolanaProgramAdapter:
 
     def meteora_quote(
         self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    ) -> dict:
         """Get quote from Meteora DLMM API."""
         try:
             resp = requests.get(
@@ -518,8 +517,8 @@ class SolanaProgramAdapter:
         return {}
 
     def meteora_build_tx(
-        self, quote_data: Dict, wallet: str, amount: int, slippage_bps: int = 50
-    ) -> Optional[str]:
+        self, quote_data: dict, wallet: str, amount: int, slippage_bps: int = 50
+    ) -> str | None:
         """Build swap transaction via Meteora DLMM API."""
         try:
             pool = quote_data.get("pool", "")
@@ -550,7 +549,7 @@ class SolanaProgramAdapter:
 
     def orca_quote(
         self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    ) -> dict:
         """Get quote from Orca Whirlpool API."""
         try:
             resp = requests.get(f"{self.ORCA_API}/v1/whirlpool/list", timeout=10)
@@ -586,8 +585,8 @@ class SolanaProgramAdapter:
         return {}
 
     def orca_build_tx(
-        self, quote_data: Dict, wallet: str, amount: int, slippage_bps: int = 50
-    ) -> Optional[str]:
+        self, quote_data: dict, wallet: str, amount: int, slippage_bps: int = 50
+    ) -> str | None:
         """Build swap transaction via Orca Whirlpool API."""
         try:
             resp = requests.post(
@@ -615,7 +614,7 @@ class SolanaProgramAdapter:
 
     def pumpswap_quote(
         self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    ) -> dict:
         """Get quote from PumpSwap (pump.fun DEX)."""
         try:
             resp = requests.get(f"{self.PUMPSWAP_API}/coins/{output_mint}", timeout=10)
@@ -635,8 +634,8 @@ class SolanaProgramAdapter:
         return {}
 
     def pumpswap_build_tx(
-        self, quote_data: Dict, wallet: str, amount: int, slippage_bps: int = 50
-    ) -> Optional[str]:
+        self, quote_data: dict, wallet: str, amount: int, slippage_bps: int = 50
+    ) -> str | None:
         """Build swap transaction via PumpSwap API."""
         try:
             resp = requests.post(
@@ -667,7 +666,7 @@ class SolanaProgramAdapter:
         amount: int,
         slippage_bps: int = 50,
         swap_type: str = "buy_small",
-    ) -> Optional[Dict]:
+    ) -> dict | None:
         """Smart routing across all Solana DEXs.
 
         Uses Jupiter as primary aggregator (routes through 20+ DEXs),
@@ -715,7 +714,7 @@ class SolanaProgramAdapter:
 
         return None
 
-    def get_dex_info(self, dex_key: str) -> Dict:
+    def get_dex_info(self, dex_key: str) -> dict:
         """Get info about a Solana DEX from the registry."""
         return SOLANA_DEX_REGISTRY.get(dex_key, {})
 
@@ -730,7 +729,7 @@ class SolanaProgramAdapter:
 
     def compare_quotes(
         self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    ) -> dict:
         """Compare quotes across Solana DEXes."""
         quotes = {}
 

@@ -5,11 +5,11 @@ Fetches prices from 125+ Solana DEX pools across 11 token pairs.
 For arbitrage: compares prices across all sources to find spreads.
 """
 import base64
-import requests
 import time
-from dataclasses import dataclass
-from typing import Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
+
+import requests
 
 SOLANA_RPC = "https://api.mainnet-beta.solana.com"
 
@@ -65,7 +65,7 @@ class SolanaRPC:
         self.url = url
         self.s = requests.Session()
 
-    def get_account(self, addr: str) -> Optional[bytes]:
+    def get_account(self, addr: str) -> bytes | None:
         r = self.s.post(
             self.url,
             json={
@@ -102,7 +102,7 @@ def base58(data: bytes) -> str:
 # ═══════════════════════════════════════════════════════════════
 
 
-def read_sqrt_price(data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0) -> Optional[float]:
+def read_sqrt_price(data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0) -> float | None:
     """Read sqrt_price_x64 from on-chain account and compute price."""
     if not data:
         return None
@@ -129,7 +129,7 @@ def read_sqrt_price(data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0) -
 # ═══════════════════════════════════════════════════════════════
 
 
-def fetch_raydium_api(pair_name: str) -> List[PriceQuote]:
+def fetch_raydium_api(pair_name: str) -> list[PriceQuote]:
     """Fetch all pools for a token pair from Raydium API."""
     results = []
     tokens = pair_name.split("/")
@@ -171,7 +171,7 @@ def fetch_raydium_api(pair_name: str) -> List[PriceQuote]:
     return results
 
 
-def fetch_orca_api(pair_name: str) -> List[PriceQuote]:
+def fetch_orca_api(pair_name: str) -> list[PriceQuote]:
     """Fetch all pools for a token pair from Orca (on-chain sqrt_price)."""
     results = []
     tokens = pair_name.split("/")
@@ -220,7 +220,7 @@ def fetch_orca_api(pair_name: str) -> List[PriceQuote]:
     return results
 
 
-def fetch_jupiter_quote(pair_name: str) -> Optional[PriceQuote]:
+def fetch_jupiter_quote(pair_name: str) -> PriceQuote | None:
     """Get real-time quote from Jupiter API."""
     tokens = pair_name.split("/")
     mint_a = TOKENS.get(tokens[0], {}).get("mint", SOL_MINT)
@@ -254,7 +254,7 @@ def fetch_jupiter_quote(pair_name: str) -> Optional[PriceQuote]:
     return None
 
 
-def fetch_raydium_quote(pair_name: str) -> Optional[PriceQuote]:
+def fetch_raydium_quote(pair_name: str) -> PriceQuote | None:
     """Get real-time quote from Raydium API."""
     tokens = pair_name.split("/")
     mint_a = TOKENS.get(tokens[0], {}).get("mint", SOL_MINT)
@@ -294,7 +294,7 @@ def fetch_raydium_quote(pair_name: str) -> Optional[PriceQuote]:
 # ═══════════════════════════════════════════════════════════════
 
 
-def fetch_pair(pair_name: str) -> List[PriceQuote]:
+def fetch_pair(pair_name: str) -> list[PriceQuote]:
     """Fetch all prices for a single token pair."""
     all_quotes = []
     with ThreadPoolExecutor(max_workers=4) as pool:
@@ -316,7 +316,7 @@ def fetch_pair(pair_name: str) -> List[PriceQuote]:
     return all_quotes
 
 
-def fetch_all_pairs(pairs: List[str] = None) -> List[PriceQuote]:
+def fetch_all_pairs(pairs: list[str] = None) -> list[PriceQuote]:
     """Fetch prices for multiple token pairs."""
     if pairs is None:
         pairs = TOKEN_PAIRS
@@ -331,7 +331,7 @@ def fetch_all_pairs(pairs: List[str] = None) -> List[PriceQuote]:
     return all_quotes
 
 
-def find_arbitrage(quotes: List[PriceQuote], min_spread_pct: float = 0.05) -> List[dict]:
+def find_arbitrage(quotes: list[PriceQuote], min_spread_pct: float = 0.05) -> list[dict]:
     """Find arbitrage opportunities within each pair."""
     opps = []
     by_pair = {}

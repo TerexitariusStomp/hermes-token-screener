@@ -94,10 +94,9 @@ def extract_addresses(text: str) -> list[tuple[str, str, str]]:
     # 3. Raw Solana addresses (base58, 32-44 chars)
     base58_chars = set("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
     for match in SOLANA_PATTERN.findall(text):
-        if len(match) >= 32 and all(c in base58_chars for c in match):
-            if match not in seen:
-                results.append((match, match, "solana_raw"))
-                seen.add(match)
+        if len(match) >= 32 and all(c in base58_chars for c in match) and match not in seen:
+            results.append((match, match, "solana_raw"))
+            seen.add(match)
 
     # 4. XRPL addresses (r-prefixed, 25-35 chars)
     for match in XRPL_PATTERN.findall(text):
@@ -241,11 +240,8 @@ async def get_all_dialogs(client) -> list:
     dialogs = []
     async for dialog in client.iter_dialogs():
         entity = dialog.entity
-        if isinstance(entity, (Channel, Chat)):
+        if isinstance(entity, (Channel, Chat)) or isinstance(entity, User) and entity.bot and INCLUDE_BOTS:
             dialogs.append(dialog)
-        elif isinstance(entity, User) and entity.bot:
-            if INCLUDE_BOTS:
-                dialogs.append(dialog)
     return dialogs
 
 

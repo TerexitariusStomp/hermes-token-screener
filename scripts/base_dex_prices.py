@@ -7,11 +7,11 @@ V2: getAmountsOut | V3: slot0 sqrtPriceX96 | 7 pairs
 Usage: python base_dex_prices.py [--amount 0.01] [--all-pairs] [--json]
 """
 
+import argparse
 import json
-import urllib.request
 import ssl
 import time
-import argparse
+import urllib.request
 
 RPCS = ["https://base.llamarpc.com", "https://base.drpc.org", "https://1rpc.io/base"]
 rpc_idx = 0
@@ -19,7 +19,9 @@ ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
-def rpc_call(method, params=[]):
+def rpc_call(method, params=None):
+    if params is None:
+        params = []
     global rpc_idx
     for _ in range(5):
         try:
@@ -119,21 +121,21 @@ def quote_v3_slot0(pool, dec0, dec1):
 def discover_and_quote(verbose=True):
     if verbose:
         print("=== POOL DISCOVERY ===\n")
-    
+
     pools = []
-    
+
     for dex, cfg in FACTORIES.items():
         for tA_name, tB_name, fees in PAIRS:
             tA = TOKENS[tA_name][0]
             tB = TOKENS[tB_name][0]
-            
+
             if cfg["type"] == "v2":
                 pool = check_v2(cfg["factory"], tA, tB)
                 if pool:
                     pools.append({"dex": dex, "pair": f"{tA_name}-{tB_name}", "pool": pool, "type": "v2", "config": cfg})
                     if verbose:
                         print(f"  {dex:<20} {tA_name}-{tB_name:<12} V2  pool={pool}")
-            
+
             elif cfg["type"] == "v3":
                 for fee in fees:
                     pool = check_v3(cfg["factory"], tA, tB, fee)
@@ -141,25 +143,25 @@ def discover_and_quote(verbose=True):
                         pools.append({"dex": dex, "pair": f"{tA_name}-{tB_name}", "pool": pool, "type": "v3", "config": cfg, "fee": fee, "dec0": TOKENS[tA_name][1], "dec1": TOKENS[tB_name][1]})
                         if verbose:
                             print(f"  {dex:<20} {tA_name}-{tB_name:<12} V3  fee={fee}bps  pool={pool}")
-            
+
             time.sleep(0.2)
-    
+
     if verbose:
         print(f"\nDiscovered {len(pools)} pools\n")
-    
+
     # Quote
     results = []
     if verbose:
         print("=== PRICE QUOTES ===\n")
         print(f"{'DEX':<20}{'Pair':<14}{'Fee':<8}{'Price':>14}{'Type'}")
         print("=" * 62)
-    
+
     for p in pools:
         dex = p["dex"]
         pair = p["pair"]
         tA_name, tB_name = pair.split("-")
         dec_out = TOKENS[tB_name][1]
-        
+
         if p["type"] == "v2":
             amount_wei = int(0.01 * 10**TOKENS[tA_name][1])
             out = quote_v2(p["config"]["router"], TOKENS[tA_name][0], TOKENS[tB_name][0], amount_wei)
@@ -171,7 +173,7 @@ def discover_and_quote(verbose=True):
             else:
                 if verbose:
                     print(f"{dex:<20}{pair:<14}{'V2':<8}{'FAIL':>14}{'':>6}")
-        
+
         elif p["type"] == "v3":
             spot = quote_v3_slot0(p["pool"], p["dec0"], p["dec1"])
             if spot and spot > 0:
@@ -181,12 +183,12 @@ def discover_and_quote(verbose=True):
             else:
                 if verbose:
                     print(f"{dex:<20}{pair:<14}{p['fee']:<8}{'FAIL':>14}{'':>6}")
-        
+
         time.sleep(0.8)
-    
+
     # Summary
     if verbose and results:
-        print(f"\n=== SUMMARY ===\n")
+        print("\n=== SUMMARY ===\n")
         pairs_set = sorted(set(r["pair"] for r in results))
         for pair in pairs_set:
             pr = [r for r in results if r["pair"] == pair]
@@ -194,18 +196,18 @@ def discover_and_quote(verbose=True):
             spread = (max(prices) - min(prices)) / min(prices) * 100
             best = max(pr, key=lambda x: x["price"])
             print(f"{pair}: {len(pr)} quotes, spread {spread:.2f}%, best @ {best['dex']} {best['fee']} ({best['price']:,.2f})")
-    
+
     return results
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
-    
+
     block = rpc_call("eth_blockNumber")
     if "result" in block:
         print(f"Base block: {int(block['result'], 16):,}\n")
-    
+
     results = discover_and_quote(not args.json)
     if args.json:
         print(json.dumps(results, indent=2))

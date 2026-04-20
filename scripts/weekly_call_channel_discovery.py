@@ -5,14 +5,13 @@ Uses Rick Burp Bot (@rick) to find and track the best crypto call channels.
 """
 
 import asyncio
-import sys
-import os
 import json
 import re
-from pathlib import Path
-from datetime import datetime
-from typing import Dict, List, Optional
 import sqlite3
+import sys
+from datetime import datetime
+from pathlib import Path
+
 import requests
 
 # Add the scripts directory to path
@@ -196,7 +195,7 @@ class CallChannelTracker:
         self.db_conn.commit()
         print("Database initialized")
 
-    async def send_command(self, command: str, description: str) -> Optional[str]:
+    async def send_command(self, command: str, description: str) -> str | None:
         """Send a command to the bot and return the response."""
         try:
             print(f"Sending command: {command} ({description})")
@@ -227,20 +226,19 @@ class CallChannelTracker:
             if not bot_response:
                 # Fallback: look for any message with relevant keywords
                 for msg in messages_after:
-                    if msg.message and len(msg.message) > 50:
-                        if any(
-                            keyword in msg.message.lower()
-                            for keyword in [
-                                "leaderboard",
-                                "best",
-                                "trending",
-                                "runners",
-                                "hot",
-                                "tokens",
-                            ]
-                        ):
-                            bot_response = msg.message
-                            break
+                    if msg.message and len(msg.message) > 50 and any(
+                        keyword in msg.message.lower()
+                        for keyword in [
+                            "leaderboard",
+                            "best",
+                            "trending",
+                            "runners",
+                            "hot",
+                            "tokens",
+                        ]
+                    ):
+                        bot_response = msg.message
+                        break
 
             return bot_response
 
@@ -248,7 +246,7 @@ class CallChannelTracker:
             print(f"Error sending command {command}: {e}")
             return None
 
-    def parse_runners_response(self, response: str) -> List[Dict]:
+    def parse_runners_response(self, response: str) -> list[dict]:
         """Parse the /runners command response."""
         tokens = []
         lines = response.split("\n")
@@ -280,7 +278,7 @@ class CallChannelTracker:
 
         return tokens
 
-    def parse_ga_response(self, response: str) -> List[Dict]:
+    def parse_ga_response(self, response: str) -> list[dict]:
         """Parse the /ga command response for ATH leaderboard."""
         tokens = []
         lines = response.split("\n")
@@ -312,7 +310,7 @@ class CallChannelTracker:
 
         return tokens
 
-    def parse_burp_response(self, response: str) -> List[Dict]:
+    def parse_burp_response(self, response: str) -> list[dict]:
         """Parse the /burp command response."""
         tokens = []
         lines = response.split("\n")
@@ -343,7 +341,7 @@ class CallChannelTracker:
 
         return tokens
 
-    def parse_dt_response(self, response: str) -> List[Dict]:
+    def parse_dt_response(self, response: str) -> list[dict]:
         """Parse the /dt command response for trending DEX tokens."""
         tokens = []
         lines = response.split("\n")
@@ -370,7 +368,7 @@ class CallChannelTracker:
 
         return tokens
 
-    def parse_pft_response(self, response: str) -> List[Dict]:
+    def parse_pft_response(self, response: str) -> list[dict]:
         """Parse the /pft command response for trending Pump tokens."""
         tokens = []
         lines = response.split("\n")
@@ -397,7 +395,7 @@ class CallChannelTracker:
 
         return tokens
 
-    def parse_tt_response(self, response: str) -> List[Dict]:
+    def parse_tt_response(self, response: str) -> list[dict]:
         """Parse the /tt command response for trending tweets."""
         tweets = []
         lines = response.split("\n")
@@ -415,7 +413,7 @@ class CallChannelTracker:
 
         return tweets
 
-    def parse_xt_response(self, response: str) -> List[Dict]:
+    def parse_xt_response(self, response: str) -> list[dict]:
         """Parse the /xt command response for trending X profiles."""
         profiles = []
         lines = response.split("\n")
@@ -439,7 +437,7 @@ class CallChannelTracker:
 
         return profiles
 
-    def parse_vol_response(self, response: str) -> Dict:
+    def parse_vol_response(self, response: str) -> dict:
         """Parse the /vol command response for market stats."""
         stats = {}
         lines = response.split("\n")
@@ -466,7 +464,7 @@ class CallChannelTracker:
 
         return stats
 
-    def parse_x_response(self, response: str) -> Dict:
+    def parse_x_response(self, response: str) -> dict:
         """Parse the /x command response for detailed token scan."""
         token_info = {}
         lines = response.split("\n")
@@ -506,7 +504,7 @@ class CallChannelTracker:
 
         return token_info
 
-    def parse_clantag_response(self, response: str) -> List[Dict]:
+    def parse_clantag_response(self, response: str) -> list[dict]:
         """Parse the /clantag response for clan/group information."""
         clans = []
         lines = response.split("\n")
@@ -522,7 +520,7 @@ class CallChannelTracker:
 
         return clans
 
-    def extract_token_addresses(self, text: str) -> List[str]:
+    def extract_token_addresses(self, text: str) -> list[str]:
         """Extract token addresses from text."""
         addresses = []
 
@@ -543,7 +541,7 @@ class CallChannelTracker:
 
         return list(set(addresses))  # Remove duplicates
 
-    def extract_social_links(self, text: str) -> Dict[str, List[str]]:
+    def extract_social_links(self, text: str) -> dict[str, list[str]]:
         """Extract social links from text."""
         social_links = {"twitter": [], "telegram": [], "discord": [], "website": []}
 
@@ -569,7 +567,7 @@ class CallChannelTracker:
 
         return social_links
 
-    def get_token_address_from_name(self, token_name: str, chain: str = "solana") -> Dict:
+    def get_token_address_from_name(self, token_name: str, chain: str = "solana") -> dict:
         """Get token address from token name using external APIs."""
         result = {
             "name": token_name,
@@ -644,7 +642,7 @@ class CallChannelTracker:
             return ath / first
         return 0.0
 
-    def calculate_performance_score(self, tokens: List[Dict]) -> float:
+    def calculate_performance_score(self, tokens: list[dict]) -> float:
         """Calculate a performance score based on token gains."""
         if not tokens:
             return 0.0
@@ -810,7 +808,7 @@ class CallChannelTracker:
                 token["address_source"] = "dexscreener"
                 print(f"    Found address: {token['address'][:20]}...")
             else:
-                print(f"    No address found")
+                print("    No address found")
 
             # Small delay to avoid rate limits
             if i < len(tokens_to_enrich) - 1:
@@ -894,9 +892,8 @@ class CallChannelTracker:
 
         return all_tokens, channel_performance
 
-    async def enrich_tokens_with_details(self, tokens: List[Dict]) -> List[Dict]:
+    async def enrich_tokens_with_details(self, tokens: list[dict]) -> list[dict]:
         """Enrich tokens with additional details using token-specific commands and external APIs."""
-        enriched_tokens = []
 
         # Get unique token addresses
         token_addresses = set()
@@ -916,7 +913,7 @@ class CallChannelTracker:
                 if response:
                     # Parse detailed scan
                     token_info = self.parse_x_response(response)
-                    addresses = self.extract_token_addresses(response)
+                    self.extract_token_addresses(response)
                     social_links = self.extract_social_links(response)
 
                     # Find token in original list and update it
@@ -1043,13 +1040,13 @@ class CallChannelTracker:
                 except Exception as e:
                     print(f"    Error getting socials for {token.get('name', 'unknown')}: {e}")
             else:
-                print(f"    No address found")
+                print("    No address found")
 
             await asyncio.sleep(0.5)
 
         return tokens
 
-    def generate_weekly_report(self, tokens: List[Dict], channel_performance: Dict) -> str:
+    def generate_weekly_report(self, tokens: list[dict], channel_performance: dict) -> str:
         """Generate a weekly report of call channel performance."""
         report_lines = []
         report_lines.append("=" * 60)

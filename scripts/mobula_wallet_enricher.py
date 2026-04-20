@@ -21,7 +21,6 @@ import sqlite3
 import time
 import urllib.request
 from pathlib import Path
-from typing import Optional
 
 DATA_DIR = Path.home() / ".hermes" / "data"
 DB_PATH = DATA_DIR / "central_contracts.db"
@@ -46,7 +45,7 @@ def _load_key() -> str:
 MOBULA_KEY = _load_key()
 
 
-def mobula_request(endpoint: str, params: dict = None) -> Optional[dict]:
+def mobula_request(endpoint: str, params: dict = None) -> dict | None:
     """Make authenticated request to Mobula API."""
     if not MOBULA_KEY:
         print("  MOBULA_API_KEY not set. Get one at https://admin.mobula.io")

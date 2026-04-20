@@ -24,7 +24,7 @@ import json
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 
@@ -58,7 +58,7 @@ def _lifecycle_path(address: str) -> Path:
     return LIFECYCLE_DIR / f"{address}_lifecycle.json"
 
 
-def _load_lifecycle(address: str) -> Optional[dict]:
+def _load_lifecycle(address: str) -> dict | None:
     path = _lifecycle_path(address)
     if path.exists():
         with open(path) as f:
@@ -72,7 +72,7 @@ def _save_lifecycle(address: str, data: dict):
         json.dump(data, f, indent=2, default=str)
 
 
-def _load_current_tokens() -> List[dict]:
+def _load_current_tokens() -> list[dict]:
     if TOP_TOKENS_PATH.exists():
         with open(TOP_TOKENS_PATH) as f:
             data = json.load(f)
@@ -85,7 +85,7 @@ def _load_current_tokens() -> List[dict]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-async def _find_pool(chain: str, address: str, client: httpx.AsyncClient) -> Optional[str]:
+async def _find_pool(chain: str, address: str, client: httpx.AsyncClient) -> str | None:
     """Find top pool address for a token."""
     net = _GT_NETWORKS.get(chain.lower(), "solana")
     try:
@@ -104,7 +104,7 @@ async def _find_pool(chain: str, address: str, client: httpx.AsyncClient) -> Opt
     return None
 
 
-async def _fetch_ohlcv(chain: str, pool: str, timeframe: str, limit: int, client: httpx.AsyncClient) -> List[list]:
+async def _fetch_ohlcv(chain: str, pool: str, timeframe: str, limit: int, client: httpx.AsyncClient) -> list[list]:
     """Fetch OHLCV candles from GeckoTerminal."""
     net = _GT_NETWORKS.get(chain.lower(), "solana")
     try:
@@ -167,7 +167,7 @@ async def take_snapshot(token: dict, client: httpx.AsyncClient) -> dict:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
+async def process_lifecycle(current_tokens: list[dict]) -> dict[str, Any]:
     """
     Process the token lifecycle:
 
@@ -304,7 +304,7 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def generate_lifecycle_chart(address: str) -> Optional[str]:
+def generate_lifecycle_chart(address: str) -> str | None:
     """
     Generate a PNG chart image showing the token's lifecycle from entry to exit.
 
@@ -313,8 +313,8 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
     import matplotlib
 
     matplotlib.use("Agg")  # headless
-    import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
+    import matplotlib.pyplot as plt
 
     lifecycle = _load_lifecycle(address)
     if not lifecycle:
@@ -450,7 +450,6 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
 
     # ── Styling ──
     change_str = f"{'+' if (price_change or 0) > 0 else ''}{price_change}%" if price_change is not None else "—"
-    status_color = "#10b981" if status == "active" else "#ef4444"
 
     ax1.set_title(
         f"{symbol} — {status.upper()} | Entry: ${entry_price:.8f} | "
@@ -500,7 +499,7 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
     return str(output_path)
 
 
-def generate_comparison_chart(address: str) -> Optional[str]:
+def generate_comparison_chart(address: str) -> str | None:
     """
     Generate a side-by-side comparison: entry chart vs exit chart.
 
@@ -510,8 +509,8 @@ def generate_comparison_chart(address: str) -> Optional[str]:
     import matplotlib
 
     matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
+    import matplotlib.pyplot as plt
 
     lifecycle = _load_lifecycle(address)
     if not lifecycle or len(lifecycle.get("snapshots", [])) < 1:
@@ -625,7 +624,7 @@ def generate_comparison_chart(address: str) -> Optional[str]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def run_lifecycle() -> Dict[str, Any]:
+def run_lifecycle() -> dict[str, Any]:
     """Run the lifecycle tracking pipeline (sync wrapper)."""
     import asyncio
 

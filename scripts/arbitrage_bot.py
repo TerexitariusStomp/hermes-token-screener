@@ -13,13 +13,12 @@ import logging
 import os
 import sys
 import time
-from decimal import Decimal
 
 # Allow running from repo root
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from hermes_screener.trading.arbitrage_scanner import scan_arbitrage
 from hermes_screener.trading.arbitrage_executor import execute_arbitrage, get_eth_price_usd
+from hermes_screener.trading.arbitrage_scanner import scan_arbitrage
 
 logging.basicConfig(
     level=logging.INFO,

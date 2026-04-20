@@ -16,19 +16,16 @@ Usage:
 """
 
 import json
-import time
 import sqlite3
-import subprocess
-import shutil
-import os
 import sys
+import time
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 from hermes_screener.metrics import start_metrics_server
-from hermes_screener.utils import find_node, gmgn_cmd
+from hermes_screener.utils import gmgn_cmd
 
 # ── Config (from centralized settings) ───────────────────────────────────────
 DB_PATH = settings.db_path
@@ -68,14 +65,14 @@ def init_wallet_db() -> sqlite3.Connection:
             chain TEXT NOT NULL,
             discovered_at REAL NOT NULL,
             last_updated REAL,
-            
+
             -- Source info
             source_tokens TEXT DEFAULT '',
             source_token_count INTEGER DEFAULT 0,
-            
+
             -- Scoring
             wallet_score REAL DEFAULT 0,
-            
+
             -- Per-token metrics (from GMGN token holders)
             realized_pnl REAL,
             unrealized_pnl REAL,
@@ -86,33 +83,33 @@ def init_wallet_db() -> sqlite3.Connection:
             sell_count INTEGER,
             avg_cost REAL,
             entry_timing_score REAL,
-            
+
             -- Cross-token metrics
             win_rate REAL,
             tokens_profitable INTEGER DEFAULT 0,
             tokens_total INTEGER DEFAULT 0,
-            
+
             -- Social
             smart_money_tag TEXT,
             wallet_tags TEXT,
             twitter_username TEXT,
-            
+
             -- Activity
             first_seen_at REAL,
             last_active_at REAL,
-            
+
             -- Pattern detection
             copy_trade_flag INTEGER DEFAULT 0,
             insider_flag INTEGER DEFAULT 0,
             rug_history_count INTEGER DEFAULT 0,
             trading_pattern TEXT,
             avg_hold_hours REAL,
-            
+
             -- Zerion supplement
             zerion_value REAL,
             zerion_24h_change_pct REAL,
             zerion_defi_value REAL,
-            
+
             UNIQUE(chain, address)
         );
 
@@ -122,7 +119,7 @@ def init_wallet_db() -> sqlite3.Connection:
             chain TEXT NOT NULL,
             token_address TEXT NOT NULL,
             token_symbol TEXT,
-            
+
             -- Per-token data from GMGN
             profit REAL,
             profit_change REAL,
@@ -134,9 +131,9 @@ def init_wallet_db() -> sqlite3.Connection:
             start_holding_at REAL,
             end_holding_at REAL,
             is_profitable INTEGER,
-            
+
             discovered_at REAL NOT NULL,
-            
+
             UNIQUE(wallet_address, token_address)
         );
 
@@ -390,7 +387,7 @@ def score_wallet_v3(
     return max(0, min(100, round(score, 1)))
 
 
-def compute_round_trips(conn: sqlite3.Connection) -> Dict[str, int]:
+def compute_round_trips(conn: sqlite3.Connection) -> dict[str, int]:
     """
     Count "round trips" per wallet.
     A round trip = token where profit > 0 but sell_count = 0.
@@ -401,7 +398,7 @@ def compute_round_trips(conn: sqlite3.Connection) -> Dict[str, int]:
         """
         SELECT wallet_address, COUNT(*) as rt_count
         FROM wallet_token_entries
-        WHERE profit > 0 
+        WHERE profit > 0
           AND (sell_tx_count IS NULL OR sell_tx_count = 0)
           AND unrealized_profit > 0
         GROUP BY wallet_address
@@ -413,7 +410,7 @@ def compute_round_trips(conn: sqlite3.Connection) -> Dict[str, int]:
 # ── Discovery ───────────────────────────────────────────────────────────────
 
 
-def get_holders_for_token(chain: str, address: str, limit: int = HOLDERS_PER_TOKEN) -> List[dict]:
+def get_holders_for_token(chain: str, address: str, limit: int = HOLDERS_PER_TOKEN) -> list[dict]:
     """Get top holders/traders for a token via GMGN.
 
     GMGN CLI max is 100 per call. To reach 1000, makes multiple calls
@@ -435,7 +432,7 @@ def get_holders_for_token(chain: str, address: str, limit: int = HOLDERS_PER_TOK
     ]
 
     seen_addresses: set = set()
-    all_holders: List[dict] = []
+    all_holders: list[dict] = []
 
     for order_by, direction in SORT_ORDERS:
         if len(all_holders) >= limit:
@@ -482,10 +479,10 @@ def get_holders_for_token(chain: str, address: str, limit: int = HOLDERS_PER_TOK
 
 def enrich_wallets_from_tokens(
     conn: sqlite3.Connection,
-    tokens: List[dict],
+    tokens: list[dict],
     min_token_score: float = 30,
     dry_run: bool = False,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Scan top holders from multiple tokens, merge wallet data.
     A wallet appearing in N tokens with M profitable = win_rate = M/N.
@@ -495,7 +492,7 @@ def enrich_wallets_from_tokens(
 
     # Collect all wallet appearances across tokens
     # wallet_addr -> [{token, symbol, profit, roi, trades, entry_time, ...}]
-    wallet_appearances: Dict[str, List[dict]] = {}
+    wallet_appearances: dict[str, list[dict]] = {}
     tokens_scanned = 0
     holders_found = 0
 
@@ -645,7 +642,7 @@ def enrich_wallets_from_tokens(
         # Upsert wallet
         cursor.execute(
             """
-            INSERT INTO tracked_wallets 
+            INSERT INTO tracked_wallets
                 (address, chain, discovered_at, last_updated,
                  source_tokens, source_token_count,
                  wallet_score, realized_pnl, unrealized_pnl, total_profit,
@@ -766,7 +763,7 @@ def report(conn: sqlite3.Connection, limit: int = 20):
 
     cursor.execute(
         f"""
-        SELECT address, chain, wallet_score, realized_pnl, avg_roi, 
+        SELECT address, chain, wallet_score, realized_pnl, avg_roi,
                win_rate, total_trades, tokens_profitable, tokens_total,
                smart_money_tag, source_tokens, twitter_username,
                trading_pattern, insider_flag, copy_trade_flag, rug_history_count
@@ -853,7 +850,7 @@ class ZerionWalletEnricher:
             time.sleep(1.5 - elapsed)
         self.last_request = time.time()
 
-    def enrich_wallet(self, address: str) -> Dict[str, Any]:
+    def enrich_wallet(self, address: str) -> dict[str, Any]:
         """Get portfolio value and activity from Zerion."""
         if not ZERION_KEY:
             return {}
@@ -989,8 +986,8 @@ def detect_copy_traders(conn: sqlite3.Connection) -> int:
         if total_copies >= 3:
             c.execute(
                 """
-                UPDATE tracked_wallets 
-                SET copy_trade_flag = 1 
+                UPDATE tracked_wallets
+                SET copy_trade_flag = 1
                 WHERE address = ? AND copy_trade_flag = 0
             """,
                 (follower,),
@@ -1030,11 +1027,11 @@ def detect_insiders(conn: sqlite3.Connection) -> int:
         HAVING early_count >= 2
     """
     )
-    for wallet, count in c.fetchall():
+    for wallet, _count in c.fetchall():
         c.execute(
             """
-            UPDATE tracked_wallets 
-            SET insider_flag = 1 
+            UPDATE tracked_wallets
+            SET insider_flag = 1
             WHERE address = ? AND insider_flag = 0
         """,
             (wallet,),
@@ -1117,7 +1114,7 @@ def detect_rug_history(conn: sqlite3.Connection) -> int:
         total_rugs = count + extra
         c.execute(
             """
-            UPDATE tracked_wallets 
+            UPDATE tracked_wallets
             SET rug_history_count = ?
             WHERE address = ?
         """,

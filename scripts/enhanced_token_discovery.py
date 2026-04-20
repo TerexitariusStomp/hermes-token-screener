@@ -5,26 +5,24 @@ Combines Rick Burp Bot data with DexScreener API for maximum token coverage.
 """
 
 import asyncio
-import os
 import re
 import sqlite3
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
 
 # Add the scripts directory to path
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Import the Telegram client
 from telethon import TelegramClient
-
-from hermes_screener.config import settings
 from token_discovery_shared import (
     ensure_discovered_tokens_table,
     insert_discovered_token,
     lookup_token_address,
 )
+
+from hermes_screener.config import settings
 
 # Configuration
 SESSION_PATH = settings.session_path
@@ -51,7 +49,7 @@ class EnhancedTokenDiscovery:
         self.db_conn = None
         self.discovered_tokens = []
 
-    def get_token_address_from_name(self, token_name: str) -> Dict:
+    def get_token_address_from_name(self, token_name: str) -> dict:
         """Get token address from token name using DexScreener API."""
         return lookup_token_address(token_name)
 
@@ -84,11 +82,11 @@ class EnhancedTokenDiscovery:
         ensure_discovered_tokens_table(self.db_conn)
         print("Database initialized")
 
-    def store_token(self, token_info: Dict, discovery_method: str = "rick_bot"):
+    def store_token(self, token_info: dict, discovery_method: str = "rick_bot"):
         """Store token information in database."""
         insert_discovered_token(self.db_conn, token_info, discovery_method)
 
-    async def send_command(self, command: str, description: str) -> Optional[str]:
+    async def send_command(self, command: str, description: str) -> str | None:
         """Send a command to the bot and return the response."""
         try:
             print(f"  Sending command: {command} ({description})")
@@ -122,19 +120,18 @@ class EnhancedTokenDiscovery:
             if not bot_response:
                 # Fallback: look for any message with relevant keywords
                 for msg in messages_after:
-                    if msg.message and len(msg.message) > 50:
-                        if any(
-                            keyword in msg.message.lower()
-                            for keyword in [
-                                "trending",
-                                "best",
-                                "runners",
-                                "popular",
-                                "hot",
-                            ]
-                        ):
-                            bot_response = msg.message
-                            break
+                    if msg.message and len(msg.message) > 50 and any(
+                        keyword in msg.message.lower()
+                        for keyword in [
+                            "trending",
+                            "best",
+                            "runners",
+                            "popular",
+                            "hot",
+                        ]
+                    ):
+                        bot_response = msg.message
+                        break
 
             return bot_response
 
@@ -142,7 +139,7 @@ class EnhancedTokenDiscovery:
             print(f"Error sending command {command}: {e}")
             return None
 
-    def extract_token_names(self, response: str) -> List[str]:
+    def extract_token_names(self, response: str) -> list[str]:
         """Extract token names from bot response."""
         token_names = []
 
@@ -206,7 +203,7 @@ class EnhancedTokenDiscovery:
 
         return unique_token_names
 
-    async def enrich_tokens(self, token_names: List[str]):
+    async def enrich_tokens(self, token_names: list[str]):
         """Enrich token names with addresses and details."""
         print(f"\n=== Enriching {len(token_names)} tokens with addresses ===")
 
@@ -230,7 +227,7 @@ class EnhancedTokenDiscovery:
                 self.store_token(token_info, "rick_bot_enriched")
                 self.discovered_tokens.append(token_info)
             else:
-                print(f"  No address found")
+                print("  No address found")
 
             # Small delay to avoid rate limits
             if i < len(tokens_to_process) - 1:

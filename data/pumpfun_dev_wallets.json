@@ -1,0 +1,376 @@
+[
+  {
+    "wallet": "BRx8TP6HsD9srJ62rcYizjAHyZ5mt3cp8wPBEZioTsym",
+    "token_count": 8,
+    "token_addresses": [
+      "9mrNW6Z7",
+      "27CztJR3",
+      "Gjb9ynGo",
+      "DLggskD5",
+      "585gidBv"
+    ],
+    "description": "pumpfun_dev | tokens: MAYHEM RIP (9mrNW6Z7...), mayhem RIP (27CztJR3...), FLYYYY (Gjb9ynGo...), FLYYY (DLggskD5...), please (585gidBv...)",
+    "sol_balance": 37.428384777,
+    "sol_balance_usd": 5614.25771655,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 45.0
+  },
+  {
+    "wallet": "69xWoewjXMGFcmHdLE75dc7oujePHrGpmLGFmiwneYTR",
+    "token_count": 6,
+    "token_addresses": [
+      "2CPfY3Z2",
+      "CaG5J8wp",
+      "F9RYCjQt",
+      "H5tE2dAE",
+      "9etiQSJw"
+    ],
+    "description": "pumpfun_dev | tokens: Aunt (2CPfY3Z2...), Aunt (CaG5J8wp...), Aunt (F9RYCjQt...), Aunt (H5tE2dAE...), \u6bcd\u591c\u53c9 (9etiQSJw...)",
+    "sol_balance": 21.502366751,
+    "sol_balance_usd": 3225.35501265,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 45.0
+  },
+  {
+    "wallet": "BcoUw7seKfanVr8UG3PstXQ2w6sTW2SLxP8uFXxZPAed",
+    "token_count": 2,
+    "token_addresses": [
+      "CyEe6iNF",
+      "9MpPZKCz"
+    ],
+    "description": "pumpfun_dev | tokens: Tinkerer (CyEe6iNF...), XVIDEO (9MpPZKCz...)",
+    "sol_balance": 71.109423041,
+    "sol_balance_usd": 10666.41345615,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 35.0
+  },
+  {
+    "wallet": "FdRgGa5heK1J2MQo43Q9dFpjBqWL1juCuy2G7UQbDHxy",
+    "token_count": 2,
+    "token_addresses": [
+      "8oM7fVoX",
+      "6KV52L1J"
+    ],
+    "description": "pumpfun_dev | tokens: Boomer (8oM7fVoX...), Boomer (6KV52L1J...)",
+    "sol_balance": 52.662083911,
+    "sol_balance_usd": 7899.31258665,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 35.0
+  },
+  {
+    "wallet": "J898BLdjUWFPsvqwraj1rjg33rE9B6zJY6HvWFKx71fo",
+    "token_count": 2,
+    "token_addresses": [
+      "3HgyWU8a",
+      "9quTN6qo"
+    ],
+    "description": "pumpfun_dev | tokens: Aunt (3HgyWU8a...), Aunt (9quTN6qo...)",
+    "sol_balance": 11.850755624,
+    "sol_balance_usd": 1777.6133436,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 35.0
+  },
+  {
+    "wallet": "GRejg5d8bzCNNsjKjmDUCTrQ9YAJLSUZaVhtjdsidXay",
+    "token_count": 2,
+    "token_addresses": [
+      "EPhSUBUK",
+      "AzcpYwMu"
+    ],
+    "description": "pumpfun_dev | tokens: Risk (EPhSUBUK...), Risk (AzcpYwMu...)",
+    "sol_balance": 96.094876141,
+    "sol_balance_usd": 14414.23142115,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 35.0
+  },
+  {
+    "wallet": "EV9dfvYEsHfuthRF9YB6Q9JGE6Z1tH9bu2q5fujxhyZ8",
+    "token_count": 4,
+    "token_addresses": [
+      "3DHHcBy5",
+      "C5jrfgqr",
+      "Ej5ykSbv",
+      "3db69x2R"
+    ],
+    "description": "pumpfun_dev | tokens: Orelha (3DHHcBy5...), Orelha (C5jrfgqr...), Orelha (Ej5ykSbv...), Orelha (3db69x2R...)",
+    "sol_balance": 0.176619496,
+    "sol_balance_usd": 26.4929244,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 30.0
+  },
+  {
+    "wallet": "6ZHPFj3inDyi4z3zywNXBaxoXRp5ucbdGrGMdi7Lz3uQ",
+    "token_count": 3,
+    "token_addresses": [
+      "FCYpXCVm",
+      "C26Wx8j5",
+      "9hCos1B4"
+    ],
+    "description": "pumpfun_dev | tokens: 67 (FCYpXCVm...), LARP (C26Wx8j5...), CWS (9hCos1B4...)",
+    "sol_balance": 0.355493033,
+    "sol_balance_usd": 53.32395495,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 30.0
+  },
+  {
+    "wallet": "FWymgf7GwMXczUmqQ6jeeE4MukdZNuaRom4twz3U45nz",
+    "token_count": 3,
+    "token_addresses": [
+      "GHKSRbCx",
+      "DFeLsZRo",
+      "AaaDiwpQ"
+    ],
+    "description": "pumpfun_dev | tokens: UBERFEETS (GHKSRbCx...), UBERFEETS (DFeLsZRo...), UBERFEETS (AaaDiwpQ...)",
+    "sol_balance": 0.256143842,
+    "sol_balance_usd": 38.4215763,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 30.0
+  },
+  {
+    "wallet": "acHcBaBj5QSnfesie8u5JaAqeBTguU9weNCYnp5xeSC",
+    "token_count": 3,
+    "token_addresses": [
+      "z6T8J8wS",
+      "13qeb4RT",
+      "maMqnarj"
+    ],
+    "description": "pumpfun_dev | tokens: WOLFDA (z6T8J8wS...), WUBM (13qeb4RT...), DKV (maMqnarj...)",
+    "sol_balance": 0.121295828,
+    "sol_balance_usd": 18.1943742,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 30.0
+  },
+  {
+    "wallet": "6mVwhFqPVqaXPdiuyLhXQLvZocurLvjUrrDc4wdN6ojZ",
+    "token_count": 2,
+    "token_addresses": [
+      "DfpnuZyJ",
+      "CLRqK2Lw"
+    ],
+    "description": "pumpfun_dev | tokens: DIETCOKE (DfpnuZyJ...), DietSoda (CLRqK2Lw...)",
+    "sol_balance": 2.970263394,
+    "sol_balance_usd": 445.5395091,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 30.0
+  },
+  {
+    "wallet": "FM1YCKED2KaqB8Uat8aB1nsffR1vezr7s6FAEieXJgke",
+    "token_count": 2,
+    "token_addresses": [
+      "HLyY2qdf",
+      "CoDPPtys"
+    ],
+    "description": "pumpfun_dev | tokens: GEMMA4 (HLyY2qdf...), ImageV2 (CoDPPtys...)",
+    "sol_balance": 8.261365898,
+    "sol_balance_usd": 1239.2048846999999,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 30.0
+  },
+  {
+    "wallet": "EdNcBDUFQaTxuaaiFfp5Ss4EanvuXtpGV9ZZvFFVRayd",
+    "token_count": 1,
+    "token_addresses": [
+      "3ZTS6Gfp"
+    ],
+    "description": "pumpfun_dev | tokens: DIET (3ZTS6Gfp...)",
+    "sol_balance": 185.879687286,
+    "sol_balance_usd": 27881.9530929,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 30.0
+  },
+  {
+    "wallet": "HQmV1sLSy7NRtcETQPfonnyJGNv6eFuWMs6yq7drcKhU",
+    "token_count": 1,
+    "token_addresses": [
+      "3dorNQXD"
+    ],
+    "description": "pumpfun_dev | tokens: COKE (3dorNQXD...)",
+    "sol_balance": 114.483889416,
+    "sol_balance_usd": 17172.5834124,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 30.0
+  },
+  {
+    "wallet": "7moqFjvm2MwAiMtCZoqYoTAPzRBxxMRT2ddyHThQuWjr",
+    "token_count": 1,
+    "token_addresses": [
+      "DP2afGRF"
+    ],
+    "description": "pumpfun_dev | tokens: CKSC (DP2afGRF...)",
+    "sol_balance": 49.033437952,
+    "sol_balance_usd": 7355.0156928,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 30.0
+  },
+  {
+    "wallet": "GkGjRtYwVzQYDnRmpD2cAAdkGYTX3gTav6f1Xq9Y5KRd",
+    "token_count": 1,
+    "token_addresses": [
+      "7LVACeqC"
+    ],
+    "description": "pumpfun_dev | tokens: \u30ab\u30e2\u30b7\u30ab (7LVACeqC...)",
+    "sol_balance": 59.839387826,
+    "sol_balance_usd": 8975.9081739,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 30.0
+  },
+  {
+    "wallet": "FHVQ21Tpt5sbvykHjH9f7twDDcr9qQXzot3NiFEgu3iu",
+    "token_count": 2,
+    "token_addresses": [
+      "EDgcjZ24",
+      "J4dHTqbh"
+    ],
+    "description": "pumpfun_dev | tokens: SUBSTRATE (EDgcjZ24...), SUBSTRATE (J4dHTqbh...)",
+    "sol_balance": 0.431246407,
+    "sol_balance_usd": 64.68696105,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 25.0
+  },
+  {
+    "wallet": "7ufAX8WYJn3uEA2S8BQYWxWDnijUvyFWRHcfeJg6njVX",
+    "token_count": 1,
+    "token_addresses": [
+      "BaKNfJSh"
+    ],
+    "description": "pumpfun_dev | tokens: \u667a\u5143 (BaKNfJSh...)",
+    "sol_balance": 2.081922091,
+    "sol_balance_usd": 312.28831365,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 25.0
+  },
+  {
+    "wallet": "9PRpmv9g85sGfHmyK6MnAgBxZr6GPcSWKBu9PugigVQq",
+    "token_count": 1,
+    "token_addresses": [
+      "Epvinge3"
+    ],
+    "description": "pumpfun_dev | tokens: SCAM (Epvinge3...)",
+    "sol_balance": 1.728292624,
+    "sol_balance_usd": 259.24389360000004,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 25.0
+  },
+  {
+    "wallet": "6PxMm8p86qeKFXnoyPUZeN7So4PZps3JVYD88gQLi4B6",
+    "token_count": 1,
+    "token_addresses": [
+      "GjUPaUej"
+    ],
+    "description": "pumpfun_dev | tokens: RIP (GjUPaUej...)",
+    "sol_balance": 2.047063459,
+    "sol_balance_usd": 307.05951884999996,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 25.0
+  },
+  {
+    "wallet": "3iPE4pvcuGxSyYGUS4aodeE2EuxreZ3AWwKgqqQ54SKi",
+    "token_count": 1,
+    "token_addresses": [
+      "Cdj4K83m"
+    ],
+    "description": "pumpfun_dev | tokens: druncunc (Cdj4K83m...)",
+    "sol_balance": 0.66053175,
+    "sol_balance_usd": 99.0797625,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 20.0
+  },
+  {
+    "wallet": "12Gek7tsJMinTQcG66Sfnx6YRNLNtRZc65SKXLztAynE",
+    "token_count": 1,
+    "token_addresses": [
+      "F89o1nDa"
+    ],
+    "description": "pumpfun_dev | tokens: COKE (F89o1nDa...)",
+    "sol_balance": 0.00302856,
+    "sol_balance_usd": 0.454284,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 15.0
+  },
+  {
+    "wallet": "EcKMYGbp7F75uXkiTbgpFyo6r3xrAXUQdKAS4aLASzCB",
+    "token_count": 1,
+    "token_addresses": [
+      "7Qu4FEKi"
+    ],
+    "description": "pumpfun_dev | tokens: $MIC (7Qu4FEKi...)",
+    "sol_balance": 0.017245362,
+    "sol_balance_usd": 2.5868043,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 15.0
+  },
+  {
+    "wallet": "8dh2xsZKrTJbU9gaUFdvctSQxbQy1S1PLmvdRXSDRtHR",
+    "token_count": 1,
+    "token_addresses": [
+      "CtxEqfgX"
+    ],
+    "description": "pumpfun_dev | tokens: SPIPSY (CtxEqfgX...)",
+    "sol_balance": 0.0,
+    "sol_balance_usd": 0.0,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 15.0
+  },
+  {
+    "wallet": "Hu5TpmUVqvnuJBHj6wpDKnF6AwkSaLEyM6duT5D5Xwht",
+    "token_count": 1,
+    "token_addresses": [
+      "GMwxkQ9w"
+    ],
+    "description": "pumpfun_dev | tokens: BMP1C (GMwxkQ9w...)",
+    "sol_balance": 0.0,
+    "sol_balance_usd": 0.0,
+    "best_token_mcap": 0,
+    "bonded_tokens": 0,
+    "total_holders": 0,
+    "score": 15.0
+  }
+]

@@ -75,7 +75,7 @@ def fetch_creators_with_tokens() -> list[dict]:
     ).fetchall()
 
     results = []
-    for wallet, count, desc, last_seen in creators:
+    for wallet, count, desc, _last_seen in creators:
         # Extract token addresses from description
         # Format: "pumpfun_dev | tokens: NAME (ADDR...), NAME (ADDR...)"
         tokens = []
@@ -105,7 +105,7 @@ def fetch_creators_with_tokens() -> list[dict]:
 
 def enrich_wallet(w: dict) -> dict:
     """Enrich a single creator wallet."""
-    wallet = w["wallet"]
+    w["wallet"]
 
     # SOL balance
     sol = get_sol_balance(w["wallet"])

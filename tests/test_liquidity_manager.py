@@ -27,7 +27,7 @@ def test_raise_when_idle_token_has_no_route():
 
     try:
         manager.build_plan(balances, prices, opportunities)
-        assert False, "Expected NoDeploymentPathError"
+        raise AssertionError("Expected NoDeploymentPathError")
     except NoDeploymentPathError as exc:
         assert "BONK" in str(exc)
 

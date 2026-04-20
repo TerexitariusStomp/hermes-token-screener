@@ -14,7 +14,6 @@ All rewards are normalized to [-1.0, +1.0].
 """
 
 import math
-from typing import Optional
 
 
 class RewardCalculator:

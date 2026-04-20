@@ -42,14 +42,14 @@ import sys
 import time
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from hermes_screener.config import settings
-from hermes_screener.logging import get_logger
 from hermes_screener.keyword_discovery import (
     run_keyword_discovery,
     save_discovered_tokens,
 )
+from hermes_screener.logging import get_logger
 
 log = get_logger("social_enhancement")
 
@@ -77,7 +77,7 @@ SURF_CLI = (
 
 
 def save_phase_output(
-    path: Path, tokens: List[dict], phase: str, extra_meta: dict = None
+    path: Path, tokens: list[dict], phase: str, extra_meta: dict = None
 ) -> None:
     """Save a phase output with metadata."""
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -96,7 +96,7 @@ def save_phase_output(
     log.info("phase_saved", path=str(path), phase=phase, tokens=len(clean))
 
 
-def load_phase_input(path: Path) -> List[dict]:
+def load_phase_input(path: Path) -> list[dict]:
     """Load tokens from a previous phase output."""
     if not path.exists():
         return []
@@ -110,7 +110,7 @@ def load_phase_input(path: Path) -> List[dict]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def collect_telegram_signals(tokens: List[dict]) -> Dict[str, dict]:
+def collect_telegram_signals(tokens: list[dict]) -> dict[str, dict]:
     """
     Collect Telegram social signals from the contracts DB.
 
@@ -125,7 +125,7 @@ def collect_telegram_signals(tokens: List[dict]) -> Dict[str, dict]:
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    signals: Dict[str, dict] = {}
+    signals: dict[str, dict] = {}
     now = time.time()
 
     for token in tokens:
@@ -231,7 +231,7 @@ def collect_telegram_signals(tokens: List[dict]) -> Dict[str, dict]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def _surf_cmd(args: list) -> Optional[dict]:
+def _surf_cmd(args: list) -> dict | None:
     """Run Surf CLI and return parsed JSON."""
     try:
         result = subprocess.run(
@@ -247,7 +247,7 @@ def _surf_cmd(args: list) -> Optional[dict]:
         return None
 
 
-def collect_twitter_signals(tokens: List[dict]) -> Dict[str, dict]:
+def collect_twitter_signals(tokens: list[dict]) -> dict[str, dict]:
     """
     Collect Twitter/X social signals via Surf CLI.
 
@@ -257,7 +257,7 @@ def collect_twitter_signals(tokens: List[dict]) -> Dict[str, dict]:
       - tw_trending_score: recent mention velocity
       - tw_kol_score: Key Opinion Leader engagement
     """
-    signals: Dict[str, dict] = {}
+    signals: dict[str, dict] = {}
 
     # Batch symbols for efficiency (Surf can search multiple)
     symbols = []
@@ -377,7 +377,7 @@ def compute_social_score(
     max_tg_velocity: float,
     max_tw_mentions: int,
     max_viral: float,
-) -> Tuple[float, dict]:
+) -> tuple[float, dict]:
     """
     Compute composite social score from Telegram + Twitter signals.
 
@@ -397,7 +397,7 @@ def compute_social_score(
     tg_vel = tg_signals.get("tg_mention_velocity", 0)
     tg_viral = tg_signals.get("tg_viral_score", 0)
     tg_quality = tg_signals.get("tg_channel_quality", 0)
-    tg_channels = tg_signals.get("tg_channel_count", 0)
+    tg_signals.get("tg_channel_count", 0)
 
     if max_tg_velocity > 0:
         vel_ratio = min(tg_vel / max(max_tg_velocity * 0.3, 0.01), 1.0)
@@ -452,10 +452,10 @@ def compute_social_score(
 
 
 def rescore_tokens_with_social(
-    tokens: List[dict],
-    tg_signals: Dict[str, dict],
-    tw_signals: Dict[str, dict],
-) -> List[dict]:
+    tokens: list[dict],
+    tg_signals: dict[str, dict],
+    tw_signals: dict[str, dict],
+) -> list[dict]:
     """Re-score tokens: keep smart money score, add social enhancement."""
 
     # Compute max values for normalization
@@ -519,10 +519,10 @@ def rescore_tokens_with_social(
 
 
 def rescore_wallets_with_social(
-    wallets: List[dict],
-    social_tokens: List[dict],
-    wallet_token_map: Dict[str, List[dict]],
-) -> List[dict]:
+    wallets: list[dict],
+    social_tokens: list[dict],
+    wallet_token_map: dict[str, list[dict]],
+) -> list[dict]:
     """Re-score wallets based on social-enhanced token portfolio quality."""
     token_by_addr = {t["contract_address"]: t for t in social_tokens}
 
@@ -540,7 +540,7 @@ def rescore_wallets_with_social(
             held_token_scores.append(t.get("score", 0))
 
         avg_social = sum(held_social_scores) / max(len(held_social_scores), 1)
-        avg_token = sum(held_token_scores) / max(len(held_token_scores), 1)
+        sum(held_token_scores) / max(len(held_token_scores), 1)
         social_token_count = sum(1 for s in held_social_scores if s > 30)
 
         # Portfolio social boost (0-20pts)
@@ -573,7 +573,7 @@ def run_social_enhancement(
     skip_telegram: bool = False,
     dry_run: bool = False,
     top_n: int = 100,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Run the social enhancement phase (Phase 4)."""
     start = time.time()
 
@@ -724,7 +724,7 @@ def run_social_enhancement(
     return result
 
 
-def _load_wallet_token_map() -> Dict[str, List[dict]]:
+def _load_wallet_token_map() -> dict[str, list[dict]]:
     try:
         conn = sqlite3.connect(f"file:{WALLETS_DB}?mode=ro", uri=True)
         conn.row_factory = sqlite3.Row
@@ -738,7 +738,7 @@ def _load_wallet_token_map() -> Dict[str, List[dict]]:
         return {}
 
 
-def _load_wallets(min_score: float = 30) -> List[dict]:
+def _load_wallets(min_score: float = 30) -> list[dict]:
     try:
         conn = sqlite3.connect(f"file:{WALLETS_DB}?mode=ro", uri=True)
         conn.row_factory = sqlite3.Row
@@ -761,7 +761,7 @@ def run_full_pipeline(
     min_wallet_score: float = 30,
     skip_twitter: bool = False,
     top_n: int = 100,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Run the complete 4-phase pipeline:
       Phase 1: token_enricher.py (already run by cron at :10)
