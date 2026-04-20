@@ -128,7 +128,27 @@ def export_tokens():
         addr = token.get("contract_address", "")
         if dex:
             token["fdv"] = token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
-            token["symbol"] = token.get("symbol") or dex.get("symbol") or ""
+            # Better symbol handling: try multiple sources, generate fallback if needed
+            symbol = token.get("symbol") or dex.get("symbol") or ""
+            # If symbol is empty, try to get from other sources
+            if not symbol:
+                # Try helius
+                helius = token.get("helius", {})
+                if helius:
+                    symbol = helius.get("symbol", "")
+                # Try birdeye
+                if not symbol:
+                    birdeye = token.get("birdeye", {})
+                    if birdeye:
+                        symbol = birdeye.get("symbol", "")
+                # Try gmgn
+                if not symbol:
+                    symbol = token.get("gmgn_symbol", "")
+            # If symbol is empty, try to generate a fallback from contract address
+            if not symbol and addr:
+                # Use first 6 chars of address as fallback symbol (e.g., "0x1234...")
+                symbol = addr[:6] + "..." if len(addr) > 6 else addr
+            token["symbol"] = symbol
             token["name"] = token.get("name") or dex.get("name") or ""
             token["volume_h24"] = dex.get("volume_h24", 0) or 0
             token["volume_h1"] = dex.get("volume_h1", 0) or 0
@@ -320,7 +340,27 @@ def export_cross_tokens():
         chain = normalize_chain(token.get("chain", ""), token.get("dex_url", ""))
         addr = token.get("contract_address", "")
         if dex:
-            token["symbol"] = token.get("symbol") or dex.get("symbol") or ""
+            # Better symbol handling: try multiple sources, generate fallback if needed
+            symbol = token.get("symbol") or dex.get("symbol") or ""
+            # If symbol is empty, try to get from other sources
+            if not symbol:
+                # Try helius
+                helius = token.get("helius", {})
+                if helius:
+                    symbol = helius.get("symbol", "")
+                # Try birdeye
+                if not symbol:
+                    birdeye = token.get("birdeye", {})
+                    if birdeye:
+                        symbol = birdeye.get("symbol", "")
+                # Try gmgn
+                if not symbol:
+                    symbol = token.get("gmgn_symbol", "")
+            # If symbol is empty, try to generate a fallback from contract address
+            if not symbol and addr:
+                # Use first 6 chars of address as fallback symbol (e.g., "0x1234...")
+                symbol = addr[:6] + "..." if len(addr) > 6 else addr
+            token["symbol"] = symbol
             token["fdv"] = token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
             token["volume_h24"] = dex.get("volume_h24", 0) or 0
             token["volume_h1"] = dex.get("volume_h1", 0) or 0
@@ -452,7 +492,27 @@ def export_cross_wallets():
         chain = normalize_chain(token.get("chain", ""), token.get("dex_url", ""))
         addr = token.get("contract_address", "")
         if dex and not token.get("symbol"):
-            token["symbol"] = dex.get("symbol") or ""
+            # Better symbol handling: try multiple sources, generate fallback if needed
+            symbol = token.get("symbol") or dex.get("symbol") or ""
+            # If symbol is empty, try to get from other sources
+            if not symbol:
+                # Try helius
+                helius = token.get("helius", {})
+                if helius:
+                    symbol = helius.get("symbol", "")
+                # Try birdeye
+                if not symbol:
+                    birdeye = token.get("birdeye", {})
+                    if birdeye:
+                        symbol = birdeye.get("symbol", "")
+                # Try gmgn
+                if not symbol:
+                    symbol = token.get("gmgn_symbol", "")
+            # If symbol is empty, try to generate a fallback from contract address
+            if not symbol and addr:
+                # Use first 6 chars of address as fallback symbol (e.g., "0x1234...")
+                symbol = addr[:6] + "..." if len(addr) > 6 else addr
+            token["symbol"] = symbol
             token["fdv"] = dex.get("fdv") or dex.get("market_cap") or 0
         if not token.get("dex_url") and addr and chain != "unknown":
             token["dex_url"] = f"https://dexscreener.com/{chain.lower()}/{addr}"

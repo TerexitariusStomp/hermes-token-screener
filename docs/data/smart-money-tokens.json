@@ -1,27 +1,6 @@
 {
   "tokens": [
     {
-      "token_address": "F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2",
-      "chain": "solana",
-      "symbol": "ASTEROID",
-      "buyer_count": 3,
-      "total_buy_usd": 2328.85284106974,
-      "avg_buy_usd": 582.213210267435,
-      "top_buyer_score": 4.0,
-      "fdv": 921629,
-      "score": 0.78,
-      "volume_h24": 3620677.9,
-      "volume_h1": 32789.27,
-      "price_change_h1": -8.01,
-      "price_change_h6": -39.84,
-      "age_hours": 64.46,
-      "dex_url": "https://dexscreener.com/solana/F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2",
-      "positives": [],
-      "gmgn_smart_wallets": 0,
-      "mcap_tier": "$250K - $1M",
-      "buyer_wallets": []
-    },
-    {
       "token_address": "0x444400cae63d2aec462701d75ac65dbe0d044900",
       "chain": "BNB",
       "symbol": "ASTEROID",
@@ -79,6 +58,27 @@
       "price_change_h6": null,
       "age_hours": null,
       "dex_url": "https://dexscreener.com/bnb/0x3d10af32639ce0b962095b682b78ece061ba7777",
+      "positives": [],
+      "gmgn_smart_wallets": 0,
+      "mcap_tier": "< $50K",
+      "buyer_wallets": []
+    },
+    {
+      "token_address": "F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2",
+      "chain": "solana",
+      "symbol": "ASTEROID",
+      "buyer_count": 3,
+      "total_buy_usd": 2328.85284106974,
+      "avg_buy_usd": 582.213210267435,
+      "top_buyer_score": 4.0,
+      "fdv": 0,
+      "score": 0,
+      "volume_h24": 0,
+      "volume_h1": 0,
+      "price_change_h1": null,
+      "price_change_h6": null,
+      "age_hours": null,
+      "dex_url": "https://dexscreener.com/solana/F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2",
       "positives": [],
       "gmgn_smart_wallets": 0,
       "mcap_tier": "< $50K",
@@ -421,5 +421,5 @@
       "buyer_wallets": []
     }
   ],
-  "generated_at_iso": "2026-04-20T00:02:25.813625+00:00"
+  "generated_at_iso": "2026-04-20T03:36:24.842982+00:00"
 }

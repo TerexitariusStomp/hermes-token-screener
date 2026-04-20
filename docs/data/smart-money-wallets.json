@@ -158,8 +158,8 @@
         "Hyrax",
         "ASTEROID"
       ],
-      "avg_fdv": 307210,
-      "mcap_tier": "$250K - $1M"
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
     },
     {
       "address": "2nHsHJpkXmHb43BqSjnQFMbUcU2kWEqFqoXsbe2zv2Wi",
@@ -181,8 +181,8 @@
         "\u53d1\u8d22",
         "ASTEROID"
       ],
-      "avg_fdv": 460814,
-      "mcap_tier": "$250K - $1M"
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
     },
     {
       "address": "HV56TXHsEzNd1bpia84zGkrhvSVuBayG5vh9KjneoYMf",
@@ -1625,8 +1625,8 @@
       "top_tokens": [
         "ASTEROID"
       ],
-      "avg_fdv": 921629,
-      "mcap_tier": "$250K - $1M"
+      "avg_fdv": 0,
+      "mcap_tier": "< $50K"
     },
     {
       "address": "BUjNTwwiwX6r5pcJqy27BQNstLo93Vu7HZNkoeApct6q",
@@ -1827,5 +1827,5 @@
       "mcap_tier": "< $50K"
     }
   ],
-  "generated_at_iso": "2026-04-20T00:02:26.174007+00:00"
+  "generated_at_iso": "2026-04-20T03:36:25.213545+00:00"
 }
