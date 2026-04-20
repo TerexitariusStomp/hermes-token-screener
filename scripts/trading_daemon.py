@@ -69,7 +69,7 @@ def run_script(
     name: str,
     execute: bool = True,
     use_flock: bool = False,
-    timeout: int = 300,
+    timeout: int = 600,
     log_file: str = None,
 ) -> bool:
     """Run a script and return success status."""
@@ -82,6 +82,7 @@ def run_script(
 
         # Add timeout wrapper
         cmd.extend(["timeout", str(timeout)])
+        logger.debug(f"[{name}] Timeout: {timeout}s")
 
         cmd.append(sys.executable)
         cmd.append(str(script_path))
@@ -212,7 +213,7 @@ def main():
                 TOKEN_ENRICHER,
                 "Token Enricher",
                 use_flock=True,
-                timeout=270,
+                timeout=600,  # 10 minutes for enrichment pipeline
                 log_file=str(LOG_DIR / "token_screener.log"),
             )
             if success:
