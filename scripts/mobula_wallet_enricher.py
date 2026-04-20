@@ -20,6 +20,10 @@ import os
 import sqlite3
 import time
 import urllib.request
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 from pathlib import Path
 from typing import Optional
 

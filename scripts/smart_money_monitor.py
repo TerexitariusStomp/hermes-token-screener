@@ -57,8 +57,7 @@ def get_tracked_wallets(conn) -> set[str]:
 
 def ensure_purchases_table(conn):
     """Create smart_money_purchases table if it doesn't exist."""
-    conn.executescript(
-        """
+    conn.executescript("""
         CREATE TABLE IF NOT EXISTS smart_money_purchases (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             tx_hash TEXT NOT NULL,
@@ -102,8 +101,7 @@ def ensure_purchases_table(conn):
             score REAL DEFAULT 0,
             PRIMARY KEY (chain, token_address)
         );
-    """
-    )
+    """)
     conn.commit()
 
 

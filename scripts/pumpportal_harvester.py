@@ -68,8 +68,8 @@ class PumpPortalHarvester:
         sol_amount = data.get("solAmount", 0)
         market_cap_sol = data.get("marketCapSol", 0)
         initial_buy = data.get("initialBuy", 0)
-        pool = data.get("pool", "pump")
-        signature = data.get("signature", "")
+        data.get("pool", "pump")
+        data.get("signature", "")
 
         now = time.time()
         chain = "solana"
@@ -331,14 +331,12 @@ def show_stats():
     print(f"  PumpPortal (last 1h): {recent}")
 
     # Sample recent
-    rows = conn.execute(
-        """
+    rows = conn.execute("""
         SELECT contract_address, last_message_text, last_seen_at
         FROM telegram_contracts_unique
         WHERE last_source LIKE '%pumpportal%'
         ORDER BY last_seen_at DESC LIMIT 5
-    """
-    ).fetchall()
+    """).fetchall()
     if rows:
         print(f"\nRecent pumpportal tokens:")
         for addr, msg, ts in rows:
@@ -349,7 +347,6 @@ def show_stats():
 
 
 async def main():
-    import sys
 
     # Force unbuffered output for daemon mode
     sys.stdout.reconfigure(line_buffering=True)

@@ -20,6 +20,10 @@ import json
 import re
 import ssl
 import urllib.request
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 from datetime import datetime, UTC
 
 DATA = "/home/terexitarius/.hermes/data"

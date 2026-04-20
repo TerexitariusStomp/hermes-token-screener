@@ -110,14 +110,12 @@ def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> Dict[str
     c = conn.cursor()
 
     # Load all contracts with scores
-    c.execute(
-        """
+    c.execute("""
         SELECT tcu.chain, tcu.contract_address, tcu.channel_count,
                COALESCE(tcu.last_seen_at, 0) as last_seen
         FROM telegram_contracts_unique tcu
         ORDER BY tcu.channel_count DESC
-    """
-    )
+    """)
     contracts = c.fetchall()
 
     # Load top100.json for enrichment data (scores, FDV)

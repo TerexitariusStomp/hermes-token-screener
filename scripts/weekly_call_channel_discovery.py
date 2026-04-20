@@ -14,13 +14,16 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import sqlite3
 import requests
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 # Add the scripts directory to path
 sys.path.insert(0, str(Path(__file__).parent))
 
 # Import the Telegram client
 from telethon import TelegramClient
-
 from hermes_screener.config import settings
 
 # Configuration
@@ -124,19 +127,16 @@ class CallChannelTracker:
         cursor = self.db_conn.cursor()
 
         # Create tables if they don't exist
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS weekly_reports (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
                 report_type TEXT,
                 data_json TEXT
             )
-        """
-        )
+        """)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS call_channels (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -147,11 +147,9 @@ class CallChannelTracker:
                 avg_gain REAL,
                 details_json TEXT
             )
-        """
-        )
+        """)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS token_performances (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -164,11 +162,9 @@ class CallChannelTracker:
                 source_channel TEXT,
                 command_used TEXT
             )
-        """
-        )
+        """)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS token_socials (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -180,11 +176,9 @@ class CallChannelTracker:
                 website TEXT,
                 source_command TEXT
             )
-        """
-        )
+        """)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS clan_performance (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -193,8 +187,7 @@ class CallChannelTracker:
                 performance_score REAL,
                 details_json TEXT
             )
-        """
-        )
+        """)
 
         self.db_conn.commit()
         print("Database initialized")
@@ -931,7 +924,6 @@ class CallChannelTracker:
 
     async def enrich_tokens_with_details(self, tokens: List[Dict]) -> List[Dict]:
         """Enrich tokens with additional details using token-specific commands and external APIs."""
-        enriched_tokens = []
 
         # Get unique token addresses
         token_addresses = set()
@@ -957,7 +949,7 @@ class CallChannelTracker:
                 if response:
                     # Parse detailed scan
                     token_info = self.parse_x_response(response)
-                    addresses = self.extract_token_addresses(response)
+                    self.extract_token_addresses(response)
                     social_links = self.extract_social_links(response)
 
                     # Find token in original list and update it

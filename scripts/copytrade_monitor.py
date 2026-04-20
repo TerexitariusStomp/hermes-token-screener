@@ -29,6 +29,10 @@ import time
 from typing import Any, Dict, List, Optional
 
 import requests
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger

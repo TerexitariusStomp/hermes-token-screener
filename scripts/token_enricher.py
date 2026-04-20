@@ -86,9 +86,28 @@ def score_token(token: dict) -> tuple[float, list[str], list[str]]:
 
     # ── SYMBOL BLOCKLIST: fiat/stablecoins are not tradeable tokens ──
     BLOCKED_SYMBOLS = {
-        "usd", "usdt", "usdc", "dai", "busd", "tusd", "eur", "gbp",
-        "jpy", "cny", "btc", "eth", "sol", "bnb", "xrp", "wsol",
-        "weth", "wbtc", "steth", "cbeth", "sui", "matic",
+        "usd",
+        "usdt",
+        "usdc",
+        "dai",
+        "busd",
+        "tusd",
+        "eur",
+        "gbp",
+        "jpy",
+        "cny",
+        "btc",
+        "eth",
+        "sol",
+        "bnb",
+        "xrp",
+        "wsol",
+        "weth",
+        "wbtc",
+        "steth",
+        "cbeth",
+        "sui",
+        "matic",
     }
     symbol = (dex.get("symbol") or token.get("symbol") or "").lower().strip()
     if symbol in BLOCKED_SYMBOLS:

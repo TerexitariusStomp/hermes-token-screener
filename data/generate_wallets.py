@@ -23,23 +23,43 @@ from datetime import datetime
 
 def generate_wallets(mnemonic=None, index=0):
     from bip_utils import (
-        Bip39MnemonicGenerator, Bip39WordsNum, Bip39SeedGenerator,
-        Bip44, Bip44Coins, Bip44Changes,
+        Bip39MnemonicGenerator,
+        Bip39WordsNum,
+        Bip39SeedGenerator,
+        Bip44,
+        Bip44Coins,
+        Bip44Changes,
     )
     from eth_account import Account as EthAccount
     from substrateinterface import Keypair
 
     if mnemonic is None:
-        mnemonic = str(Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_24))
-    
+        mnemonic = str(
+            Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_24)
+        )
+
     seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
     wallets = {}
 
     evm_coins = {
-        "ETHEREUM", "AVALANCHE_C_CHAIN", "POLYGON", "FANTOM", "CELO",
-        "MOONBEAM", "MOONRIVER", "HARMONY_ONE", "VECHAIN", "THETA",
-        "CONFLUX", "BINANCE_SMART_CHAIN", "ARBITRUM", "OPTIMISM",
-        "METIS", "OKEX_CHAIN_ETH", "HUOBI_CHAIN", "HARMONY_ONE_METAMASK",
+        "ETHEREUM",
+        "AVALANCHE_C_CHAIN",
+        "POLYGON",
+        "FANTOM",
+        "CELO",
+        "MOONBEAM",
+        "MOONRIVER",
+        "HARMONY_ONE",
+        "VECHAIN",
+        "THETA",
+        "CONFLUX",
+        "BINANCE_SMART_CHAIN",
+        "ARBITRUM",
+        "OPTIMISM",
+        "METIS",
+        "OKEX_CHAIN_ETH",
+        "HUOBI_CHAIN",
+        "HARMONY_ONE_METAMASK",
         "FANTOM_OPERA",
     }
 
@@ -116,13 +136,20 @@ def generate_wallets(mnemonic=None, index=0):
     # Derive all BIP-44 coins
     for coin_enum in Bip44Coins:
         try:
-            w = Bip44.FromSeed(seed_bytes, coin_enum).Purpose().Coin().Account(0).Change(Bip44Changes.CHAIN_EXT).AddressIndex(index)
+            w = (
+                Bip44.FromSeed(seed_bytes, coin_enum)
+                .Purpose()
+                .Coin()
+                .Account(0)
+                .Change(Bip44Changes.CHAIN_EXT)
+                .AddressIndex(index)
+            )
             priv = w.PrivateKey().Raw().ToHex()
             addr = w.PublicKey().ToAddress()
-            
+
             if coin_enum.name in evm_coins:
                 addr = EthAccount.from_key(priv).address
-            
+
             chain_name = name_map.get(coin_enum.name, coin_enum.name)
             wallets[chain_name] = {
                 "address": addr,
@@ -161,41 +188,98 @@ def generate_wallets(mnemonic=None, index=0):
 
     # Remove testnets, dead chains, and duplicates
     remove_testnets = {
-        name for name in wallets
-        if any(kw in name.upper() for kw in ["TESTNET", "REGTEST", "_TEST", "TEST_", "STAGENET", "DEVNET", "TESTNET", "LEDGER"])
+        name
+        for name in wallets
+        if any(
+            kw in name.upper()
+            for kw in [
+                "TESTNET",
+                "REGTEST",
+                "_TEST",
+                "TEST_",
+                "STAGENET",
+                "DEVNET",
+                "TESTNET",
+                "LEDGER",
+            ]
+        )
     }
     remove_dead = {
-        "NIMIQ", "PI_NETWORK", "NANO", "VERGE", "BITCOIN_SV", "BITCOIN_CASH_SLP",
-        "NINE_CHRONICLES_GOLD", "MAVRYK", "ECASH", "DIGIBYTE", "ONTOLOGY",
-        "ZILLIQA", "BITCOIN_CASH_SLP_TESTNET", "BITCOIN_CASH_TESTNET",
+        "NIMIQ",
+        "PI_NETWORK",
+        "NANO",
+        "VERGE",
+        "BITCOIN_SV",
+        "BITCOIN_CASH_SLP",
+        "NINE_CHRONICLES_GOLD",
+        "MAVRYK",
+        "ECASH",
+        "DIGIBYTE",
+        "ONTOLOGY",
+        "ZILLIQA",
+        "BITCOIN_CASH_SLP_TESTNET",
+        "BITCOIN_CASH_TESTNET",
     }
     remove_dupes = {
-        "ELROND", "NEO", "NEO_LEGACY", "FETCH_AI", "FETCH_AI_ETH",
-        "HARMONY_ONE_ATOM", "OKEX_CHAIN_ATOM", "OKEX_CHAIN_ATOM_OLD",
-        "OKEX_CHAIN_ETH", "BINANCE_SMART_CHAIN", "AVAX_P_CHAIN", "AVAX_X_CHAIN",
-        "KUSAMA_ED25519_SLIP", "POLKADOT_ED25519_SLIP", "SECRET_NETWORK_OLD",
-        "CHIHUAHUA", "IRIS_NET", "STAFI", "CERTIK", "AKASH_NETWORK",
-        "AXELAR", "NEUTRON",
+        "ELROND",
+        "NEO",
+        "NEO_LEGACY",
+        "FETCH_AI",
+        "FETCH_AI_ETH",
+        "HARMONY_ONE_ATOM",
+        "OKEX_CHAIN_ATOM",
+        "OKEX_CHAIN_ATOM_OLD",
+        "OKEX_CHAIN_ETH",
+        "BINANCE_SMART_CHAIN",
+        "AVAX_P_CHAIN",
+        "AVAX_X_CHAIN",
+        "KUSAMA_ED25519_SLIP",
+        "POLKADOT_ED25519_SLIP",
+        "SECRET_NETWORK_OLD",
+        "CHIHUAHUA",
+        "IRIS_NET",
+        "STAFI",
+        "CERTIK",
+        "AKASH_NETWORK",
+        "AXELAR",
+        "NEUTRON",
     }
     remove_all = remove_testnets | remove_dead | remove_dupes
     wallets = {k: v for k, v in wallets.items() if k not in remove_all}
 
     # Fix VM types for known chains
     vm_fixes = {
-        "EVM (all EVM chains)": "EVM (0x)", "ARBITRUM": "EVM (0x)",
-        "AVAX_C_CHAIN": "EVM (0x)", "ETHEREUM_CLASSIC": "EVM (0x)",
-        "FANTOM_OPERA": "EVM (0x)", "HARMONY_ONE_ETH": "EVM (0x)",
-        "HARMONY_ONE_METAMASK": "EVM (0x)", "HUOBI_CHAIN": "EVM (0x)",
-        "METIS": "EVM (0x)", "MOONBEAM": "EVM (0x)", "MOONRIVER": "EVM (0x)",
-        "OPTIMISM": "EVM (0x)", "Polygon": "EVM (0x)", "THETA": "EVM (0x)",
-        "VECHAIN": "EVM (0x)", "CELO": "EVM (0x)", "CONFLUX": "EVM (0x)",
-        "Celo": "EVM (0x)", "Elrond/MultiversX": "MultiversX VM",
-        "NEAR_PROTOCOL": "Near VM", "Kusama": "Substrate (SS58)",
-        "Polkadot": "Substrate (SS58)", "Fetch.ai": "Cosmos (Bech32)",
-        "SECRET_NETWORK_NEW": "Cosmos (Bech32)", "Akash": "Cosmos (Bech32)",
-        "Axelar": "Cosmos (Bech32)", "Chihuahua": "Cosmos (Bech32)",
-        "Certik": "Cosmos (Bech32)", "Iris": "Cosmos (Bech32)",
-        "Stafi": "Cosmos (Bech32)", "Neutron": "Cosmos (Bech32)",
+        "EVM (all EVM chains)": "EVM (0x)",
+        "ARBITRUM": "EVM (0x)",
+        "AVAX_C_CHAIN": "EVM (0x)",
+        "ETHEREUM_CLASSIC": "EVM (0x)",
+        "FANTOM_OPERA": "EVM (0x)",
+        "HARMONY_ONE_ETH": "EVM (0x)",
+        "HARMONY_ONE_METAMASK": "EVM (0x)",
+        "HUOBI_CHAIN": "EVM (0x)",
+        "METIS": "EVM (0x)",
+        "MOONBEAM": "EVM (0x)",
+        "MOONRIVER": "EVM (0x)",
+        "OPTIMISM": "EVM (0x)",
+        "Polygon": "EVM (0x)",
+        "THETA": "EVM (0x)",
+        "VECHAIN": "EVM (0x)",
+        "CELO": "EVM (0x)",
+        "CONFLUX": "EVM (0x)",
+        "Celo": "EVM (0x)",
+        "Elrond/MultiversX": "MultiversX VM",
+        "NEAR_PROTOCOL": "Near VM",
+        "Kusama": "Substrate (SS58)",
+        "Polkadot": "Substrate (SS58)",
+        "Fetch.ai": "Cosmos (Bech32)",
+        "SECRET_NETWORK_NEW": "Cosmos (Bech32)",
+        "Akash": "Cosmos (Bech32)",
+        "Axelar": "Cosmos (Bech32)",
+        "Chihuahua": "Cosmos (Bech32)",
+        "Certik": "Cosmos (Bech32)",
+        "Iris": "Cosmos (Bech32)",
+        "Stafi": "Cosmos (Bech32)",
+        "Neutron": "Cosmos (Bech32)",
     }
     for name, wallet in wallets.items():
         if name in vm_fixes:
@@ -212,27 +296,83 @@ def generate_wallets(mnemonic=None, index=0):
 
 def _get_vm_type(chain_name):
     evm_chains = {
-        "EVM", "Avalanche", "Polygon", "Fantom", "Celo", "Moonbeam",
-        "Moonriver", "Harmony", "VeChain", "Theta", "Conflux", "BSC",
-        "Arbitrum", "Optimism", "Metis", "Ethereum Classic", "OKEx",
-        "Huobi", "Base", "Blast", "Linea", "Scroll", "zkSync",
-        "Mantle", "Berachain", "Fraxtal", "Sonic", "Monad",
+        "EVM",
+        "Avalanche",
+        "Polygon",
+        "Fantom",
+        "Celo",
+        "Moonbeam",
+        "Moonriver",
+        "Harmony",
+        "VeChain",
+        "Theta",
+        "Conflux",
+        "BSC",
+        "Arbitrum",
+        "Optimism",
+        "Metis",
+        "Ethereum Classic",
+        "OKEx",
+        "Huobi",
+        "Base",
+        "Blast",
+        "Linea",
+        "Scroll",
+        "zkSync",
+        "Mantle",
+        "Berachain",
+        "Fraxtal",
+        "Sonic",
+        "Monad",
     }
     cosmos_chains = {
-        "Cosmos", "Osmosis", "Celestia", "dYdX", "Injective", "Kujira",
-        "Nibiru", "BandChain", "Kava", "Terra", "Cronos", "Neutron",
-        "Chihuahua", "Akash", "Axelar", "Iris", "Fetch.ai", "Certik",
-        "Stafi", "Secret Network", "Sei", "Canto", "Evmos", "Mantra",
-        "Initia", "Archway", "XION", "Persistence", "Regen",
+        "Cosmos",
+        "Osmosis",
+        "Celestia",
+        "dYdX",
+        "Injective",
+        "Kujira",
+        "Nibiru",
+        "BandChain",
+        "Kava",
+        "Terra",
+        "Cronos",
+        "Neutron",
+        "Chihuahua",
+        "Akash",
+        "Axelar",
+        "Iris",
+        "Fetch.ai",
+        "Certik",
+        "Stafi",
+        "Secret Network",
+        "Sei",
+        "Canto",
+        "Evmos",
+        "Mantra",
+        "Initia",
+        "Archway",
+        "XION",
+        "Persistence",
+        "Regen",
     }
-    
+
     if chain_name in evm_chains or "EVM" in chain_name:
         return "EVM (0x address)"
     elif chain_name in cosmos_chains:
         return "Cosmos SDK (Bech32)"
     elif chain_name in ("Solana",):
         return "SVM (base58)"
-    elif chain_name in ("Bitcoin", "Doge", "Dash", "Zcash", "Litecoin", "Bitcoin Cash", "Bitcoin SV", "DigiByte"):
+    elif chain_name in (
+        "Bitcoin",
+        "Doge",
+        "Dash",
+        "Zcash",
+        "Litecoin",
+        "Bitcoin Cash",
+        "Bitcoin SV",
+        "DigiByte",
+    ):
         return "Bitcoin UTXO"
     elif chain_name in ("Sui", "Aptos"):
         return "Move VM"
@@ -269,11 +409,17 @@ def _get_vm_type(chain_name):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Universal Wallet Generator - 94+ chains")
+    parser = argparse.ArgumentParser(
+        description="Universal Wallet Generator - 94+ chains"
+    )
     parser.add_argument("--mnemonic", help="24-word BIP-39 mnemonic")
-    parser.add_argument("--derive-index", type=int, default=0, help="HD derivation index")
+    parser.add_argument(
+        "--derive-index", type=int, default=0, help="HD derivation index"
+    )
     parser.add_argument("--output", default="all_wallets.json", help="Output file")
-    parser.add_argument("--addresses-only", action="store_true", help="Print addresses only")
+    parser.add_argument(
+        "--addresses-only", action="store_true", help="Print addresses only"
+    )
     parser.add_argument("--chain", help="Generate wallet for specific chain only")
     parser.add_argument("--no-save", action="store_true", help="Don't save to file")
     args = parser.parse_args()
@@ -288,7 +434,9 @@ def main():
             print(f"PrivKey:  {w['private_key']}")
             print(f"VM Type:  {w['vm_type']}")
         else:
-            print(f"Chain '{args.chain}' not found. Available: {', '.join(sorted(result['wallets'].keys()))}")
+            print(
+                f"Chain '{args.chain}' not found. Available: {', '.join(sorted(result['wallets'].keys()))}"
+            )
         return
 
     if args.addresses_only:
@@ -335,17 +483,20 @@ def main():
                 for name, data in result["wallets"].items()
             },
         }
-        
-        os.makedirs(os.path.dirname(args.output) if os.path.dirname(args.output) else ".", exist_ok=True)
+
+        os.makedirs(
+            os.path.dirname(args.output) if os.path.dirname(args.output) else ".",
+            exist_ok=True,
+        )
         with open(args.output, "w") as f:
             json.dump(safe_output, f, indent=2)
-        
+
         # Save full version (with private keys) separately
         full_path = args.output.replace(".json", "_full.json")
         with open(full_path, "w") as f:
             json.dump(result, f, indent=2)
         os.chmod(full_path, 0o600)
-        
+
         print(f"\nAddresses saved to: {args.output}")
         print(f"Full (with keys) saved to: {full_path} (chmod 600)")
 

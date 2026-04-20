@@ -60,8 +60,7 @@ start_metrics_server()
 
 def init_wallet_db() -> sqlite3.Connection:
     conn = sqlite3.connect(str(WALLETS_DB), timeout=30)
-    conn.executescript(
-        """
+    conn.executescript("""
         CREATE TABLE IF NOT EXISTS tracked_wallets (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             address TEXT NOT NULL,
@@ -156,8 +155,7 @@ def init_wallet_db() -> sqlite3.Connection:
         CREATE INDEX IF NOT EXISTS idx_wallets_winrate ON tracked_wallets(win_rate DESC);
         CREATE INDEX IF NOT EXISTS idx_entries_wallet ON wallet_token_entries(wallet_address);
         CREATE INDEX IF NOT EXISTS idx_entries_token ON wallet_token_entries(token_address);
-    """
-    )
+    """)
     conn.commit()
     return conn
 
@@ -397,16 +395,14 @@ def compute_round_trips(conn: sqlite3.Connection) -> Dict[str, int]:
     They made money on paper but didn't realize it.
     """
     c = conn.cursor()
-    c.execute(
-        """
+    c.execute("""
         SELECT wallet_address, COUNT(*) as rt_count
         FROM wallet_token_entries
         WHERE profit > 0 
           AND (sell_tx_count IS NULL OR sell_tx_count = 0)
           AND unrealized_profit > 0
         GROUP BY wallet_address
-    """
-    )
+    """)
     return {row[0]: row[1] for row in c.fetchall()}
 
 
@@ -776,8 +772,7 @@ def report(conn: sqlite3.Connection, limit: int = 20):
     """Print top wallets with full metrics."""
     cursor = conn.cursor()
 
-    cursor.execute(
-        f"""
+    cursor.execute(f"""
         SELECT address, chain, wallet_score, realized_pnl, avg_roi, 
                win_rate, total_trades, tokens_profitable, tokens_total,
                smart_money_tag, source_tokens, twitter_username,
@@ -786,8 +781,7 @@ def report(conn: sqlite3.Connection, limit: int = 20):
         WHERE wallet_score > 0
         ORDER BY wallet_score DESC
         LIMIT {limit}
-    """
-    )
+    """)
 
     print(f"\n{'='*80}")
     print(f"TOP {limit} WALLETS BY SCORE")
@@ -959,14 +953,12 @@ def detect_copy_traders(conn: sqlite3.Connection) -> int:
     c = conn.cursor()
 
     # Get all token entries grouped by token
-    c.execute(
-        """
+    c.execute("""
         SELECT token_address, wallet_address, start_holding_at, profit_change
         FROM wallet_token_entries
         WHERE start_holding_at IS NOT NULL
         ORDER BY token_address, start_holding_at
-    """
-    )
+    """)
 
     # Group by token
     token_entries = {}
@@ -1037,8 +1029,7 @@ def detect_insiders(conn: sqlite3.Connection) -> int:
     flagged = 0
 
     # 1. Very early entries with extreme ROI (possible insider)
-    c.execute(
-        """
+    c.execute("""
         SELECT wte.wallet_address, COUNT(*) as early_count
         FROM wallet_token_entries wte
         WHERE wte.profit_change > 10  -- >1000% ROI
@@ -1046,8 +1037,7 @@ def detect_insiders(conn: sqlite3.Connection) -> int:
           AND wte.is_profitable = 1
         GROUP BY wte.wallet_address
         HAVING early_count >= 2
-    """
-    )
+    """)
     for wallet, count in c.fetchall():
         c.execute(
             """
@@ -1060,14 +1050,12 @@ def detect_insiders(conn: sqlite3.Connection) -> int:
         flagged += c.rowcount
 
     # 2. Wallets with suspiciously high avg ROI
-    c.execute(
-        """
+    c.execute("""
         SELECT address FROM tracked_wallets
         WHERE avg_roi > 20  -- >2000% average ROI
           AND total_trades < 10
           AND insider_flag = 0
-    """
-    )
+    """)
     for (wallet,) in c.fetchall():
         c.execute(
             "UPDATE tracked_wallets SET insider_flag = 1 WHERE address = ?", (wallet,)
@@ -1115,15 +1103,13 @@ def detect_rug_history(conn: sqlite3.Connection) -> int:
         pass
 
     # Also flag entries with massive losses as potential rugs
-    c.execute(
-        """
+    c.execute("""
         SELECT wallet_address, COUNT(*) as rug_count
         FROM wallet_token_entries
         WHERE (profit_change < -0.9 OR profit < -1000)
           AND is_profitable = 0
         GROUP BY wallet_address
-    """
-    )
+    """)
 
     for wallet, count in c.fetchall():
         # Add any known rugged tokens

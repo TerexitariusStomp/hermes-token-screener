@@ -397,7 +397,7 @@ def compute_social_score(
     tg_vel = tg_signals.get("tg_mention_velocity", 0)
     tg_viral = tg_signals.get("tg_viral_score", 0)
     tg_quality = tg_signals.get("tg_channel_quality", 0)
-    tg_channels = tg_signals.get("tg_channel_count", 0)
+    tg_signals.get("tg_channel_count", 0)
 
     if max_tg_velocity > 0:
         vel_ratio = min(tg_vel / max(max_tg_velocity * 0.3, 0.01), 1.0)
@@ -540,7 +540,7 @@ def rescore_wallets_with_social(
             held_token_scores.append(t.get("score", 0))
 
         avg_social = sum(held_social_scores) / max(len(held_social_scores), 1)
-        avg_token = sum(held_token_scores) / max(len(held_token_scores), 1)
+        sum(held_token_scores) / max(len(held_token_scores), 1)
         social_token_count = sum(1 for s in held_social_scores if s > 30)
 
         # Portfolio social boost (0-20pts)

@@ -74,6 +74,7 @@ start_metrics_server()
 # USAGE PATTERNS (replacing old logging calls):
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def example_enrichment():
     """Shows how to use structured logging + metrics in enrichment layers."""
 

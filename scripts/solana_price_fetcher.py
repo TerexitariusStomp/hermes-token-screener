@@ -4,8 +4,13 @@ Solana On-Chain Price Fetcher v3
 Fetches prices from 125+ Solana DEX pools across 11 token pairs.
 For arbitrage: compares prices across all sources to find spreads.
 """
+
 import base64
 import requests
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 import time
 from dataclasses import dataclass
 from typing import Optional, List

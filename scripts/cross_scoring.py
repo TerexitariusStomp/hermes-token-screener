@@ -275,7 +275,7 @@ def rescore_tokens(
 
     # Build token → smart wallet mapping
     token_wallets: Dict[str, List[dict]] = {}
-    wallet_by_addr = {w["address"]: w for w in wallets}
+    {w["address"]: w for w in wallets}
 
     for wallet in wallets:
         w_addr = wallet["address"]
@@ -408,7 +408,7 @@ def _compute_wallet_composite_score(
     # ── Win Rate (0-15) ──
     win_rate = wallet.get("win_rate") or 0
     tokens_profitable = wallet.get("tokens_profitable") or 0
-    tokens_total = wallet.get("tokens_total") or 0
+    wallet.get("tokens_total") or 0
 
     if win_rate >= 0.8:
         score += 10

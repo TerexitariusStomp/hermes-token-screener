@@ -264,14 +264,12 @@ def load_telegram_data() -> Dict:
         }
 
     # Daily metrics (latest per symbol)
-    rows = db.execute(
-        """
+    rows = db.execute("""
         SELECT symbol, sentiment_score, sentiment_label, telegram_members, telegram_community_name
         FROM daily_metrics
         WHERE date = (SELECT MAX(date) FROM daily_metrics)
         ORDER BY rank
-    """
-    ).fetchall()
+    """).fetchall()
     for r in rows:
         sym = r["symbol"].upper() if r["symbol"] else ""
         if sym in tg:
@@ -281,14 +279,12 @@ def load_telegram_data() -> Dict:
             tg[sym]["telegram_community"] = r["telegram_community_name"] or ""
 
     # Metrics history (latest member count)
-    rows = db.execute(
-        """
+    rows = db.execute("""
         SELECT symbol, members FROM telegram_metrics_history
         WHERE id IN (
             SELECT MAX(id) FROM telegram_metrics_history GROUP BY symbol
         )
-    """
-    ).fetchall()
+    """).fetchall()
     for r in rows:
         sym = r["symbol"].upper() if r["symbol"] else ""
         if sym in tg and r["members"]:

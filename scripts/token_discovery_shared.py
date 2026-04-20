@@ -10,6 +10,10 @@ import sqlite3
 from typing import Any
 
 import requests
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 DISCOVERED_TOKENS_SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS discovered_tokens (

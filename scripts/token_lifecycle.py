@@ -27,6 +27,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import httpx
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
@@ -484,7 +488,6 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
         if price_change is not None
         else "—"
     )
-    status_color = "#10b981" if status == "active" else "#ef4444"
 
     ax1.set_title(
         f"{symbol} — {status.upper()} | Entry: ${entry_price:.8f} | "

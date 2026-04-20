@@ -26,6 +26,10 @@ import time
 from typing import Any, Dict, List, Optional
 
 import requests
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
@@ -160,15 +164,10 @@ def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
     """Rank tokens for AI review. No filtering — AI decides what's tradeable."""
     ranked = []
     for t in tokens:
-        # Skip obvious honeypots only (safety)
-        if t.get("goplus_is_honeypot"):
-            continue
-        ranked.append(t)
-    for t in tokens:
-        score = t.get("score", 0) or 0
-        fdv = t.get("fdv", 0) or 0
-        vol = t.get("volume_h24", 0) or 0
-        smart = t.get("smart_wallet_count", t.get("gmgn_smart_wallets", 0)) or 0
+        t.get("score", 0) or 0
+        t.get("fdv", 0) or 0
+        t.get("volume_h24", 0) or 0
+        t.get("smart_wallet_count", t.get("gmgn_smart_wallets", 0)) or 0
 
         # Skip obvious honeypots only (safety)
         if t.get("goplus_is_honeypot"):

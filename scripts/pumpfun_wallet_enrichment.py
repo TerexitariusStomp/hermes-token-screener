@@ -13,6 +13,10 @@ import json
 import sqlite3
 import time
 import urllib.request
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 from hermes_screener.config import settings
 from hermes_screener.utils import gmgn_cmd  # noqa: F401 – shared helper
@@ -65,14 +69,12 @@ def fetch_creators_with_tokens() -> list[dict]:
     conn = sqlite3.connect(str(DB_PATH), timeout=10)
 
     # Get creators
-    creators = conn.execute(
-        """
+    creators = conn.execute("""
         SELECT contract_address, mentions, last_message_text, last_seen_at
         FROM telegram_contracts_unique
         WHERE last_source = 'pumpportal_creator'
         ORDER BY mentions DESC
-    """
-    ).fetchall()
+    """).fetchall()
 
     results = []
     for wallet, count, desc, last_seen in creators:
@@ -105,7 +107,7 @@ def fetch_creators_with_tokens() -> list[dict]:
 
 def enrich_wallet(w: dict) -> dict:
     """Enrich a single creator wallet."""
-    wallet = w["wallet"]
+    w["wallet"]
 
     # SOL balance
     sol = get_sol_balance(w["wallet"])

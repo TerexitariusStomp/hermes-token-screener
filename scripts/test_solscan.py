@@ -5,6 +5,10 @@ Test Solscan API with different endpoints.
 
 import asyncio
 import httpx
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 import os
 from pathlib import Path
 

@@ -13,6 +13,10 @@ from decimal import Decimal
 from typing import Dict, List, Optional
 
 import requests
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 from dotenv import load_dotenv
 from eth_account import Account
 from web3 import Web3
@@ -1511,7 +1515,6 @@ class DexAggregatorTrader:
             f"SELLING {sell_amount:.4f} {token_name} ({sell_pct*100:.0f}% of {token_bal:.4f}) to free up ETH"
         )
         amount_wei = int(sell_amount * Decimal(10**18))
-        weth = "0x4200000000000000000000000000000000000006"
 
         # 1. Try direct on-chain AMM swaps (cheapest gas, no API overhead)
         result = self._direct_cheap_sell(token_address, amount_wei)
@@ -1539,7 +1542,6 @@ class DexAggregatorTrader:
         """Sell via Odos API (higher gas, last resort)."""
         try:
             amount_wei = str(int(sell_amount * Decimal(10**18)))
-            weth = "0x4200000000000000000000000000000000000006"
 
             # Get quote from Odos
             quote_resp = requests.post(

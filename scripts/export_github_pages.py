@@ -131,7 +131,9 @@ def export_tokens():
         chain_norm = token.get("chain", "unknown")
         addr = token.get("contract_address", "")
         if dex:
-            token["fdv"] = token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
+            token["fdv"] = (
+                token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
+            )
             token["symbol"] = token.get("symbol") or dex.get("symbol") or ""
             token["name"] = token.get("name") or dex.get("name") or ""
             token["volume_h24"] = dex.get("volume_h24", 0) or 0
@@ -147,6 +149,7 @@ def export_tokens():
             if isinstance(token[key], set):
                 token[key] = list(token[key])
         clean_tokens.append(token)
+
     # Prioritize: high score + high volume + no negative signals = top
     def token_sort_key(t):
         score = t.get("score", 0) or 0
@@ -155,15 +158,30 @@ def export_tokens():
         pc_h1 = t.get("price_change_h1")
 
         # Penalty count from negative signals
-        bad_signals = sum(1 for bad in [
-            "DEAD", "death spiral", "ONLY SELLS", "on bonding curve",
-            "HEAVY SELLS", "stagnant volume", "no volume",
-            "decline h1", "declining h6", "collapsed h24", "down h24",
-            "steep decline", "CRASH",
-        ] if bad in str(negs))
+        bad_signals = sum(
+            1
+            for bad in [
+                "DEAD",
+                "death spiral",
+                "ONLY SELLS",
+                "on bonding curve",
+                "HEAVY SELLS",
+                "stagnant volume",
+                "no volume",
+                "decline h1",
+                "declining h6",
+                "collapsed h24",
+                "down h24",
+                "steep decline",
+                "CRASH",
+            ]
+            if bad in str(negs)
+        )
 
         # Volume multiplier: $100K=1x, $1M=2x, $10M=3x (linear in log)
-        vol_mult = min(vol / 500000, 3.0)  # $500K=1x, cap at 3x  # normalize so $1M = 1.0
+        vol_mult = min(
+            vol / 500000, 3.0
+        )  # $500K=1x, cap at 3x  # normalize so $1M = 1.0
 
         # Penalty for no price data
         stale_mult = 0.3 if pc_h1 is None else 1.0
@@ -314,7 +332,9 @@ def export_cross_tokens():
         addr = token.get("contract_address", "")
         if dex:
             token["symbol"] = token.get("symbol") or dex.get("symbol") or ""
-            token["fdv"] = token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
+            token["fdv"] = (
+                token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
+            )
             token["volume_h24"] = dex.get("volume_h24", 0) or 0
             token["volume_h1"] = dex.get("volume_h1", 0) or 0
             token["price_change_h1"] = dex.get("price_change_h1")
@@ -323,7 +343,6 @@ def export_cross_tokens():
         if not token.get("dex_url") and addr and chain != "unknown":
             token["dex_url"] = f"https://dexscreener.com/{chain.lower()}/{addr}"
         token["chain"] = chain
-
 
     # Get wallet holdings
     db_path = settings.wallets_db_path
@@ -376,15 +395,31 @@ def export_cross_tokens():
         wallets = t.get("wallet_count", 0)
         negs = t.get("negatives", [])
         pc_h1 = t.get("price_change_h1")
-        bad_signals = sum(1 for bad in [
-            "DEAD", "death spiral", "ONLY SELLS", "on bonding curve",
-            "HEAVY SELLS", "stagnant volume", "no volume",
-            "decline h1", "declining h6", "collapsed h24", "down h24",
-            "steep decline", "CRASH",
-        ] if bad in str(negs))
+        bad_signals = sum(
+            1
+            for bad in [
+                "DEAD",
+                "death spiral",
+                "ONLY SELLS",
+                "on bonding curve",
+                "HEAVY SELLS",
+                "stagnant volume",
+                "no volume",
+                "decline h1",
+                "declining h6",
+                "collapsed h24",
+                "down h24",
+                "steep decline",
+                "CRASH",
+            ]
+            if bad in str(negs)
+        )
         vol_mult = min(vol / 500000, 3.0)  # $500K=1x, cap at 3x
         stale_mult = 0.3 if pc_h1 is None else 1.0
-        return score * vol_mult * stale_mult * (1 + wallets * 0.3) / (1 + bad_signals * 2)
+        return (
+            score * vol_mult * stale_mult * (1 + wallets * 0.3) / (1 + bad_signals * 2)
+        )
+
     tokens.sort(key=cross_token_sort, reverse=True)
 
     # Convert sets to lists
@@ -710,7 +745,7 @@ def export_smart_money():
             with open(src) as f:
                 raw = json.load(f)
             candidate = {}
-            for t in (raw.get("tokens") or raw.get("top_tokens") or []):
+            for t in raw.get("tokens") or raw.get("top_tokens") or []:
                 addr = t.get("contract_address", "")
                 if addr:
                     candidate[addr] = t
@@ -724,7 +759,16 @@ def export_smart_money():
     conn.row_factory = sqlite3.Row
     try:
         # ── Export SM tokens enriched with pipeline data ──
-        BLOCKED_SM_SYMBOLS = {"wsol", "weth", "usdc", "usdt", "dai", "busd", "wbtc", "steth"}
+        BLOCKED_SM_SYMBOLS = {
+            "wsol",
+            "weth",
+            "usdc",
+            "usdt",
+            "dai",
+            "busd",
+            "wbtc",
+            "steth",
+        }
         sm_token_rows = conn.execute("""
             SELECT t.token_address, t.chain, t.symbol, t.buyer_count,
                    t.total_buy_usd, t.avg_buy_usd, t.top_buyer_score,
@@ -743,9 +787,16 @@ def export_smart_money():
 
             # Merge enriched data with SM data
             dex_data = enriched.get("dex", {})
-            fdv = dex_data.get("fdv") or enriched.get("fdv") or enriched.get("market_cap") or 0
+            fdv = (
+                dex_data.get("fdv")
+                or enriched.get("fdv")
+                or enriched.get("market_cap")
+                or 0
+            )
             score = enriched.get("score", 0) or r["sm_score"] or 0
-            symbol = dex_data.get("symbol") or enriched.get("symbol") or r["symbol"] or ""
+            symbol = (
+                dex_data.get("symbol") or enriched.get("symbol") or r["symbol"] or ""
+            )
 
             # Filter out wrapped/stable tokens
             if symbol.lower().strip() in BLOCKED_SM_SYMBOLS:
@@ -756,29 +807,32 @@ def export_smart_money():
             except (json.JSONDecodeError, TypeError):
                 wallet_list = []
 
-            tokens.append({
-                "token_address": addr,
-                "chain": chain,
-                "symbol": symbol,
-                "buyer_count": r["buyer_count"] or 0,
-                "total_buy_usd": r["total_buy_usd"] or 0,
-                "avg_buy_usd": r["avg_buy_usd"] or 0,
-                "top_buyer_score": r["top_buyer_score"] or 0,
-                # Enriched fields
-                "fdv": fdv,
-                "score": score,
-                "volume_h24": dex_data.get("volume_h24", 0) or 0,
-                "volume_h1": dex_data.get("volume_h1", 0) or 0,
-                "price_change_h1": dex_data.get("price_change_h1"),
-                "price_change_h6": dex_data.get("price_change_h6"),
-                "age_hours": dex_data.get("age_hours"),
-                "dex_url": enriched.get("dex_url", "") or f"https://dexscreener.com/{chain.lower()}/{addr}",
-                "positives": enriched.get("positives", []),
-                "gmgn_smart_wallets": enriched.get("gmgn_smart_wallets", 0),
-                # Computed
-                "mcap_tier": mcap_tier_label(fdv),
-                "buyer_wallets": wallet_list[:5],
-            })
+            tokens.append(
+                {
+                    "token_address": addr,
+                    "chain": chain,
+                    "symbol": symbol,
+                    "buyer_count": r["buyer_count"] or 0,
+                    "total_buy_usd": r["total_buy_usd"] or 0,
+                    "avg_buy_usd": r["avg_buy_usd"] or 0,
+                    "top_buyer_score": r["top_buyer_score"] or 0,
+                    # Enriched fields
+                    "fdv": fdv,
+                    "score": score,
+                    "volume_h24": dex_data.get("volume_h24", 0) or 0,
+                    "volume_h1": dex_data.get("volume_h1", 0) or 0,
+                    "price_change_h1": dex_data.get("price_change_h1"),
+                    "price_change_h6": dex_data.get("price_change_h6"),
+                    "age_hours": dex_data.get("age_hours"),
+                    "dex_url": enriched.get("dex_url", "")
+                    or f"https://dexscreener.com/{chain.lower()}/{addr}",
+                    "positives": enriched.get("positives", []),
+                    "gmgn_smart_wallets": enriched.get("gmgn_smart_wallets", 0),
+                    # Computed
+                    "mcap_tier": mcap_tier_label(fdv),
+                    "buyer_wallets": wallet_list[:5],
+                }
+            )
 
         # Sort by composite: buyer_count * score * (1 + total_usd/1000)
         tokens.sort(
@@ -832,40 +886,46 @@ def export_smart_money():
                 "avg_hold_hours, insider_flag, copy_trade_flag, realized_pnl, "
                 "unrealized_pnl, buy_count, sell_count, rug_history_count, "
                 "trading_pattern, first_seen_at, last_active_at "
-                "FROM tracked_wallets WHERE address = ?", (w_addr,)
+                "FROM tracked_wallets WHERE address = ?",
+                (w_addr,),
             ).fetchone()
 
             # Get SM tokens this wallet bought with FDV
-            bought = conn.execute("""
+            bought = conn.execute(
+                """
                 SELECT p.token_address, p.token_symbol FROM smart_money_purchases p
                 WHERE p.wallet_address = ? AND p.side = 'buy'
                 GROUP BY p.token_address
-            """, (w_addr,)).fetchall()
+            """,
+                (w_addr,),
+            ).fetchall()
             held_symbols = [r[1] for r in bought if r[1]]
             held_fdvs = [token_fdv.get(r[0], 0) for r in bought]
             avg_fdv = sum(held_fdvs) / len(held_fdvs) if held_fdvs else 0
 
             chain = normalize_chain(w["chain"] or "")
-            wallets.append({
-                "address": w_addr,
-                "chain": chain,
-                "wallet_score": w["wallet_score"] or 0,
-                "total_profit": tw["total_profit"] if tw else 0,
-                "win_rate": tw["win_rate"] if tw else 0,
-                "avg_roi": tw["avg_roi"] if tw else 0,
-                "total_trades": tw["total_trades"] if tw else 0,
-                "wallet_tags": tw["wallet_tags"] if tw else "",
-                "avg_hold_hours": tw["avg_hold_hours"] if tw else 0,
-                "insider_flag": tw["insider_flag"] if tw else 0,
-                "copy_trade_flag": tw["copy_trade_flag"] if tw else 0,
-                "realized_pnl": tw["realized_pnl"] if tw else 0,
-                "rug_history_count": tw["rug_history_count"] if tw else 0,
-                "trading_pattern": tw["trading_pattern"] if tw else "",
-                "sm_tokens_held": w["sm_token_count"] or 0,
-                "top_tokens": held_symbols[:10],
-                "avg_fdv": round(avg_fdv),
-                "mcap_tier": mcap_tier_label(avg_fdv),
-            })
+            wallets.append(
+                {
+                    "address": w_addr,
+                    "chain": chain,
+                    "wallet_score": w["wallet_score"] or 0,
+                    "total_profit": tw["total_profit"] if tw else 0,
+                    "win_rate": tw["win_rate"] if tw else 0,
+                    "avg_roi": tw["avg_roi"] if tw else 0,
+                    "total_trades": tw["total_trades"] if tw else 0,
+                    "wallet_tags": tw["wallet_tags"] if tw else "",
+                    "avg_hold_hours": tw["avg_hold_hours"] if tw else 0,
+                    "insider_flag": tw["insider_flag"] if tw else 0,
+                    "copy_trade_flag": tw["copy_trade_flag"] if tw else 0,
+                    "realized_pnl": tw["realized_pnl"] if tw else 0,
+                    "rug_history_count": tw["rug_history_count"] if tw else 0,
+                    "trading_pattern": tw["trading_pattern"] if tw else "",
+                    "sm_tokens_held": w["sm_token_count"] or 0,
+                    "top_tokens": held_symbols[:10],
+                    "avg_fdv": round(avg_fdv),
+                    "mcap_tier": mcap_tier_label(avg_fdv),
+                }
+            )
 
             # Sort by composite: score * sm_tokens_held
             wallets.sort(

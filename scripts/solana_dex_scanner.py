@@ -4,8 +4,13 @@ Solana DEX Price Scanner
 Finds real-time prices across 37+ DEX programs for any token pair.
 Uses Jupiter routing to discover pools, reads on-chain state for direct quotes.
 """
+
 import base64
 import requests
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 import time
 from dataclasses import dataclass, field
 from typing import Optional, List, Dict

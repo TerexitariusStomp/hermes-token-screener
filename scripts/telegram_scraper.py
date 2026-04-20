@@ -131,7 +131,46 @@ def get_db():
 
 
 def ensure_tables(conn):
+<<<<<<< Updated upstream
     ensure_telegram_contract_tables(conn)
+=======
+    conn.executescript("""
+        CREATE TABLE IF NOT EXISTS telegram_contract_calls (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            channel_id TEXT NOT NULL,
+            message_id INTEGER NOT NULL,
+            chain TEXT,
+            contract_address TEXT NOT NULL,
+            raw_address TEXT,
+            address_source TEXT,
+            message_text TEXT,
+            observed_at REAL,
+            session_source TEXT,
+            inserted_at REAL NOT NULL
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_calls_msg_contract
+            ON telegram_contract_calls(message_id, contract_address);
+
+        CREATE TABLE IF NOT EXISTS telegram_contracts_unique (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            chain TEXT NOT NULL,
+            contract_address TEXT NOT NULL,
+            first_seen_at REAL NOT NULL,
+            last_seen_at REAL NOT NULL,
+            mentions INTEGER NOT NULL,
+            last_channel_id TEXT,
+            last_message_id INTEGER,
+            last_raw_address TEXT,
+            last_source TEXT,
+            last_message_text TEXT,
+            channel_count INTEGER NOT NULL DEFAULT 0,
+            channels_seen TEXT DEFAULT ''
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_chain_addr
+            ON telegram_contracts_unique(chain, contract_address);
+    """)
+    conn.commit()
+>>>>>>> Stashed changes
 
 
 def insert_extraction(
@@ -280,9 +319,7 @@ async def poll_dialog(
             chain = (
                 "solana"
                 if not normalized.startswith("0x") and not normalized.startswith("r")
-                else "xrpl"
-                if normalized.startswith("r")
-                else "ethereum"
+                else "xrpl" if normalized.startswith("r") else "ethereum"
             )
             inserted = insert_extraction(
                 conn,

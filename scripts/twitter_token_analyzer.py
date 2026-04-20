@@ -410,7 +410,7 @@ def analyze_profile(handle: str, page) -> ProfileAnalysis:
     tweets = extract_tweets(page)
     a.tweets_scraped = len(tweets)
 
-    now = datetime.now(timezone.utc)
+    datetime.now(timezone.utc)
     all_ages = []
     for t in tweets:
         d = time_ago_days(t.timestamp)

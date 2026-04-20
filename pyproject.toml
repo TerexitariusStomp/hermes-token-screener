@@ -28,7 +28,8 @@ dependencies = [
     "pydantic>=2.0,<3.0",
     "pydantic-settings>=2.0,<3.0",
     "requests>=2.28",
-    "httpx>=0.27",
+    "httpx[socks]>=0.27",
+    "pysocks>=1.7",
     "python-dotenv>=1.0",
     "structlog>=24.0",
     "prometheus-client>=0.20",
@@ -60,7 +61,8 @@ dev = [
     "black>=24.0",
     "mypy>=1.10",
 ]
-all = ["hermes-token-screener[telegram,dashboard,trading,ml,dev]"]
+all = ["hermes-token-screener[telegram,dashboard,trading,ml,dev,worker]"]
+worker = ["fastapi>=0.110", "uvicorn[standard]>=0.29"]
 
 [project.urls]
 Homepage = "https://github.com/TerexitariusStomp/hermes-token-screener"

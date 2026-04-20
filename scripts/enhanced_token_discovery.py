@@ -5,13 +5,18 @@ Combines Rick Burp Bot data with DexScreener API for maximum token coverage.
 """
 
 import asyncio
+import sys
 import os
 import re
-import sqlite3
-import sys
-from datetime import datetime
 from pathlib import Path
+from datetime import datetime
 from typing import Dict, List, Optional
+import sqlite3
+import requests
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 # Add the scripts directory to path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -19,18 +24,11 @@ sys.path.insert(0, str(Path(__file__).parent))
 # Import the Telegram client
 from telethon import TelegramClient
 
-from hermes_screener.config import settings
-from token_discovery_shared import (
-    ensure_discovered_tokens_table,
-    insert_discovered_token,
-    lookup_token_address,
-)
-
 # Configuration
-SESSION_PATH = settings.session_path
-TG_API_ID = settings.tg_api_id
-TG_API_HASH = settings.tg_api_hash
-DB_PATH = settings.db_path
+SESSION_PATH = Path.home() / ".hermes" / ".telegram_session" / "hermes_user"
+TG_API_ID = int(os.getenv("TG_API_ID", "39533004"))
+TG_API_HASH = os.getenv("TG_API_HASH", "958e52889177eec2fa15e9e4e4c2cc4c")
+DB_PATH = Path.home() / ".hermes" / "call_channels.db"
 
 # Bot commands to execute for maximum token coverage
 BOT_COMMANDS = [
@@ -53,7 +51,46 @@ class EnhancedTokenDiscovery:
 
     def get_token_address_from_name(self, token_name: str) -> Dict:
         """Get token address from token name using DexScreener API."""
-        return lookup_token_address(token_name)
+        result = {
+            "name": token_name,
+            "address": None,
+            "chain": "solana",
+            "source": None,
+            "price": None,
+            "liquidity": None,
+            "volume": None,
+            "dex": None,
+        }
+
+        try:
+            url = f"https://api.dexscreener.com/latest/dex/search?q={token_name}"
+            response = requests.get(url, timeout=10)
+
+            if response.status_code == 200:
+                data = response.json()
+                if "pairs" in data and data["pairs"]:
+                    for pair in data["pairs"][:3]:
+                        if "baseToken" in pair:
+                            base_token = pair["baseToken"]
+                            if (
+                                base_token.get("name", "").lower() == token_name.lower()
+                                or base_token.get("symbol", "").lower()
+                                == token_name.lower()
+                            ):
+                                result["address"] = base_token.get("address")
+                                result["chain"] = pair.get("chainId", "solana")
+                                result["source"] = "dexscreener"
+                                result["dex"] = pair.get("dexId", "")
+                                result["price"] = pair.get("priceUsd", "")
+                                result["liquidity"] = pair.get("liquidity", {}).get(
+                                    "usd", ""
+                                )
+                                result["volume"] = pair.get("volume", {}).get("h24", "")
+                                break
+        except Exception as e:
+            print(f"Error with DexScreener API for {token_name}: {e}")
+
+        return result
 
     async def connect(self):
         """Connect to Telegram and find the RickBurp channel."""
@@ -81,12 +118,49 @@ class EnhancedTokenDiscovery:
     def init_database(self):
         """Initialize database for storing token information."""
         self.db_conn = sqlite3.connect(DB_PATH)
-        ensure_discovered_tokens_table(self.db_conn)
+        cursor = self.db_conn.cursor()
+
+        # Create table if it doesn't exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS discovered_tokens (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                token_name TEXT,
+                token_address TEXT,
+                chain TEXT,
+                dex TEXT,
+                price REAL,
+                liquidity REAL,
+                volume_24h REAL,
+                source TEXT,
+                discovery_method TEXT
+            )
+        """)
+
+        self.db_conn.commit()
         print("Database initialized")
 
     def store_token(self, token_info: Dict, discovery_method: str = "rick_bot"):
         """Store token information in database."""
-        insert_discovered_token(self.db_conn, token_info, discovery_method)
+        cursor = self.db_conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO discovered_tokens (token_name, token_address, chain, dex, price, liquidity, volume_24h, source, discovery_method)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+            (
+                token_info.get("name", "unknown"),
+                token_info.get("address"),
+                token_info.get("chain", "solana"),
+                token_info.get("dex"),
+                token_info.get("price"),
+                token_info.get("liquidity"),
+                token_info.get("volume"),
+                token_info.get("source"),
+                discovery_method,
+            ),
+        )
+        self.db_conn.commit()
 
     async def send_command(self, command: str, description: str) -> Optional[str]:
         """Send a command to the bot and return the response."""
