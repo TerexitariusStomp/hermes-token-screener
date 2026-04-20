@@ -1005,26 +1005,32 @@ async def _enrich_bitquery(token: dict, client: httpx.AsyncClient) -> None:
 
 
 async def _enrich_derived(enriched: list) -> int:
-    """Layer 6: Computed security signals (no API needed)."""
+    """Layer 6: Computed security + momentum signals (no API needed)."""
     count = 0
     for token in enriched:
         derived = {}
+        scanner = {}
+
+        dex = token.get("dex", {}) or {}
+        fdv = dex.get("fdv") or token.get("fdv")
+        liq = dex.get("liquidity_usd") or token.get("liquidity_usd")
 
         # FDV vs liquidity ratio
-        fdv = token.get("dex", {}).get("fdv") or token.get("fdv")
-        liq = token.get("dex", {}).get("liquidity_usd") or token.get("liquidity_usd")
+        liq_ratio = None
         if fdv and liq and fdv > 0:
-            ratio = liq / fdv
-            derived["liq_fdv_ratio"] = round(ratio, 4)
+            liq_ratio = liq / fdv
+            derived["liq_fdv_ratio"] = round(liq_ratio, 4)
             derived["liq_risk"] = (
-                "critical" if ratio < 0.02 else ("high" if ratio < 0.05 else "moderate" if ratio < 0.10 else "healthy")
+                "critical" if liq_ratio < 0.02 else ("high" if liq_ratio < 0.05 else "moderate" if liq_ratio < 0.10 else "healthy")
             )
 
-        # Tax risk (from GoPlus)
-        goplus = token.get("goplus", {})
+        # Tax + authority risk (GoPlus + GMGN)
+        goplus = token.get("goplus", {}) or {}
+        gmgn = token.get("gmgn", {}) or {}
+
+        buy_tax = float(goplus.get("buy_tax", 0) or 0)
+        sell_tax = float(goplus.get("sell_tax", 0) or 0)
         if goplus:
-            buy_tax = goplus.get("buy_tax", 0)
-            sell_tax = goplus.get("sell_tax", 0)
             if buy_tax > 0.10 or sell_tax > 0.10:
                 derived["tax_risk"] = "high"
             elif buy_tax > 0.05 or sell_tax > 0.05:
@@ -1032,8 +1038,96 @@ async def _enrich_derived(enriched: list) -> int:
             else:
                 derived["tax_risk"] = "low"
 
+        has_mint_authority = bool(goplus.get("is_mintable") or gmgn.get("has_mint_authority"))
+        derived["has_mint_authority"] = has_mint_authority
+
+        # Microstructure (adapted from memecoin.watch + dexscreener-analysis-bot)
+        txns_m5 = dex.get("txns_m5", {}) or {}
+        txns_h1 = dex.get("txns_h1", {}) or {}
+
+        buys_m5 = int(txns_m5.get("buys", 0) or 0)
+        sells_m5 = int(txns_m5.get("sells", 0) or 0)
+        buys_h1 = int(txns_h1.get("buys", 0) or 0)
+        sells_h1 = int(txns_h1.get("sells", 0) or 0)
+
+        total_m5 = buys_m5 + sells_m5
+        total_h1 = buys_h1 + sells_h1
+
+        volume_m5 = float(dex.get("volume_m5", 0) or 0)
+        volume_h1 = float(dex.get("volume_h1", 0) or 0)
+        price_change_m5 = float(dex.get("price_change_m5", 0) or 0)
+        price_change_h1 = float(dex.get("price_change_h1", 0) or 0)
+        price_change_h6 = float(dex.get("price_change_h6", 0) or 0)
+
+        buy_ratio_m5 = (buys_m5 / total_m5) if total_m5 > 0 else 0.0
+        buy_ratio_h1 = (buys_h1 / total_h1) if total_h1 > 0 else 0.0
+        heat_m5_h1 = (volume_m5 / volume_h1 * 100.0) if volume_h1 > 0 else 0.0
+        avg_trade_size_m5 = (volume_m5 / total_m5) if total_m5 > 0 else 0.0
+
+        derived["buy_ratio_m5"] = round(buy_ratio_m5, 4)
+        derived["buy_ratio_h1"] = round(buy_ratio_h1, 4)
+        derived["heat_m5_h1"] = round(heat_m5_h1, 2)
+        derived["avg_trade_size_m5_usd"] = round(avg_trade_size_m5, 2)
+
+        # Early-warning score (0..10): buy pressure + rising prints + healthy heat
+        early_score = 0
+        if buy_ratio_m5 >= 0.70:
+            early_score += 3
+        if buy_ratio_h1 >= 0.65:
+            early_score += 2
+        if price_change_m5 >= 0.2:
+            early_score += 2
+        if 8 <= heat_m5_h1 <= 60:
+            early_score += 2
+        if total_m5 >= 8:
+            early_score += 1
+        early_score = max(0, min(10, early_score))
+
+        # Pump heat status (adapted to m5/h1 windows)
+        if heat_m5_h1 >= 60:
+            heat_status = "peak"
+        elif heat_m5_h1 >= 40:
+            heat_status = "hot"
+        elif heat_m5_h1 >= 20:
+            heat_status = "building"
+        else:
+            heat_status = "cold"
+
+        # Big-swap / whale cluster proxy using USD avg ticket size
+        whale_cluster = total_m5 >= 3 and avg_trade_size_m5 >= 2000 and buy_ratio_m5 >= 0.70
+
+        scanner["early_warning_score"] = early_score
+        scanner["heat_status"] = heat_status
+        scanner["whale_cluster"] = whale_cluster
+
+        # Suspicious / rug heuristics
+        suspicious_low_liq_vs_vol = bool((liq or 0) > 0 and volume_h1 > 0 and (liq / max(volume_h1, 1)) < 0.08)
+        suspicious_thin_txns = bool(total_h1 < 10 and volume_h1 > 10000)
+        suspicious_one_sided = bool(total_h1 >= 10 and (buy_ratio_h1 > 0.97 or buy_ratio_h1 < 0.03))
+        suspicious_extreme_move = bool(abs(price_change_h1) > 1000)
+
+        possible_rug = bool(
+            has_mint_authority
+            or suspicious_low_liq_vs_vol
+            or suspicious_thin_txns
+            or suspicious_one_sided
+            or suspicious_extreme_move
+            or (liq_ratio is not None and liq_ratio < 0.015)
+            or derived.get("tax_risk") == "high"
+        )
+        massive_dump = bool(price_change_h1 <= -60 or price_change_h6 <= -70)
+
+        derived["possible_rug"] = possible_rug
+        derived["massive_dump"] = massive_dump
+
+        # Flatten compatibility keys consumed by score_token()
+        token["derived_possible_rug"] = possible_rug
+        token["derived_massive_dump"] = massive_dump
+        token["derived_has_mint_authority"] = has_mint_authority
+
         if derived:
             token["derived"] = derived
+            token["scanner"] = scanner
             count += 1
 
     return count

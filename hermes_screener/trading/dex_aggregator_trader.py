@@ -4,11 +4,13 @@ DEX Aggregator Trading Bot
 Uses multiple DEX aggregators for optimal trading across Base and Solana.
 """
 
+import json
 import logging
 import os
 import sys
 import time
 from decimal import Decimal
+from pathlib import Path
 
 import requests
 from dotenv import load_dotenv
@@ -697,6 +699,14 @@ class DexAggregatorTrader:
             except Exception as e:
                 logger.error(f"Solana balance error: {e}")
         return Decimal("0")
+
+    def get_evm_balance(self) -> Decimal:
+        """Compatibility wrapper for Base native balance."""
+        return self.get_balance("base")
+
+    def get_solana_balance(self) -> Decimal:
+        """Compatibility wrapper for Solana native balance."""
+        return self.get_balance("solana")
 
     def get_token_balance(self, token_address: str, chain: str = "base") -> Decimal:
         """Get ERC20 token balance on EVM chain."""
