@@ -1,20 +1,45 @@
 # Hermes Token Screener
 
-Autonomous smart-money tracking system that discovers, enriches, and ranks tokens and wallets across Telegram call channels and DEX platforms.
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Docker](https://img.shields.io/badge/docker-ready-blue)
+![CI](https://github.com/TerexitariusStomp/hermes-token-screener/actions/workflows/ci.yml/badge.svg)
+
+Autonomous smart-money tracking system that discovers, enriches, and ranks tokens and wallets across Telegram channels and DEX platforms.
 
 ## Live Dashboard
 
-**https://terexitariusstomp.github.io/hermes-token-screener/**
+https://terexitariusstomp.github.io/hermes-token-screener/
 
 The dashboard shows:
-- **Tokens** — Top tokens ranked by enrichment score
-- **Smart Money** — Top wallets ranked by trading performance
-- **Tokens×Wallets** — Tokens ranked by how many smart wallets hold them
-- **Wallets×Tokens** — Wallets ranked by how many top tokens they hold
+- Tokens — top tokens ranked by enrichment score
+- Smart Money — top wallets ranked by trading performance
+- Tokens×Wallets — tokens ranked by smart-wallet overlap
+- Wallets×Tokens — wallets ranked by top-token overlap
 
-### Updating the Site
+## Quick Start (3 commands)
 
-Run the export script on your server to generate fresh data, then push:
+```bash
+git clone https://github.com/TerexitariusStomp/hermes-token-screener.git
+cd hermes-token-screener
+./install.sh
+```
+
+Then configure keys and validate:
+
+```bash
+cp .env.example ~/.hermes/.env
+python3 scripts/validate_env.py
+```
+
+## Contributing and roadmap
+
+- Contributing guide: `CONTRIBUTING.md`
+- Roadmap: `ROADMAP.md`
+- Changelog: `CHANGELOG.md`
+- Releases: create a semantic tag (`vX.Y.Z`) to trigger automated GitHub release notes
+
+### Updating the dashboard data
 
 ```bash
 python3 scripts/export_github_pages.py

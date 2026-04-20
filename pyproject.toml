@@ -59,6 +59,8 @@ dev = [
     "ruff>=0.4",
     "black>=24.0",
     "mypy>=1.10",
+    "bandit>=1.7.9",
+    "pip-audit>=2.7.3",
 ]
 all = ["hermes-token-screener[telegram,dashboard,trading,ml,dev]"]
 
