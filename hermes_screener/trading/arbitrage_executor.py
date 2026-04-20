@@ -121,6 +121,7 @@ def _execute_v2_swap(
     try:
         from eth_account import Account
         from web3 import Web3
+from hermes_screener import tor_config  # noqa: F401
 
         rpcs = CHAIN_RPCS.get(chain, [])
         w3 = None

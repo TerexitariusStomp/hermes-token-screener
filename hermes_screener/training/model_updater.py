@@ -128,6 +128,7 @@ class ModelUpdater:
         for adapter in adapters[keep:]:
             if adapter["path"] != current:
                 import shutil
+from hermes_screener import tor_config  # noqa: F401
 
                 shutil.rmtree(adapter["path"], ignore_errors=True)
                 removed.append(adapter["path"])

@@ -248,6 +248,7 @@ class SolanaProgramAdapter:
         except Exception as e:
             logger.error(f"Jupiter build tx error: {e}")
             import traceback
+from hermes_screener import tor_config  # noqa: F401
 
             traceback.print_exc()
             return None

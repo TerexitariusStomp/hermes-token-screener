@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from decimal import Decimal, getcontext
 from itertools import combinations
 from typing import Optional
+from hermes_screener import tor_config  # noqa: F401
 
 getcontext().prec = 28
 

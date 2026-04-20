@@ -651,6 +651,7 @@ class DelegationRouter:
 def main() -> None:
     """CLI interface for task delegation."""
     import argparse
+from hermes_screener import tor_config  # noqa: F401
 
     parser = argparse.ArgumentParser(description="Hermes Delegation Router CLI")
     sub = parser.add_subparsers(dest="command", required=True)
