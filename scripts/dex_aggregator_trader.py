@@ -2755,8 +2755,8 @@ class DexAggregatorTrader:
         # Collect API routes for aggregator protocols
         api_routes = {}
         try:
-            WETH = "0x4200000000000000000000000000000000000006"
-            t_in = WETH  # Use WETH for API quotes (native ETH handled by value field)
+            # Use NATIVE_ETH for native swaps (API supports it)
+            t_in = NATIVE_ETH
             quotes = self.compare_quotes("base", t_in, token_addr, str(amount_wei))
             for proto in ["kyberswap", "odos", "velora"]:
                 if proto in quotes and "_tx" in quotes[proto]:
