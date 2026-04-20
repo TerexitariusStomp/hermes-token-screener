@@ -4,14 +4,18 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 
-COPY pyproject.toml .
-RUN pip install --no-cache-dir \
-    pydantic pydantic-settings structlog prometheus-client rich httpx \
-    fastapi uvicorn
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY hermes_screener/ hermes_screener/
+COPY scripts/ scripts/
 
-VOLUME ["/root/.hermes/data", "/root/.hermes/logs"]
+# Create directories for data
+RUN mkdir -p /app/.hermes/data /app/.hermes/logs
+
+# Set environment variables
+ENV HERMES_HOME=/app
+ENV PYTHONPATH=/app
 
 EXPOSE 8080
 
