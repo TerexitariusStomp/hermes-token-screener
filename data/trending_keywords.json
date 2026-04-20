@@ -1,0 +1,133 @@
+{
+  "generated_at": 1776229907.3582034,
+  "generated_at_iso": "2026-04-15T05:11:47Z",
+  "window_hours": 1.0,
+  "texts_analyzed": 1051,
+  "keywords": [
+    {
+      "keyword": "ass",
+      "count": 56,
+      "type": "token"
+    },
+    {
+      "keyword": "unc",
+      "count": 44,
+      "type": "word"
+    },
+    {
+      "keyword": "orelha",
+      "count": 41,
+      "type": "token"
+    },
+    {
+      "keyword": "jit",
+      "count": 40,
+      "type": "token"
+    },
+    {
+      "keyword": "justice",
+      "count": 40,
+      "type": "word"
+    },
+    {
+      "keyword": "a super sendor",
+      "count": 38,
+      "type": "token"
+    },
+    {
+      "keyword": "super",
+      "count": 38,
+      "type": "word"
+    },
+    {
+      "keyword": "sendor",
+      "count": 38,
+      "type": "word"
+    },
+    {
+      "keyword": "super sendor",
+      "count": 38,
+      "type": "bigram"
+    },
+    {
+      "keyword": "justice for orelha",
+      "count": 36,
+      "type": "token"
+    },
+    {
+      "keyword": "justice orelha",
+      "count": 36,
+      "type": "bigram"
+    },
+    {
+      "keyword": "mayhem",
+      "count": 26,
+      "type": "word"
+    },
+    {
+      "keyword": "boar",
+      "count": 22,
+      "type": "word"
+    },
+    {
+      "keyword": "humanity",
+      "count": 20,
+      "type": "word"
+    },
+    {
+      "keyword": "test",
+      "count": 19,
+      "type": "token"
+    },
+    {
+      "keyword": "aunt",
+      "count": 18,
+      "type": "token"
+    },
+    {
+      "keyword": "hello",
+      "count": 17,
+      "type": "token"
+    },
+    {
+      "keyword": "rip",
+      "count": 17,
+      "type": "word"
+    },
+    {
+      "keyword": "flying",
+      "count": 16,
+      "type": "word"
+    },
+    {
+      "keyword": "cancer",
+      "count": 16,
+      "type": "word"
+    },
+    {
+      "keyword": "yn",
+      "count": 14,
+      "type": "token"
+    },
+    {
+      "keyword": "cat",
+      "count": 14,
+      "type": "word"
+    },
+    {
+      "keyword": "hippo",
+      "count": 14,
+      "type": "word"
+    },
+    {
+      "keyword": "killing",
+      "count": 14,
+      "type": "word"
+    },
+    {
+      "keyword": "soda",
+      "count": 14,
+      "type": "word"
+    }
+  ]
+}

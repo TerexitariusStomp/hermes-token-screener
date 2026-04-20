@@ -22,6 +22,13 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 # Import the Telegram client
 from telethon import TelegramClient
+from token_discovery_shared import (
+    ensure_discovered_tokens_table,
+    insert_discovered_token,
+    lookup_token_address,
+)
+
+from hermes_screener.config import settings
 
 # Configuration
 SESSION_PATH = Path.home() / ".hermes" / ".telegram_session" / "hermes_user"
@@ -38,7 +45,7 @@ class SimpleTokenDiscovery:
         self.channel = None
         self.db_conn = None
 
-    def get_token_address_from_name(self, token_name: str) -> Dict:
+    def get_token_address_from_name(self, token_name: str) -> dict:
         """Get token address from token name using DexScreener API."""
         result = {
             "name": token_name,
@@ -81,7 +88,7 @@ class SimpleTokenDiscovery:
 
         return result
 
-    async def get_trending_tokens(self) -> List[str]:
+    async def get_trending_tokens(self) -> list[str]:
         """Get trending token names from Rick Burp Bot."""
         token_names = []
 
@@ -97,10 +104,7 @@ class SimpleTokenDiscovery:
 
         # Find the RickBurp channel
         async for dialog in self.client.iter_dialogs():
-            if (
-                hasattr(dialog.entity, "title")
-                and "rickburp" in dialog.entity.title.lower()
-            ):
+            if hasattr(dialog.entity, "title") and "rickburp" in dialog.entity.title.lower():
                 self.channel = dialog.entity
                 print(f"Found channel: {self.channel.title} (ID: {self.channel.id})")
                 break
@@ -173,7 +177,7 @@ class SimpleTokenDiscovery:
         self.db_conn.commit()
         print("Database initialized")
 
-    def store_token(self, token_info: Dict, discovery_method: str = "rick_bot"):
+    def store_token(self, token_info: dict, discovery_method: str = "rick_bot"):
         """Store token information in database."""
         cursor = self.db_conn.cursor()
         cursor.execute(
@@ -231,7 +235,7 @@ class SimpleTokenDiscovery:
                 self.store_token(token_info)
                 discovered_tokens.append(token_info)
             else:
-                print(f"  No address found")
+                print("  No address found")
 
             # Small delay to avoid rate limits
             if i < len(token_names) - 1:
@@ -249,9 +253,7 @@ class SimpleTokenDiscovery:
         if discovered_tokens:
             print("\nDiscovered Tokens:")
             for i, token in enumerate(discovered_tokens, 1):
-                print(
-                    f"{i:2d}. {token['name']:15} | {token['address'][:20]}... | {token.get('chain', 'N/A')}"
-                )
+                print(f"{i:2d}. {token['name']:15} | {token['address'][:20]}... | {token.get('chain', 'N/A')}")
 
         # Close database
         if self.db_conn:

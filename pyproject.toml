@@ -45,6 +45,9 @@ trading = [
     "solders>=0.21",
     "solana>=0.30",
     "PyYAML>=6.0",
+    "py-clob-client>=0.25.0",
+    "py-clob-client-v2>=1.0.0",
+    "pmxt>=2.31.1",
 ]
 ml = [
     "torch>=2.0",
@@ -60,6 +63,8 @@ dev = [
     "ruff>=0.4",
     "black>=24.0",
     "mypy>=1.10",
+    "bandit>=1.7.9",
+    "pip-audit>=2.7.3",
 ]
 all = ["hermes-token-screener[telegram,dashboard,trading,ml,dev,worker]"]
 worker = ["fastapi>=0.110", "uvicorn[standard]>=0.29"]
@@ -75,10 +80,11 @@ hermes-screener = "hermes_screener.cli:main"
 packages = ["hermes_screener"]
 
 [tool.black]
-target-version = ["py311"]
+target-version = ["py312"]
+line-length = 120
+
 
 [tool.ruff]
-target-version = "py310"
 line-length = 120
 
 [tool.ruff.lint]
@@ -90,7 +96,12 @@ ignore = ["E501", "E722", "N806", "B905", "SIM105", "SIM108", "SIM115"]
 "hermes_screener/agents/*.py" = ["UP035", "SIM103", "F841"]
 "hermes_screener/memory/*.py" = ["F401", "F841"]
 "hermes_screener/models/*.py" = ["F401"]
-"tests/*.py" = ["SIM102"]
+"tests/*.py" = ["SIM102", "B011", "N805", "N802", "N803"]
+"scripts/*.py" = [
+    "UP006", "UP035", "UP045", "I001", "F541", "F841", "F401",
+    "SIM102", "SIM113", "SIM114", "N803", "N805", "N802",
+    "E402", "E741", "B007", "B033", "W293", "W291",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

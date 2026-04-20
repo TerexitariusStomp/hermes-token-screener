@@ -25,9 +25,7 @@ def _fresh(**kw):
     """Create Settings with no env file."""
     from hermes_screener.config import Settings
 
-    return Settings(
-        hermes_home=kw.pop("hermes_home", "/tmp/test_hermes"), _env_file=None, **kw
-    )
+    return Settings(hermes_home=kw.pop("hermes_home", "/tmp/test_hermes"), _env_file=None, **kw)
 
 
 def test_defaults():
@@ -59,12 +57,7 @@ def test_env_override(tmp_path):
     from hermes_screener.config import Settings
 
     env_file = tmp_path / ".env"
-    env_file.write_text(
-        "top_n=50\n"
-        "max_enrich=100\n"
-        "coingecko_api_key=test_key_123\n"
-        "log_level=DEBUG\n"
-    )
+    env_file.write_text("top_n=50\n" "max_enrich=100\n" "coingecko_api_key=test_key_123\n" "log_level=DEBUG\n")
     s = Settings(hermes_home=tmp_path, _env_file=str(env_file))
     assert s.top_n == 50
     assert s.max_enrich == 100
@@ -93,9 +86,7 @@ def test_api_key_masked():
 
 def test_scoring_weights_sum():
     s = _fresh()
-    total = (
-        s.w_channel + s.w_freshness + s.w_low_fdv + s.w_volume + s.w_txns + s.w_momentum
-    )
+    total = s.w_channel + s.w_freshness + s.w_low_fdv + s.w_volume + s.w_txns + s.w_momentum
     assert total == 100.0
 
 

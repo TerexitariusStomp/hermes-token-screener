@@ -39,6 +39,8 @@ from hermes_screener.async_enrichment import run_async_enrichment
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 from hermes_screener.metrics import start_metrics_server
+from hermes_screener.revised_scoring import revised_score_token
+from hermes_screener.training import ExperienceCollector
 
 # ── Config (from centralized settings) ───────────────────────────────────────
 DB_PATH = settings.db_path
@@ -71,6 +73,7 @@ ZERION_API_KEY = settings.zerion_api_key
 # ── Logging + Metrics ────────────────────────────────────────────────────────
 log = get_logger("token_enricher")
 start_metrics_server()
+collector = ExperienceCollector(source_script="token_enricher")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -253,6 +256,32 @@ def score_token(token: dict) -> tuple[float, list[str], list[str]]:
     if all_positive and pc_h1 and pc_h6 and pc_h24:
         score += 2  # bonus for all-positive
 
+    # ── 6.5. MICROSTRUCTURE SCANNER SIGNALS (0-10) ──
+    # Derived from live trade-flow heuristics inspired by memecoin scanner workflows.
+    scanner = token.get("scanner", {}) or {}
+    ew_score = scanner.get("early_warning_score", 0) or 0
+    heat_status = scanner.get("heat_status", "") or ""
+    whale_cluster = bool(scanner.get("whale_cluster", False))
+
+    if ew_score >= 8:
+        score += 5
+    elif ew_score >= 6:
+        score += 3
+    elif ew_score >= 4:
+        score += 1
+
+    if heat_status == "hot":
+        score += 2
+    elif heat_status == "building":
+        score += 1
+    elif heat_status == "peak":
+        score -= 2
+        negatives.append("overheated flow")
+
+    if whale_cluster:
+        score += 3
+        positives.append("whale cluster")
+
     # ── 7. AGE PENALTY (older = harder to move) ──
     if age_hours is not None:
         if age_hours > 720:
@@ -297,10 +326,9 @@ def score_token(token: dict) -> tuple[float, list[str], list[str]]:
             negatives.append(f"down h24 ({pc_h24:+.0f}%)")
 
     # Death spiral
-    if vol_h24 > 0 and vol_h1 < vol_h24 * 0.005:
-        if pc_h6 is not None and pc_h6 < -10:
-            score *= 0.3
-            negatives.append("death spiral")
+    if vol_h24 > 0 and vol_h1 < vol_h24 * 0.005 and pc_h6 is not None and pc_h6 < -10:
+        score *= 0.3
+        negatives.append("death spiral")
 
     # ── MULTIPLIERS (positive only) ──
     if token.get("etherscan_verified"):
@@ -379,10 +407,9 @@ def score_token(token: dict) -> tuple[float, list[str], list[str]]:
             score *= 0.3
             negatives.append(f"HEAVY SELLS ({sell_ratio:.0%})")
 
-    if vol_h24 > 0 and vol_h1 > 0:
-        if vol_h1 < vol_h24 * STAGNANT_VOLUME_RATIO:
-            score *= 0.5
-            negatives.append("stagnant volume")
+    if vol_h24 > 0 and vol_h1 > 0 and vol_h1 < vol_h24 * STAGNANT_VOLUME_RATIO:
+        score *= 0.5
+        negatives.append("stagnant volume")
 
     buys_h6 = (dex.get("txns_h6", {}) or {}).get("buys", 0) or 0
     sells_h6 = (dex.get("txns_h6", {}) or {}).get("sells", 0) or 0
@@ -469,9 +496,7 @@ class EnricherResult:
 
         for name, result in self.layers.items():
             status = "✅" if result["success"] else "❌"
-            lines.append(
-                f"  {status} {name}: {result['enriched']}/{result['total']} ({result['elapsed']:.1f}s)"
-            )
+            lines.append(f"  {status} {name}: {result['enriched']}/{result['total']} ({result['elapsed']:.1f}s)")
             if result["error"]:
                 lines.append(f"    Error: {result['error']}")
 
@@ -498,9 +523,7 @@ class SocialSignalEnricher:
                     enriched_count += 1
             except Exception as e:
                 # Log error but continue with other tokens
-                log.debug(
-                    f"Social enrichment failed for {token.get('symbol', '?')}: {e}"
-                )
+                log.debug(f"Social enrichment failed for {token.get('symbol', '?')}: {e}")
                 continue
 
         return enriched_count, len(tokens)
@@ -550,9 +573,7 @@ class SocialSignalEnricher:
         if signals:
             # Calculate overall social momentum
             telegram_score = signals.get("social_score", 0)
-            twitter_score = (
-                signals.get("twitter_activity", 0) * 0.5
-            )  # Weight Twitter less
+            twitter_score = signals.get("twitter_activity", 0) * 0.5  # Weight Twitter less
 
             total_momentum = telegram_score + twitter_score
             if total_momentum >= 100:
@@ -595,9 +616,7 @@ def run_enricher():
 
     try:
         # Run async enrichment
-        enriched, layer_results = asyncio.run(
-            run_async_enrichment(candidates[:MAX_ENRICH], max_enrich=MAX_ENRICH)
-        )
+        enriched, layer_results = asyncio.run(run_async_enrichment(candidates[:MAX_ENRICH], max_enrich=MAX_ENRICH))
 
         # Record results from async enrichment
         for result in layer_results:
@@ -624,10 +643,59 @@ def run_enricher():
     # Score tokens
     log.info("Scoring tokens...")
     for token in enriched:
-        score, positives, negatives = score_token(token)
+        try:
+            collector.record_token_enriched(token)
+        except Exception:
+            pass
+        score, positives, negatives = revised_score_token(token)
         token["score"] = score
         token["positives"] = positives
         token["negatives"] = negatives
+        try:
+            collector.record_token_scored(token, score, {"positives": positives, "negatives": negatives})
+        except Exception:
+            pass
+
+    # Filter duplicate token names per chain - keep only top-scoring one per (name, chain)
+    def filter_duplicate_names(tokens: list[dict]) -> list[dict]:
+        """Filter duplicate token names per chain, keeping only the highest-scoring one."""
+        from collections import defaultdict
+
+        # Group tokens by (symbol, chain)
+        groups = defaultdict(list)
+        for token in tokens:
+            symbol = (token.get("symbol") or token.get("dex", {}).get("symbol") or "").upper().strip()
+            chain = token.get("chain", "").lower()
+            if symbol and chain:
+                groups[(symbol, chain)].append(token)
+
+        # Keep only the highest-scoring token per group
+        filtered_tokens = []
+        for (symbol, chain), group_tokens in groups.items():
+            if len(group_tokens) == 1:
+                filtered_tokens.append(group_tokens[0])
+            else:
+                # Sort by score (descending) and keep the top one
+                group_tokens.sort(key=lambda t: t.get("score", 0), reverse=True)
+                top_token = group_tokens[0]
+                filtered_tokens.append(top_token)
+
+                # Log the filtering
+                duplicates = group_tokens[1:]
+                if duplicates:
+                    log.info(
+                        "filtered_duplicate_names",
+                        symbol=symbol,
+                        chain=chain,
+                        kept_score=top_token.get("score", 0),
+                        filtered_count=len(duplicates),
+                        filtered_scores=[t.get("score", 0) for t in duplicates],
+                    )
+
+        return filtered_tokens
+
+    # Apply duplicate name filtering before final sorting
+    enriched = filter_duplicate_names(enriched)
 
     # Sort by score
     enriched.sort(key=lambda t: t.get("score", 0), reverse=True)
@@ -648,13 +716,7 @@ def run_enricher():
         json.dump(output, f, indent=2, default=str)
 
     # Save as Phase 1 (initial enrichment scores)
-    phase1_path = (
-        Path.home()
-        / ".hermes"
-        / "data"
-        / "token_screener"
-        / "top100_phase1_initial.json"
-    )
+    phase1_path = Path.home() / ".hermes" / "data" / "token_screener" / "top100_phase1_initial.json"
     with open(phase1_path, "w") as f:
         json.dump({**output, "phase": "phase1_initial"}, f, indent=2, default=str)
 
@@ -693,12 +755,8 @@ def run_enricher():
 def main():
 
     parser = argparse.ArgumentParser(description="Token enrichment pipeline")
-    parser.add_argument(
-        "--max-tokens", type=int, default=None, help="Max tokens to enrich"
-    )
-    parser.add_argument(
-        "--min-channels", type=int, default=None, help="Min channel count"
-    )
+    parser.add_argument("--max-tokens", type=int, default=None, help="Max tokens to enrich")
+    parser.add_argument("--min-channels", type=int, default=None, help="Min channel count")
     parser.add_argument(
         "--async-mode",
         action="store_true",
@@ -730,12 +788,9 @@ def main():
             return 1
         enriched, layer_results = run_async_enrichment_sync(candidates, MAX_ENRICH)
         if enriched:
-            scored = score_and_output(enriched)
+            scored = enriched
             elapsed = time.time() - start
-            log.info(
-                f"\nAsync completed in {elapsed:.1f}s: {len(enriched)} tokens enriched, "
-                f"{len(scored)} scored"
-            )
+            log.info(f"\nAsync completed in {elapsed:.1f}s: {len(enriched)} tokens enriched, " f"{len(scored)} scored")
             result = {"status": "ok", "tokens": len(enriched), "scored": len(scored)}
         else:
             result = {"status": "no_enrichment"}

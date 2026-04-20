@@ -1,246 +1,253 @@
-# Hermes Token Screener
+# Hermes Token Screener Dashboard
 
-Autonomous smart-money tracking system that discovers, enriches, and ranks tokens and wallets across Telegram call channels and DEX platforms.
+Multi-chain token screening and smart money tracking dashboard with automatic HTTPS deployment.
 
-## Live Dashboard
+## 🚀 Quick Start
 
-**https://terexitariusstomp.github.io/hermes-token-screener/**
-
-The dashboard shows:
-- **Tokens** — Top tokens ranked by enrichment score
-- **Smart Money** — Top wallets ranked by trading performance
-- **Tokens×Wallets** — Tokens ranked by how many smart wallets hold them
-- **Wallets×Tokens** — Wallets ranked by how many top tokens they hold
-
-### Updating the Site
-
-Run the export script on your server to generate fresh data, then push:
+### Option 1: One-Command Deployment (Recommended)
 
 ```bash
-python3 scripts/export_github_pages.py
-git add docs/data/
-git commit -m "update site data"
-git push
+# Clone the repository
+git clone https://github.com/TerexitariusStomp/hermes-token-screener.git
+cd hermes-token-screener
+
+# Run quick start (installs Docker if needed)
+sudo ./quickstart.sh
 ```
 
-## Data Sources
-
-[Telegram Call Channels](TELEGRAM_CHANNELS.md) — 49 monitored channels
-
-## Architecture
-
-<img src="hermes-token-screener-full-architecture.svg" alt="Hermes Token Screener Full Codebase Architecture" width="100%"/>
-
-## Scripts
-
-| Script | Purpose | Cron | Runtime |
-|--------|---------|------|---------|
-| `telegram_scraper.py` | Harvest contract addresses from 62 Telegram chats | `*/10 * * * *` | ~30s |
-| `token_discovery.py` | Pull Dexscreener boosted + new profiles | `*/30 * * * *` | ~2s |
-| `token_enricher.py` | 12-layer enrichment + scoring | `10 * * * *` | ~8 min |
-| `wallet_tracker.py` | Discover + score wallets from top tokens | `15 * * * *` | ~15s |
-| `smart_money_research.py` | Pattern learning + leaderboard | on-demand | ~5s |
-| `db_maintenance.py` | Prune to top 1000 tokens + wallets | `0 0 * * *` | ~1s |
-
-## Token Enrichment (12 Layers)
-
-| Layer | Source | Data | Required |
-|-------|--------|------|----------|
-| 0 | Dexscreener | Volume, txns, FDV, liquidity, price | Yes |
-| 1 | Surf | Social sentiment, mindshare, trending | No |
-| 2 | GoPlus v2 | EVM security (honeypot, tax, mint) | No |
-| 3 | RugCheck | Solana security (rug score, insiders) | No |
-| 4 | Etherscan | Contract verification | No |
-| 5 | De.Fi | Security analysis, holder concentration | No |
-| 6 | Derived | Computed signals from Dexscreener data | No |
-| 7 | CoinGecko | Market data, exchange listings | No |
-| 8 | GMGN | Dev conviction, smart money, bot detection | No |
-| 9 | Social | Telegram DB + composite social score | No |
-| 10 | Zerion | Price, market cap, FDV, supply, verified | No |
-
-Each enricher is wrapped in try/except. If it fails, its fields are skipped but the pipeline continues. Only Layer 0 (Dexscreener) is required.
-
-## Token Scoring (0-100)
-
-Base score from 6 factors:
-
-| Factor | Points | Description |
-|--------|--------|-------------|
-| Social momentum | 0-35 | Cross-channel calls + Telegram velocity |
-| Freshness | 0-15 | Newer tokens score higher |
-| Low FDV | 0-15 | Lower market cap = more upside |
-| Volume | 0-24 | Absolute + accelerating volume |
-| Transactions | 0-15 | Txn count + buy-heavy ratio |
-| Price momentum | 0-10 | h1/h6/h24 price direction |
-
-Multipliers: verified contract (+20%), dev holding (+25%), LP burned (+15%), smart wallets >20 (+15%), BINANCE listed (+10%), CoinGecko low risk (+5%)
-
-**Steep decline penalties** (price collapse = unlikely to recover):
-
-| Condition | Penalty |
-|-----------|---------|
-| h1 < -60% | score × 0.1 (rug in progress) |
-| h1 < -40% | score × 0.2 |
-| h1 < -25% | score × 0.5 |
-| h6 < -70% | score × 0.1 (dead) |
-| h6 < -50% | score × 0.2 (crashed) |
-| h6 < -30% | score × 0.5 (declining) |
-| Death spiral (vol dying + declining) | score × 0.3 |
-
-## Wallet Scoring (0-100)
-
-| Factor | Points | Description |
-|--------|--------|-------------|
-| Realized PNL | 0-35 | Profit TAKEN, not paper gains |
-| Trade Count | 0-20 | Active wallets = established traders |
-| Win Rate | 0-10 | Profitable tokens / total tokens |
-| ROI | 0-10 | Average profit_change per token |
-| Entry Timing | 0-8 | Earlier = better |
-| Wallet Age | 0-5 | Longer = more established |
-| Smart Tag | 0-5 | TOP1, KOL, SMART = better |
-| Insider Bonus | 0-5 | MORE insider flags = BETTER |
-| DeFi + Portfolio | 0-5 | Staked/borrowed positions |
-| Social Presence | 0-2 | Linked Twitter = credibility |
-
-**Penalties:**
-
-| Condition | Penalty |
-|-----------|---------|
-| Round trips (profit without selling) | -15 each |
-| Copy trade (always follows others) | -20 |
-| Rug history (rugged anyone) | -100 each |
-
-**Insider flags BOOST the score** — insiders know things, following them = alpha.
-
-## Pattern Detection
-
-| Pattern | Description |
-|---------|-------------|
-| SNIPER | Exits quickly, high sell ratio (>0.8) |
-| SWING | Moderate holds, partial exits (0.4-0.8) |
-| HOLDER | Few sells, long holds (<0.4) |
-| DEGEN | >50 trades across >10 tokens |
-| INSIDER | Flagged by heuristics (high ROI + few trades) |
-| ACTIVE | >20 trades |
-
-## Setup
-
-### Prerequisites
+### Option 2: Manual Deployment
 
 ```bash
-# Node.js (for GMGN CLI)
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
-sudo apt install -y nodejs
+# Clone the repository
+git clone https://github.com/TerexitariusStomp/hermes-token-screener.git
+cd hermes-token-screener
 
-# Surf CLI
-curl -sSf https://agent.asksurf.ai/cli/releases/install.sh | bash
-
-# Python dependencies
-pip install telethon requests python-dotenv
+# Deploy with Docker Compose
+./deploy.sh
 ```
 
-### API Keys
-
-Copy `.env.example` to `~/.hermes/.env` and fill in:
+### Option 3: Docker Compose Only
 
 ```bash
-cp .env.example ~/.hermes/.env
+# Clone and deploy
+git clone https://github.com/TerexitariusStomp/hermes-token-screener.git
+cd hermes-token-screener
+
+# Create directories
+mkdir -p data logs caddy-data caddy-config nginx-data
+
+# Start services
+docker-compose up -d
 ```
 
-Required keys:
+## 🌐 Access Your Dashboard
 
-| Key | Service | Free? |
-|-----|---------|-------|
-| `TG_API_ID` / `TG_API_HASH` | Telegram (my.telegram.org) | Yes |
-| `GMGN_API_KEY` | GMGN (gmgn.ai/ai) | Yes |
-| `ZERION_API_KEY` | Zerion (developers.zerion.io) | Yes |
-| `ETHERSCAN_API_KEY` | Etherscan (etherscan.io/apis) | Yes |
-| `DEFI_API_KEY` | De.Fi (de.fi) | Yes |
+After deployment, your dashboard will be available at:
 
-Optional:
+- **HTTP**: `http://YOUR_SERVER_IP`
+- **HTTPS**: `https://YOUR_SERVER_IP` (if domain configured)
 
-| Key | Service |
-|-----|---------|
-| `HELIUS_API_KEY` | Helius (Solana webhooks) |
-| `ALCHEMY_API_KEY` | Alchemy (EVM webhooks) |
-| `TELEGRAM_BOT_TOKEN` | Notifications |
+### Default URLs:
+- **Dashboard**: `http://YOUR_SERVER_IP/`
+- **Wallets**: `http://YOUR_SERVER_IP/wallets`
+- **Token Detail**: `http://YOUR_SERVER_IP/token/{address}`
+- **API**: `http://YOUR_SERVER_IP/api/top100`
+- **Health Check**: `http://YOUR_SERVER_IP/health`
 
-### Run
+## 🏗️ Architecture
 
+### Components:
+1. **Hermes Dashboard** (FastAPI): Backend API and web interface
+2. **Caddy**: Reverse proxy with automatic HTTPS (Let's Encrypt)
+3. **Nginx**: Alternative reverse proxy (optional)
+4. **Docker Compose**: Container orchestration
+
+### Data Flow:
+```
+User → Caddy (HTTPS) → FastAPI Dashboard → Token Data
+```
+
+## ⚙️ Configuration
+
+### Environment Variables (.env file):
 ```bash
-# Test individual scripts
-python3 telegram_scraper.py --dry-run
-python3 token_discovery.py
-python3 token_enricher.py --max-tokens 20
-python3 wallet_tracker.py --min-score 5
-python3 smart_money_research.py --leaderboard
+# Domain configuration (for HTTPS)
+DOMAIN=hermes-token-screener.com
+EMAIL=hermeticsintellegencia@proton.me
 
-# Or set up cron (recommended)
+# Application settings
+PORT=8080
+HERMES_HOME=/app
+PYTHONPATH=/app
 ```
 
-### Cron Setup
+### Custom Domain Setup:
+1. Point your domain to your server IP
+2. Update `.env` file with your domain:
+   ```bash
+   DOMAIN=your-domain.com
+   EMAIL=your-email@example.com
+   ```
+3. Restart services:
+   ```bash
+   docker-compose down
+   docker-compose up -d
+   ```
 
+## 🔧 Management
+
+### View Logs:
 ```bash
-crontab -e
+# All services
+docker-compose logs -f
+
+# Specific service
+docker-compose logs -f hermes-dashboard
+docker-compose logs -f caddy
 ```
 
-Add:
-
-```cron
-# Telegram contract harvesting (every 10 min)
-*/10 * * * * /home/$USER/.hermes/scripts/telegram_scraper.py >> /home/$USER/.hermes/logs/tg_contract_scraper.log 2>&1
-
-# Dexscreener token discovery (every 30 min)
-*/30 * * * * /home/$USER/.hermes/scripts/token_discovery.py >> /home/$USER/.hermes/logs/token_discovery.log 2>&1
-
-# Token enrichment (hourly at :10)
-10 * * * * /home/$USER/.hermes/scripts/token_enricher.py >> /home/$USER/.hermes/logs/token_screener.log 2>&1
-
-# Wallet tracking (hourly at :15)
-15 * * * * /home/$USER/.hermes/scripts/wallet_tracker.py >> /home/$USER/.hermes/logs/wallet_tracker.log 2>&1
-
-# Database maintenance (daily at midnight)
-0 0 * * * /home/$USER/.hermes/scripts/db_maintenance.py >> /home/$USER/.hermes/logs/db_maintenance.log 2>&1
-```
-
-### Database Maintenance
-
-The `db_maintenance.py` script runs daily to keep databases lean:
-
-- **Contracts**: Keeps top 1000 by `(channel_count × mentions)`. Tokens younger than 7 days are never pruned.
-- **Wallets**: Keeps top 1000 by `wallet_score`. Orphaned entries (tokens no longer in DB) are cleaned.
-
+### Stop Services:
 ```bash
-# Check current size
-python3 db_maintenance.py --dry-run
-
-# Override limits
-python3 db_maintenance.py --max-tokens 2000 --max-wallets 500
+docker-compose down
 ```
 
-## Data Flow
-
-```
-Every 10 min:  Telegram chats → central_contracts.db (dedup + increment)
-Every 30 min:  Dexscreener   → central_contracts.db (boosted + profiles)
-Hourly :10:    central_contracts.db → 12-layer enrichment → top100.json
-Hourly :15:    top100.json → wallet discovery → wallet_tracker.db
-Daily 00:00:   Prune both DBs to top 1000
+### Restart Services:
+```bash
+docker-compose restart
 ```
 
-## Rate Limits
+### Update Application:
+```bash
+git pull
+docker-compose build
+docker-compose up -d
+```
 
-| API | Delay | Notes |
-|-----|-------|-------|
-| Dexscreener | 1.0s | 300 tokens = 5 min |
-| RugCheck | 0.5s | Free, Solana only |
-| GoPlus v2 | 1.0s | EVM chains only |
-| CoinGecko | 1.5s | Free tier |
-| GMGN CLI | 0.5s | 2 calls per token |
-| Zerion | 1.5s | Basic auth |
-| De.Fi | 3.0s | GraphQL, 20 req/min |
-| Etherscan | 0.25s | V2 API |
+## 📊 API Endpoints
 
-## License
+### Main Endpoints:
+- `GET /` - Main dashboard
+- `GET /wallets` - Wallet tracking
+- `GET /token/{address}` - Token detail page
+- `GET /wallet/{address}` - Wallet detail page
+- `GET /health` - Health check
+- `GET /api/top100` - Top 100 tokens API
+- `GET /api/wallets` - Wallets API
 
-MIT
+### Example API Call:
+```bash
+# Get top 100 tokens
+curl http://YOUR_SERVER_IP/api/top100
+
+# Get wallets
+curl http://YOUR_SERVER_IP/api/wallets?min_score=50
+```
+
+## 🐳 Docker Details
+
+### Docker Compose Services:
+1. **hermes-dashboard**: FastAPI application
+2. **caddy**: Reverse proxy with automatic HTTPS
+3. **nginx**: Alternative reverse proxy (optional)
+
+### Volumes:
+- `./data` → `/app/.hermes/data` (token data)
+- `./logs` → `/app/.hermes/logs` (application logs)
+- `./caddy-data` → `/data` (Caddy certificates)
+- `./caddy-config` → `/config` (Caddy configuration)
+
+### Ports:
+- **80**: HTTP (Caddy)
+- **443**: HTTPS (Caddy)
+- **8080**: Direct FastAPI access (optional)
+
+## 🔒 Security Features
+
+### Automatic HTTPS:
+- Let's Encrypt certificates
+- Automatic certificate renewal
+- HTTP to HTTPS redirect
+
+### Security Headers:
+- HSTS (Strict-Transport-Security)
+- X-Frame-Options: DENY
+- X-Content-Type-Options: nosniff
+- X-XSS-Protection: 1; mode=block
+- Referrer-Policy: strict-origin-when-cross-origin
+
+### Rate Limiting:
+- API: 10 requests/second
+- Burst: 20 requests
+
+## 🛠️ Troubleshooting
+
+### Port 80 Already in Use:
+```bash
+# Check what's using port 80
+sudo netstat -tlnp | grep :80
+
+# Stop conflicting service
+sudo systemctl stop apache2  # or nginx
+```
+
+### Permission Denied:
+```bash
+# Make scripts executable
+chmod +x deploy.sh quickstart.sh
+
+# Run with sudo
+sudo ./deploy.sh
+```
+
+### Docker Not Running:
+```bash
+# Start Docker
+sudo systemctl start docker
+
+# Enable Docker on boot
+sudo systemctl enable docker
+```
+
+### View Container Status:
+```bash
+docker-compose ps
+docker stats
+```
+
+## 📈 Monitoring
+
+### Health Checks:
+- Application: `http://localhost:8080/health`
+- Caddy: Automatic health monitoring
+- Docker: Built-in health checks
+
+### Logs:
+- Application logs: `./logs/`
+- Caddy logs: `./caddy-data/logs/`
+- Docker logs: `docker-compose logs`
+
+## 🔄 Updates
+
+### Automatic Updates:
+The dashboard automatically updates with new token data from the enrichment pipeline.
+
+### Manual Updates:
+```bash
+# Pull latest changes
+git pull
+
+# Rebuild and restart
+docker-compose build
+docker-compose up -d
+```
+
+## 📝 License
+
+MIT License - See LICENSE file for details.
+
+## 🆘 Support
+
+For issues or questions:
+- GitHub Issues: https://github.com/TerexitariusStomp/hermes-token-screener/issues
+- Email: hermeticsintellegencia@proton.me
+- Telegram: @terexserverbot

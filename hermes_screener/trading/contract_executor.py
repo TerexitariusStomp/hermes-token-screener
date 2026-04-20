@@ -224,9 +224,7 @@ class ContractExecutor:
             Web3.to_checksum_address(spender),
         ).call()
 
-    def approve_token(
-        self, token_addr: str, spender: str, amount: int = None
-    ) -> str | None:
+    def approve_token(self, token_addr: str, spender: str, amount: int = None) -> str | None:
         """Approve token spending. Returns tx_hash or None."""
         if amount is None:
             amount = MAX_UINT256
@@ -238,14 +236,10 @@ class ContractExecutor:
             return "already_approved"
 
         try:
-            tx = contract.functions.approve(
-                Web3.to_checksum_address(spender), amount
-            ).build_transaction(
+            tx = contract.functions.approve(Web3.to_checksum_address(spender), amount).build_transaction(
                 {
                     "from": self.account.address,
-                    "nonce": self.w3.eth.get_transaction_count(
-                        self.account.address, "pending"
-                    ),
+                    "nonce": self.w3.eth.get_transaction_count(self.account.address, "pending"),
                     "gas": 60000,
                     "maxFeePerGas": self.w3.eth.gas_price,
                     "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
@@ -286,14 +280,10 @@ class ContractExecutor:
 
     # ==================== UNISWAP V3 ====================
 
-    def quote_univ3(
-        self, token_in: str, token_out: str, amount_in: int, fee: int = 3000
-    ) -> int:
+    def quote_univ3(self, token_in: str, token_out: str, amount_in: int, fee: int = 3000) -> int:
         """Get quote from Uniswap V3 QuoterV2 (view function, free)."""
         chain_cfg = PROTOCOL_REGISTRY["base"]["uniswap_v3"]
-        quoter = self.w3.eth.contract(
-            address=Web3.to_checksum_address(chain_cfg["quoter"]), abi=UNIV3_QUOTER_ABI
-        )
+        quoter = self.w3.eth.contract(address=Web3.to_checksum_address(chain_cfg["quoter"]), abi=UNIV3_QUOTER_ABI)
 
         # Wrap native ETH for quoting
         t_in = token_in if token_in != NATIVE_ETH else chain_cfg["native_wrap"]
@@ -324,9 +314,7 @@ class ContractExecutor:
     ) -> str | None:
         """Execute swap on Uniswap V3 via SwapRouter. Returns tx_hash or None."""
         chain_cfg = PROTOCOL_REGISTRY["base"]["uniswap_v3"]
-        router = self.w3.eth.contract(
-            address=Web3.to_checksum_address(chain_cfg["router"]), abi=UNIV3_ROUTER_ABI
-        )
+        router = self.w3.eth.contract(address=Web3.to_checksum_address(chain_cfg["router"]), abi=UNIV3_ROUTER_ABI)
 
         t_in = token_in if token_in != NATIVE_ETH else chain_cfg["native_wrap"]
         t_out = token_out if token_out != NATIVE_ETH else chain_cfg["native_wrap"]
@@ -355,9 +343,7 @@ class ContractExecutor:
                 {
                     "from": self.account.address,
                     "value": amount_in if is_native_in else 0,
-                    "nonce": self.w3.eth.get_transaction_count(
-                        self.account.address, "pending"
-                    ),
+                    "nonce": self.w3.eth.get_transaction_count(self.account.address, "pending"),
                     "gas": 300000,
                     "maxFeePerGas": self.w3.eth.gas_price,
                     "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
@@ -427,9 +413,7 @@ class ContractExecutor:
                 {
                     "from": self.account.address,
                     "value": amount_in if is_native_in else 0,
-                    "nonce": self.w3.eth.get_transaction_count(
-                        self.account.address, "pending"
-                    ),
+                    "nonce": self.w3.eth.get_transaction_count(self.account.address, "pending"),
                     "gas": 300000,
                     "maxFeePerGas": self.w3.eth.gas_price,
                     "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
@@ -459,14 +443,10 @@ class ContractExecutor:
 
     # ==================== SUSHISWAP ====================
 
-    def swap_sushi(
-        self, token_in: str, token_out: str, amount_in: int, min_out: int
-    ) -> str | None:
+    def swap_sushi(self, token_in: str, token_out: str, amount_in: int, min_out: int) -> str | None:
         """Execute swap on SushiSwap RouteProcessor4."""
         chain_cfg = PROTOCOL_REGISTRY["base"]["sushiswap"]
-        router = self.w3.eth.contract(
-            address=Web3.to_checksum_address(chain_cfg["router"]), abi=SUSHI_ROUTER_ABI
-        )
+        router = self.w3.eth.contract(address=Web3.to_checksum_address(chain_cfg["router"]), abi=SUSHI_ROUTER_ABI)
 
         t_in = token_in if token_in != NATIVE_ETH else chain_cfg["native_wrap"]
         t_out = token_out if token_out != NATIVE_ETH else chain_cfg["native_wrap"]
@@ -489,9 +469,7 @@ class ContractExecutor:
                 {
                     "from": self.account.address,
                     "value": amount_in if is_native_in else 0,
-                    "nonce": self.w3.eth.get_transaction_count(
-                        self.account.address, "pending"
-                    ),
+                    "nonce": self.w3.eth.get_transaction_count(self.account.address, "pending"),
                     "gas": 300000,
                     "maxFeePerGas": self.w3.eth.gas_price,
                     "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
@@ -521,9 +499,7 @@ class ContractExecutor:
 
     # ==================== AGGREGATOR EXECUTION ====================
 
-    def execute_aggregator_tx(
-        self, protocol: str, tx_data: dict, value: int = 0
-    ) -> str | None:
+    def execute_aggregator_tx(self, protocol: str, tx_data: dict, value: int = 0) -> str | None:
         """Execute a pre-built aggregator transaction (KyberSwap, Odos, Velora).
         tx_data should have: 'to', 'data', 'gas' (optional)"""
         try:
@@ -532,9 +508,7 @@ class ContractExecutor:
                 "to": Web3.to_checksum_address(tx_data["to"]),
                 "data": tx_data["data"],
                 "value": value,
-                "nonce": self.w3.eth.get_transaction_count(
-                    self.account.address, "pending"
-                ),
+                "nonce": self.w3.eth.get_transaction_count(self.account.address, "pending"),
                 "gas": int(tx_data.get("gas", 300000)),
                 "maxFeePerGas": self.w3.eth.gas_price,
                 "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
@@ -564,9 +538,7 @@ class ContractExecutor:
 
     # ==================== BEST QUOTE FINDER ====================
 
-    def find_best_quote(
-        self, token_in: str, token_out: str, amount_in: int, chain: str = "base"
-    ) -> dict:
+    def find_best_quote(self, token_in: str, token_out: str, amount_in: int, chain: str = "base") -> dict:
         """Find best quote across all direct-contract protocols.
         Returns: {protocol: amount_out, ...} sorted by best output."""
         quotes = {}
@@ -635,12 +607,8 @@ class ContractExecutor:
 
             if best_out > 0:
                 min_out = int(best_out * (10000 - slippage_bps) / 10000)
-                logger.info(
-                    f"UniV3 best: fee={best_fee}, out={best_out}, min_out={min_out}"
-                )
-                result = self.swap_univ3(
-                    token_in, token_out, amount_in, min_out, best_fee
-                )
+                logger.info(f"UniV3 best: fee={best_fee}, out={best_out}, min_out={min_out}")
+                result = self.swap_univ3(token_in, token_out, amount_in, min_out, best_fee)
                 if result:
                     return result
                 logger.warning("UniV3 swap failed, trying next protocol...")
@@ -649,9 +617,7 @@ class ContractExecutor:
         if not preferred_protocol or preferred_protocol == "pancakeswap":
             logger.info("Trying PancakeSwap V3 (direct contract)...")
             # Pancake doesn't have on-chain quoter on Base, estimate from UniV3
-            est_out = self.quote_univ3(
-                token_in, token_out, amount_in, 2500
-            )  # 0.25% tier
+            est_out = self.quote_univ3(token_in, token_out, amount_in, 2500)  # 0.25% tier
             if est_out > 0:
                 min_out = int(est_out * (10000 - slippage_bps) / 10000)
                 result = self.swap_pancake(token_in, token_out, amount_in, min_out)
@@ -683,18 +649,14 @@ class ContractExecutor:
     ) -> str | None:
         """Execute KyberSwap via direct contract call using API-assembled calldata."""
         chain_cfg = PROTOCOL_REGISTRY["base"]["kyberswap"]
-        router = self.w3.eth.contract(
-            address=Web3.to_checksum_address(chain_cfg["router"]), abi=KYBER_ROUTER_ABI
-        )
+        router = self.w3.eth.contract(address=Web3.to_checksum_address(chain_cfg["router"]), abi=KYBER_ROUTER_ABI)
 
         is_native = token_in == NATIVE_ETH
         if not is_native:
             self.approve_token(token_in, chain_cfg["router"], amount_in)
 
         # KyberSwap API returns calldata directly - use execute_aggregator_tx
-        return self.execute_aggregator_tx(
-            "KyberSwap", api_calldata, value=amount_in if is_native else 0
-        )
+        return self.execute_aggregator_tx("KyberSwap", api_calldata, value=amount_in if is_native else 0)
 
     # ==================== PARASWAP V6 CONTRACT ====================
 
@@ -733,9 +695,7 @@ class ContractExecutor:
         },
     ]
 
-    def swap_paraswap_v6(
-        self, token_in: str, token_out: str, amount_in: int, min_out: int, api_tx: dict
-    ) -> str | None:
+    def swap_paraswap_v6(self, token_in: str, token_out: str, amount_in: int, min_out: int, api_tx: dict) -> str | None:
         """Execute ParaSwap V6 via direct contract. API provides route data."""
         router_addr = "0x6a000f20005980200259b80c5102003040001068"
         is_native = token_in == NATIVE_ETH
@@ -743,9 +703,7 @@ class ContractExecutor:
             self.approve_token(token_in, router_addr, amount_in)
 
         # ParaSwap API returns the full calldata
-        return self.execute_aggregator_tx(
-            "ParaSwapV6", api_tx, value=amount_in if is_native else 0
-        )
+        return self.execute_aggregator_tx("ParaSwapV6", api_tx, value=amount_in if is_native else 0)
 
     # ==================== 1INCH V6 CONTRACT ====================
 
@@ -801,18 +759,14 @@ class ContractExecutor:
         },
     ]
 
-    def swap_1inch_v6(
-        self, token_in: str, token_out: str, amount_in: int, min_out: int, api_tx: dict
-    ) -> str | None:
+    def swap_1inch_v6(self, token_in: str, token_out: str, amount_in: int, min_out: int, api_tx: dict) -> str | None:
         """Execute 1inch V6 via direct contract. API provides route calldata."""
         router_addr = "0x1111111254EEB25477B68fb85Ed929f73A960582"
         is_native = token_in == NATIVE_ETH
         if not is_native:
             self.approve_token(token_in, router_addr, amount_in)
 
-        return self.execute_aggregator_tx(
-            "1inchV6", api_tx, value=amount_in if is_native else 0
-        )
+        return self.execute_aggregator_tx("1inchV6", api_tx, value=amount_in if is_native else 0)
 
     # ==================== SMART SWAP (UPDATED) ====================
 
@@ -864,9 +818,7 @@ class ContractExecutor:
                 if best_out > 0:
                     min_out = int(best_out * (10000 - slippage_bps) / 10000)
                     logger.info(f"[UniV3] fee={best_fee} out={best_out} min={min_out}")
-                    result = self.swap_univ3(
-                        token_in, token_out, amount_in, min_out, best_fee
-                    )
+                    result = self.swap_univ3(token_in, token_out, amount_in, min_out, best_fee)
                     if result:
                         return result
 
@@ -914,9 +866,7 @@ class ContractExecutor:
 
     # ==================== MULTI-CHAIN QUOTES ====================
 
-    def quote_all_chains(
-        self, token_in_symbol: str, token_out_symbol: str, amount_wei: int
-    ) -> dict:
+    def quote_all_chains(self, token_in_symbol: str, token_out_symbol: str, amount_wei: int) -> dict:
         """Get quotes across all working chains and DEXes."""
         results = {}
 
@@ -938,9 +888,7 @@ class ContractExecutor:
 
                 try:
                     if ptype == "v2_router":
-                        c = chain_w3.eth.contract(
-                            address=Web3.to_checksum_address(addr), abi=V2_ROUTER_ABI
-                        )
+                        c = chain_w3.eth.contract(address=Web3.to_checksum_address(addr), abi=V2_ROUTER_ABI)
                         r = c.functions.getAmountsOut(
                             amount_wei,
                             [
@@ -954,9 +902,7 @@ class ContractExecutor:
                         }
 
                     elif ptype == "v3_quoter":
-                        c = chain_w3.eth.contract(
-                            address=Web3.to_checksum_address(addr), abi=UNIV3_QUOTER_ABI
-                        )
+                        c = chain_w3.eth.contract(address=Web3.to_checksum_address(addr), abi=UNIV3_QUOTER_ABI)
                         r = c.functions.quoteExactInputSingle(
                             (
                                 Web3.to_checksum_address(weth),
@@ -972,9 +918,7 @@ class ContractExecutor:
                         }
 
                     elif ptype == "curve":
-                        c = chain_w3.eth.contract(
-                            address=Web3.to_checksum_address(addr), abi=CURVE_POOL_ABI
-                        )
+                        c = chain_w3.eth.contract(address=Web3.to_checksum_address(addr), abi=CURVE_POOL_ABI)
                         r = c.functions.get_dy(1, 2, amount_wei // 10**12).call()
                         results[f"{chain}/{proto_name}"] = {"output": r, "chain": chain}
 
@@ -983,9 +927,7 @@ class ContractExecutor:
 
         return results
 
-    def best_quote_across_chains(
-        self, chain: str, token_in: str, token_out: str, amount_in: int
-    ) -> tuple[str, int]:
+    def best_quote_across_chains(self, chain: str, token_in: str, token_out: str, amount_in: int) -> tuple[str, int]:
         """Find best quote on a specific chain across all DEXes."""
         chain_w3 = self.get_chain_web3(chain)
         if not chain_w3:
@@ -1003,9 +945,7 @@ class ContractExecutor:
 
             try:
                 if ptype == "v2_router":
-                    c = chain_w3.eth.contract(
-                        address=Web3.to_checksum_address(addr), abi=V2_ROUTER_ABI
-                    )
+                    c = chain_w3.eth.contract(address=Web3.to_checksum_address(addr), abi=V2_ROUTER_ABI)
                     r = c.functions.getAmountsOut(
                         amount_in,
                         [
@@ -1018,9 +958,7 @@ class ContractExecutor:
                         best_dex = proto_name
 
                 elif ptype == "v3_quoter":
-                    c = chain_w3.eth.contract(
-                        address=Web3.to_checksum_address(addr), abi=UNIV3_QUOTER_ABI
-                    )
+                    c = chain_w3.eth.contract(address=Web3.to_checksum_address(addr), abi=UNIV3_QUOTER_ABI)
                     for fee in [500, 3000, 10000]:
                         try:
                             r = c.functions.quoteExactInputSingle(
@@ -1039,9 +977,7 @@ class ContractExecutor:
                             continue
 
                 elif ptype == "sushi_rp":
-                    c = chain_w3.eth.contract(
-                        address=Web3.to_checksum_address(addr), abi=SUSHI_RP_ABI
-                    )
+                    c = chain_w3.eth.contract(address=Web3.to_checksum_address(addr), abi=SUSHI_RP_ABI)
                     r = c.functions.processRoute(
                         Web3.to_checksum_address(token_in),
                         amount_in,

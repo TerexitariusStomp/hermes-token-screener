@@ -39,9 +39,7 @@ class Gemma4QuantizedLoader:
             with open(self.config_path) as f:
                 return yaml.safe_load(f)
         except FileNotFoundError:
-            logger.warning(
-                f"Config file not found at {self.config_path}, using defaults"
-            )
+            logger.warning(f"Config file not found at {self.config_path}, using defaults")
             return {
                 "model": {
                     "name": "google/gemma-4-9b-it",
@@ -78,9 +76,7 @@ class Gemma4QuantizedLoader:
 
         quantization_config = self._get_quantization_config()
 
-        logger.info(
-            f"Loading quantized Gemma 4 model ({model_config['quantization']})..."
-        )
+        logger.info(f"Loading quantized Gemma 4 model ({model_config['quantization']})...")
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_config["name"],

@@ -1,8 +1,56 @@
-.env
-__pycache__/
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
 *.pyc
-.git/
-.pytest_cache/
-*.egg-info/
-dist/
-build/
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (will be mounted as volumes)
+data/
+logs/
+caddy-data/
+caddy-config/
+nginx-data/
+
+# Documentation
+*.md
+LICENSE
+
+# Scripts (not needed in container)
+deploy.sh
+quickstart.sh
+start.sh

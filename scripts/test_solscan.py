@@ -12,6 +12,8 @@ import hermes_screener.tor_config
 import os
 from pathlib import Path
 
+import httpx
+
 # Load environment variables
 env_path = Path(__file__).parent.parent / ".env"
 if env_path.exists():

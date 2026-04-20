@@ -13,13 +13,12 @@ import logging
 import os
 import sys
 import time
-from decimal import Decimal
 
 # Allow running from repo root
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from hermes_screener.trading.arbitrage_scanner import scan_arbitrage
 from hermes_screener.trading.arbitrage_executor import execute_arbitrage, get_eth_price_usd
+from hermes_screener.trading.arbitrage_scanner import scan_arbitrage
 
 logging.basicConfig(
     level=logging.INFO,
@@ -40,14 +39,18 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--token", default=DEFAULT_TOKEN, help="Token address to scan")
     p.add_argument("--base-token", default=DEFAULT_BASE_TOKEN, dest="base_token", help="Quote token (e.g. USDC)")
     p.add_argument("--amount-usd", type=float, default=1000.0, dest="amount_usd", help="Trade size in USD")
-    p.add_argument("--min-profit-pct", type=float, default=0.002, dest="min_profit_pct", help="Min net profit (default 0.2%%)")
+    p.add_argument(
+        "--min-profit-pct", type=float, default=0.002, dest="min_profit_pct", help="Min net profit (default 0.2%%)"
+    )
     p.add_argument("--dry-run", action="store_true", default=True, dest="dry_run", help="Simulate only (default: True)")
     p.add_argument("--live", action="store_true", default=False, help="Enable live execution (overrides --dry-run)")
     p.add_argument("--interval", type=int, default=30, help="Scan interval in seconds (default: 30)")
     p.add_argument("--gas-gwei", type=float, default=1.0, dest="gas_gwei", help="Gas price in Gwei (default: 1.0)")
     p.add_argument("--wallet", default="", help="Wallet address (required for live mode)")
     p.add_argument("--key", default="", help="Private key (required for live mode)")
-    p.add_argument("--tokens-file", default="", dest="tokens_file", help="JSON file with list of token addresses to scan")
+    p.add_argument(
+        "--tokens-file", default="", dest="tokens_file", help="JSON file with list of token addresses to scan"
+    )
     return p.parse_args()
 
 
@@ -135,7 +138,9 @@ def run_scan_cycle(
                     profit = result.get("actual_profit_usd", 0.0)
                     stats["trades_executed"] += 1
                     stats["total_profit_usd"] += profit
-                    logger.info(f"Trade SUCCESS: profit=${profit:.4f} | buy={result['tx_buy']} sell={result['tx_sell']}")
+                    logger.info(
+                        f"Trade SUCCESS: profit=${profit:.4f} | buy={result['tx_buy']} sell={result['tx_sell']}"
+                    )
                 else:
                     logger.error(f"Trade FAILED: {result.get('error')}")
             except Exception as e:
@@ -160,6 +165,7 @@ def main() -> None:
     tokens: list = [args.token]
     if args.tokens_file and os.path.isfile(args.tokens_file):
         import json
+
         with open(args.tokens_file) as f:
             extra = json.load(f)
         if isinstance(extra, list):

@@ -11,7 +11,6 @@ import json
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Union
 
 from hermes_screener.config import settings
 
@@ -19,7 +18,7 @@ from hermes_screener.config import settings
 _NODE_BIN: str | None = None
 
 
-JsonValue = Union[dict[str, "JsonValue"], list["JsonValue"], str, int, float, bool, None]
+JsonValue = dict[str, "JsonValue"] | list["JsonValue"] | str | int | float | bool | None
 
 
 def find_node() -> str:

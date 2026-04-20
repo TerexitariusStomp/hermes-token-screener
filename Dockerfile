@@ -2,16 +2,25 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    wget \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY pyproject.toml .
-RUN pip install --no-cache-dir \
-    pydantic pydantic-settings structlog prometheus-client rich httpx \
-    fastapi uvicorn
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy application code (includes data/ for bundled data)
 COPY hermes_screener/ hermes_screener/
+COPY scripts/ scripts/
 
-VOLUME ["/root/.hermes/data", "/root/.hermes/logs"]
+# Set environment variables - HERMES_HOME points to hermes_screener/
+# so settings.db_path -> /app/hermes_screener/data/central_contracts.db
+ENV HERMES_HOME=/app/hermes_screener
+ENV PYTHONPATH=/app
 
 EXPOSE 8080
 

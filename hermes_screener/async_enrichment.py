@@ -92,10 +92,7 @@ class AsyncDexscreenerEnricher:
         client: httpx.AsyncClient,
     ) -> tuple[list[dict], int]:
         """Enrich a batch of tokens with Dexscreener data."""
-        tasks = [
-            self._enrich_one(client, token, i, len(tokens))
-            for i, token in enumerate(tokens)
-        ]
+        tasks = [self._enrich_one(client, token, i, len(tokens)) for i, token in enumerate(tokens)]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         enriched = []
@@ -125,9 +122,7 @@ class AsyncDexscreenerEnricher:
                 if not pairs:
                     return token
 
-                best = max(
-                    pairs, key=lambda p: (p.get("liquidity", {}).get("usd", 0) or 0)
-                )
+                best = max(pairs, key=lambda p: (p.get("liquidity", {}).get("usd", 0) or 0))
                 txns = best.get("txns", {})
                 volume = best.get("volume", {})
                 price_change = best.get("priceChange", {})
@@ -160,10 +155,7 @@ class AsyncDexscreenerEnricher:
                 ds_chain = best.get("chainId", "")
                 orig_chain = token.get("chain", "")
                 reliable_sources = {"gmgn_trenches", "gmgn_trending"}
-                is_reliable = any(
-                    (token.get("last_source", "") or "").startswith(s)
-                    for s in reliable_sources
-                )
+                is_reliable = any((token.get("last_source", "") or "").startswith(s) for s in reliable_sources)
                 if ds_chain and ds_chain != orig_chain and not is_reliable:
                     token["chain"] = ds_chain
 
@@ -185,9 +177,7 @@ class AsyncDexscreenerEnricher:
             except Exception as e:
                 metrics.api_calls.labels(provider="dexscreener", status="error").inc()
                 if (idx + 1) % 50 == 0:
-                    log.warning(
-                        "dexscreener_error", idx=idx + 1, total=total, error=str(e)
-                    )
+                    log.warning("dexscreener_error", idx=idx + 1, total=total, error=str(e))
                 return token
 
     @staticmethod
@@ -329,13 +319,9 @@ async def _enrich_rugcheck(token: dict, client: httpx.AsyncClient) -> None:
         "risk_level": data.get("riskLevel"),
         "risks": data.get("risks", []),
         "insider_percentage": data.get("insiderAccounts", {}).get("percentage", 0),
-        "top_holders_pct": sum(
-            h.get("pct", 0) for h in data.get("topHolders", [])[:10]
-        ),
+        "top_holders_pct": sum(h.get("pct", 0) for h in data.get("topHolders", [])[:10]),
         "lp_locked": (
-            data.get("markets", [{}])[0].get("lp", {}).get("lpLocked", False)
-            if data.get("markets")
-            else False
+            data.get("markets", [{}])[0].get("lp", {}).get("lpLocked", False) if data.get("markets") else False
         ),
     }
 
@@ -415,9 +401,7 @@ async def _enrich_defi(token: dict, client: httpx.AsyncClient) -> None:
         return
 
     data = resp.json()
-    report = data.get("data", {}).get(
-        "authenticatedGetAccessToSmartContractSecurityDatabase", {}
-    )
+    report = data.get("data", {}).get("authenticatedGetAccessToSmartContractSecurityDatabase", {})
     if not report:
         return
 
@@ -456,9 +440,7 @@ async def _enrich_coingecko(token: dict, client: httpx.AsyncClient) -> None:
         "sentiment_up": data.get("sentiment_votes_up_percentage", 0),
         "sentiment_down": data.get("sentiment_votes_down_percentage", 0),
         "ath": data.get("market_data", {}).get("ath", {}).get("usd"),
-        "ath_change_pct": data.get("market_data", {})
-        .get("ath_change_percentage", {})
-        .get("usd"),
+        "ath_change_pct": data.get("market_data", {}).get("ath_change_percentage", {}).get("usd"),
         "exchanges": len(data.get("tickers", [])) if data.get("tickers") else 0,
         "categories": data.get("categories", []),
     }
@@ -522,9 +504,7 @@ async def _enrich_solscan(token: dict, client: httpx.AsyncClient) -> None:
             headers=headers,
             timeout=10.0,
         )
-        transfers_data = (
-            resp_transfers.json() if resp_transfers.status_code == 200 else {}
-        )
+        transfers_data = resp_transfers.json() if resp_transfers.status_code == 200 else {}
 
         token["solscan"] = {
             "name": data.get("name", ""),
@@ -593,18 +573,10 @@ async def _enrich_helius(token: dict, client: httpx.AsyncClient) -> None:
             "symbol": result.get("content", {}).get("metadata", {}).get("symbol", ""),
             "decimals": result.get("token_info", {}).get("decimals", 0),
             "supply": result.get("token_info", {}).get("supply", 0),
-            "price_per_token": result.get("token_info", {})
-            .get("price_info", {})
-            .get("price_per_token", 0),
-            "total_price": result.get("token_info", {})
-            .get("price_info", {})
-            .get("total_price", 0),
-            "currency": result.get("token_info", {})
-            .get("price_info", {})
-            .get("currency", ""),
-            "holder_count": len(
-                holders_data.get("result", {}).get("token_accounts", [])
-            ),
+            "price_per_token": result.get("token_info", {}).get("price_info", {}).get("price_per_token", 0),
+            "total_price": result.get("token_info", {}).get("price_info", {}).get("total_price", 0),
+            "currency": result.get("token_info", {}).get("price_info", {}).get("currency", ""),
+            "holder_count": len(holders_data.get("result", {}).get("token_accounts", [])),
         }
 
     except Exception:
@@ -695,9 +667,7 @@ async def _enrich_birdeye(token: dict, client: httpx.AsyncClient) -> None:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-async def _run_cli_enricher(
-    name: str, sync_fn: Callable, enriched: list
-) -> LayerResult:
+async def _run_cli_enricher(name: str, sync_fn: Callable, enriched: list) -> LayerResult:
     """Run a synchronous CLI enricher in a thread."""
     start = time.time()
     try:
@@ -819,7 +789,9 @@ async def _enrich_goldsky(token: dict, client: httpx.AsyncClient) -> None:
         return
 
     rpc_url = f"https://edge.goldsky.com/standard/evm/{chain_id}?secret={settings.goldsky_api_key}"
-    transfer_topic = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"  # Transfer(address,address,uint256)
+    transfer_topic = (
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"  # Transfer(address,address,uint256)
+    )
 
     try:
         # Get recent Transfer events for this token (last ~100 blocks)
@@ -1004,15 +976,9 @@ async def _enrich_bitquery(token: dict, client: httpx.AsyncClient) -> None:
                 {
                     "time": t.get("Block", {}).get("Time", ""),
                     "dex": t.get("Trade", {}).get("Dex", {}).get("ProtocolName", ""),
-                    "buy_symbol": t.get("Trade", {})
-                    .get("Buy", {})
-                    .get("Currency", {})
-                    .get("Symbol", ""),
+                    "buy_symbol": t.get("Trade", {}).get("Buy", {}).get("Currency", {}).get("Symbol", ""),
                     "buy_amount": t.get("Trade", {}).get("Buy", {}).get("Amount", 0),
-                    "sell_symbol": t.get("Trade", {})
-                    .get("Sell", {})
-                    .get("Currency", {})
-                    .get("Symbol", ""),
+                    "sell_symbol": t.get("Trade", {}).get("Sell", {}).get("Currency", {}).get("Symbol", ""),
                     "sell_amount": t.get("Trade", {}).get("Sell", {}).get("Amount", 0),
                     "hash": t.get("Transaction", {}).get("Hash", "")[:20],
                 }
@@ -1039,32 +1005,34 @@ async def _enrich_bitquery(token: dict, client: httpx.AsyncClient) -> None:
 
 
 async def _enrich_derived(enriched: list) -> int:
-    """Layer 6: Computed security signals (no API needed)."""
+    """Layer 6: Computed security + momentum signals (no API needed)."""
     count = 0
     for token in enriched:
         derived = {}
+        scanner = {}
+
+        dex = token.get("dex", {}) or {}
+        fdv = dex.get("fdv") or token.get("fdv")
+        liq = dex.get("liquidity_usd") or token.get("liquidity_usd")
 
         # FDV vs liquidity ratio
-        fdv = token.get("dex", {}).get("fdv") or token.get("fdv")
-        liq = token.get("dex", {}).get("liquidity_usd") or token.get("liquidity_usd")
+        liq_ratio = None
         if fdv and liq and fdv > 0:
-            ratio = liq / fdv
-            derived["liq_fdv_ratio"] = round(ratio, 4)
+            liq_ratio = liq / fdv
+            derived["liq_fdv_ratio"] = round(liq_ratio, 4)
             derived["liq_risk"] = (
                 "critical"
-                if ratio < 0.02
-                else (
-                    "high"
-                    if ratio < 0.05
-                    else "moderate" if ratio < 0.10 else "healthy"
-                )
+                if liq_ratio < 0.02
+                else ("high" if liq_ratio < 0.05 else "moderate" if liq_ratio < 0.10 else "healthy")
             )
 
-        # Tax risk (from GoPlus)
-        goplus = token.get("goplus", {})
+        # Tax + authority risk (GoPlus + GMGN)
+        goplus = token.get("goplus", {}) or {}
+        gmgn = token.get("gmgn", {}) or {}
+
+        buy_tax = float(goplus.get("buy_tax", 0) or 0)
+        sell_tax = float(goplus.get("sell_tax", 0) or 0)
         if goplus:
-            buy_tax = goplus.get("buy_tax", 0)
-            sell_tax = goplus.get("sell_tax", 0)
             if buy_tax > 0.10 or sell_tax > 0.10:
                 derived["tax_risk"] = "high"
             elif buy_tax > 0.05 or sell_tax > 0.05:
@@ -1072,8 +1040,96 @@ async def _enrich_derived(enriched: list) -> int:
             else:
                 derived["tax_risk"] = "low"
 
+        has_mint_authority = bool(goplus.get("is_mintable") or gmgn.get("has_mint_authority"))
+        derived["has_mint_authority"] = has_mint_authority
+
+        # Microstructure (adapted from memecoin.watch + dexscreener-analysis-bot)
+        txns_m5 = dex.get("txns_m5", {}) or {}
+        txns_h1 = dex.get("txns_h1", {}) or {}
+
+        buys_m5 = int(txns_m5.get("buys", 0) or 0)
+        sells_m5 = int(txns_m5.get("sells", 0) or 0)
+        buys_h1 = int(txns_h1.get("buys", 0) or 0)
+        sells_h1 = int(txns_h1.get("sells", 0) or 0)
+
+        total_m5 = buys_m5 + sells_m5
+        total_h1 = buys_h1 + sells_h1
+
+        volume_m5 = float(dex.get("volume_m5", 0) or 0)
+        volume_h1 = float(dex.get("volume_h1", 0) or 0)
+        price_change_m5 = float(dex.get("price_change_m5", 0) or 0)
+        price_change_h1 = float(dex.get("price_change_h1", 0) or 0)
+        price_change_h6 = float(dex.get("price_change_h6", 0) or 0)
+
+        buy_ratio_m5 = (buys_m5 / total_m5) if total_m5 > 0 else 0.0
+        buy_ratio_h1 = (buys_h1 / total_h1) if total_h1 > 0 else 0.0
+        heat_m5_h1 = (volume_m5 / volume_h1 * 100.0) if volume_h1 > 0 else 0.0
+        avg_trade_size_m5 = (volume_m5 / total_m5) if total_m5 > 0 else 0.0
+
+        derived["buy_ratio_m5"] = round(buy_ratio_m5, 4)
+        derived["buy_ratio_h1"] = round(buy_ratio_h1, 4)
+        derived["heat_m5_h1"] = round(heat_m5_h1, 2)
+        derived["avg_trade_size_m5_usd"] = round(avg_trade_size_m5, 2)
+
+        # Early-warning score (0..10): buy pressure + rising prints + healthy heat
+        early_score = 0
+        if buy_ratio_m5 >= 0.70:
+            early_score += 3
+        if buy_ratio_h1 >= 0.65:
+            early_score += 2
+        if price_change_m5 >= 0.2:
+            early_score += 2
+        if 8 <= heat_m5_h1 <= 60:
+            early_score += 2
+        if total_m5 >= 8:
+            early_score += 1
+        early_score = max(0, min(10, early_score))
+
+        # Pump heat status (adapted to m5/h1 windows)
+        if heat_m5_h1 >= 60:
+            heat_status = "peak"
+        elif heat_m5_h1 >= 40:
+            heat_status = "hot"
+        elif heat_m5_h1 >= 20:
+            heat_status = "building"
+        else:
+            heat_status = "cold"
+
+        # Big-swap / whale cluster proxy using USD avg ticket size
+        whale_cluster = total_m5 >= 3 and avg_trade_size_m5 >= 2000 and buy_ratio_m5 >= 0.70
+
+        scanner["early_warning_score"] = early_score
+        scanner["heat_status"] = heat_status
+        scanner["whale_cluster"] = whale_cluster
+
+        # Suspicious / rug heuristics
+        suspicious_low_liq_vs_vol = bool((liq or 0) > 0 and volume_h1 > 0 and (liq / max(volume_h1, 1)) < 0.08)
+        suspicious_thin_txns = bool(total_h1 < 10 and volume_h1 > 10000)
+        suspicious_one_sided = bool(total_h1 >= 10 and (buy_ratio_h1 > 0.97 or buy_ratio_h1 < 0.03))
+        suspicious_extreme_move = bool(abs(price_change_h1) > 1000)
+
+        possible_rug = bool(
+            has_mint_authority
+            or suspicious_low_liq_vs_vol
+            or suspicious_thin_txns
+            or suspicious_one_sided
+            or suspicious_extreme_move
+            or (liq_ratio is not None and liq_ratio < 0.015)
+            or derived.get("tax_risk") == "high"
+        )
+        massive_dump = bool(price_change_h1 <= -60 or price_change_h6 <= -70)
+
+        derived["possible_rug"] = possible_rug
+        derived["massive_dump"] = massive_dump
+
+        # Flatten compatibility keys consumed by score_token()
+        token["derived_possible_rug"] = possible_rug
+        token["derived_massive_dump"] = massive_dump
+        token["derived_has_mint_authority"] = has_mint_authority
+
         if derived:
             token["derived"] = derived
+            token["scanner"] = scanner
             count += 1
 
     return count
@@ -1115,15 +1171,9 @@ async def run_async_enrichment(
 
         if not enriched:
             log.error("dexscreener_empty", candidates=len(candidates))
-            return [], [
-                LayerResult(
-                    "Dexscreener", False, 0, total_candidates, elapsed, "no results"
-                )
-            ]
+            return [], [LayerResult("Dexscreener", False, 0, total_candidates, elapsed, "no results")]
 
-        results.append(
-            LayerResult("Dexscreener", True, dex_count, total_candidates, elapsed)
-        )
+        results.append(LayerResult("Dexscreener", True, dex_count, total_candidates, elapsed))
         log.info(
             "phase1_complete",
             enriched=dex_count,
@@ -1174,167 +1224,113 @@ async def run_async_enrichment(
         async def run_goplus():
             start = time.time()
             try:
-                ok, total = await goplus_enricher.enrich_batch(
-                    _enrich_goplus, enriched, client
-                )
+                ok, total = await goplus_enricher.enrich_batch(_enrich_goplus, enriched, client)
                 return LayerResult("GoPlus", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "GoPlus", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("GoPlus", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_rugcheck():
             start = time.time()
             try:
-                ok, total = await rugcheck_enricher.enrich_batch(
-                    _enrich_rugcheck, enriched, client
-                )
+                ok, total = await rugcheck_enricher.enrich_batch(_enrich_rugcheck, enriched, client)
                 return LayerResult("RugCheck", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "RugCheck", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("RugCheck", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_etherscan():
             start = time.time()
             try:
-                ok, total = await etherscan_enricher.enrich_batch(
-                    _enrich_etherscan, enriched, client
-                )
+                ok, total = await etherscan_enricher.enrich_batch(_enrich_etherscan, enriched, client)
                 return LayerResult("Etherscan", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "Etherscan", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("Etherscan", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_defi():
             start = time.time()
             try:
-                ok, total = await defi_enricher.enrich_batch(
-                    _enrich_defi, enriched, client
-                )
+                ok, total = await defi_enricher.enrich_batch(_enrich_defi, enriched, client)
                 return LayerResult("De.Fi", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "De.Fi", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("De.Fi", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_coingecko():
             start = time.time()
             try:
-                ok, total = await coingecko_enricher.enrich_batch(
-                    _enrich_coingecko, enriched, client
-                )
+                ok, total = await coingecko_enricher.enrich_batch(_enrich_coingecko, enriched, client)
                 return LayerResult("CoinGecko", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "CoinGecko", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("CoinGecko", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_zerion():
             start = time.time()
             try:
-                ok, total = await zerion_enricher.enrich_batch(
-                    _enrich_zerion, enriched, client
-                )
+                ok, total = await zerion_enricher.enrich_batch(_enrich_zerion, enriched, client)
                 return LayerResult("Zerion", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "Zerion", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("Zerion", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_solscan():
             start = time.time()
             try:
-                ok, total = await solscan_enricher.enrich_batch(
-                    _enrich_solscan, enriched, client
-                )
+                ok, total = await solscan_enricher.enrich_batch(_enrich_solscan, enriched, client)
                 return LayerResult("Solscan", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "Solscan", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("Solscan", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_helius():
             start = time.time()
             try:
-                ok, total = await helius_enricher.enrich_batch(
-                    _enrich_helius, enriched, client
-                )
+                ok, total = await helius_enricher.enrich_batch(_enrich_helius, enriched, client)
                 return LayerResult("Helius", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "Helius", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("Helius", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_birdeye():
             start = time.time()
             try:
-                ok, total = await birdeye_enricher.enrich_batch(
-                    _enrich_birdeye, enriched, client
-                )
+                ok, total = await birdeye_enricher.enrich_batch(_enrich_birdeye, enriched, client)
                 return LayerResult("Birdeye", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "Birdeye", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("Birdeye", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_goldrush():
             start = time.time()
             try:
-                ok, total = await goldrush_enricher.enrich_batch(
-                    _enrich_goldrush, enriched, client
-                )
+                ok, total = await goldrush_enricher.enrich_batch(_enrich_goldrush, enriched, client)
                 return LayerResult("Goldrush", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "Goldrush", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("Goldrush", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_goldsky():
             start = time.time()
             try:
-                ok, total = await goldsky_enricher.enrich_batch(
-                    _enrich_goldsky, enriched, client
-                )
+                ok, total = await goldsky_enricher.enrich_batch(_enrich_goldsky, enriched, client)
                 return LayerResult("Goldsky", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "Goldsky", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("Goldsky", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_bitquery():
             start = time.time()
             try:
-                ok, total = await bitquery_enricher.enrich_batch(
-                    _enrich_bitquery, enriched, client
-                )
+                ok, total = await bitquery_enricher.enrich_batch(_enrich_bitquery, enriched, client)
                 return LayerResult("Bitquery", True, ok, total, time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "Bitquery", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("Bitquery", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_derived():
             start = time.time()
             try:
                 count = await _enrich_derived(enriched)
-                return LayerResult(
-                    "Derived", True, count, len(enriched), time.time() - start
-                )
+                return LayerResult("Derived", True, count, len(enriched), time.time() - start)
             except Exception as e:
-                return LayerResult(
-                    "Derived", False, 0, len(enriched), time.time() - start, str(e)
-                )
+                return LayerResult("Derived", False, 0, len(enriched), time.time() - start, str(e))
 
         # Surf, GMGN — CLI-based, run in threads
         async def run_surf():
             try:
                 from token_enricher import SurfEnricher
 
-                return await _run_cli_enricher(
-                    "Surf", lambda t: SurfEnricher().enrich_batch(t), enriched
-                )
+                return await _run_cli_enricher("Surf", lambda t: SurfEnricher().enrich_batch(t), enriched)
             except ImportError:
                 return LayerResult("Surf", False, 0, len(enriched), 0, "import failed")
 
@@ -1342,9 +1338,7 @@ async def run_async_enrichment(
             try:
                 from token_enricher import GMGNEnricher
 
-                return await _run_cli_enricher(
-                    "GMGN", lambda t: GMGNEnricher().enrich_batch(t), enriched
-                )
+                return await _run_cli_enricher("GMGN", lambda t: GMGNEnricher().enrich_batch(t), enriched)
             except ImportError:
                 return LayerResult("GMGN", False, 0, len(enriched), 0, "import failed")
 
@@ -1352,13 +1346,9 @@ async def run_async_enrichment(
             try:
                 from scripts.token_enricher import SocialSignalEnricher
 
-                return await _run_cli_enricher(
-                    "Social", lambda t: SocialSignalEnricher().enrich_batch(t), enriched
-                )
+                return await _run_cli_enricher("Social", lambda t: SocialSignalEnricher().enrich_batch(t), enriched)
             except ImportError:
-                return LayerResult(
-                    "Social", False, 0, len(enriched), 0, "import failed"
-                )
+                return LayerResult("Social", False, 0, len(enriched), 0, "import failed")
 
         # ═══ RUN ALL IN PARALLEL ═══
         phase2_start = time.time()

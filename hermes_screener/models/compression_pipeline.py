@@ -20,9 +20,6 @@ import os
 import time
 from pathlib import Path
 
-
-
-
 # ── Compression Profiles ───────────────────────────────────────────────
 
 
@@ -133,9 +130,7 @@ class ModelWeightCompressor:
                 "precision": precision,
             }
 
-        compression_ratio = (
-            original_size / compressed_size if compressed_size > 0 else 1.0
-        )
+        compression_ratio = original_size / compressed_size if compressed_size > 0 else 1.0
         return {
             "compressed": compressed,
             "assignments": assignments,
@@ -145,9 +140,7 @@ class ModelWeightCompressor:
             "profile": self.profile["description"],
         }
 
-    def _quantize_tensor(
-        self, tensor: list[float], precision: str
-    ) -> tuple[bytes, dict]:
+    def _quantize_tensor(self, tensor: list[float], precision: str) -> tuple[bytes, dict]:
         """Quantize a single tensor to specified precision."""
         import sys
 
@@ -233,19 +226,13 @@ class CompressionPipeline:
 
         # Select tier based on target memory
         if target_memory_mb is not None:
-            tier = self._select_tier_for_budget(
-                len(vectors), dimension, target_memory_mb
-            )
+            tier = self._select_tier_for_budget(len(vectors), dimension, target_memory_mb)
         else:
             tier = self.profile_config["tier"]
 
         # Determine if dimension reduction is needed
         reduce_dims = self.profile_config["reduce_dimensions"]
-        target_dim = (
-            int(dimension * self.profile_config["target_dimension_ratio"])
-            if reduce_dims
-            else None
-        )
+        target_dim = int(dimension * self.profile_config["target_dimension_ratio"]) if reduce_dims else None
 
         # Initialize store
         self.vector_store = self.TurboQuantStore(
@@ -273,9 +260,7 @@ class CompressionPipeline:
             "profile": self.profile,
         }
 
-    def _select_tier_for_budget(
-        self, num_vectors: int, dimension: int, target_mb: float
-    ) -> str:
+    def _select_tier_for_budget(self, num_vectors: int, dimension: int, target_mb: float) -> str:
         """Select the compression tier that fits within target memory."""
         fp32_bytes = num_vectors * dimension * 4
 
@@ -404,9 +389,7 @@ def validate_pipeline():
     random.seed(42)
 
     dim = 128
-    test_vectors = {
-        f"vec_{i}": [random.gauss(0, 1) for _ in range(dim)] for i in range(20)
-    }
+    test_vectors = {f"vec_{i}": [random.gauss(0, 1) for _ in range(dim)] for i in range(20)}
 
     print("TurboQuant Compression Pipeline - Self Test")
     print("=" * 55)

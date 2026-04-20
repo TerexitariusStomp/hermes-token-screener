@@ -1,0 +1,7 @@
+{
+  "chain": "solana",
+  "gas_gwei": 5e-06,
+  "unique_pairs": 46,
+  "top_pair": "7nX3SLt83wFpEYtWmozDCCfZctdeSB7E6QGpU1fxAiTa",
+  "out_file": "/home/terexitarius/.hermes/data/solana_dex_pools.json"
+}

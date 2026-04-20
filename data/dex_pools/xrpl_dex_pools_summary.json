@@ -1,0 +1,6 @@
+{
+  "chain": "xrpl",
+  "gas_gwei": 1e-05,
+  "orderbook_file": "/home/terexitarius/.hermes/data/xrpl_dex_orderbook_xrp_usd.json",
+  "note": "XRPL DEX is orderbook-based; using book_offers snapshot for XRP/USD."
+}

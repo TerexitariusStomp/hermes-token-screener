@@ -9,10 +9,9 @@ Merges:
 """
 
 import json
-import sqlite3
 import re
+import sqlite3
 from pathlib import Path
-from typing import Dict
 
 DATA_DIR = Path.home() / ".hermes" / "data" / "token_screener"
 TWITTER_JSON = DATA_DIR / "twitter_token_analysis.json"
@@ -137,7 +136,6 @@ BEARISH_WORDS = {
     "garbage",
     "red",
     "down",
-    "falling",
     "loss",
     "losses",
     "bag",
@@ -239,7 +237,7 @@ def compute_tweet_sentiment(tweets: list) -> dict:
     }
 
 
-def load_telegram_data() -> Dict:
+def load_telegram_data() -> dict:
     """Load Telegram sentiment + metrics from top10_tokens.db."""
     tg = {}
     if not TOP10_DB.exists():
@@ -294,7 +292,7 @@ def load_telegram_data() -> Dict:
     return tg
 
 
-def load_twitter_data() -> Dict:
+def load_twitter_data() -> dict:
     """Load Twitter analysis from JSON."""
     if not TWITTER_JSON.exists():
         return {}
@@ -330,9 +328,7 @@ def main():
         )
 
         # Twitter sentiment (standalone, not combined with TG)
-        tw_sent_score = twitter.get("twitter_sentiment", {}).get(
-            "sentiment_score", None
-        )
+        tw_sent_score = twitter.get("twitter_sentiment", {}).get("sentiment_score", None)
         tw_sent_label = twitter.get("twitter_sentiment", {}).get("sentiment_label", "-")
 
         entry = {
@@ -358,11 +354,7 @@ def main():
         results.append(entry)
 
         # Print
-        tg_s = (
-            f"{t['sentiment_score']:>5.1f}"
-            if t["sentiment_score"] is not None
-            else "    -"
-        )
+        tg_s = f"{t['sentiment_score']:>5.1f}" if t["sentiment_score"] is not None else "    -"
         tw_s = f"{tw_sent_score:>5.1f}" if tw_sent_score is not None else "    -"
 
         print(
@@ -375,7 +367,7 @@ def main():
 
     # Summary table
     print(f"\n{'='*95}")
-    print(f"  TELEGRAM + TWITTER ANALYSIS (sentiments kept separate)")
+    print("  TELEGRAM + TWITTER ANALYSIS (sentiments kept separate)")
     print(f"{'='*95}")
     print(
         f"{'Rank':>4} {'Sym':>10} {'TG_Mbr':>7} {'TG_Sent':>8} {'TW_Fll':>7} {'TW_Prof':>7} "
@@ -384,16 +376,8 @@ def main():
     print(f"{'-'*4} {'-'*10} {'-'*7} {'-'*8} {'-'*7} {'-'*7} {'-'*7} {'-'*8} {'-'*12}")
 
     for r in results:
-        tg_s = (
-            f"{r['telegram_sentiment_score']:.0f}"
-            if r["telegram_sentiment_score"] is not None
-            else "-"
-        )
-        tw_s = (
-            f"{r['twitter_sentiment_score']:.0f}"
-            if r["twitter_sentiment_score"] is not None
-            else "-"
-        )
+        tg_s = f"{r['telegram_sentiment_score']:.0f}" if r["telegram_sentiment_score"] is not None else "-"
+        tw_s = f"{r['twitter_sentiment_score']:.0f}" if r["twitter_sentiment_score"] is not None else "-"
 
         print(
             f"{r['rank']:>4} {r['symbol']:>10} {r['telegram_members']:>7,} {tg_s:>8} "

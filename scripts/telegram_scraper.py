@@ -52,9 +52,7 @@ start_metrics_server()
 EVM_PATTERN = re.compile(r"0x[a-fA-F0-9]{40}")
 SOLANA_PATTERN = re.compile(r"[1-9A-HJ-NP-Za-km-z]{32,44}")
 XRPL_PATTERN = re.compile(r"r[1-9A-HJ-NP-Za-km-z]{24,34}")
-DEX_LINK_PATTERN = re.compile(
-    r"(?:dexscreener\.com|gmgn\.ai|raydium\.io|pump\.fun)/[^\s)]+"
-)
+DEX_LINK_PATTERN = re.compile(r"(?:dexscreener\.com|gmgn\.ai|raydium\.io|pump\.fun)/[^\s)]+")
 PUMP_FUN_RE = re.compile(r"/([a-fA-F0-9]+)")
 
 
@@ -96,10 +94,9 @@ def extract_addresses(text: str) -> list[tuple[str, str, str]]:
     # 3. Raw Solana addresses (base58, 32-44 chars)
     base58_chars = set("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
     for match in SOLANA_PATTERN.findall(text):
-        if len(match) >= 32 and all(c in base58_chars for c in match):
-            if match not in seen:
-                results.append((match, match, "solana_raw"))
-                seen.add(match)
+        if len(match) >= 32 and all(c in base58_chars for c in match) and match not in seen:
+            results.append((match, match, "solana_raw"))
+            seen.add(match)
 
     # 4. XRPL addresses (r-prefixed, 25-35 chars)
     for match in XRPL_PATTERN.findall(text):
@@ -232,9 +229,7 @@ def create_client_with_retry(max_attempts=3):
             return TelegramClient(str(SESSION_PATH), TG_API_ID, TG_API_HASH)
         except sqlite3.OperationalError as e:
             if "database is locked" in str(e):
-                log.warning(
-                    f"SQLite lock on client creation (attempt {attempt}/{max_attempts})"
-                )
+                log.warning(f"SQLite lock on client creation (attempt {attempt}/{max_attempts})")
                 time.sleep(attempt * 2)
             else:
                 raise
@@ -245,17 +240,12 @@ async def get_all_dialogs(client) -> list:
     dialogs = []
     async for dialog in client.iter_dialogs():
         entity = dialog.entity
-        if isinstance(entity, (Channel, Chat)):
+        if isinstance(entity, (Channel, Chat)) or isinstance(entity, User) and entity.bot and INCLUDE_BOTS:
             dialogs.append(dialog)
-        elif isinstance(entity, User) and entity.bot:
-            if INCLUDE_BOTS:
-                dialogs.append(dialog)
     return dialogs
 
 
-async def poll_dialog(
-    client, dialog, last_seen: dict, conn, dry_run: bool = False
-) -> int:
+async def poll_dialog(client, dialog, last_seen: dict, conn, dry_run: bool = False) -> int:
     chat_id = dialog.id
     chat_title = getattr(dialog.entity, "title", None) or str(chat_id)
     last_id = last_seen.get(str(chat_id), 0)
@@ -310,9 +300,7 @@ async def run_scrape(max_dialogs: int = None, dry_run: bool = False):
     last_run = state.get("last_run", 0)
     if not dry_run and now - last_run < MIN_CYCLE_INTERVAL:
         elapsed = now - last_run
-        log.info(
-            f"Skipping - only {elapsed:.0f}s since last run (min {MIN_CYCLE_INTERVAL}s)"
-        )
+        log.info(f"Skipping - only {elapsed:.0f}s since last run (min {MIN_CYCLE_INTERVAL}s)")
         return {"status": "skipped", "reason": "rate_limit", "elapsed": elapsed}
 
     log.info("Connecting to Telegram...")
@@ -340,9 +328,7 @@ async def run_scrape(max_dialogs: int = None, dry_run: bool = False):
 
         for i, dialog in enumerate(dialogs):
             try:
-                new_in_chat = await poll_dialog(
-                    client, dialog, last_seen, conn, dry_run
-                )
+                new_in_chat = await poll_dialog(client, dialog, last_seen, conn, dry_run)
                 total_new += new_in_chat
                 total_polls += 1
                 if new_in_chat > 0:
@@ -364,9 +350,7 @@ async def run_scrape(max_dialogs: int = None, dry_run: bool = False):
             state["known_dialogs"] = [d.id for d in dialogs]
             save_state(state)
 
-        log.info(
-            f"Cycle complete: {total_new} new contracts from {total_polls} dialogs"
-        )
+        log.info(f"Cycle complete: {total_new} new contracts from {total_polls} dialogs")
         if chat_stats:
             top = sorted(chat_stats.items(), key=lambda x: -x[1])[:5]
             log.info(f"Top chats: {', '.join(f'{n}({c})' for n, c in top)}")
@@ -375,9 +359,7 @@ async def run_scrape(max_dialogs: int = None, dry_run: bool = False):
             "status": "ok",
             "dialogs_polled": total_polls,
             "new_contracts": total_new,
-            "top_chats": dict(
-                list(sorted(chat_stats.items(), key=lambda x: -x[1]))[:10]
-            ),
+            "top_chats": dict(list(sorted(chat_stats.items(), key=lambda x: -x[1]))[:10]),
             "dry_run": dry_run,
         }
 

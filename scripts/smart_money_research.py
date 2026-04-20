@@ -19,14 +19,14 @@ Usage:
   python3 smart_money_research.py --learn      # force pattern update
 """
 
-import json
-import time
-import sqlite3
 import argparse
+import json
+import sqlite3
 import sys
-from pathlib import Path
+import time
 from datetime import datetime
-from typing import List, Dict, Any
+from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -49,7 +49,7 @@ start_metrics_server()
 # ── Pattern Learning ────────────────────────────────────────────────────────
 
 
-def learn_patterns(conn: sqlite3.Connection) -> Dict[str, Any]:
+def learn_patterns(conn: sqlite3.Connection) -> dict[str, Any]:
     """
     Analyze wallet behavior patterns from token_entries.
     Groups wallets by trading pattern and computes aggregate stats.
@@ -81,7 +81,7 @@ def learn_patterns(conn: sqlite3.Connection) -> Dict[str, Any]:
     return patterns
 
 
-def get_leaderboard(limit: int = 50) -> List[Dict[str, Any]]:
+def get_leaderboard(limit: int = 50) -> list[dict[str, Any]]:
     """Get top wallets ranked by v3 score."""
     if not WALLETS_DB.exists():
         return []
@@ -113,7 +113,7 @@ def get_leaderboard(limit: int = 50) -> List[Dict[str, Any]]:
 # ── Token Analysis ──────────────────────────────────────────────────────────
 
 
-def analyze_token(chain: str, address: str) -> Dict[str, Any]:
+def analyze_token(chain: str, address: str) -> dict[str, Any]:
     """
     Single-token analysis using the enricher output.
     Reads from the pre-computed top100.json instead of calling APIs.
@@ -147,7 +147,7 @@ def analyze_token(chain: str, address: str) -> Dict[str, Any]:
 # ── Insights Generation ────────────────────────────────────────────────────
 
 
-def generate_insights() -> Dict[str, Any]:
+def generate_insights() -> dict[str, Any]:
     """Generate comprehensive insights from all data sources."""
     insights = {
         "generated_at": time.time(),
@@ -161,9 +161,7 @@ def generate_insights() -> Dict[str, Any]:
         tokens = data.get("tokens", [])
         insights["tokens"] = {
             "total": len(tokens),
-            "avg_score": round(
-                sum(t.get("score", 0) for t in tokens) / max(len(tokens), 1), 1
-            ),
+            "avg_score": round(sum(t.get("score", 0) for t in tokens) / max(len(tokens), 1), 1),
             "top_5": [
                 {
                     "symbol": t.get("symbol"),
@@ -251,7 +249,7 @@ def main():
     if args.leaderboard:
         board = get_leaderboard(20)
         print(f"\n{'='*70}")
-        print(f"TOP 20 WALLETS")
+        print("TOP 20 WALLETS")
         print(f"{'='*70}")
         for w in board:
             flags = []
@@ -284,12 +282,8 @@ def main():
     tok = insights.get("tokens", {})
     wal = insights.get("wallets", {})
     log.info(f"Tokens: {tok.get('total', 0)} (avg score: {tok.get('avg_score', 0)})")
-    log.info(
-        f"Wallets: {wal.get('total', 0)} (avg: {wal.get('avg_score', 0)}, max: {wal.get('max_score', 0)})"
-    )
-    log.info(
-        f"Insiders: {wal.get('insiders', 0)}, Copy-traders: {wal.get('copy_traders', 0)}"
-    )
+    log.info(f"Wallets: {wal.get('total', 0)} (avg: {wal.get('avg_score', 0)}, max: {wal.get('max_score', 0)})")
+    log.info(f"Insiders: {wal.get('insiders', 0)}, Copy-traders: {wal.get('copy_traders', 0)}")
 
 
 if __name__ == "__main__":

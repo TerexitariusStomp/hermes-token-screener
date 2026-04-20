@@ -1,0 +1,6 @@
+{
+  "chain": "starknet",
+  "gas_gwei": 1e-05,
+  "pair_count": 22,
+  "out_file": "/home/terexitarius/.hermes/data/starknet_dex_pools.json"
+}

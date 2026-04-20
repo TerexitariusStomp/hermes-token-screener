@@ -34,12 +34,8 @@ SOLANA_RPC = "https://api.mainnet-beta.solana.com"
 def get_sol_balance(wallet: str) -> float:
     """Get SOL balance via public RPC."""
     try:
-        payload = json.dumps(
-            {"jsonrpc": "2.0", "id": 1, "method": "getBalance", "params": [wallet]}
-        ).encode()
-        req = urllib.request.Request(
-            SOLANA_RPC, data=payload, headers={"Content-Type": "application/json"}
-        )
+        payload = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "getBalance", "params": [wallet]}).encode()
+        req = urllib.request.Request(SOLANA_RPC, data=payload, headers={"Content-Type": "application/json"})
         with urllib.request.urlopen(req, timeout=10) as resp:
             data = json.loads(resp.read())
             lamports = data.get("result", {}).get("value", 0)
@@ -50,16 +46,13 @@ def get_sol_balance(wallet: str) -> float:
 
 def get_token_info(token_addr: str) -> dict:
     """Get token info from GMGN."""
-    data = gmgn_cmd(
-        ["token", "info", "--chain", "sol", "--address", token_addr, "--raw"]
-    )
+    data = gmgn_cmd(["token", "info", "--chain", "sol", "--address", token_addr, "--raw"])
     if data:
         return {
             "holder_count": data.get("holder_count", 0),
             "liquidity": data.get("liquidity", 0),
             "market_cap": data.get("market_cap", 0),
-            "is_bonded": data.get("complete", False)
-            or data.get("bonding_curve_progress", 0) >= 100,
+            "is_bonded": data.get("complete", False) or data.get("bonding_curve_progress", 0) >= 100,
         }
     return {}
 
@@ -77,7 +70,7 @@ def fetch_creators_with_tokens() -> list[dict]:
     """).fetchall()
 
     results = []
-    for wallet, count, desc, last_seen in creators:
+    for wallet, count, desc, _last_seen in creators:
         # Extract token addresses from description
         # Format: "pumpfun_dev | tokens: NAME (ADDR...), NAME (ADDR...)"
         tokens = []
@@ -198,9 +191,7 @@ def main():
     OUTPUT_PATH.write_text(json.dumps(enriched, indent=2))
 
     print(f"\n{'='*90}")
-    print(
-        f"{'Rank':>4} {'Wallet':>22} {'Tkns':>4} {'SOL':>7} {'Bonded':>6} {'BestMcap':>10} {'Score':>6}"
-    )
+    print(f"{'Rank':>4} {'Wallet':>22} {'Tkns':>4} {'SOL':>7} {'Bonded':>6} {'BestMcap':>10} {'Score':>6}")
     print(f"{'-'*4} {'-'*22} {'-'*4} {'-'*7} {'-'*6} {'-'*10} {'-'*6}")
     for i, w in enumerate(enriched[:15], 1):
         print(

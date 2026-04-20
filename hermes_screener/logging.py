@@ -121,9 +121,7 @@ def get_logger(name: str) -> structlog.stdlib.BoundLogger:
 
 
 @contextmanager
-def log_duration(
-    log: structlog.stdlib.BoundLogger, event: str, **extra: Any
-) -> Iterator[None]:
+def log_duration(log: structlog.stdlib.BoundLogger, event: str, **extra: Any) -> Iterator[None]:
     """Context manager that logs duration_ms when the block exits.
 
     Usage:

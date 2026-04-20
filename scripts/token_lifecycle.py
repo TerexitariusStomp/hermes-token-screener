@@ -24,7 +24,7 @@ import json
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 # TOR proxy - route all external HTTP through SOCKS5
@@ -62,7 +62,7 @@ def _lifecycle_path(address: str) -> Path:
     return LIFECYCLE_DIR / f"{address}_lifecycle.json"
 
 
-def _load_lifecycle(address: str) -> Optional[dict]:
+def _load_lifecycle(address: str) -> dict | None:
     path = _lifecycle_path(address)
     if path.exists():
         with open(path) as f:
@@ -76,7 +76,7 @@ def _save_lifecycle(address: str, data: dict):
         json.dump(data, f, indent=2, default=str)
 
 
-def _load_current_tokens() -> List[dict]:
+def _load_current_tokens() -> list[dict]:
     if TOP_TOKENS_PATH.exists():
         with open(TOP_TOKENS_PATH) as f:
             data = json.load(f)
@@ -89,9 +89,7 @@ def _load_current_tokens() -> List[dict]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-async def _find_pool(
-    chain: str, address: str, client: httpx.AsyncClient
-) -> Optional[str]:
+async def _find_pool(chain: str, address: str, client: httpx.AsyncClient) -> str | None:
     """Find top pool address for a token."""
     net = _GT_NETWORKS.get(chain.lower(), "solana")
     try:
@@ -110,9 +108,7 @@ async def _find_pool(
     return None
 
 
-async def _fetch_ohlcv(
-    chain: str, pool: str, timeframe: str, limit: int, client: httpx.AsyncClient
-) -> List[list]:
+async def _fetch_ohlcv(chain: str, pool: str, timeframe: str, limit: int, client: httpx.AsyncClient) -> list[list]:
     """Fetch OHLCV candles from GeckoTerminal."""
     net = _GT_NETWORKS.get(chain.lower(), "solana")
     try:
@@ -122,9 +118,7 @@ async def _fetch_ohlcv(
             timeout=15,
         )
         if resp.status_code == 200:
-            return (
-                resp.json().get("data", {}).get("attributes", {}).get("ohlcv_list", [])
-            )
+            return resp.json().get("data", {}).get("attributes", {}).get("ohlcv_list", [])
     except Exception:
         pass
     return []
@@ -161,12 +155,8 @@ async def take_snapshot(token: dict, client: httpx.AsyncClient) -> dict:
             "m15": len(candles_m15),
             "d1": len(candles_d1),
         },
-        "entry_price": (
-            candles_h1[0][4] if candles_h1 else None
-        ),  # close of first candle
-        "current_price": (
-            candles_h1[-1][4] if candles_h1 else None
-        ),  # close of last candle
+        "entry_price": (candles_h1[0][4] if candles_h1 else None),  # close of first candle
+        "current_price": (candles_h1[-1][4] if candles_h1 else None),  # close of last candle
         "token_data": {
             "symbol": token.get("symbol"),
             "score": token.get("score"),
@@ -181,7 +171,7 @@ async def take_snapshot(token: dict, client: httpx.AsyncClient) -> dict:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
+async def process_lifecycle(current_tokens: list[dict]) -> dict[str, Any]:
     """
     Process the token lifecycle:
 
@@ -223,9 +213,7 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
                     "symbol": token.get("symbol"),
                     "status": "active",
                     "entry_time": now,
-                    "entry_time_iso": datetime.fromtimestamp(
-                        now, tz=timezone.utc
-                    ).isoformat(),
+                    "entry_time_iso": datetime.fromtimestamp(now, tz=timezone.utc).isoformat(),
                     "entry_score": token.get("score"),
                     "entry_fdv": token.get("fdv"),
                     "entry_price": snapshot.get("current_price"),
@@ -243,9 +231,7 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
 
             elif lifecycle.get("status") == "active":
                 # UPDATE: add periodic snapshot (every 4 hours)
-                last_snapshot = (
-                    lifecycle["snapshots"][-1] if lifecycle.get("snapshots") else {}
-                )
+                last_snapshot = lifecycle["snapshots"][-1] if lifecycle.get("snapshots") else {}
                 last_time = last_snapshot.get("timestamp", 0)
 
                 if now - last_time > 14400:  # 4 hours
@@ -254,9 +240,7 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
                     lifecycle["snapshot_count"] = len(lifecycle["snapshots"])
                     lifecycle["current_score"] = token.get("score")
                     lifecycle["current_fdv"] = token.get("fdv")
-                    lifecycle["days_tracked"] = round(
-                        (now - lifecycle["entry_time"]) / 86400, 1
-                    )
+                    lifecycle["days_tracked"] = round((now - lifecycle["entry_time"]) / 86400, 1)
 
                     # Calculate price change from entry
                     entry_price = lifecycle.get("entry_price")
@@ -296,21 +280,15 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
 
                 lifecycle["status"] = "exited"
                 lifecycle["exit_time"] = now
-                lifecycle["exit_time_iso"] = datetime.fromtimestamp(
-                    now, tz=timezone.utc
-                ).isoformat()
+                lifecycle["exit_time_iso"] = datetime.fromtimestamp(now, tz=timezone.utc).isoformat()
                 lifecycle["exit_score"] = lifecycle.get("current_score")
-                lifecycle["exit_price"] = final_snapshot.get(
-                    "current_price"
-                ) or lifecycle.get("current_price")
+                lifecycle["exit_price"] = final_snapshot.get("current_price") or lifecycle.get("current_price")
 
                 # Final price change
                 entry_price = lifecycle.get("entry_price")
                 exit_price = lifecycle.get("exit_price")
                 if entry_price and exit_price and entry_price > 0:
-                    lifecycle["price_change_pct"] = round(
-                        ((exit_price - entry_price) / entry_price) * 100, 2
-                    )
+                    lifecycle["price_change_pct"] = round(((exit_price - entry_price) / entry_price) * 100, 2)
 
                 lifecycle["final_snapshot"] = final_snapshot
                 lifecycle["snapshots"].append(final_snapshot)
@@ -321,9 +299,7 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
                 generate_comparison_chart(addr)
                 exited += 1
 
-    log.info(
-        "lifecycle_processed", new_entries=new_entries, updated=updated, exited=exited
-    )
+    log.info("lifecycle_processed", new_entries=new_entries, updated=updated, exited=exited)
     return {"new_entries": new_entries, "updated": updated, "exited": exited}
 
 
@@ -332,7 +308,7 @@ async def process_lifecycle(current_tokens: List[dict]) -> Dict[str, Any]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def generate_lifecycle_chart(address: str) -> Optional[str]:
+def generate_lifecycle_chart(address: str) -> str | None:
     """
     Generate a PNG chart image showing the token's lifecycle from entry to exit.
 
@@ -341,8 +317,8 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
     import matplotlib
 
     matplotlib.use("Agg")  # headless
-    import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
+    import matplotlib.pyplot as plt
 
     lifecycle = _load_lifecycle(address)
     if not lifecycle:
@@ -397,9 +373,7 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
                 break
 
     # ── Create figure ──
-    fig, (ax1, ax2) = plt.subplots(
-        2, 1, figsize=(14, 8), gridspec_kw={"height_ratios": [3, 1]}
-    )
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 8), gridspec_kw={"height_ratios": [3, 1]})
     fig.patch.set_facecolor("#0a0e17")
     ax1.set_facecolor("#0a0e17")
     ax2.set_facecolor("#0a0e17")
@@ -464,9 +438,7 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
 
     # ── Entry price line ──
     if entry_price:
-        ax1.axhline(
-            y=entry_price, color="#06b6d4", linestyle="--", linewidth=0.8, alpha=0.5
-        )
+        ax1.axhline(y=entry_price, color="#06b6d4", linestyle="--", linewidth=0.8, alpha=0.5)
         ax1.text(
             mdates.date2num(dates[0]),
             entry_price,
@@ -477,17 +449,11 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
         )
 
     # ── Volume bars ──
-    vol_colors = [
-        "#10b98166" if closes[i] >= opens[i] else "#ef444466" for i in range(len(dates))
-    ]
+    vol_colors = ["#10b98166" if closes[i] >= opens[i] else "#ef444466" for i in range(len(dates))]
     ax2.bar([mdates.date2num(d) for d in dates], volumes, width=width, color=vol_colors)
 
     # ── Styling ──
-    change_str = (
-        f"{'+' if (price_change or 0) > 0 else ''}{price_change}%"
-        if price_change is not None
-        else "—"
-    )
+    change_str = f"{'+' if (price_change or 0) > 0 else ''}{price_change}%" if price_change is not None else "—"
 
     ax1.set_title(
         f"{symbol} — {status.upper()} | Entry: ${entry_price:.8f} | "
@@ -537,7 +503,7 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
     return str(output_path)
 
 
-def generate_comparison_chart(address: str) -> Optional[str]:
+def generate_comparison_chart(address: str) -> str | None:
     """
     Generate a side-by-side comparison: entry chart vs exit chart.
 
@@ -547,8 +513,8 @@ def generate_comparison_chart(address: str) -> Optional[str]:
     import matplotlib
 
     matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
+    import matplotlib.pyplot as plt
 
     lifecycle = _load_lifecycle(address)
     if not lifecycle or len(lifecycle.get("snapshots", [])) < 1:
@@ -612,9 +578,7 @@ def generate_comparison_chart(address: str) -> Optional[str]:
     entry_price = lifecycle.get("entry_price")
     exit_price = lifecycle.get("exit_price") or lifecycle.get("current_price")
     change = lifecycle.get("price_change_pct")
-    change_str = (
-        f"{'+' if (change or 0) > 0 else ''}{change}%" if change is not None else "—"
-    )
+    change_str = f"{'+' if (change or 0) > 0 else ''}{change}%" if change is not None else "—"
 
     _plot_candles(
         ax1,
@@ -664,7 +628,7 @@ def generate_comparison_chart(address: str) -> Optional[str]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def run_lifecycle() -> Dict[str, Any]:
+def run_lifecycle() -> dict[str, Any]:
     """Run the lifecycle tracking pipeline (sync wrapper)."""
     import asyncio
 
@@ -680,12 +644,8 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Token lifecycle tracker")
-    parser.add_argument(
-        "--chart", type=str, help="Generate lifecycle chart for address"
-    )
-    parser.add_argument(
-        "--snapshot", action="store_true", help="Force snapshot all tokens"
-    )
+    parser.add_argument("--chart", type=str, help="Generate lifecycle chart for address")
+    parser.add_argument("--snapshot", action="store_true", help="Force snapshot all tokens")
     args = parser.parse_args()
 
     if args.chart:

@@ -19,9 +19,9 @@ import json
 import sqlite3
 import time
 from pathlib import Path
-from typing import TypedDict, Union
+from typing import TypedDict
 
-JsonValue = Union[dict[str, "JsonValue"], list["JsonValue"], str, int, float, bool, None]
+JsonValue = dict[str, "JsonValue"] | list["JsonValue"] | str | int | float | bool | None
 
 
 class WalletEnrichResult(TypedDict):
@@ -31,9 +31,9 @@ class WalletEnrichResult(TypedDict):
     elapsed: float
 
 
-from hermes_screener.config import settings
-from hermes_screener.logging import get_logger
-from hermes_screener.metrics import metrics
+from hermes_screener.config import settings  # noqa: E402
+from hermes_screener.logging import get_logger  # noqa: E402
+from hermes_screener.metrics import metrics  # noqa: E402
 
 log = get_logger("async_wallets")
 
@@ -143,10 +143,7 @@ async def _fetch_all_holders_for_token(
         return []
 
     # Fire all sort orders concurrently
-    tasks = [
-        _fetch_holders_batch(node_bin, gmgn_chain, address, ob, d)
-        for ob, d in SORT_ORDERS
-    ]
+    tasks = [_fetch_holders_batch(node_bin, gmgn_chain, address, ob, d) for ob, d in SORT_ORDERS]
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     # Deduplicate by address
@@ -223,9 +220,7 @@ async def enrich_wallets_async(
 
         async with semaphore:
             start = time.time()
-            holders = await _fetch_all_holders_for_token(
-                node_bin, chain, addr, limit=settings.holders_per_token
-            )
+            holders = await _fetch_all_holders_for_token(node_bin, chain, addr, limit=settings.holders_per_token)
             elapsed = time.time() - start
 
             tokens_scanned += 1
@@ -253,8 +248,7 @@ async def enrich_wallets_async(
                     "unrealized_profit": h.get("unrealized_profit", 0) or 0,
                     "buy_tx_count": h.get("buy_tx_count_cur", 0) or 0,
                     "sell_tx_count": h.get("sell_tx_count_cur", 0) or 0,
-                    "total_trades": (h.get("buy_tx_count_cur", 0) or 0)
-                    + (h.get("sell_tx_count_cur", 0) or 0),
+                    "total_trades": (h.get("buy_tx_count_cur", 0) or 0) + (h.get("sell_tx_count_cur", 0) or 0),
                     "avg_cost": h.get("avg_cost"),
                     "start_holding_at": h.get("start_holding_at"),
                     "is_profitable": 1 if profit > 0 else 0,
@@ -283,15 +277,15 @@ async def enrich_wallets_async(
         cursor = conn.cursor()
         for w_addr, entries in wallet_appearances.items():
             source_tokens = list(set(e["token_address"] for e in entries))
-            total_profit = sum(e["profit"] for e in entries)
-            total_realized = sum(e["realized_profit"] for e in entries)
-            total_unrealized = sum(e["unrealized_profit"] for e in entries)
-            avg_roi = total_profit / len(entries) if entries else 0
-            total_trades = sum(e["total_trades"] for e in entries)
-            buy_count = sum(e["buy_tx_count"] for e in entries)
-            sell_count = sum(e["sell_tx_count"] for e in entries)
-            profitable = sum(e["is_profitable"] for e in entries)
-            win_rate = profitable / len(entries) if entries else 0
+            total_profit = sum(e["profit"] for e in entries)  # type: ignore[misc]
+            total_realized = sum(e["realized_profit"] for e in entries)  # type: ignore[misc]
+            total_unrealized = sum(e["unrealized_profit"] for e in entries)  # type: ignore[misc]
+            avg_roi = total_profit / len(entries) if entries else 0  # type: ignore[misc]
+            total_trades = sum(e["total_trades"] for e in entries)  # type: ignore[misc]
+            buy_count = sum(e["buy_tx_count"] for e in entries)  # type: ignore[misc]
+            sell_count = sum(e["sell_tx_count"] for e in entries)  # type: ignore[misc]
+            profitable = sum(e["is_profitable"] for e in entries)  # type: ignore[misc]
+            win_rate = profitable / len(entries) if entries else 0  # type: ignore[misc]
 
             cursor.execute(
                 """
@@ -409,8 +403,4 @@ def enrich_wallets_async_sync(
     dry_run: bool = False,
 ) -> WalletEnrichResult:
     """Synchronous wrapper for enrich_wallets_async()."""
-    return asyncio.run(
-        enrich_wallets_async(
-            conn, tokens, min_token_score, max_concurrent_tokens, dry_run
-        )
-    )
+    return asyncio.run(enrich_wallets_async(conn, tokens, min_token_score, max_concurrent_tokens, dry_run))

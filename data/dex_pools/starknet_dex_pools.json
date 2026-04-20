@@ -1,0 +1,1420 @@
+{
+  "source": "DexScreener search",
+  "chain": "starknet",
+  "pair_count": 22,
+  "pairs": [
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac-0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f-0-100-0x0",
+      "pairAddress": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac-0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f-0-100-0x0",
+      "baseToken": {
+        "address": "0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f",
+        "name": "Starknet tBTC",
+        "symbol": "tBTC"
+      },
+      "quoteToken": {
+        "address": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
+        "name": "Wrapped BTC",
+        "symbol": "WBTC"
+      },
+      "priceNative": "1.001160",
+      "priceUsd": "75707.14",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 1,
+          "sells": 1
+        },
+        "h6": {
+          "buys": 3,
+          "sells": 1
+        },
+        "h24": {
+          "buys": 12,
+          "sells": 5
+        }
+      },
+      "volume": {
+        "h24": 516612.27,
+        "h6": 204050.1,
+        "h1": 148668.38,
+        "m5": 0
+      },
+      "priceChange": {
+        "h1": 0.02,
+        "h6": -0.05,
+        "h24": -2.44
+      },
+      "liquidity": {
+        "usd": 1702660.34,
+        "base": 13.9637,
+        "quote": 8.5362
+      },
+      "fdv": 5820887,
+      "marketCap": 479248187,
+      "pairCreatedAt": 1761679983000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac-0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f-34028236692093847977029636859101184-200-0x0",
+      "pairAddress": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac-0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f-34028236692093847977029636859101184-200-0x0",
+      "baseToken": {
+        "address": "0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f",
+        "name": "Starknet tBTC",
+        "symbol": "tBTC"
+      },
+      "quoteToken": {
+        "address": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
+        "name": "Wrapped BTC",
+        "symbol": "WBTC"
+      },
+      "priceNative": "1.001060",
+      "priceUsd": "75699.60",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 2,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 3,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 6,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 192024.19,
+        "h6": 112071.94,
+        "h1": 91642.05,
+        "m5": 0
+      },
+      "priceChange": {
+        "h1": 0.02,
+        "h6": -0.45,
+        "h24": -0.43
+      },
+      "liquidity": {
+        "usd": 1318499.47,
+        "base": 11.9858,
+        "quote": 5.4373
+      },
+      "fdv": 5820307,
+      "marketCap": 479200438,
+      "pairCreatedAt": 1749645986000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-34028236692093847977029636859101184-200-0x0",
+      "pairAddress": "0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-34028236692093847977029636859101184-200-0x0",
+      "baseToken": {
+        "address": "0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a",
+        "name": "Endur xSTRK",
+        "symbol": "xSTRK"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "1.1446",
+      "priceUsd": "0.03994",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 1,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 6,
+          "sells": 8
+        }
+      },
+      "volume": {
+        "h24": 1564.04,
+        "h6": 0.14,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {
+        "h6": -2.24,
+        "h24": -5.45
+      },
+      "liquidity": {
+        "usd": 1179238.59,
+        "base": 3634690,
+        "quote": 29628727
+      },
+      "fdv": 1619638,
+      "marketCap": 1619638,
+      "pairCreatedAt": 1732559813000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x033068f6539f8e6e6b131e6b2b814e6c34a5224bc66947c47dab9dfee93b35fb-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-170141183460469235273462165868118016-1000-0x0",
+      "pairAddress": "0x033068f6539f8e6e6b131e6b2b814e6c34a5224bc66947c47dab9dfee93b35fb-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-170141183460469235273462165868118016-1000-0x0",
+      "baseToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "quoteToken": {
+        "address": "0x033068f6539f8e6e6b131e6b2b814e6c34a5224bc66947c47dab9dfee93b35fb",
+        "name": "USDC",
+        "symbol": "USDC"
+      },
+      "priceNative": "0.03507",
+      "priceUsd": "0.03507",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 5
+        },
+        "h1": {
+          "buys": 26,
+          "sells": 32
+        },
+        "h6": {
+          "buys": 181,
+          "sells": 231
+        },
+        "h24": {
+          "buys": 979,
+          "sells": 1136
+        }
+      },
+      "volume": {
+        "h24": 1503744.98,
+        "h6": 255879.41,
+        "h1": 46116.36,
+        "m5": 1997.76
+      },
+      "priceChange": {
+        "m5": -0.11,
+        "h1": 0.2,
+        "h6": -1.78,
+        "h24": -4.82
+      },
+      "liquidity": {
+        "usd": 1074992.59,
+        "base": 25223687,
+        "quote": 190333
+      },
+      "fdv": 77565564,
+      "marketCap": 77565564,
+      "pairCreatedAt": 1764422622000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7-170141183460469235273462165868118016-1000-0x0",
+      "pairAddress": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7-170141183460469235273462165868118016-1000-0x0",
+      "baseToken": {
+        "address": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+        "name": "Ether",
+        "symbol": "ETH"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "66118.9297",
+      "priceUsd": "2327.38",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 1,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 2,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 0.12,
+        "h6": 0.05,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {
+        "h6": -1.74,
+        "h24": -1.74
+      },
+      "liquidity": {
+        "usd": 420505.76,
+        "base": 2.4358,
+        "quote": 11785133
+      },
+      "fdv": 53945689,
+      "marketCap": 53945689,
+      "pairCreatedAt": 1707988702000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2-0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7-34028236692093847977029636859101184-200-0x0",
+      "pairAddress": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2-0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7-34028236692093847977029636859101184-200-0x0",
+      "baseToken": {
+        "address": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2",
+        "name": "Starknet Wrapped Staked Ether",
+        "symbol": "wstETH"
+      },
+      "quoteToken": {
+        "address": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+        "name": "Ether",
+        "symbol": "ETH"
+      },
+      "priceNative": "1.2222",
+      "priceUsd": "2907.41",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 1,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 1.45,
+        "h6": 0,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {},
+      "liquidity": {
+        "usd": 156571.36,
+        "base": 0.1779,
+        "quote": 65.6042
+      },
+      "fdv": 396734,
+      "marketCap": 396734,
+      "pairCreatedAt": 1693909749000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7-1020847100762815411640772995208708096-5982-0x0",
+      "pairAddress": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7-1020847100762815411640772995208708096-5982-0x0",
+      "baseToken": {
+        "address": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+        "name": "Ether",
+        "symbol": "ETH"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "66682.4963",
+      "priceUsd": "2340.55",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 3
+        },
+        "h6": {
+          "buys": 30,
+          "sells": 8
+        },
+        "h24": {
+          "buys": 123,
+          "sells": 70
+        }
+      },
+      "volume": {
+        "h24": 27981.25,
+        "h6": 5023.6,
+        "h1": 455.69,
+        "m5": 0
+      },
+      "priceChange": {
+        "h1": -0.01,
+        "h6": -0.88,
+        "h24": -2.97
+      },
+      "liquidity": {
+        "usd": 110600.21,
+        "base": 8.6905,
+        "quote": 2571495
+      },
+      "fdv": 54250936,
+      "marketCap": 54250936,
+      "pairCreatedAt": 1708355917000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x040e81cfeb176bfdbc5047bbc55eb471cfab20a6b221f38d8fda134e1bfffca4-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-3402823669209384634633746074317682114-19802-0x0",
+      "pairAddress": "0x040e81cfeb176bfdbc5047bbc55eb471cfab20a6b221f38d8fda134e1bfffca4-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-3402823669209384634633746074317682114-19802-0x0",
+      "baseToken": {
+        "address": "0x040e81cfeb176bfdbc5047bbc55eb471cfab20a6b221f38d8fda134e1bfffca4",
+        "name": "DOG GO TO THE MOON",
+        "symbol": "DOG"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "0.02128",
+      "priceUsd": "0.0007427",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 0,
+          "sells": 1
+        },
+        "h24": {
+          "buys": 0,
+          "sells": 2
+        }
+      },
+      "volume": {
+        "h24": 149.71,
+        "h6": 73.82,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {
+        "h6": -2.73,
+        "h24": -2.73
+      },
+      "liquidity": {
+        "usd": 25170.79,
+        "base": 15288476,
+        "quote": 395846
+      },
+      "fdv": 36996,
+      "marketCap": 36996,
+      "pairCreatedAt": 1753084455000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-1020847100762815390390123822295304634-5982-0x0",
+      "pairAddress": "0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-1020847100762815390390123822295304634-5982-0x0",
+      "baseToken": {
+        "address": "0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee",
+        "name": "STARKNET BROTHER",
+        "symbol": "BROTHER"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "0.000000003275",
+      "priceUsd": "0.0000000001169",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 2,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 31.76,
+        "h6": 0,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {
+        "h24": -0.74
+      },
+      "liquidity": {
+        "usd": 21352.71,
+        "base": 101020215114195,
+        "quote": 267232
+      },
+      "fdv": 116932,
+      "marketCap": 116932,
+      "pairCreatedAt": 1730355608000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/1b540ed528b51628b5de4adf717bdfc101648c9e6215f55ed913682244c6b6d8?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/d41ceb29ff57d181c62d3f35e97a16464bd6ba470e1bb6056452a0079c81f855?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/starknet/0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee?timestamp=1776575100000",
+        "websites": [
+          {
+            "url": "https://www.supbro.fun/",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/StarknetBro",
+            "type": "twitter"
+          },
+          {
+            "url": "https://t.me/starknetbrother",
+            "type": "telegram"
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-17014118346046923173168730371588410572-95310-0x0",
+      "pairAddress": "0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-17014118346046923173168730371588410572-95310-0x0",
+      "baseToken": {
+        "address": "0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b",
+        "name": "Survivor",
+        "symbol": "SURVIVOR"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "4.1359",
+      "priceUsd": "0.1451",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 14,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 25,
+          "sells": 4
+        },
+        "h24": {
+          "buys": 105,
+          "sells": 8
+        }
+      },
+      "volume": {
+        "h24": 129.67,
+        "h6": 25.56,
+        "h1": 10.9,
+        "m5": 0
+      },
+      "priceChange": {
+        "h1": -0.15,
+        "h6": -0.82,
+        "h24": -3.37
+      },
+      "liquidity": {
+        "usd": 16986.52,
+        "base": 48427,
+        "quote": 283655
+      },
+      "fdv": 1451706,
+      "marketCap": 1451706,
+      "pairCreatedAt": 1760462116000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/ba3bcf4383d87b11ddbc88f2b4304436b959cf107e34c161903cabbbe0c64a91?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/b4fa726a6786cbfb6ba8950f19e21cd4deb00215805687e866f943873b16879b?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/starknet/0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b?timestamp=1776575100000",
+        "websites": [
+          {
+            "url": "https://lootsurvivor.io/",
+            "label": "Website"
+          },
+          {
+            "url": "https://docs.provable.games/lootsurvivor",
+            "label": "Docs"
+          },
+          {
+            "url": "https://www.youtube.com/@ProvableGames",
+            "label": "YouTube"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/LootSurvivor",
+            "type": "twitter"
+          },
+          {
+            "url": "https://discord.gg/lootsurvivor",
+            "type": "discord"
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2-0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7-170141183460469235273462165868118016-1000-0x0",
+      "pairAddress": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2-0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7-170141183460469235273462165868118016-1000-0x0",
+      "baseToken": {
+        "address": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2",
+        "name": "Starknet Wrapped Staked Ether",
+        "symbol": "wstETH"
+      },
+      "quoteToken": {
+        "address": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+        "name": "Ether",
+        "symbol": "ETH"
+      },
+      "priceNative": "1.2231",
+      "priceUsd": "2940.68",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 1,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 8.27,
+        "h6": 0,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {},
+      "liquidity": {
+        "usd": 16860.32,
+        "base": 0.471,
+        "quote": 6.4364
+      },
+      "fdv": 401274,
+      "marketCap": 401274,
+      "pairCreatedAt": 1694187967000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8-1020847100762815411640772995208708096-354892-0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc",
+      "pairAddress": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8-1020847100762815411640772995208708096-354892-0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc",
+      "baseToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "quoteToken": {
+        "address": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
+        "name": "USD Coin",
+        "symbol": "USDC"
+      },
+      "priceNative": "0.03492",
+      "priceUsd": "0.03492",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 1,
+          "sells": 4
+        },
+        "h24": {
+          "buys": 8,
+          "sells": 17
+        }
+      },
+      "volume": {
+        "h24": 138.75,
+        "h6": 21.4,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {
+        "h6": -1.93,
+        "h24": -5.7
+      },
+      "liquidity": {
+        "usd": 14586.9,
+        "base": 102424,
+        "quote": 11010
+      },
+      "fdv": 77233724,
+      "marketCap": 77233724,
+      "pairCreatedAt": 1712582983000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8-170141183460469235273462165868118016-1000-0x0",
+      "pairAddress": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8-170141183460469235273462165868118016-1000-0x0",
+      "baseToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "quoteToken": {
+        "address": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
+        "name": "USD Coin",
+        "symbol": "USDC"
+      },
+      "priceNative": "0.03507",
+      "priceUsd": "0.03507",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 3,
+          "sells": 3
+        },
+        "h6": {
+          "buys": 29,
+          "sells": 68
+        },
+        "h24": {
+          "buys": 165,
+          "sells": 327
+        }
+      },
+      "volume": {
+        "h24": 5243.58,
+        "h6": 931.57,
+        "h1": 92.23,
+        "m5": 0
+      },
+      "priceChange": {
+        "h1": 0.06,
+        "h6": -1.92,
+        "h24": -4.9
+      },
+      "liquidity": {
+        "usd": 14045.29,
+        "base": 255985,
+        "quote": 5067.02429
+      },
+      "fdv": 77567347,
+      "marketCap": 77567347,
+      "pairCreatedAt": 1707650478000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x075afe6402ad5a5c20dd25e10ec3b3986acaa647b77e4ae24b0cbc9a54a27a87-0-354892-0x005e470ff654d834983a46b8f29dfa99963d5044b993cb7b9c92243a69dab38f",
+      "pairAddress": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x075afe6402ad5a5c20dd25e10ec3b3986acaa647b77e4ae24b0cbc9a54a27a87-0-354892-0x005e470ff654d834983a46b8f29dfa99963d5044b993cb7b9c92243a69dab38f",
+      "baseToken": {
+        "address": "0x075afe6402ad5a5c20dd25e10ec3b3986acaa647b77e4ae24b0cbc9a54a27a87",
+        "name": "Ekubo Protocol",
+        "symbol": "EKUBO"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "26.5458",
+      "priceUsd": "0.9317",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 1,
+          "sells": 1
+        },
+        "h6": {
+          "buys": 12,
+          "sells": 4
+        },
+        "h24": {
+          "buys": 63,
+          "sells": 33
+        }
+      },
+      "volume": {
+        "h24": 606.07,
+        "h6": 96.6,
+        "h1": 8.49,
+        "m5": 0
+      },
+      "priceChange": {
+        "h1": -0.26,
+        "h6": -0.6,
+        "h24": -1.75
+      },
+      "liquidity": {
+        "usd": 9934.85,
+        "base": 5331.2294,
+        "quote": 141522
+      },
+      "fdv": 8998896,
+      "marketCap": 8998896,
+      "pairCreatedAt": 1725967481000
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x00acc2fa3bb7f6a6726c14d9e142d51fe3984dbfa32b5907e1e76425177875e2-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-2347948331754475397897284791279200659-5982-0x0",
+      "pairAddress": "0x00acc2fa3bb7f6a6726c14d9e142d51fe3984dbfa32b5907e1e76425177875e2-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-2347948331754475397897284791279200659-5982-0x0",
+      "baseToken": {
+        "address": "0x00acc2fa3bb7f6a6726c14d9e142d51fe3984dbfa32b5907e1e76425177875e2",
+        "name": "SCHIZODIO ",
+        "symbol": "SCHIZODIO "
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "0.0009983",
+      "priceUsd": "0.00003593",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 1,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 33.46,
+        "h6": 0,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {},
+      "liquidity": {
+        "usd": 9100.75,
+        "base": 134770849,
+        "quote": 118255
+      },
+      "fdv": 35939,
+      "marketCap": 35939,
+      "pairCreatedAt": 1730778991000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/7caa9fd610624f72fa93b0a7687794359235d58474cd1fc2c8c485c157f296f6?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/3eed0f91e76e9b9c2a99957c8e85cd3af27040b61174d59ebc370da3b14e4c8d?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/starknet/0x00acc2fa3bb7f6a6726c14d9e142d51fe3984dbfa32b5907e1e76425177875e2?timestamp=1776575100000",
+        "websites": [
+          {
+            "url": "https://schizodio.xyz",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/schizodio",
+            "type": "twitter"
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-3402823669209384634633746074317682114-19802-0x0",
+      "pairAddress": "0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-3402823669209384634633746074317682114-19802-0x0",
+      "baseToken": {
+        "address": "0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49",
+        "name": "Lords",
+        "symbol": "LORDS"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "0.1857",
+      "priceUsd": "0.006500",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 4,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 21,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 177,
+          "sells": 9
+        }
+      },
+      "volume": {
+        "h24": 160.3,
+        "h6": 4.7,
+        "h1": 3.42,
+        "m5": 0
+      },
+      "priceChange": {
+        "h1": -0.18,
+        "h6": -0.99,
+        "h24": -2.58
+      },
+      "liquidity": {
+        "usd": 4102.79,
+        "base": 354837,
+        "quote": 51320
+      },
+      "fdv": 555660,
+      "marketCap": 555660,
+      "pairCreatedAt": 1708431822000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/104415dacaaf08c11b338e1e60eb965e893487a68009e649dd5cad0b78925a9c?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/148b970662c16205db880755a46ade9fb0fc1e625116ff99c35d8e9d76316ef5?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/starknet/0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49?timestamp=1776575100000",
+        "websites": [
+          {
+            "url": "https://realms.world",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/LootRealms",
+            "type": "twitter"
+          },
+          {
+            "url": "https://discord.com/invite/realmsworld",
+            "type": "discord"
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x04fcaf2a7b4a072fe57c59beee807322d34ed65000d78611c909a46fead07fb1-3402823669209384634633746074317682114-19802-0x0",
+      "pairAddress": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-0x04fcaf2a7b4a072fe57c59beee807322d34ed65000d78611c909a46fead07fb1-3402823669209384634633746074317682114-19802-0x0",
+      "baseToken": {
+        "address": "0x04fcaf2a7b4a072fe57c59beee807322d34ed65000d78611c909a46fead07fb1",
+        "name": "Daydreams",
+        "symbol": "dreams"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "0.1280",
+      "priceUsd": "0.004495",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 1,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 1,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 1.01,
+        "h6": 1.01,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {},
+      "liquidity": {
+        "usd": 1581.15,
+        "base": 328920,
+        "quote": 2919.7068
+      },
+      "fdv": 175881,
+      "marketCap": 175881,
+      "pairCreatedAt": 1752230382000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/ac3a8dc3e3311dd7cc6e48cb1951a4e116a7bfc93020b49a253273f1288d549f?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/f06ee84edfd4186728200a520e483bff05086bceb8697df51ea5c97891c02411?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/starknet/0x04fcaf2a7b4a072fe57c59beee807322d34ed65000d78611c909a46fead07fb1?timestamp=1776575100000",
+        "websites": [
+          {
+            "url": "https://dreams.fun",
+            "label": "Website"
+          },
+          {
+            "url": "https://docs.dreams.fun/",
+            "label": "Docs"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/daydreamsagents",
+            "type": "twitter"
+          },
+          {
+            "url": "https://discord.com/invite/CdGWEkKeZ7",
+            "type": "discord"
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-3402823669209384634633746074317682114-354892-0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc",
+      "pairAddress": "0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-3402823669209384634633746074317682114-354892-0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc",
+      "baseToken": {
+        "address": "0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b",
+        "name": "Survivor",
+        "symbol": "SURVIVOR"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "4.2769",
+      "priceUsd": "0.1501",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 2
+        },
+        "h6": {
+          "buys": 13,
+          "sells": 13
+        },
+        "h24": {
+          "buys": 36,
+          "sells": 42
+        }
+      },
+      "volume": {
+        "h24": 101.43,
+        "h6": 37.45,
+        "h1": 0.36,
+        "m5": 0
+      },
+      "priceChange": {
+        "h1": -0.33,
+        "h6": 0.12,
+        "h24": 3.27
+      },
+      "liquidity": {
+        "usd": 590.54,
+        "base": 2010.2778,
+        "quote": 8226.993
+      },
+      "fdv": 1501193,
+      "marketCap": 1501193,
+      "pairCreatedAt": 1759676568000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/ba3bcf4383d87b11ddbc88f2b4304436b959cf107e34c161903cabbbe0c64a91?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/b4fa726a6786cbfb6ba8950f19e21cd4deb00215805687e866f943873b16879b?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/starknet/0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b?timestamp=1776575100000",
+        "websites": [
+          {
+            "url": "https://lootsurvivor.io/",
+            "label": "Website"
+          },
+          {
+            "url": "https://docs.provable.games/lootsurvivor",
+            "label": "Docs"
+          },
+          {
+            "url": "https://www.youtube.com/@ProvableGames",
+            "label": "YouTube"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/LootSurvivor",
+            "type": "twitter"
+          },
+          {
+            "url": "https://discord.gg/lootsurvivor",
+            "type": "discord"
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-10208471007628153903901238222953046344-354892-0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc",
+      "pairAddress": "0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-10208471007628153903901238222953046344-354892-0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc",
+      "baseToken": {
+        "address": "0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b",
+        "name": "Survivor",
+        "symbol": "SURVIVOR"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "4.2227",
+      "priceUsd": "0.1499",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 6,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 5.98,
+        "h6": 0,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {
+        "h24": 0.55
+      },
+      "liquidity": {
+        "usd": 506.45,
+        "base": 1751.1148,
+        "quote": 6871.9328
+      },
+      "fdv": 1499068,
+      "marketCap": 1499068,
+      "pairCreatedAt": 1761072104000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/ba3bcf4383d87b11ddbc88f2b4304436b959cf107e34c161903cabbbe0c64a91?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/b4fa726a6786cbfb6ba8950f19e21cd4deb00215805687e866f943873b16879b?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/starknet/0x042dd777885ad2c116be96d4d634abc90a26a790ffb5871e037dd5ae7d2ec86b?timestamp=1776575100000",
+        "websites": [
+          {
+            "url": "https://lootsurvivor.io/",
+            "label": "Website"
+          },
+          {
+            "url": "https://docs.provable.games/lootsurvivor",
+            "label": "Docs"
+          },
+          {
+            "url": "https://www.youtube.com/@ProvableGames",
+            "label": "YouTube"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/LootSurvivor",
+            "type": "twitter"
+          },
+          {
+            "url": "https://discord.gg/lootsurvivor",
+            "type": "discord"
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-17014118346046923173168730371588410572-95310-0x0",
+      "pairAddress": "0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-17014118346046923173168730371588410572-95310-0x0",
+      "baseToken": {
+        "address": "0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee",
+        "name": "STARKNET BROTHER",
+        "symbol": "BROTHER"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "0.000000003120",
+      "priceUsd": "0.0000000001123",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 1,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 2.27,
+        "h6": 0,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {},
+      "liquidity": {
+        "usd": 445.01,
+        "base": 1852461546338,
+        "quote": 6580.4701
+      },
+      "fdv": 112347,
+      "marketCap": 112347,
+      "pairCreatedAt": 1755840640000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/1b540ed528b51628b5de4adf717bdfc101648c9e6215f55ed913682244c6b6d8?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/d41ceb29ff57d181c62d3f35e97a16464bd6ba470e1bb6056452a0079c81f855?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/starknet/0x03b405a98c9e795d427fe82cdeeeed803f221b52471e3a757574a2b4180793ee?timestamp=1776575100000",
+        "websites": [
+          {
+            "url": "https://www.supbro.fun/",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/StarknetBro",
+            "type": "twitter"
+          },
+          {
+            "url": "https://t.me/starknetbrother",
+            "type": "telegram"
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-170141183460469235273462165868118016-1000-0x0",
+      "pairAddress": "0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-170141183460469235273462165868118016-1000-0x0",
+      "baseToken": {
+        "address": "0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49",
+        "name": "Lords",
+        "symbol": "LORDS"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "0.1869",
+      "priceUsd": "0.006562",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 1,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 2,
+          "sells": 1
+        },
+        "h24": {
+          "buys": 4,
+          "sells": 1
+        }
+      },
+      "volume": {
+        "h24": 7.36,
+        "h6": 6.93,
+        "h1": 0.15,
+        "m5": 0
+      },
+      "priceChange": {
+        "h1": 0.57,
+        "h6": -1.94,
+        "h24": -1.5
+      },
+      "liquidity": {
+        "usd": 37.42,
+        "base": 4356.1032,
+        "quote": 251.6723
+      },
+      "fdv": 560986,
+      "marketCap": 560986,
+      "pairCreatedAt": 1708502678000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/104415dacaaf08c11b338e1e60eb965e893487a68009e649dd5cad0b78925a9c?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/148b970662c16205db880755a46ade9fb0fc1e625116ff99c35d8e9d76316ef5?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/starknet/0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49?timestamp=1776575100000",
+        "websites": [
+          {
+            "url": "https://realms.world",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/LootRealms",
+            "type": "twitter"
+          },
+          {
+            "url": "https://discord.com/invite/realmsworld",
+            "type": "discord"
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "starknet",
+      "dexId": "ekubo",
+      "url": "https://dexscreener.com/starknet/0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-170141183460469235273462165868118016-354892-0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc",
+      "pairAddress": "0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49-0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d-170141183460469235273462165868118016-354892-0x043e4f09c32d13d43a880e85f69f7de93ceda62d6cf2581a582c6db635548fdc",
+      "baseToken": {
+        "address": "0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49",
+        "name": "Lords",
+        "symbol": "LORDS"
+      },
+      "quoteToken": {
+        "address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK"
+      },
+      "priceNative": "0.1903",
+      "priceUsd": "0.006661",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 1,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 1,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 1,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 0.14,
+        "h6": 0.14,
+        "h1": 0.14,
+        "m5": 0
+      },
+      "priceChange": {},
+      "liquidity": {
+        "usd": 10.12,
+        "base": 760.2613,
+        "quote": 144.4798
+      },
+      "fdv": 569416,
+      "marketCap": 569416,
+      "pairCreatedAt": 1734464465000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/104415dacaaf08c11b338e1e60eb965e893487a68009e649dd5cad0b78925a9c?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/148b970662c16205db880755a46ade9fb0fc1e625116ff99c35d8e9d76316ef5?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/starknet/0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49?timestamp=1776575100000",
+        "websites": [
+          {
+            "url": "https://realms.world",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/LootRealms",
+            "type": "twitter"
+          },
+          {
+            "url": "https://discord.com/invite/realmsworld",
+            "type": "discord"
+          }
+        ]
+      }
+    }
+  ]
+}

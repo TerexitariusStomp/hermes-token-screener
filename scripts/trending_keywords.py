@@ -229,7 +229,6 @@ STOPWORDS = {
     "raydium",
     "pumpfun",
     # Fiat/stablecoin exclusions - not tradeable tokens
-    "usd",
     "usdt",
     "usdc",
     "dai",
@@ -240,8 +239,6 @@ STOPWORDS = {
     "jpy",
     "cny",
     "btc",
-    "eth",
-    "sol",
     "bnb",
     "xrp",
 }
@@ -359,13 +356,9 @@ def main():
 
     # Extract actual token names (cleaner signal)
     token_names = extract_token_names(texts)
-    name_freq = Counter(
-        n.lower() for n in token_names if len(n) >= 2 and n.lower() not in STOPWORDS
-    )
+    name_freq = Counter(n.lower() for n in token_names if len(n) >= 2 and n.lower() not in STOPWORDS)
     token_keywords = [
-        {"keyword": name, "count": count, "type": "token"}
-        for name, count in name_freq.most_common(20)
-        if count >= 2
+        {"keyword": name, "count": count, "type": "token"} for name, count in name_freq.most_common(20) if count >= 2
     ]
 
     # Also extract general keywords from names only (not metadata)
@@ -395,7 +388,7 @@ def main():
     OUTPUT_PATH.write_text(json.dumps(output, indent=2))
 
     # Print top keywords
-    print(f"\nTop trending keywords:")
+    print("\nTop trending keywords:")
     for kw in keywords[:15]:
         bar = "#" * min(kw["count"], 30)
         print(f"  {kw['keyword']:>20}  {kw['count']:>4}  {bar}")

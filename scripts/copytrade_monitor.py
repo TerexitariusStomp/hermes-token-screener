@@ -26,7 +26,7 @@ import json
 import sqlite3
 import sys
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import requests
 # TOR proxy - route all external HTTP through SOCKS5
@@ -47,6 +47,7 @@ TOP_TOKENS_PATH = settings.output_path
 # ═══════════════════════════════════════════════════════════════════════════════
 # DISCOVERIES DATABASE
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def init_discoveries_db() -> sqlite3.Connection:
     """Initialize the copytrade discoveries database."""
@@ -117,7 +118,8 @@ def init_discoveries_db() -> sqlite3.Connection:
 # WALLET POSITION SCANNING (via GMGN + existing data)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def scan_wallet_positions(min_wallet_score: float = 30) -> Dict[str, List[dict]]:
+
+def scan_wallet_positions(min_wallet_score: float = 30) -> dict[str, list[dict]]:
     """
     Scan top wallets for their current token positions.
 
@@ -131,7 +133,7 @@ def scan_wallet_positions(min_wallet_score: float = 30) -> Dict[str, List[dict]]
     wallets = conn.execute(
         "SELECT address, chain, wallet_score, wallet_tags FROM tracked_wallets "
         "WHERE wallet_score >= ? ORDER BY wallet_score DESC LIMIT 50",
-        (min_wallet_score,)
+        (min_wallet_score,),
     ).fetchall()
     conn.close()
 
@@ -142,7 +144,7 @@ def scan_wallet_positions(min_wallet_score: float = 30) -> Dict[str, List[dict]]
     conn2.close()
 
     # Build wallet → positions map
-    positions: Dict[str, List[dict]] = {}
+    positions: dict[str, list[dict]] = {}
     for entry in all_entries:
         addr = entry["wallet_address"]
         if addr not in positions:
@@ -157,10 +159,11 @@ def scan_wallet_positions(min_wallet_score: float = 30) -> Dict[str, List[dict]]
 # NEW TOKEN DETECTION
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def detect_new_positions(
-    wallet_positions: Dict[str, List[dict]],
+    wallet_positions: dict[str, list[dict]],
     disc_conn: sqlite3.Connection,
-) -> List[dict]:
+) -> list[dict]:
     """
     Detect new token positions from top wallets.
 
@@ -197,19 +200,21 @@ def detect_new_positions(
                 continue
 
             # New discovery!
-            new_discoveries.append({
-                "contract_address": token_addr,
-                "chain": chain,
-                "symbol": pos.get("token_symbol", ""),
-                "discovered_by_wallet": wallet_addr,
-                "discovery_method": "wallet_scan",
-                "profit": pos.get("profit", 0),
-                "roi_pct": pos.get("profit_change", 0),
-                "buy_tx_count": pos.get("buy_tx_count", 0),
-                "sell_tx_count": pos.get("sell_tx_count", 0),
-                "is_profitable": pos.get("is_profitable", 0),
-                "discovered_at": time.time(),
-            })
+            new_discoveries.append(
+                {
+                    "contract_address": token_addr,
+                    "chain": chain,
+                    "symbol": pos.get("token_symbol", ""),
+                    "discovered_by_wallet": wallet_addr,
+                    "discovery_method": "wallet_scan",
+                    "profit": pos.get("profit", 0),
+                    "roi_pct": pos.get("profit_change", 0),
+                    "buy_tx_count": pos.get("buy_tx_count", 0),
+                    "sell_tx_count": pos.get("sell_tx_count", 0),
+                    "is_profitable": pos.get("is_profitable", 0),
+                    "discovered_at": time.time(),
+                }
+            )
 
     # Deduplicate by address
     seen = set()
@@ -223,14 +228,14 @@ def detect_new_positions(
     return unique
 
 
-def save_discoveries(discoveries: List[dict], conn: sqlite3.Connection):
+def save_discoveries(discoveries: list[dict], conn: sqlite3.Connection):
     """Save discovered tokens to the copytrade database."""
     now = time.time()
     for d in discoveries:
         # Check if token already exists
         existing = conn.execute(
             "SELECT id, wallet_count, wallet_addresses FROM discovered_tokens WHERE contract_address = ? AND chain = ?",
-            (d["contract_address"], d["chain"])
+            (d["contract_address"], d["chain"]),
         ).fetchone()
 
         if existing:
@@ -238,43 +243,66 @@ def save_discoveries(discoveries: List[dict], conn: sqlite3.Connection):
             existing_wallets = json.loads(existing[2]) if existing[2] else []
             if d["discovered_by_wallet"] not in existing_wallets:
                 existing_wallets.append(d["discovered_by_wallet"])
-            conn.execute("""
+            conn.execute(
+                """
                 UPDATE discovered_tokens SET
                     wallet_count = ?,
                     wallet_addresses = ?,
                     discovered_at = MIN(discovered_at, ?)
                 WHERE id = ?
-            """, (len(existing_wallets), json.dumps(existing_wallets), d["discovered_at"], existing[0]))
+            """,
+                (len(existing_wallets), json.dumps(existing_wallets), d["discovered_at"], existing[0]),
+            )
         else:
             # New entry
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO discovered_tokens
                 (contract_address, chain, symbol, discovered_at, discovered_by_wallet,
                  discovery_method, profit, roi_pct, buy_tx_count, sell_tx_count,
                  is_profitable, wallet_count, wallet_addresses)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
-            """, (
-                d["contract_address"], d["chain"], d.get("symbol", ""),
-                d["discovered_at"], d["discovered_by_wallet"], d.get("discovery_method", "wallet_scan"),
-                d.get("profit", 0), d.get("roi_pct", 0), d.get("buy_tx_count", 0),
-                d.get("sell_tx_count", 0), d.get("is_profitable", 0),
-                json.dumps([d["discovered_by_wallet"]]),
-            ))
+            """,
+                (
+                    d["contract_address"],
+                    d["chain"],
+                    d.get("symbol", ""),
+                    d["discovered_at"],
+                    d["discovered_by_wallet"],
+                    d.get("discovery_method", "wallet_scan"),
+                    d.get("profit", 0),
+                    d.get("roi_pct", 0),
+                    d.get("buy_tx_count", 0),
+                    d.get("sell_tx_count", 0),
+                    d.get("is_profitable", 0),
+                    json.dumps([d["discovered_by_wallet"]]),
+                ),
+            )
 
         # Save wallet position
-        conn.execute("""
+        conn.execute(
+            """
             INSERT OR REPLACE INTO wallet_positions
             (wallet_address, token_address, chain, first_seen_at, last_updated,
              profit, roi_pct, buy_tx_count, sell_tx_count, is_profitable)
             VALUES (?, ?, ?, COALESCE((SELECT first_seen_at FROM wallet_positions WHERE wallet_address=? AND token_address=?), ?),
                     ?, ?, ?, ?, ?, ?)
-        """, (
-            d["discovered_by_wallet"], d["contract_address"], d["chain"],
-            d["discovered_by_wallet"], d["contract_address"], d["discovered_at"],
-            now, d.get("profit", 0), d.get("roi_pct", 0),
-            d.get("buy_tx_count", 0), d.get("sell_tx_count", 0),
-            d.get("is_profitable", 0),
-        ))
+        """,
+            (
+                d["discovered_by_wallet"],
+                d["contract_address"],
+                d["chain"],
+                d["discovered_by_wallet"],
+                d["contract_address"],
+                d["discovered_at"],
+                now,
+                d.get("profit", 0),
+                d.get("roi_pct", 0),
+                d.get("buy_tx_count", 0),
+                d.get("sell_tx_count", 0),
+                d.get("is_profitable", 0),
+            ),
+        )
 
     conn.commit()
 
@@ -283,7 +311,8 @@ def save_discoveries(discoveries: List[dict], conn: sqlite3.Connection):
 # WEBHOOK SETUP
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def setup_alchemy_webhook(wallets: List[dict], webhook_url: str = "") -> Optional[str]:
+
+def setup_alchemy_webhook(wallets: list[dict], webhook_url: str = "") -> str | None:
     """
     Create Alchemy webhook for wallet activity monitoring.
 
@@ -309,7 +338,7 @@ def setup_alchemy_webhook(wallets: List[dict], webhook_url: str = "") -> Optiona
                 "network": "ETH_MAINNET",  # Base uses same webhook
                 "webhook_type": "ADDRESS_ACTIVITY",
                 "addresses": addresses,
-                "webhook_url": webhook_url or f"https://your-server.com/alchemy/webhook",
+                "webhook_url": webhook_url or "https://your-server.com/alchemy/webhook",
             },
             headers={"X-Alchemy-Token": api_key},
             timeout=15,
@@ -327,7 +356,7 @@ def setup_alchemy_webhook(wallets: List[dict], webhook_url: str = "") -> Optiona
     return None
 
 
-def setup_helius_webhook(wallets: List[dict], webhook_url: str = "") -> Optional[str]:
+def setup_helius_webhook(wallets: list[dict], webhook_url: str = "") -> str | None:
     """
     Create Helius webhook for Solana wallet monitoring.
     """
@@ -346,7 +375,7 @@ def setup_helius_webhook(wallets: List[dict], webhook_url: str = "") -> Optional
         resp = requests.post(
             f"https://api.helius.xyz/v0/webhooks?api-key={api_key}",
             json={
-                "webhookURL": webhook_url or f"https://your-server.com/helius/webhook",
+                "webhookURL": webhook_url or "https://your-server.com/helius/webhook",
                 "transactionTypes": ["SWAP", "TRANSFER"],
                 "accountAddresses": addresses,
                 "webhookType": "enhanced",
@@ -366,7 +395,7 @@ def setup_helius_webhook(wallets: List[dict], webhook_url: str = "") -> Optional
     return None
 
 
-def setup_quicknode_webhook(wallets: List[dict], webhook_url: str = "") -> Optional[str]:
+def setup_quicknode_webhook(wallets: list[dict], webhook_url: str = "") -> str | None:
     """
     Create QuickNode webhook for EVM wallet monitoring.
     """
@@ -386,7 +415,7 @@ def setup_quicknode_webhook(wallets: List[dict], webhook_url: str = "") -> Optio
             "https://api.quicknode.com/quickalerts/rest/v1/destinations",
             json={
                 "name": "hermes-copytrade-monitor",
-                "to_url": webhook_url or f"https://your-server.com/quicknode/webhook",
+                "to_url": webhook_url or "https://your-server.com/quicknode/webhook",
             },
             headers={"x-api-key": api_key, "Content-Type": "application/json"},
             timeout=15,
@@ -401,7 +430,9 @@ def setup_quicknode_webhook(wallets: List[dict], webhook_url: str = "") -> Optio
                 json={
                     "name": "hermes-wallet-transfers",
                     "destination_id": dest_id,
-                    "expression": "(" + " || ".join([f"tx_from == '{a}' || tx_to == '{a}'" for a in addresses[:5]]) + ")",
+                    "expression": "("
+                    + " || ".join([f"tx_from == '{a}' || tx_to == '{a}'" for a in addresses[:5]])
+                    + ")",
                     "network": "ethereum-mainnet",
                 },
                 headers={"x-api-key": api_key, "Content-Type": "application/json"},
@@ -425,15 +456,17 @@ ANKR_API_KEY = "0e8c5d238f6a82f29d32988cccc7094b7435463936045a913be32563e16b5792
 ANKR_ENDPOINT = "https://rpc.ankr.com/multichain/" + ANKR_API_KEY
 
 ANKR_CHAINS = {
-    "ethereum": "eth", "eth": "eth",
+    "ethereum": "eth",
+    "eth": "eth",
     "base": "base",
-    "binance": "bsc", "bsc": "bsc",
+    "binance": "bsc",
+    "bsc": "bsc",
     "polygon": "polygon",
     "avalanche": "avalanche",
 }
 
 
-def poll_ankr_balances(wallets: List[dict]) -> List[dict]:
+def poll_ankr_balances(wallets: list[dict]) -> list[dict]:
     """
     Poll Ankr for multi-chain token balances.
 
@@ -475,16 +508,18 @@ def poll_ankr_balances(wallets: List[dict]) -> List[dict]:
                     balance_usd = float(token.get("balanceUsd", 0))
 
                     if token_addr and balance > 0 and balance_usd > 1:  # skip dust
-                        new_positions.append({
-                            "wallet_address": addr,
-                            "token_address": token_addr,
-                            "chain": chain,
-                            "symbol": token.get("tokenSymbol", ""),
-                            "balance": balance,
-                            "balance_usd": balance_usd,
-                            "discovered_at": time.time(),
-                            "discovery_method": "ankr_poll",
-                        })
+                        new_positions.append(
+                            {
+                                "wallet_address": addr,
+                                "token_address": token_addr,
+                                "chain": chain,
+                                "symbol": token.get("tokenSymbol", ""),
+                                "balance": balance,
+                                "balance_usd": balance_usd,
+                                "discovered_at": time.time(),
+                                "discovery_method": "ankr_poll",
+                            }
+                        )
         except Exception as e:
             log.debug("ankr_poll_error", wallet=addr[:12], error=str(e))
             continue
@@ -496,6 +531,7 @@ def poll_ankr_balances(wallets: List[dict]) -> List[dict]:
 # ═══════════════════════════════════════════════════════════════════════════════
 # ENRICHMENT INTEGRATION
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 def enrich_discovered_tokens(conn: sqlite3.Connection):
     """
@@ -550,7 +586,8 @@ def enrich_discovered_tokens(conn: sqlite3.Connection):
             ).fetchone()[0]
             score += min(wallet_count * 10, 30)
 
-            conn.execute("""
+            conn.execute(
+                """
                 UPDATE discovered_tokens SET
                     symbol = COALESCE(NULLIF(symbol, ''), ?),
                     name = ?,
@@ -560,12 +597,18 @@ def enrich_discovered_tokens(conn: sqlite3.Connection):
                     enrichment_score = ?,
                     enriched_at = ?
                 WHERE id = ?
-            """, (
-                base.get("symbol", symbol),
-                base.get("name", ""),
-                fdv, vol24, price,
-                round(score, 1), time.time(), token_id,
-            ))
+            """,
+                (
+                    base.get("symbol", symbol),
+                    base.get("name", ""),
+                    fdv,
+                    vol24,
+                    price,
+                    round(score, 1),
+                    time.time(),
+                    token_id,
+                ),
+            )
             enriched += 1
             metrics.api_calls.labels(provider="dexscreener_copytrade", status="ok").inc()
 
@@ -581,11 +624,12 @@ def enrich_discovered_tokens(conn: sqlite3.Connection):
 # MAIN
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def run_copytrade_monitor(
     min_wallet_score: float = 30,
     setup_webhooks: bool = False,
     poll_ankr: bool = True,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Run the copytrade monitoring pipeline."""
     start = time.time()
 
@@ -599,11 +643,14 @@ def run_copytrade_monitor(
     # Load top wallets
     conn = sqlite3.connect(f"file:{WALLETS_DB}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
-    wallets = [dict(r) for r in conn.execute(
-        "SELECT address, chain, wallet_score, wallet_tags FROM tracked_wallets "
-        "WHERE wallet_score >= ? ORDER BY wallet_score DESC LIMIT 50",
-        (min_wallet_score,)
-    ).fetchall()]
+    wallets = [
+        dict(r)
+        for r in conn.execute(
+            "SELECT address, chain, wallet_score, wallet_tags FROM tracked_wallets "
+            "WHERE wallet_score >= ? ORDER BY wallet_score DESC LIMIT 50",
+            (min_wallet_score,),
+        ).fetchall()
+    ]
     conn.close()
 
     log.info("wallets_loaded", count=len(wallets))
@@ -642,7 +689,7 @@ def run_copytrade_monitor(
             # Check if already known
             existing = disc_conn.execute(
                 "SELECT id FROM discovered_tokens WHERE contract_address = ? AND chain = ?",
-                (pos["token_address"], pos["chain"])
+                (pos["token_address"], pos["chain"]),
             ).fetchone()
             if not existing:
                 new_from_ankr.append(discovery)
@@ -673,8 +720,7 @@ def run_copytrade_monitor(
         "new_this_run": len(new_from_scan) + len(new_from_ankr),
         "webhooks": webhook_ids,
         "top_discoveries": [
-            {"symbol": r[0], "address": r[1][:12] + "...", "score": r[2], "wallets": r[3]}
-            for r in top5
+            {"symbol": r[0], "address": r[1][:12] + "...", "score": r[2], "wallets": r[3]} for r in top5
         ],
         "elapsed": round(elapsed, 1),
     }
@@ -685,6 +731,7 @@ def run_copytrade_monitor(
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="Copy-trade monitor")
     parser.add_argument("--min-wallet-score", type=float, default=30)
     parser.add_argument("--setup-webhooks", action="store_true")

@@ -1,0 +1,114 @@
+{
+  "total_pairs_compared": 15327,
+  "opportunity_count": 6,
+  "top_opportunities": [
+    {
+      "pair_key": "TY5WnpU6bLxKrrAaa7JSQht1sPdgU4hkyk_0",
+      "pair": "META/TRX",
+      "low_source": "sunswap_v1",
+      "low_price": "122.316149124720622397",
+      "low_base_volume": "65208684064131872",
+      "low_quote_volume": "8000000",
+      "high_source": "sunswap_v2",
+      "high_price": "128.66188396037633198",
+      "high_base_volume": "64800000000000000",
+      "high_quote_volume": "8334832",
+      "pct_diff": "5.187977941641402726279236507",
+      "sources": [
+        "sunswap_v1",
+        "sunswap_v2",
+        "justswap"
+      ]
+    },
+    {
+      "pair_key": "TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9_0",
+      "pair": "JST/TRX",
+      "low_source": "sunswap_v1",
+      "low_price": "0.205956784099349675",
+      "low_base_volume": "450417924970717777704556",
+      "low_quote_volume": "96092887627",
+      "high_source": "sunswap_v2",
+      "high_price": "0.214137593926267984",
+      "high_base_volume": "111931037653012506242",
+      "high_quote_volume": "22000000",
+      "pct_diff": "3.972100196986975851991881801",
+      "sources": [
+        "sunswap_v1",
+        "sunswap_v2",
+        "justswap"
+      ]
+    },
+    {
+      "pair_key": "TSSMHYeV2uE9qYH95DqyoCuNCzEL1NvU3S_0",
+      "pair": "SUN/TRX",
+      "low_source": "sunswap_v1",
+      "low_price": "0.055876500623573802",
+      "low_base_volume": "647654430829421736349894",
+      "low_quote_volume": "36499515063",
+      "high_source": "sunswap_v2",
+      "high_price": "0.056518686551553088",
+      "high_base_volume": "639550000000000000000",
+      "high_quote_volume": "36168454",
+      "pct_diff": "1.149295179212338558755302848",
+      "sources": [
+        "sunswap_v1",
+        "sunswap_v2",
+        "justswap"
+      ]
+    },
+    {
+      "pair_key": "TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4_0",
+      "pair": "TUSD/TRX",
+      "low_source": "sunswap_v1",
+      "low_price": "3.03934168237770605",
+      "low_base_volume": "249128614193979302680",
+      "low_quote_volume": "756726611",
+      "high_source": "sunswap_v2",
+      "high_price": "3.060267207993586132",
+      "high_base_volume": "3297000000000000000",
+      "high_quote_volume": "10237412",
+      "pct_diff": "0.6884887519296561382923908133",
+      "sources": [
+        "sunswap_v1",
+        "sunswap_v2",
+        "justswap"
+      ]
+    },
+    {
+      "pair_key": "TFczxzPhnThNSqr5by8tvxsdCFRRz6cPNq_0",
+      "pair": "NFT/TRX",
+      "low_source": "sunswap_v1",
+      "low_price": "0.000001022722331267",
+      "low_base_volume": "2173007608922144",
+      "low_quote_volume": "2220137720",
+      "high_source": "sunswap_v2",
+      "high_price": "0.000001029529628341",
+      "high_base_volume": "34293000000000",
+      "high_quote_volume": "35385717",
+      "pct_diff": "0.6656055965421990044756662948",
+      "sources": [
+        "sunswap_v1",
+        "sunswap_v2",
+        "justswap"
+      ]
+    },
+    {
+      "pair_key": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t_0",
+      "pair": "USDT/TRX",
+      "low_source": "sunswap_v1",
+      "low_price": "3.043624824291148165",
+      "low_base_volume": "129422128329",
+      "low_quote_volume": "395102255472",
+      "high_source": "sunswap_v2",
+      "high_price": "3.061485396696526957",
+      "high_base_volume": "9219000",
+      "high_quote_volume": "28670286",
+      "pct_diff": "0.5868191198479421687320804158",
+      "sources": [
+        "sunswap_v1",
+        "sunswap_v2",
+        "justswap"
+      ]
+    }
+  ]
+}

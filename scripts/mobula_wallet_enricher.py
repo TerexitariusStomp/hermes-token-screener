@@ -25,7 +25,6 @@ import sys, os
 sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
 import hermes_screener.tor_config
 from pathlib import Path
-from typing import Optional
 
 DATA_DIR = Path.home() / ".hermes" / "data"
 DB_PATH = DATA_DIR / "central_contracts.db"
@@ -50,7 +49,7 @@ def _load_key() -> str:
 MOBULA_KEY = _load_key()
 
 
-def mobula_request(endpoint: str, params: dict = None) -> Optional[dict]:
+def mobula_request(endpoint: str, params: dict = None) -> dict | None:
     """Make authenticated request to Mobula API."""
     if not MOBULA_KEY:
         print("  MOBULA_API_KEY not set. Get one at https://admin.mobula.io")
@@ -110,9 +109,7 @@ def get_wallet_classification(wallet: str, blockchain: str = "solana") -> dict:
 
     # Mobula returns trader_type/classification in various formats
     trader_type = (
-        wallet_data.get("trader_type")
-        or wallet_data.get("classification")
-        or wallet_data.get("wallet_type", "")
+        wallet_data.get("trader_type") or wallet_data.get("classification") or wallet_data.get("wallet_type", "")
     )
     if trader_type:
         result["mobula_trader_type"] = trader_type
@@ -131,9 +128,7 @@ def get_wallet_classification(wallet: str, blockchain: str = "solana") -> dict:
         result["mobula_pnl_30d"] = pnl
 
     # Trade count
-    result["mobula_trade_count"] = wallet_data.get("trade_count") or wallet_data.get(
-        "total_trades", 0
-    )
+    result["mobula_trade_count"] = wallet_data.get("trade_count") or wallet_data.get("total_trades", 0)
 
     return result
 

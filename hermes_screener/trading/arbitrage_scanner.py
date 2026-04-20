@@ -12,7 +12,7 @@ import urllib.request
 from dataclasses import dataclass, field
 from decimal import Decimal, getcontext
 from itertools import combinations
-from typing import List, Optional
+from typing import Optional
 
 getcontext().prec = 28
 
@@ -26,26 +26,54 @@ GAS_UNITS_TWO_SWAPS: int = 200_000
 
 # RPC endpoints per chain
 CHAIN_RPCS: dict = {
-    "base": ["https://base.llamarpc.com", "https://base.drpc.org", "https://1rpc.io/base"],
+    "base": [
+        "https://base.llamarpc.com",
+        "https://base.drpc.org",
+        "https://1rpc.io/base",
+    ],
     "ethereum": ["https://eth.llamarpc.com", "https://rpc.ankr.com/eth"],
     "arbitrum": ["https://arb1.arbitrum.io/rpc", "https://rpc.ankr.com/arbitrum"],
 }
 
 # V2/V3 factories on Base (from base_dex_prices.py)
 BASE_FACTORIES: dict = {
-    "Uniswap V2":     {"type": "v2", "factory": "0x8909Dc15e40173Ff4699343b6eB8132c65e18eC6", "router": "0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24"},
-    "Aerodrome":      {"type": "v2", "factory": "0x420DD381b31aEf6683db6B902084cB0FFECe40Da", "router": "0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43"},
-    "BaseSwap V2":    {"type": "v2", "factory": "0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB", "router": "0x327Df1E6de05895d2ab08513aaDD9313Fe505d86"},
-    "SushiSwap V2":   {"type": "v2", "factory": "0x71524B4f93c58fcbF659783fCBe56AcF49992dDa", "router": "0x6BDED42c6DA8FBf0d2bA55B2fa120C5e0c8D7891"},
-    "Uniswap V3":     {"type": "v3", "factory": "0x33128a8fC17869897dcE68Ed026d694621f6FDfD", "fees": [100, 500, 3000, 10000]},
-    "PancakeSwap V3": {"type": "v3", "factory": "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865", "fees": [100, 500, 2500, 10000]},
+    "Uniswap V2": {
+        "type": "v2",
+        "factory": "0x8909Dc15e40173Ff4699343b6eB8132c65e18eC6",
+        "router": "0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24",
+    },
+    "Aerodrome": {
+        "type": "v2",
+        "factory": "0x420DD381b31aEf6683db6B902084cB0FFECe40Da",
+        "router": "0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43",
+    },
+    "BaseSwap V2": {
+        "type": "v2",
+        "factory": "0xFDa619b6d20975be80A10332cD39b9a4b0FAa8BB",
+        "router": "0x327Df1E6de05895d2ab08513aaDD9313Fe505d86",
+    },
+    "SushiSwap V2": {
+        "type": "v2",
+        "factory": "0x71524B4f93c58fcbF659783fCBe56AcF49992dDa",
+        "router": "0x6BDED42c6DA8FBf0d2bA55B2fa120C5e0c8D7891",
+    },
+    "Uniswap V3": {
+        "type": "v3",
+        "factory": "0x33128a8fC17869897dcE68Ed026d694621f6FDfD",
+        "fees": [100, 500, 3000, 10000],
+    },
+    "PancakeSwap V3": {
+        "type": "v3",
+        "factory": "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865",
+        "fees": [100, 500, 2500, 10000],
+    },
 }
 
 # Known token decimals for Base chain
 BASE_TOKEN_DECIMALS: dict = {
     "0x4200000000000000000000000000000000000006": 18,  # WETH
-    "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": 6,   # USDC
-    "0xfde4c96c8593536e31f229ea8f37b2ada2699bb2": 6,   # USDT
+    "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913": 6,  # USDC
+    "0xfde4c96c8593536e31f229ea8f37b2ada2699bb2": 6,  # USDT
     "0x50c5725949a6f0c72e6c4a641f24049a917db0cb": 18,  # DAI
     "0x940181a94a35a4569d4521129dfd34b47d5ed16c": 18,  # AERO
 }
@@ -70,8 +98,12 @@ def _rpc_call(chain: str, method: str, params: list = None) -> dict:
         try:
             payload = json.dumps({"jsonrpc": "2.0", "method": method, "params": params, "id": 1}).encode()
             req = urllib.request.Request(
-                url, data=payload,
-                headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"},
+                url,
+                data=payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": "Mozilla/5.0",
+                },
                 method="POST",
             )
             with urllib.request.urlopen(req, timeout=15, context=ssl_ctx) as resp:
@@ -83,7 +115,7 @@ def _rpc_call(chain: str, method: str, params: list = None) -> dict:
     return {"error": "rpc_failed"}
 
 
-def _eth_call(chain: str, to: str, data: str) -> Optional[str]:
+def _eth_call(chain: str, to: str, data: str) -> str | None:
     """eth_call returning hex result or None."""
     r = _rpc_call(chain, "eth_call", [{"to": to, "data": data}, "latest"])
     result = r.get("result", "")
@@ -108,9 +140,9 @@ def _get_token_decimals(token: str, chain: str) -> int:
     return 18  # fallback
 
 
-def _check_v2_pool(factory: str, tA: str, tB: str, chain: str) -> Optional[str]:
+def _check_v2_pool(factory: str, token_a: str, token_b: str, chain: str) -> str | None:
     """Return V2 pool address or None."""
-    data = "0xe6a43905" + tA[2:].zfill(64) + tB[2:].zfill(64)
+    data = "0xe6a43905" + token_a[2:].zfill(64) + token_b[2:].zfill(64)
     result = _eth_call(chain, factory, data)
     if result and len(result) >= 66:
         addr = "0x" + result[-40:]
@@ -118,9 +150,9 @@ def _check_v2_pool(factory: str, tA: str, tB: str, chain: str) -> Optional[str]:
     return None
 
 
-def _check_v3_pool(factory: str, tA: str, tB: str, fee: int, chain: str) -> Optional[str]:
+def _check_v3_pool(factory: str, token_a: str, token_b: str, fee: int, chain: str) -> str | None:
     """Return V3 pool address or None."""
-    data = "0x1698ee82" + tA[2:].zfill(64) + tB[2:].zfill(64) + hex(fee)[2:].zfill(64)
+    data = "0x1698ee82" + token_a[2:].zfill(64) + token_b[2:].zfill(64) + hex(fee)[2:].zfill(64)
     result = _eth_call(chain, factory, data)
     if result and len(result) >= 66:
         addr = "0x" + result[-40:]
@@ -128,11 +160,18 @@ def _check_v3_pool(factory: str, tA: str, tB: str, fee: int, chain: str) -> Opti
     return None
 
 
-def _quote_v2(router: str, tA: str, tB: str, amount_wei: int, chain: str) -> Optional[int]:
+def _quote_v2(router: str, token_a: str, token_b: str, amount_wei: int, chain: str) -> int | None:
     """getAmountsOut quote from V2 router."""
     path_off = "0" * 62 + "40"
     path_len = "0" * 62 + "02"
-    data = "0xd06ca61f" + hex(amount_wei)[2:].zfill(64) + path_off + path_len + tA[2:].zfill(64) + tB[2:].zfill(64)
+    data = (
+        "0xd06ca61f"
+        + hex(amount_wei)[2:].zfill(64)
+        + path_off
+        + path_len
+        + token_a[2:].zfill(64)
+        + token_b[2:].zfill(64)
+    )
     result = _eth_call(chain, router, data)
     if result and len(result) >= 258:
         try:
@@ -144,14 +183,14 @@ def _quote_v2(router: str, tA: str, tB: str, amount_wei: int, chain: str) -> Opt
     return None
 
 
-def _quote_v3_slot0(pool: str, dec_in: int, dec_out: int, chain: str) -> Optional[float]:
+def _quote_v3_slot0(pool: str, dec_in: int, dec_out: int, chain: str) -> float | None:
     """Spot price from V3 slot0 sqrtPriceX96."""
     result = _eth_call(chain, pool, "0x3850c7bd")
     if result and len(result) >= 66:
         try:
             sqrt = int(result[:66], 16)
             if sqrt > 0:
-                price = (sqrt / (2 ** 96)) ** 2 * (10 ** (dec_in - dec_out))
+                price = (sqrt / (2**96)) ** 2 * (10 ** (dec_in - dec_out))
                 return price
         except ValueError:
             pass
@@ -161,20 +200,22 @@ def _quote_v3_slot0(pool: str, dec_in: int, dec_out: int, chain: str) -> Optiona
 @dataclass
 class PoolQuote:
     """Price quote from a single liquidity pool."""
+
     dex: str
     pool_address: str
     token_in: str
     token_out: str
-    price: Decimal           # units of token_out per token_in
-    fee_bps: int             # fee in basis points
-    pool_type: str           # "v2" or "v3"
+    price: Decimal  # units of token_out per token_in
+    fee_bps: int  # fee in basis points
+    pool_type: str  # "v2" or "v3"
     chain: str
-    router: str = ""         # router address for execution
+    router: str = ""  # router address for execution
 
 
 @dataclass
 class ArbOpportunity:
     """Identified cross-pool arbitrage opportunity."""
+
     buy_pool: PoolQuote
     sell_pool: PoolQuote
     gross_spread_pct: Decimal
@@ -190,12 +231,12 @@ def fetch_all_pool_quotes(
     base_token: str,
     chain: str,
     amount: Decimal,
-) -> List[PoolQuote]:
+) -> list[PoolQuote]:
     """
     Query every known DEX factory for pools containing token_address/base_token pair.
     Returns price quotes from each discovered pool via direct RPC.
     """
-    quotes: List[PoolQuote] = []
+    quotes: list[PoolQuote] = []
     tA = token_address.lower()
     tB = base_token.lower()
 
@@ -206,7 +247,7 @@ def fetch_all_pool_quotes(
 
     dec_in = _get_token_decimals(tA, chain)
     dec_out = _get_token_decimals(tB, chain)
-    amount_wei = int(amount * Decimal(10 ** dec_in))
+    amount_wei = int(amount * Decimal(10**dec_in))
 
     for dex_name, cfg in factories.items():
         ftype = cfg["type"]
@@ -228,19 +269,21 @@ def fetch_all_pool_quotes(
                 router = cfg.get("router", "")
                 out_wei = _quote_v2(router, tA_eff, tB_eff, amount_wei, chain)
                 if out_wei and out_wei > 0:
-                    out_dec = Decimal(out_wei) / Decimal(10 ** dec_out)
+                    out_dec = Decimal(out_wei) / Decimal(10**dec_out)
                     price = out_dec / amount
-                    quotes.append(PoolQuote(
-                        dex=dex_name,
-                        pool_address=pool,
-                        token_in=tA,
-                        token_out=tB,
-                        price=price,
-                        fee_bps=30,  # standard V2 fee
-                        pool_type="v2",
-                        chain=chain,
-                        router=router,
-                    ))
+                    quotes.append(
+                        PoolQuote(
+                            dex=dex_name,
+                            pool_address=pool,
+                            token_in=tA,
+                            token_out=tB,
+                            price=price,
+                            fee_bps=30,  # standard V2 fee
+                            pool_type="v2",
+                            chain=chain,
+                            router=router,
+                        )
+                    )
                     logger.debug(f"V2 {dex_name}: price={price:.6f}")
 
             elif ftype == "v3":
@@ -263,17 +306,19 @@ def fetch_all_pool_quotes(
                         else:
                             continue
 
-                    quotes.append(PoolQuote(
-                        dex=dex_name,
-                        pool_address=pool,
-                        token_in=tA,
-                        token_out=tB,
-                        price=price,
-                        fee_bps=fee // 100,  # convert from 1/1M to bps
-                        pool_type="v3",
-                        chain=chain,
-                        router="",
-                    ))
+                    quotes.append(
+                        PoolQuote(
+                            dex=dex_name,
+                            pool_address=pool,
+                            token_in=tA,
+                            token_out=tB,
+                            price=price,
+                            fee_bps=fee // 100,  # convert from 1/1M to bps
+                            pool_type="v3",
+                            chain=chain,
+                            router="",
+                        )
+                    )
                     logger.debug(f"V3 {dex_name} fee={fee}: price={price:.6f}")
 
             time.sleep(0.1)
@@ -340,7 +385,7 @@ def scan_arbitrage(
     eth_price_usd: float = 3000.0,
     min_profit_pct: float = 0.002,
     amount: Decimal = Decimal("0.01"),
-) -> List[ArbOpportunity]:
+) -> list[ArbOpportunity]:
     """
     Scan all known pools for token_address/base_token, return profitable arb opportunities
     sorted by net_profit_pct descending.
@@ -351,7 +396,7 @@ def scan_arbitrage(
         return []
 
     min_pct = Decimal(str(min_profit_pct))
-    opportunities: List[ArbOpportunity] = []
+    opportunities: list[ArbOpportunity] = []
 
     for q1, q2 in combinations(quotes, 2):
         # Try both directions
@@ -359,7 +404,8 @@ def scan_arbitrage(
             if sell.price <= buy.price:
                 continue
             opp = evaluate_opportunity(
-                buy, sell,
+                buy,
+                sell,
                 gas_price_gwei=gas_price_gwei,
                 trade_amount_usd=trade_amount_usd,
                 eth_price_usd=eth_price_usd,

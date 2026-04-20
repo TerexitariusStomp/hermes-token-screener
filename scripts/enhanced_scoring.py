@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import json
 import time
-from typing import List
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
@@ -122,9 +121,7 @@ def compute_enhanced_token_score(token: dict) -> float:
     smart_money_score = 0.0
 
     # Smart wallet count
-    smart_wallets = (
-        token.get("gmgn_smart_wallets") or token.get("smart_wallet_count") or 0
-    )
+    smart_wallets = token.get("gmgn_smart_wallets") or token.get("smart_wallet_count") or 0
     if smart_wallets > 0:
         if smart_wallets >= 50:
             smart_money_score += 15  # Very high smart money
@@ -489,7 +486,7 @@ def compute_enhanced_token_score(token: dict) -> float:
     return round(max(0, min(100, score)), 2)
 
 
-def enhance_existing_tokens(tokens: List[dict]) -> List[dict]:
+def enhance_existing_tokens(tokens: list[dict]) -> list[dict]:
     """
     Enhance existing tokens with better scoring using available data.
 
@@ -508,15 +505,9 @@ def enhance_existing_tokens(tokens: List[dict]) -> List[dict]:
 
         # Add scoring breakdown for transparency
         enhanced_token["scoring_breakdown"] = {
-            "liquidity": min(
-                20, max(0, 20 - (token.get("liq_risk") == "critical") * 5)
-            ),
-            "distribution": min(
-                15, max(0, 15 - (token.get("insider_percentage", 0) > 20) * 5)
-            ),
-            "twitter": min(
-                15, max(0, 15 - (token.get("tw_sentiment_score", 0) < 0.4) * 5)
-            ),
+            "liquidity": min(20, max(0, 20 - (token.get("liq_risk") == "critical") * 5)),
+            "distribution": min(15, max(0, 15 - (token.get("insider_percentage", 0) > 20) * 5)),
+            "twitter": min(15, max(0, 15 - (token.get("tw_sentiment_score", 0) < 0.4) * 5)),
             "community": min(10, max(0, 10 - (token.get("channel_count", 0) < 2) * 5)),
         }
 

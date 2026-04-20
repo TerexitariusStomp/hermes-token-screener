@@ -7,6 +7,7 @@ V2: getAmountsOut | V3: slot0 sqrtPriceX96 | 7 pairs
 Usage: python base_dex_prices.py [--amount 0.01] [--all-pairs] [--json]
 """
 
+import argparse
 import json
 import urllib.request
 # TOR proxy - route all external HTTP through SOCKS5
@@ -15,7 +16,7 @@ sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
 import hermes_screener.tor_config
 import ssl
 import time
-import argparse
+import urllib.request
 
 RPCS = ["https://base.llamarpc.com", "https://base.drpc.org", "https://1rpc.io/base"]
 rpc_idx = 0
@@ -24,21 +25,18 @@ ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
 
-def rpc_call(method, params=[]):
+def rpc_call(method, params=None):
+    if params is None:
+        params = []
     global rpc_idx
     for _ in range(5):
         try:
             url = RPCS[rpc_idx % len(RPCS)]
-            payload = json.dumps(
-                {"jsonrpc": "2.0", "method": method, "params": params, "id": 1}
-            ).encode()
+            payload = json.dumps({"jsonrpc": "2.0", "method": method, "params": params, "id": 1}).encode()
             req = urllib.request.Request(
                 url,
                 data=payload,
-                headers={
-                    "Content-Type": "application/json",
-                    "User-Agent": "Mozilla/5.0",
-                },
+                headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"},
                 method="POST",
             )
             with urllib.request.urlopen(req, timeout=15, context=ctx) as resp:
@@ -103,14 +101,8 @@ FACTORIES = {
         "router": "0x6BDED42c6DA8FBf0d2bA55B2fa120C5e0c8D7891",
     },
     # V3 factories
-    "Uniswap V3": {
-        "type": "v3",
-        "factory": "0x33128a8fC17869897dcE68Ed026d694621f6FDfD",
-    },
-    "PancakeSwap V3": {
-        "type": "v3",
-        "factory": "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865",
-    },
+    "Uniswap V3": {"type": "v3", "factory": "0x33128a8fC17869897dcE68Ed026d694621f6FDfD"},
+    "PancakeSwap V3": {"type": "v3", "factory": "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865"},
 }
 
 
@@ -137,14 +129,7 @@ def check_v3(factory, tA, tB, fee):
 def quote_v2(router, tA, tB, amount_wei):
     path_off = "0" * 62 + "40"
     path_len = "0" * 62 + "02"
-    data = (
-        "0xd06ca61f"
-        + hex(amount_wei)[2:].zfill(64)
-        + path_off
-        + path_len
-        + tA[2:].zfill(64)
-        + tB[2:].zfill(64)
-    )
+    data = "0xd06ca61f" + hex(amount_wei)[2:].zfill(64) + path_off + path_len + tA[2:].zfill(64) + tB[2:].zfill(64)
     r = call(router, data)
     result = r.get("result", "")
     if result and len(result) >= 258:
@@ -186,13 +171,7 @@ def discover_and_quote(verbose=True):
                 pool = check_v2(cfg["factory"], tA, tB)
                 if pool:
                     pools.append(
-                        {
-                            "dex": dex,
-                            "pair": f"{tA_name}-{tB_name}",
-                            "pool": pool,
-                            "type": "v2",
-                            "config": cfg,
-                        }
+                        {"dex": dex, "pair": f"{tA_name}-{tB_name}", "pool": pool, "type": "v2", "config": cfg}
                     )
                     if verbose:
                         print(f"  {dex:<20} {tA_name}-{tB_name:<12} V2  pool={pool}")
@@ -214,9 +193,7 @@ def discover_and_quote(verbose=True):
                             }
                         )
                         if verbose:
-                            print(
-                                f"  {dex:<20} {tA_name}-{tB_name:<12} V3  fee={fee}bps  pool={pool}"
-                            )
+                            print(f"  {dex:<20} {tA_name}-{tB_name:<12} V3  fee={fee}bps  pool={pool}")
 
             time.sleep(0.2)
 
@@ -238,12 +215,7 @@ def discover_and_quote(verbose=True):
 
         if p["type"] == "v2":
             amount_wei = int(0.01 * 10 ** TOKENS[tA_name][1])
-            out = quote_v2(
-                p["config"]["router"],
-                TOKENS[tA_name][0],
-                TOKENS[tB_name][0],
-                amount_wei,
-            )
+            out = quote_v2(p["config"]["router"], TOKENS[tA_name][0], TOKENS[tB_name][0], amount_wei)
             if out and out > 0:
                 price = (out / (10**dec_out)) / 0.01
                 results.append({"dex": dex, "pair": pair, "price": price, "fee": "V2"})
@@ -269,7 +241,7 @@ def discover_and_quote(verbose=True):
 
     # Summary
     if verbose and results:
-        print(f"\n=== SUMMARY ===\n")
+        print("\n=== SUMMARY ===\n")
         pairs_set = sorted(set(r["pair"] for r in results))
         for pair in pairs_set:
             pr = [r for r in results if r["pair"] == pair]

@@ -19,8 +19,6 @@ data/*.db-shm
 *.log
 dashboard_data.json
 
-# Allow docs/data for GitHub Pages
-!docs/data/
 
 # IDE
 .vscode/

@@ -18,6 +18,10 @@ import time
 from pathlib import Path
 from typing import List, Dict, Optional
 
+from hermes_screener.config import settings
+from hermes_screener.contract_db import open_sqlite_rw
+from hermes_screener.utils import gmgn_cmd  # noqa: F401 – re-exported for callers
+
 # ── Config ──────────────────────────────────────────────────────────────────
 DATA_DIR = Path.home() / ".hermes" / "data"
 DB_PATH = DATA_DIR / "central_contracts.db"
@@ -58,9 +62,7 @@ def get_db():
     return conn
 
 
-def upsert_contract(
-    conn, chain: str, address: str, source: str, channel_id: str, message_text: str = ""
-):
+def upsert_contract(conn, chain: str, address: str, source: str, channel_id: str, message_text: str = ""):
     """Insert or update a contract in telegram_contracts_unique."""
     now = time.time()
     try:
@@ -113,7 +115,7 @@ def upsert_contract(
     )
 
 
-def harvest_trenches(chain: str) -> List[Dict]:
+def harvest_trenches(chain: str) -> list[dict]:
     """Harvest pump alerts from GMGN trenches."""
     tokens = []
 
@@ -166,7 +168,7 @@ def harvest_trenches(chain: str) -> List[Dict]:
     return tokens
 
 
-def harvest_trending(chain: str) -> List[Dict]:
+def harvest_trending(chain: str) -> list[dict]:
     """Harvest featured signals from GMGN trending."""
     tokens = []
 
@@ -218,7 +220,7 @@ def harvest_trending(chain: str) -> List[Dict]:
 
 
 def main():
-    print(f"=== GMGN Harvester ===")
+    print("=== GMGN Harvester ===")
     print(f"Chains: {CHAINS}")
     print()
 
@@ -266,9 +268,7 @@ def main():
     gmgn_count = conn.execute(
         "SELECT COUNT(*) FROM telegram_contracts_unique WHERE last_source LIKE 'gmgn_%'"
     ).fetchone()[0]
-    total_count = conn.execute(
-        "SELECT COUNT(*) FROM telegram_contracts_unique"
-    ).fetchone()[0]
+    total_count = conn.execute("SELECT COUNT(*) FROM telegram_contracts_unique").fetchone()[0]
 
     print(f"\nDone: {total_seen} tokens processed this run")
     print(f"DB: {gmgn_count} GMGN-sourced / {total_count} total contracts")

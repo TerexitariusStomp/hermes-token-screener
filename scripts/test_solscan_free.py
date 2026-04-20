@@ -4,6 +4,7 @@ Test Solscan free tier endpoints.
 """
 
 import asyncio
+
 import httpx
 # TOR proxy - route all external HTTP through SOCKS5
 import sys, os

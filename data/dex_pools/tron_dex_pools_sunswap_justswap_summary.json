@@ -1,0 +1,30 @@
+{
+  "sunswap_v1": {
+    "path": "/home/terexitarius/.hermes/data/tron_sunswap_allpairs_v1.json",
+    "total_num": 20633,
+    "max_page_no": 412,
+    "pairs": 20633
+  },
+  "sunswap_v2": {
+    "path": "/home/terexitarius/.hermes/data/tron_sunswap_allpairs_v2.json",
+    "total_num": 399,
+    "max_page_no": 7,
+    "pairs": 399
+  },
+  "sunswap_v3": {
+    "path": "/home/terexitarius/.hermes/data/tron_sunswap_allpairs_v3.json",
+    "total_num": 4952,
+    "max_page_no": 99,
+    "pairs": 4952
+  },
+  "justswap": {
+    "path": "/home/terexitarius/.hermes/data/tron_justswap_allpairs.json",
+    "total_num": 20633,
+    "max_page_no": 412,
+    "pairs": 15233
+  },
+  "poloniex": {
+    "path": "/home/terexitarius/.hermes/data/poloniex_markets.json",
+    "markets": 922
+  }
+}

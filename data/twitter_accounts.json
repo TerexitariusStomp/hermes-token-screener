@@ -1,0 +1,130 @@
+{
+  "WatcherGuru": {
+    "type": "news",
+    "priority": "high"
+  },
+  "CoinDesk": {
+    "type": "news",
+    "priority": "high"
+  },
+  "Cointelegraph": {
+    "type": "news",
+    "priority": "high"
+  },
+  "TheBlock__": {
+    "type": "news",
+    "priority": "high"
+  },
+  "decryptmedia": {
+    "type": "news",
+    "priority": "medium"
+  },
+  "CryptoCapo_": {
+    "type": "influencer",
+    "priority": "high"
+  },
+  "Pentoshi1337": {
+    "type": "influencer",
+    "priority": "high"
+  },
+  "CryptoKaleo": {
+    "type": "influencer",
+    "priority": "high"
+  },
+  "GiganticRebirth": {
+    "type": "influencer",
+    "priority": "high"
+  },
+  "HsakaTrades": {
+    "type": "influencer",
+    "priority": "high"
+  },
+  "Bluntz_Capital": {
+    "type": "influencer",
+    "priority": "high"
+  },
+  "venturefounder": {
+    "type": "influencer",
+    "priority": "medium"
+  },
+  "CryptoMichNL": {
+    "type": "influencer",
+    "priority": "medium"
+  },
+  "Uniswap": {
+    "type": "project",
+    "priority": "high"
+  },
+  "AerodromeFi": {
+    "type": "project",
+    "priority": "high"
+  },
+  "aave": {
+    "type": "project",
+    "priority": "medium"
+  },
+  "GMGNai": {
+    "type": "tool",
+    "priority": "high"
+  },
+  "DexScreener": {
+    "type": "tool",
+    "priority": "high"
+  },
+  "solana": {
+    "type": "project",
+    "priority": "high"
+  },
+  "JupiterExchange": {
+    "type": "project",
+    "priority": "high"
+  },
+  "RaydiumProtocol": {
+    "type": "project",
+    "priority": "medium"
+  },
+  "pumpdotfun": {
+    "type": "project",
+    "priority": "high"
+  },
+  "base": {
+    "type": "project",
+    "priority": "high"
+  },
+  "BuildOnBase": {
+    "type": "project",
+    "priority": "medium"
+  },
+  "MustStopMurad": {
+    "type": "influencer",
+    "priority": "high"
+  },
+  "GCRClassic": {
+    "type": "influencer",
+    "priority": "high"
+  },
+  "CryptoGodJohn": {
+    "type": "influencer",
+    "priority": "medium"
+  },
+  "zachxbt": {
+    "type": "research",
+    "priority": "medium"
+  },
+  "lookonchain": {
+    "type": "analytics",
+    "priority": "high"
+  },
+  "EmberCN": {
+    "type": "analytics",
+    "priority": "medium"
+  },
+  "ai_9684xtpa": {
+    "type": "analytics",
+    "priority": "medium"
+  },
+  "SpotOnChain": {
+    "type": "analytics",
+    "priority": "medium"
+  }
+}

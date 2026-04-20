@@ -7,10 +7,9 @@ Pattern: API (route) → instruction construction → simulate → sign → send
 NOT:     API (route) → API (build tx) → sign → send
 """
 
-import os
 import base64
 import logging
-from typing import Dict, Optional, Tuple
+import os
 
 import requests
 # TOR proxy - route all external HTTP through SOCKS5
@@ -24,6 +23,11 @@ from solders.message import MessageV0
 from solders.instruction import Instruction, AccountMeta
 from solana.rpc.api import Client
 from solana.rpc.types import TxOpts
+from solders.instruction import AccountMeta, Instruction
+from solders.keypair import Keypair
+from solders.message import MessageV0
+from solders.pubkey import Pubkey
+from solders.transaction import VersionedTransaction
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +42,7 @@ METEORA_DLMM = Pubkey.from_string("LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo")
 # Token program
 TOKEN_PROGRAM = Pubkey.from_string("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
 TOKEN_2022_PROGRAM = Pubkey.from_string("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb")
-ASSOCIATED_TOKEN_PROGRAM = Pubkey.from_string(
-    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
-)
+ASSOCIATED_TOKEN_PROGRAM = Pubkey.from_string("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL")
 SYSTEM_PROGRAM = Pubkey.from_string("11111111111111111111111111111111")
 SYSVAR_RENT = Pubkey.from_string("SysvarRent111111111111111111111111111111111")
 
@@ -68,18 +70,14 @@ class SolanaProgramAdapter:
     """Direct Solana program interaction via RPC. Uses Jupiter API for routing only."""
 
     def __init__(self, rpc_url: str = None, private_key: str = None):
-        self.rpc_url = rpc_url or os.environ.get(
-            "SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com"
-        )
+        self.rpc_url = rpc_url or os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com")
         self.client = Client(self.rpc_url)
         self.keypair = None
 
         if private_key:
             self._init_keypair(private_key)
         else:
-            pk = os.environ.get("SOLANA_PRIVATE_KEY") or os.environ.get(
-                "WALLET_PRIVATE_KEY_SOLANA", ""
-            )
+            pk = os.environ.get("SOLANA_PRIVATE_KEY") or os.environ.get("WALLET_PRIVATE_KEY_SOLANA", "")
             if pk:
                 self._init_keypair(pk)
 
@@ -142,9 +140,7 @@ class SolanaProgramAdapter:
 
     # ==================== JUPITER QUOTE ====================
 
-    def jupiter_quote(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    def jupiter_quote(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> dict:
         """Get quote from Jupiter API v1."""
         try:
             resp = requests.get(
@@ -165,9 +161,7 @@ class SolanaProgramAdapter:
 
     # ==================== JUPITER ROUTE → DIRECT TX ====================
 
-    def jupiter_build_tx(
-        self, quote: Dict, wrap_unwrap: bool = True
-    ) -> Optional[VersionedTransaction]:
+    def jupiter_build_tx(self, quote: dict, wrap_unwrap: bool = True) -> VersionedTransaction | None:
         """
         Build a VersionedTransaction from Jupiter quote.
 
@@ -194,9 +188,7 @@ class SolanaProgramAdapter:
             )
 
             if resp.status_code != 200:
-                logger.error(
-                    f"Jupiter swap-instructions failed: HTTP {resp.status_code} - {resp.text[:200]}"
-                )
+                logger.error(f"Jupiter swap-instructions failed: HTTP {resp.status_code} - {resp.text[:200]}")
                 return None
 
             swap_data = resp.json()
@@ -259,9 +251,7 @@ class SolanaProgramAdapter:
                 return tx
 
             else:
-                logger.error(
-                    f"Unexpected Jupiter response format: {list(swap_data.keys())}"
-                )
+                logger.error(f"Unexpected Jupiter response format: {list(swap_data.keys())}")
                 return None
 
         except Exception as e:
@@ -271,7 +261,7 @@ class SolanaProgramAdapter:
             traceback.print_exc()
             return None
 
-    def _parse_jupiter_instruction(self, ix_data: Dict) -> Optional[Instruction]:
+    def _parse_jupiter_instruction(self, ix_data: dict) -> Instruction | None:
         """Parse a Jupiter instruction dict into a solders Instruction."""
         try:
             program_id = Pubkey.from_string(ix_data["programId"])
@@ -292,7 +282,7 @@ class SolanaProgramAdapter:
 
     # ==================== SIMULATE ====================
 
-    def simulate_tx(self, tx: VersionedTransaction) -> Tuple[bool, str]:
+    def simulate_tx(self, tx: VersionedTransaction) -> tuple[bool, str]:
         """Simulate a transaction. Returns (success, error_msg)."""
         try:
             resp = self.client.simulate_transaction(tx)
@@ -311,9 +301,7 @@ class SolanaProgramAdapter:
 
     # ==================== SEND =============================
 
-    def send_tx(
-        self, tx: VersionedTransaction, skip_preflight: bool = False
-    ) -> Optional[str]:
+    def send_tx(self, tx: VersionedTransaction, skip_preflight: bool = False) -> str | None:
         """Send a signed transaction. Returns signature or None."""
         try:
             opts = TxOpts(
@@ -340,9 +328,7 @@ class SolanaProgramAdapter:
 
     # ==================== HIGH-LEVEL SWAP ====================
 
-    def swap(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Optional[str]:
+    def swap(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> str | None:
         """
         Execute swap: quote → build → simulate → sign → send → confirm.
         Returns signature or None.
@@ -386,9 +372,7 @@ class SolanaProgramAdapter:
             logger.warning(f"Swap not yet confirmed: {sig}")
             return sig  # Return anyway, might confirm later
 
-    def swap_by_symbol(
-        self, from_symbol: str, to_symbol: str, amount_ui: float, slippage_bps: int = 50
-    ) -> Optional[str]:
+    def swap_by_symbol(self, from_symbol: str, to_symbol: str, amount_ui: float, slippage_bps: int = 50) -> str | None:
         """Swap using token symbols and UI amount."""
         from_token = TOKENS.get(from_symbol.upper())
         to_token = TOKENS.get(to_symbol.upper())
@@ -398,15 +382,11 @@ class SolanaProgramAdapter:
             return None
 
         amount_base = int(amount_ui * (10 ** from_token["decimals"]))
-        return self.swap(
-            from_token["mint"], to_token["mint"], amount_base, slippage_bps
-        )
+        return self.swap(from_token["mint"], to_token["mint"], amount_base, slippage_bps)
 
     # ==================== RAYDIUM (DIRECT) ====================
 
-    def raydium_cpmm_quote(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    def raydium_cpmm_quote(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> dict:
         """Get quote from Raydium CPMM API."""
         try:
             resp = requests.get(
@@ -428,7 +408,7 @@ class SolanaProgramAdapter:
             logger.error(f"Raydium quote error: {e}")
         return {}
 
-    def raydium_build_tx(self, quote_data: Dict) -> Optional[VersionedTransaction]:
+    def raydium_build_tx(self, quote_data: dict) -> VersionedTransaction | None:
         """
         Build VersionedTransaction from Raydium swap data.
         Raydium API returns serialized instructions - we decode and rebuild.
@@ -472,7 +452,7 @@ class SolanaProgramAdapter:
             logger.error(f"Raydium build error: {e}")
             return None
 
-    def _parse_raydium_instruction(self, ix_data: Dict) -> Optional[Instruction]:
+    def _parse_raydium_instruction(self, ix_data: dict) -> Instruction | None:
         """Parse Raydium instruction data."""
         try:
             program_id = Pubkey.from_string(ix_data["programId"])
@@ -494,18 +474,12 @@ class SolanaProgramAdapter:
 
     METEORA_API = "https://dlmm-api.meteora.ag"
 
-    def meteora_quote(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    def meteora_quote(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> dict:
         """Get quote from Meteora DLMM API."""
         try:
-            resp = requests.get(
-                f"{self.METEORA_API}/pair/{input_mint}/{output_mint}", timeout=10
-            )
+            resp = requests.get(f"{self.METEORA_API}/pair/{input_mint}/{output_mint}", timeout=10)
             if resp.status_code != 200:
-                resp = requests.get(
-                    f"{self.METEORA_API}/pair/{output_mint}/{input_mint}", timeout=10
-                )
+                resp = requests.get(f"{self.METEORA_API}/pair/{output_mint}/{input_mint}", timeout=10)
             if resp.status_code == 200:
                 pairs = resp.json()
                 if isinstance(pairs, list) and pairs:
@@ -521,9 +495,7 @@ class SolanaProgramAdapter:
             logger.error(f"Meteora quote error: {e}")
         return {}
 
-    def meteora_build_tx(
-        self, quote_data: Dict, wallet: str, amount: int, slippage_bps: int = 50
-    ) -> Optional[str]:
+    def meteora_build_tx(self, quote_data: dict, wallet: str, amount: int, slippage_bps: int = 50) -> str | None:
         """Build swap transaction via Meteora DLMM API."""
         try:
             pool = quote_data.get("pool", "")
@@ -552,9 +524,7 @@ class SolanaProgramAdapter:
 
     ORCA_API = "https://api.orca.so"
 
-    def orca_quote(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    def orca_quote(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> dict:
         """Get quote from Orca Whirlpool API."""
         try:
             resp = requests.get(f"{self.ORCA_API}/v1/whirlpool/list", timeout=10)
@@ -589,9 +559,7 @@ class SolanaProgramAdapter:
             logger.error(f"Orca quote error: {e}")
         return {}
 
-    def orca_build_tx(
-        self, quote_data: Dict, wallet: str, amount: int, slippage_bps: int = 50
-    ) -> Optional[str]:
+    def orca_build_tx(self, quote_data: dict, wallet: str, amount: int, slippage_bps: int = 50) -> str | None:
         """Build swap transaction via Orca Whirlpool API."""
         try:
             resp = requests.post(
@@ -617,9 +585,7 @@ class SolanaProgramAdapter:
 
     PUMPSWAP_API = "https://frontend-api.pump.fun"
 
-    def pumpswap_quote(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    def pumpswap_quote(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> dict:
         """Get quote from PumpSwap (pump.fun DEX)."""
         try:
             resp = requests.get(f"{self.PUMPSWAP_API}/coins/{output_mint}", timeout=10)
@@ -638,9 +604,7 @@ class SolanaProgramAdapter:
             logger.error(f"PumpSwap quote error: {e}")
         return {}
 
-    def pumpswap_build_tx(
-        self, quote_data: Dict, wallet: str, amount: int, slippage_bps: int = 50
-    ) -> Optional[str]:
+    def pumpswap_build_tx(self, quote_data: dict, wallet: str, amount: int, slippage_bps: int = 50) -> str | None:
         """Build swap transaction via PumpSwap API."""
         try:
             resp = requests.post(
@@ -671,7 +635,7 @@ class SolanaProgramAdapter:
         amount: int,
         slippage_bps: int = 50,
         swap_type: str = "buy_small",
-    ) -> Optional[Dict]:
+    ) -> dict | None:
         """Smart routing across all Solana DEXs.
 
         Uses Jupiter as primary aggregator (routes through 20+ DEXs),
@@ -684,33 +648,23 @@ class SolanaProgramAdapter:
         for dex in priority:
             try:
                 if dex == "jupiter":
-                    quote = self.jupiter_quote(
-                        input_mint, output_mint, amount, slippage_bps
-                    )
+                    quote = self.jupiter_quote(input_mint, output_mint, amount, slippage_bps)
                     if quote and quote.get("outAmount"):
                         return {"dex": "jupiter", "quote": quote, "route": swap_type}
                 elif dex == "raydium":
-                    quote = self.raydium_cpmm_quote(
-                        input_mint, output_mint, amount, slippage_bps
-                    )
+                    quote = self.raydium_cpmm_quote(input_mint, output_mint, amount, slippage_bps)
                     if quote and quote.get("outputAmount"):
                         return {"dex": "raydium", "quote": quote, "route": swap_type}
                 elif dex == "orca":
-                    quote = self.orca_quote(
-                        input_mint, output_mint, amount, slippage_bps
-                    )
+                    quote = self.orca_quote(input_mint, output_mint, amount, slippage_bps)
                     if quote and quote.get("pool"):
                         return {"dex": "orca", "quote": quote, "route": swap_type}
                 elif dex == "meteora":
-                    quote = self.meteora_quote(
-                        input_mint, output_mint, amount, slippage_bps
-                    )
+                    quote = self.meteora_quote(input_mint, output_mint, amount, slippage_bps)
                     if quote and quote.get("pool"):
                         return {"dex": "meteora", "quote": quote, "route": swap_type}
                 elif dex == "pumpswap":
-                    quote = self.pumpswap_quote(
-                        input_mint, output_mint, amount, slippage_bps
-                    )
+                    quote = self.pumpswap_quote(input_mint, output_mint, amount, slippage_bps)
                     if quote and quote.get("pool"):
                         return {"dex": "pumpswap", "quote": quote, "route": swap_type}
             except Exception as e:
@@ -719,22 +673,18 @@ class SolanaProgramAdapter:
 
         return None
 
-    def get_dex_info(self, dex_key: str) -> Dict:
+    def get_dex_info(self, dex_key: str) -> dict:
         """Get info about a Solana DEX from the registry."""
         return SOLANA_DEX_REGISTRY.get(dex_key, {})
 
     def list_dexs_by_tvl(self, min_tvl: float = 0) -> list:
         """List all Solana DEXs sorted by TVL."""
-        dexs = [
-            (k, v) for k, v in SOLANA_DEX_REGISTRY.items() if v.get("tvl", 0) >= min_tvl
-        ]
+        dexs = [(k, v) for k, v in SOLANA_DEX_REGISTRY.items() if v.get("tvl", 0) >= min_tvl]
         return sorted(dexs, key=lambda x: x[1].get("tvl", 0), reverse=True)
 
     # ==================== MULTI-DEX COMPARISON ====================
 
-    def compare_quotes(
-        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
-    ) -> Dict:
+    def compare_quotes(self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50) -> dict:
         """Compare quotes across Solana DEXes."""
         quotes = {}
 

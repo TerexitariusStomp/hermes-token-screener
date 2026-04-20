@@ -1,0 +1,24 @@
+{
+  "pair": "XRP/USD",
+  "results": {
+    "bitstamp": {
+      "issuer": "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B",
+      "best_ask_price": "1.4545",
+      "best_bid_price": "1.4303",
+      "ask_usd": "5.0454408705",
+      "ask_xrp": "3.468849",
+      "bid_usd": "4.999999831",
+      "bid_xrp": "3.49577"
+    },
+    "gatehub": {
+      "issuer": "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq",
+      "best_ask_price": "1.445621944612892682691441906",
+      "best_bid_price": "1.429999999985618086523243827",
+      "ask_usd": "23.247671",
+      "ask_xrp": "16.081432",
+      "bid_usd": "56189.13653582489",
+      "bid_xrp": "39293.102473"
+    }
+  },
+  "best_cross_issuer_arb": null
+}

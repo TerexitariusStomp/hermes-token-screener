@@ -117,11 +117,7 @@ def _wallet_link(addr):
 
 
 def _chain_cls(chain):
-    return (
-        f"chain-{chain}"
-        if chain in ("solana", "sol", "base", "ethereum", "bsc")
-        else ""
-    )
+    return f"chain-{chain}" if chain in ("solana", "sol", "base", "ethereum", "bsc") else ""
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -210,9 +206,7 @@ def _page(title, active, body, extra_css=""):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def _chart_html(
-    symbol, chain, address, dex_url, pair_address, current_price, fdv, vol24
-):
+def _chart_html(symbol, chain, address, dex_url, pair_address, current_price, fdv, vol24):
     """Generate full chart page with TradingView Lightweight Charts."""
     return f"""<!DOCTYPE html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -412,8 +406,7 @@ async def index():
             kws = tk_data.get("keywords", [])[:12]
             if kws:
                 kw_items = "".join(
-                    f'<span class="kw">{kw["keyword"]}<span class="ct">{kw["count"]}</span></span>'
-                    for kw in kws
+                    f'<span class="kw">{kw["keyword"]}<span class="ct">{kw["count"]}</span></span>' for kw in kws
                 )
                 trending_html = f'<div class="trending"><span class="label">&#128293; TRENDING</span>{kw_items}</div>'
         except Exception:
@@ -425,10 +418,7 @@ async def index():
         sc_cls = _score_cls(score)
         p1h = _pct_cls(t.get("price_change_h1"))
         p6h = _pct_cls(t.get("price_change_h6"))
-        tags = "".join(
-            f'<span class="tag tag-g">{p}</span>'
-            for p in (t.get("positives") or [])[:2]
-        )
+        tags = "".join(f'<span class="tag tag-g">{p}</span>' for p in (t.get("positives") or [])[:2])
         addr = t.get("contract_address", "")
         rows += f"""<tr>
   <td>{i}</td>
@@ -490,18 +480,12 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
         score = w.get("wallet_score", 0) or 0
         sc_cls = _score_cls(score)
         profit = w.get("total_profit")
-        profit_cls = (
-            "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
-        )
+        profit_cls = "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
         tags_html = ""
         for t in (w.get("wallet_tags") or "").split(","):
             t = t.strip()
             if t:
-                tag_cls = (
-                    "tag-r"
-                    if t in ("sniper", "insider")
-                    else "tag-g" if t == "smart" else ""
-                )
+                tag_cls = "tag-r" if t in ("sniper", "insider") else "tag-g" if t == "smart" else ""
                 tags_html += f'<span class="tag {tag_cls}">{t}</span>'
         if w.get("insider_flag"):
             tags_html += '<span class="tag tag-y">INSIDER</span>'
@@ -548,12 +532,8 @@ async def token_detail(address: str):
             f"<h1>Token Detail</h1><p class='sub'>{address}</p><div class='card'><h3>Not Found</h3><p>Not in current top100.json</p></div>",
         )
 
-    pos = "".join(
-        f'<span class="tag tag-g">{p}</span>' for p in (token.get("positives") or [])
-    )
-    neg = "".join(
-        f'<span class="tag tag-r">{n}</span>' for n in (token.get("negatives") or [])
-    )
+    pos = "".join(f'<span class="tag tag-g">{p}</span>' for p in (token.get("positives") or []))
+    neg = "".join(f'<span class="tag tag-r">{n}</span>' for n in (token.get("negatives") or []))
 
     return _page(
         token.get("symbol", "Token"),
@@ -607,9 +587,7 @@ async def token_chart(address: str):
             break
 
     if not token:
-        return _page(
-            "Chart", "tokens", "<h1>Chart</h1><p class='sub'>Token not found</p>"
-        )
+        return _page("Chart", "tokens", "<h1>Chart</h1><p class='sub'>Token not found</p>")
 
     return HTMLResponse(
         _chart_html(
@@ -629,13 +607,9 @@ async def token_chart(address: str):
 async def wallet_detail(address: str):
     conn = _get_wallet_db()
     if not conn:
-        return _page(
-            "Wallet", "wallets", "<h1>Wallet</h1><p class='sub'>DB not available</p>"
-        )
+        return _page("Wallet", "wallets", "<h1>Wallet</h1><p class='sub'>DB not available</p>")
 
-    wallet = conn.execute(
-        "SELECT * FROM tracked_wallets WHERE address = ?", (address,)
-    ).fetchone()
+    wallet = conn.execute("SELECT * FROM tracked_wallets WHERE address = ?", (address,)).fetchone()
     positions = conn.execute(
         "SELECT * FROM wallet_token_entries WHERE wallet_address = ? ORDER BY profit DESC LIMIT 50",
         (address,),
@@ -738,16 +712,8 @@ async def api_stats():
     data = _load_top100()
     try:
         conn = _get_wallet_db()
-        wc = (
-            conn.execute("SELECT COUNT(*) FROM tracked_wallets").fetchone()[0]
-            if conn
-            else 0
-        )
-        avg = (
-            conn.execute("SELECT AVG(wallet_score) FROM tracked_wallets").fetchone()[0]
-            if conn
-            else 0
-        )
+        wc = conn.execute("SELECT COUNT(*) FROM tracked_wallets").fetchone()[0] if conn else 0
+        avg = conn.execute("SELECT AVG(wallet_score) FROM tracked_wallets").fetchone()[0] if conn else 0
         if conn:
             conn.close()
     except Exception:
@@ -846,9 +812,7 @@ async def api_chart_ohlcv(
                     "error": f"status {resp.status_code}",
                 }
 
-            candles = (
-                resp.json().get("data", {}).get("attributes", {}).get("ohlcv_list", [])
-            )
+            candles = resp.json().get("data", {}).get("attributes", {}).get("ohlcv_list", [])
             return {
                 "candles": candles,
                 "count": len(candles),
@@ -877,8 +841,7 @@ def _get_top_wallets(limit: int = 200) -> list[dict]:
         return []
     try:
         rows = conn.execute(
-            "SELECT * FROM tracked_wallets "
-            "WHERE wallet_score > 0 ORDER BY wallet_score DESC LIMIT ?",
+            "SELECT * FROM tracked_wallets " "WHERE wallet_score > 0 ORDER BY wallet_score DESC LIMIT ?",
             (limit,),
         ).fetchall()
         return [dict(r) for r in rows]
@@ -924,9 +887,7 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
         return tokens  # type: ignore[no-any-return]  # Fallback: return tokens sorted by score
 
     # For each top wallet, get their token holdings
-    wallet_holdings: dict[str, set[str]] = (
-        {}
-    )  # token_address -> set of wallet addresses
+    wallet_holdings: dict[str, set[str]] = {}  # token_address -> set of wallet addresses
     for w in top_wallets:
         addr = w["address"]
         held_tokens = _get_wallet_token_holdings(addr)
@@ -942,9 +903,7 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
         t["holding_wallets"] = list(wallet_holdings.get(t_addr, set()))[:10]
 
     # Sort by wallet_count DESC, then score DESC
-    tokens.sort(
-        key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True
-    )
+    tokens.sort(key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True)
     return tokens  # type: ignore[no-any-return]
 
 
@@ -957,9 +916,7 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
     # Load top tokens
     data = _load_top100()
     tokens = data.get("tokens", [])
-    top_token_addrs = {
-        t.get("contract_address", "") for t in tokens if t.get("contract_address")
-    }
+    top_token_addrs = {t.get("contract_address", "") for t in tokens if t.get("contract_address")}
 
     if not top_token_addrs:
         return []
@@ -1010,10 +967,7 @@ async def cross_tokens():
         wc_cls = "sc-h" if wc >= 10 else "sc-m" if wc >= 5 else "sc-l"
         p1h = _pct_cls(t.get("price_change_h1"))
         p6h = _pct_cls(t.get("price_change_h6"))
-        tags = "".join(
-            f'<span class="tag tag-g">{p}</span>'
-            for p in (t.get("positives") or [])[:2]
-        )
+        tags = "".join(f'<span class="tag tag-g">{p}</span>' for p in (t.get("positives") or [])[:2])
         addr = t.get("contract_address", "")
         holding_wallets = t.get("holding_wallets", [])
         wallet_links = ", ".join(
@@ -1066,22 +1020,14 @@ async def cross_wallets():
         tc_cls = "sc-h" if tc >= 10 else "sc-m" if tc >= 5 else "sc-l"
         addr = w.get("address", "")
         profit = w.get("total_profit")
-        profit_cls = (
-            "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
-        )
+        profit_cls = "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
         top_tokens = w.get("top_tokens", [])
-        token_badges = " ".join(
-            f'<span class="tag tag-g">{t}</span>' for t in top_tokens[:6]
-        )
+        token_badges = " ".join(f'<span class="tag tag-g">{t}</span>' for t in top_tokens[:6])
         tags_html = ""
         for t in (w.get("wallet_tags") or "").split(","):
             t = t.strip()
             if t:
-                tag_cls = (
-                    "tag-r"
-                    if t in ("sniper", "insider")
-                    else "tag-g" if t == "smart" else ""
-                )
+                tag_cls = "tag-r" if t in ("sniper", "insider") else "tag-g" if t == "smart" else ""
                 tags_html += f'<span class="tag {tag_cls}">{t}</span>'
         if w.get("insider_flag"):
             tags_html += '<span class="tag tag-y">INSIDER</span>'

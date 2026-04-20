@@ -12,10 +12,9 @@ Usage:
 """
 
 import json
-import time
 import sqlite3
 import sys
-from typing import List, Set, Tuple
+import time
 
 import requests
 # TOR proxy - route all external HTTP through SOCKS5
@@ -75,9 +74,7 @@ conn.executescript("""
     conn.commit()
 
 
-def insert_discovery(
-    conn, chain: str, address: str, source: str, description: str = ""
-) -> bool:
+def insert_discovery(conn, chain: str, address: str, source: str, description: str = "") -> bool:
     now = time.time()
     chan_str = f"discovery:{source}"
     try:
@@ -145,7 +142,7 @@ def insert_discovery(
         return False
 
 
-def fetch_dexscreener_boosted() -> List[Tuple[str, str, str]]:
+def fetch_dexscreener_boosted() -> list[tuple[str, str, str]]:
     try:
         r = requests.get("https://api.dexscreener.com/token-boosts/top/v1", timeout=15)
         if r.status_code != 200:
@@ -159,11 +156,9 @@ def fetch_dexscreener_boosted() -> List[Tuple[str, str, str]]:
         return []
 
 
-def fetch_dexscreener_profiles() -> List[Tuple[str, str, str]]:
+def fetch_dexscreener_profiles() -> list[tuple[str, str, str]]:
     try:
-        r = requests.get(
-            "https://api.dexscreener.com/token-profiles/latest/v1", timeout=15
-        )
+        r = requests.get("https://api.dexscreener.com/token-profiles/latest/v1", timeout=15)
         if r.status_code != 200:
             return []
         return [
@@ -179,7 +174,7 @@ def fetch_dexscreener_profiles() -> List[Tuple[str, str, str]]:
         return []
 
 
-def run_discovery(chains: Set[str] = None):
+def run_discovery(chains: set[str] = None):
     chains = chains or DEFAULT_CHAINS
     conn = get_db()
     ensure_tables(conn)
@@ -208,11 +203,7 @@ def run_discovery(chains: Set[str] = None):
 
     log.info(f"Total unique tokens after filter: {len(unique)}")
 
-    new_count = sum(
-        1
-        for chain, addr, source in unique
-        if insert_discovery(conn, chain, addr, source)
-    )
+    new_count = sum(1 for chain, addr, source in unique if insert_discovery(conn, chain, addr, source))
     conn.commit()
     conn.close()
 
@@ -224,9 +215,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Token discovery from DEX platforms")
-    parser.add_argument(
-        "--chains", type=str, default=None, help="Comma-separated chains"
-    )
+    parser.add_argument("--chains", type=str, default=None, help="Comma-separated chains")
     args = parser.parse_args()
     chains = set(args.chains.split(",")) if args.chains else None
 

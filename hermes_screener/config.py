@@ -64,11 +64,7 @@ class Settings(BaseSettings):
         return self.hermes_home / "data" / "tg_scraper_state.json"
 
     gmgn_cli: Path = Field(
-        default_factory=lambda: Path.home()
-        / ".hermes"
-        / "gmgn-cli"
-        / "dist"
-        / "index.js",
+        default_factory=lambda: Path.home() / ".hermes" / "gmgn-cli" / "dist" / "index.js",
     )
 
     # ── Telegram ─────────────────────────────────────────────────────────────

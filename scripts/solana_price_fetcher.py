@@ -12,9 +12,10 @@ import sys, os
 sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
 import hermes_screener.tor_config
 import time
-from dataclasses import dataclass
-from typing import Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
+
+import requests
 
 SOLANA_RPC = "https://api.mainnet-beta.solana.com"
 
@@ -70,7 +71,7 @@ class SolanaRPC:
         self.url = url
         self.s = requests.Session()
 
-    def get_account(self, addr: str) -> Optional[bytes]:
+    def get_account(self, addr: str) -> bytes | None:
         r = self.s.post(
             self.url,
             json={
@@ -107,9 +108,7 @@ def base58(data: bytes) -> str:
 # ═══════════════════════════════════════════════════════════════
 
 
-def read_sqrt_price(
-    data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0
-) -> Optional[float]:
+def read_sqrt_price(data: bytes, dec_a: int, dec_b: int, offset_hint: int = 0) -> float | None:
     """Read sqrt_price_x64 from on-chain account and compute price."""
     if not data:
         return None
@@ -136,7 +135,7 @@ def read_sqrt_price(
 # ═══════════════════════════════════════════════════════════════
 
 
-def fetch_raydium_api(pair_name: str) -> List[PriceQuote]:
+def fetch_raydium_api(pair_name: str) -> list[PriceQuote]:
     """Fetch all pools for a token pair from Raydium API."""
     results = []
     tokens = pair_name.split("/")
@@ -178,7 +177,7 @@ def fetch_raydium_api(pair_name: str) -> List[PriceQuote]:
     return results
 
 
-def fetch_orca_api(pair_name: str) -> List[PriceQuote]:
+def fetch_orca_api(pair_name: str) -> list[PriceQuote]:
     """Fetch all pools for a token pair from Orca (on-chain sqrt_price)."""
     results = []
     tokens = pair_name.split("/")
@@ -216,11 +215,7 @@ def fetch_orca_api(pair_name: str) -> List[PriceQuote]:
                                 pair=pair_name,
                                 source="on_chain",
                                 tvl=float(tvl),
-                                volume_24h=(
-                                    float(vol_day)
-                                    if isinstance(vol_day, (int, float))
-                                    else 0
-                                ),
+                                volume_24h=(float(vol_day) if isinstance(vol_day, (int, float)) else 0),
                                 timestamp=time.time(),
                             )
                         )
@@ -231,7 +226,7 @@ def fetch_orca_api(pair_name: str) -> List[PriceQuote]:
     return results
 
 
-def fetch_jupiter_quote(pair_name: str) -> Optional[PriceQuote]:
+def fetch_jupiter_quote(pair_name: str) -> PriceQuote | None:
     """Get real-time quote from Jupiter API."""
     tokens = pair_name.split("/")
     mint_a = TOKENS.get(tokens[0], {}).get("mint", SOL_MINT)
@@ -265,7 +260,7 @@ def fetch_jupiter_quote(pair_name: str) -> Optional[PriceQuote]:
     return None
 
 
-def fetch_raydium_quote(pair_name: str) -> Optional[PriceQuote]:
+def fetch_raydium_quote(pair_name: str) -> PriceQuote | None:
     """Get real-time quote from Raydium API."""
     tokens = pair_name.split("/")
     mint_a = TOKENS.get(tokens[0], {}).get("mint", SOL_MINT)
@@ -305,7 +300,7 @@ def fetch_raydium_quote(pair_name: str) -> Optional[PriceQuote]:
 # ═══════════════════════════════════════════════════════════════
 
 
-def fetch_pair(pair_name: str) -> List[PriceQuote]:
+def fetch_pair(pair_name: str) -> list[PriceQuote]:
     """Fetch all prices for a single token pair."""
     all_quotes = []
     with ThreadPoolExecutor(max_workers=4) as pool:
@@ -327,7 +322,7 @@ def fetch_pair(pair_name: str) -> List[PriceQuote]:
     return all_quotes
 
 
-def fetch_all_pairs(pairs: List[str] = None) -> List[PriceQuote]:
+def fetch_all_pairs(pairs: list[str] = None) -> list[PriceQuote]:
     """Fetch prices for multiple token pairs."""
     if pairs is None:
         pairs = TOKEN_PAIRS
@@ -342,9 +337,7 @@ def fetch_all_pairs(pairs: List[str] = None) -> List[PriceQuote]:
     return all_quotes
 
 
-def find_arbitrage(
-    quotes: List[PriceQuote], min_spread_pct: float = 0.05
-) -> List[dict]:
+def find_arbitrage(quotes: list[PriceQuote], min_spread_pct: float = 0.05) -> list[dict]:
     """Find arbitrage opportunities within each pair."""
     opps = []
     by_pair = {}
@@ -393,9 +386,7 @@ if __name__ == "__main__":
             print(f"\n{'─'*95}")
             print(f"  {q.pair}")
             print(f"{'─'*95}")
-            print(
-                f"  {'DEX':<25} | {'Price':>16} | {'TVL':>14} | {'Vol 24h':>14} | {'Source'}"
-            )
+            print(f"  {'DEX':<25} | {'Price':>16} | {'TVL':>14} | {'Vol 24h':>14} | {'Source'}")
             print(f"  {'-'*85}")
 
         tvl = f"${q.tvl:,.0f}" if q.tvl > 0 else ""
