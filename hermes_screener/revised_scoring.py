@@ -331,14 +331,25 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     if vol_h24 > 0 and vol_h1 > 0:
         STAGNANT_VOLUME_RATIO = 0.05  # Keep same threshold
         if vol_h1 < vol_h24 * STAGNANT_VOLUME_RATIO:
-            score *= 0.3  # REDUCED from 0.5
+            # Reduce penalty for tokens with strong fundamentals
+            # Only apply penalty if FDV is low or holder count is low
+            holder_count = token.get("gmgn_holder_count", 0) or 0
+            if fdv > 1_000_000 or holder_count > 1000:
+                score *= 0.7  # Less penalty for strong tokens
+            else:
+                score *= 0.3  # Keep penalty for weak tokens
             negatives.append("stagnant volume")
 
     buys_h6 = (dex.get("txns_h6", {}) or {}).get("buys", 0) or 0
     sells_h6 = (dex.get("txns_h6", {}) or {}).get("sells", 0) or 0
     total_h6 = buys_h6 + sells_h6
     if total_h6 == 0 and age_hours and age_hours > 1:
-        score *= 0.2  # REDUCED from 0.4
+        # Reduce penalty for tokens with strong fundamentals
+        holder_count = token.get("gmgn_holder_count", 0) or 0
+        if fdv > 1_000_000 or holder_count > 1000:
+            score *= 0.6  # Less penalty for strong tokens
+        else:
+            score *= 0.2  # Keep penalty for weak tokens
         negatives.append("no txns in 6h")
 
     # RugCheck
@@ -357,6 +368,39 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     if fdv > 0 and fdv < 10_000:
         score *= 0.7  # NEW penalty for micro-cap tokens
         negatives.append("micro-cap (<$10K FDV)")
+
+    # ── NEW: BONUS FOR STRONG FUNDAMENTALS ──
+    # Bonus for high FDV (established token)
+    if fdv > 10_000_000:
+        score *= 1.3  # 30% bonus for $10M+ FDV
+        positives.append("high FDV ($10M+)")
+    elif fdv > 1_000_000:
+        score *= 1.2  # 20% bonus for $1M+ FDV
+        positives.append("good FDV ($1M+)")
+    elif fdv > 100_000:
+        score *= 1.1  # 10% bonus for $100K+ FDV
+
+    # Bonus for high holder count (well-distributed)
+    holder_count = token.get("gmgn_holder_count", 0) or 0
+    if holder_count > 10000:
+        score *= 1.3  # 30% bonus for 10K+ holders
+        positives.append("high holder count (10K+)")
+    elif holder_count > 5000:
+        score *= 1.2  # 20% bonus for 5K+ holders
+        positives.append("good holder count (5K+)")
+    elif holder_count > 1000:
+        score *= 1.1  # 10% bonus for 1K+ holders
+
+    # Bonus for high liquidity (deep pools)
+    liquidity = dex.get("liquidity_usd", 0) or 0
+    if liquidity > 500_000:
+        score *= 1.3  # 30% bonus for $500K+ liquidity
+        positives.append("high liquidity ($500K+)")
+    elif liquidity > 100_000:
+        score *= 1.2  # 20% bonus for $100K+ liquidity
+        positives.append("good liquidity ($100K+)")
+    elif liquidity > 50_000:
+        score *= 1.1  # 10% bonus for $50K+ liquidity
 
     return round(score, 2), positives, negatives
 

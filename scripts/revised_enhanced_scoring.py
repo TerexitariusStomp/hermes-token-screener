@@ -22,7 +22,7 @@ def revised_compute_enhanced_token_score(
 ) -> float:
     """
     Revised enhanced token score with conservative methodology.
-    
+
     Key changes from original:
     1. Reduced smart money points (max 15 instead of 25)
     2. Increased penalties for "no txns in 6h" and "stagnant volume"
@@ -34,7 +34,7 @@ def revised_compute_enhanced_token_score(
     negatives = token.get("negatives") or []
     age = token.get("age_hours") or 0
     vol24 = token.get("volume_h24") or 0
-    
+
     # Critical negatives that should exclude tokens
     if "POSSIBLE RUG" in negatives:
         return 0.0
@@ -44,9 +44,9 @@ def revised_compute_enhanced_token_score(
         return 0.0
     if "ONLY SELLS" in negatives:
         return 0.0
-    
+
     score = 0.0
-    
+
     # ═══════════════════════════════════════════════════════════════════════════
     # 1. SMART MONEY PRESENCE (0-15 points) - REDUCED FROM 25
     # ═══════════════════════════════════════════════════════════════════════════
@@ -54,26 +54,26 @@ def revised_compute_enhanced_token_score(
         # Normalize wallet count (more = better)
         wallet_ratio = min(smart_wallet_count / max(max_smart_wallets * 0.5, 1), 1.0)
         wallet_score = wallet_ratio * 6  # REDUCED from 10
-        
+
         # Reduce smart wallet score for old tokens (stuck wallets)
         if age > 72:
             wallet_score *= 0.4  # REDUCED from 0.5
         elif age > 168:
             wallet_score *= 0.2  # REDUCED from 0.3
-        
+
         score += wallet_score
-        
+
         # Average quality of wallets holding this token
         if max_score_sum > 0 and smart_wallet_count > 0:
             quality_ratio = min(smart_wallet_score_sum / max_score_sum, 1.0)
             score += quality_ratio * 5  # REDUCED from 8
-        
+
         # Insider/sniper presence bonus
         if insider_count > 0:
             score += min(insider_count * 1.5, 3)  # REDUCED from min(insider_count * 2, 4)
         if sniper_count > 0:
             score += min(sniper_count * 0.5, 2)  # REDUCED from min(sniper_count * 1, 3)
-    
+
     # GMGN smart wallet count (additional signal)
     gmgn_smart_wallets = token.get("gmgn_smart_wallets", 0) or 0
     if gmgn_smart_wallets > 0:
@@ -89,27 +89,27 @@ def revised_compute_enhanced_token_score(
             score += 1  # REDUCED from 2
         else:
             score += 0.5  # REDUCED from 1
-    
+
     # ═══════════════════════════════════════════════════════════════════════════
     # 2. HOLDER DISTRIBUTION (0-10 points) - REDUCED FROM 15
     # ═══════════════════════════════════════════════════════════════════════════
     holder_count = 0
-    
+
     # Get holder count from GMGN (most reliable)
     gmgn_holder_count = token.get("gmgn_holder_count", 0) or 0
     if gmgn_holder_count > 0:
         holder_count = gmgn_holder_count
-    
+
     # Fallback to Helius
     helius = token.get("helius", {})
     if not holder_count and helius and helius.get("holder_count"):
         holder_count = helius.get("holder_count", 0)
-    
+
     # Fallback to Birdeye
     birdeye = token.get("birdeye", {})
     if not holder_count and birdeye and birdeye.get("holder_count"):
         holder_count = birdeye.get("holder_count", 0)
-    
+
     # Score based on holder count
     if holder_count > 0:
         if holder_count >= 10_000:
@@ -124,7 +124,7 @@ def revised_compute_enhanced_token_score(
             score += 1  # REDUCED from 2
         else:
             score += 0.5  # REDUCED from 1
-    
+
     # Holder concentration (from RugCheck)
     rugcheck = token.get("rugcheck", {})
     top_holders_pct = rugcheck.get("top_holders_pct", 0) or 0
@@ -139,7 +139,7 @@ def revised_compute_enhanced_token_score(
             score += 0.5  # REDUCED from 1
         else:
             score -= 2  # Kept same penalty
-    
+
     # Insider percentage (from RugCheck)
     insider_percentage = rugcheck.get("insider_percentage", 0) or 0
     if insider_percentage > 0:
@@ -151,20 +151,20 @@ def revised_compute_enhanced_token_score(
             score += 0.5  # REDUCED from 1
         else:
             score -= 3  # Kept same penalty
-    
+
     # ═══════════════════════════════════════════════════════════════════════════
     # 3. LIQUIDITY ANALYSIS (0-10 points) - REDUCED FROM 15
     # ═══════════════════════════════════════════════════════════════════════════
     # Get liquidity from GMGN (most reliable)
     gmgn_liquidity = token.get("gmgn_liquidity", 0) or 0
-    
+
     # Fallback to Birdeye
     if not gmgn_liquidity and birdeye and birdeye.get("liquidity"):
         gmgn_liquidity = birdeye.get("liquidity", 0)
-    
+
     # Get FDV for ratio calculation
     fdv = token.get("fdv") or 0
-    
+
     # Score based on liquidity
     if gmgn_liquidity > 0:
         if gmgn_liquidity >= 5_000_000:
@@ -179,7 +179,7 @@ def revised_compute_enhanced_token_score(
             score += 1  # REDUCED from 2
         else:
             score += 0.5  # REDUCED from 1
-    
+
     # Liquidity/FDV ratio (from derived)
     derived = token.get("derived", {})
     liq_fdv_ratio = derived.get("liq_fdv_ratio", 0) or 0
@@ -192,12 +192,12 @@ def revised_compute_enhanced_token_score(
             score += 0.5  # REDUCED from 1
         else:
             score -= 1  # Kept same penalty
-    
+
     # LP lock status (from RugCheck)
     lp_locked = rugcheck.get("lp_locked", False)
     if lp_locked:
         score += 1  # REDUCED from 2
-    
+
     # ═══════════════════════════════════════════════════════════════════════════
     # 4. SOCIAL SIGNALS (0-10 points) - REDUCED FROM 15
     # ═══════════════════════════════════════════════════════════════════════════
@@ -213,7 +213,7 @@ def revised_compute_enhanced_token_score(
         score += 1  # REDUCED from 2
     elif channel_count >= 1:
         score += 0.5  # REDUCED from 1
-    
+
     # Social score (from SocialSignalEnricher)
     social_score = token.get("social_score", 0) or 0
     if social_score > 0:
@@ -225,7 +225,7 @@ def revised_compute_enhanced_token_score(
             score += 1  # REDUCED from 2
         else:
             score += 0.5  # REDUCED from 1
-    
+
     # Mention velocity (from SocialSignalEnricher)
     mention_velocity = token.get("mention_velocity", 0) or 0
     if mention_velocity > 0:
@@ -235,7 +235,7 @@ def revised_compute_enhanced_token_score(
             score += 1  # REDUCED from 2
         elif mention_velocity >= 1:
             score += 0.5  # REDUCED from 1
-    
+
     # Social momentum (from SocialSignalEnricher)
     social_momentum = token.get("social_momentum", "")
     if social_momentum == "very_high":
@@ -244,13 +244,13 @@ def revised_compute_enhanced_token_score(
         score += 1  # REDUCED from 2
     elif social_momentum == "medium":
         score += 0.5  # REDUCED from 1
-    
+
     # ═══════════════════════════════════════════════════════════════════════════
     # 5. VOLUME & FDV (0-6 points) - REDUCED FROM 10
     # ═══════════════════════════════════════════════════════════════════════════
     vol24 = token.get("volume_h24") or 0
     vol1h = token.get("volume_h1") or 0
-    
+
     if fdv > 0:
         # FDV in sweet spot: 10K-10M = good, <1K or >100M = risky
         if 10_000 <= fdv <= 10_000_000:
@@ -259,7 +259,7 @@ def revised_compute_enhanced_token_score(
             score += 1.5  # REDUCED from 2
         else:
             score += 0.5  # REDUCED from 1
-    
+
     if vol24 > 0:
         # Volume relative to FDV (turnover ratio)
         if fdv > 0:
@@ -272,7 +272,7 @@ def revised_compute_enhanced_token_score(
                 score += 0.5  # REDUCED from 1
         else:
             score += 0.5  # REDUCED from 1
-    
+
     if vol1h > 0 and vol24 > 0:
         # Recent momentum: 1h volume / 24h volume * 24
         hourly_momentum = (vol1h / vol24) * 24
@@ -282,14 +282,14 @@ def revised_compute_enhanced_token_score(
             score += 0.5  # REDUCED from 2
         else:
             score += 0.25  # REDUCED from 1
-    
+
     # ═══════════════════════════════════════════════════════════════════════════
     # 6. PRICE MOMENTUM (0-5 points) - REDUCED FROM 10
     # ═══════════════════════════════════════════════════════════════════════════
     p1h = token.get("price_change_h1")
     p6h = token.get("price_change_h6")
     p24h = token.get("price_change_h24")
-    
+
     if p1h is not None:
         if 5 <= p1h <= 50:
             score += 2  # REDUCED from 4
@@ -301,7 +301,7 @@ def revised_compute_enhanced_token_score(
             score += 0.5  # REDUCED from 1
         else:
             score += 0  # Kept same
-    
+
     if p6h is not None:
         if p6h > 10:
             score += 1.5  # REDUCED from 3
@@ -309,13 +309,13 @@ def revised_compute_enhanced_token_score(
             score += 1  # REDUCED from 2
         elif p6h > -15:
             score += 0.5  # REDUCED from 1
-    
+
     if p24h is not None:
         if p24h > 20:
             score += 1.5  # REDUCED from 3
         elif p24h > 0:
             score += 1  # REDUCED from 2
-    
+
     # ═══════════════════════════════════════════════════════════════════════════
     # 7. SECURITY (0-3 points) - REDUCED FROM 5
     # ═══════════════════════════════════════════════════════════════════════════
@@ -325,7 +325,7 @@ def revised_compute_enhanced_token_score(
         score += 1.5  # REDUCED from 2
     elif goplus_honeypot is None:
         score += 0.5  # REDUCED from 1
-    
+
     # RugCheck score
     rugcheck_score = rugcheck.get("score", 0) or 0
     if rugcheck_score > 0:
@@ -335,14 +335,14 @@ def revised_compute_enhanced_token_score(
             score += 0.5  # REDUCED from 1
         else:
             score -= 2  # Kept same penalty
-    
+
     # De.Fi security
     defi = token.get("defi", {})
     if defi:
         defi_score = defi.get("score", 0) or 0
         if defi_score >= 80:
             score += 0.5  # REDUCED from 1
-    
+
     # ═══════════════════════════════════════════════════════════════════════════
     # 8. TOKEN FUNDAMENTALS (0-3 points) - REDUCED FROM 5
     # ═══════════════════════════════════════════════════════════════════════════
@@ -359,7 +359,7 @@ def revised_compute_enhanced_token_score(
             score -= 1  # Kept same penalty
     elif age > 0.5:
         score += 0.5  # REDUCED from 1
-    
+
     # Dev holding = good
     dev_hold = token.get("gmgn_dev_hold")
     if dev_hold:
@@ -367,7 +367,7 @@ def revised_compute_enhanced_token_score(
         if age > 72:
             dev_bonus *= 0.4  # REDUCED from 0.5
         score += dev_bonus
-    
+
     # Penalty for negatives
     negative_penalties = {
         "death spiral": 8,  # REDUCED from 10
@@ -389,7 +389,7 @@ def revised_compute_enhanced_token_score(
         "HAS MINT AUTHORITY": 5,  # REDUCED from 6
         "no txns in 6h": 4,  # REDUCED from 4
     }
-    
+
     for neg in negatives:
         for pattern, penalty in negative_penalties.items():
             if pattern.lower() in neg.lower():
@@ -398,7 +398,7 @@ def revised_compute_enhanced_token_score(
         else:
             # Default penalty for unmatched negatives
             score -= 2  # Kept same
-    
+
     # ── POSITIVE QUALITY ADJUSTMENT ──
     positives = token.get("positives") or []
     if age > 72 and vol24 < 100_000:
@@ -406,13 +406,52 @@ def revised_compute_enhanced_token_score(
             score -= 1  # Kept same
         if "CoinGecko listed" in positives:
             score -= 0.5  # Kept same
-    
+
     # ── NEW: PENALTY FOR ZERO SOCIAL SIGNALS ──
     if channel_count == 0 and social_score == 0 and mention_velocity == 0:
         score *= 0.6  # NEW penalty
         if "no social signals" not in negatives:
             negatives.append("no social signals")
-    
+
+    # ── NEW: BONUS FOR STRONG FUNDAMENTALS ──
+    # Bonus for high FDV (established token)
+    if fdv > 10_000_000:
+        score *= 1.3  # 30% bonus for $10M+ FDV
+        if "high FDV ($10M+)" not in positives:
+            positives.append("high FDV ($10M+)")
+    elif fdv > 1_000_000:
+        score *= 1.2  # 20% bonus for $1M+ FDV
+        if "good FDV ($1M+)" not in positives:
+            positives.append("good FDV ($1M+)")
+    elif fdv > 100_000:
+        score *= 1.1  # 10% bonus for $100K+ FDV
+
+    # Bonus for high holder count (well-distributed)
+    holder_count = token.get("gmgn_holder_count", 0) or 0
+    if holder_count > 10000:
+        score *= 1.3  # 30% bonus for 10K+ holders
+        if "high holder count (10K+)" not in positives:
+            positives.append("high holder count (10K+)")
+    elif holder_count > 5000:
+        score *= 1.2  # 20% bonus for 5K+ holders
+        if "good holder count (5K+)" not in positives:
+            positives.append("good holder count (5K+)")
+    elif holder_count > 1000:
+        score *= 1.1  # 10% bonus for 1K+ holders
+
+    # Bonus for high liquidity (deep pools)
+    liquidity = token.get("gmgn_liquidity", 0) or 0
+    if liquidity > 500_000:
+        score *= 1.3  # 30% bonus for $500K+ liquidity
+        if "high liquidity ($500K+)" not in positives:
+            positives.append("high liquidity ($500K+)")
+    elif liquidity > 100_000:
+        score *= 1.2  # 20% bonus for $100K+ liquidity
+        if "good liquidity ($100K+)" not in positives:
+            positives.append("good liquidity ($100K+)")
+    elif liquidity > 50_000:
+        score *= 1.1  # 10% bonus for $50K+ liquidity
+
     # Note: Fresh tokens are desirable for pump potential - no penalty
-    
+
     return round(max(0, min(100, score)), 2)
