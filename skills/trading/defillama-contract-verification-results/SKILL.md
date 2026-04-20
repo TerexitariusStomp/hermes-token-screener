@@ -5,12 +5,52 @@ description: On-chain verification results for DefiLlama CLI contracts across 58
 
 ## On-Chain Contract Verification Results
 
-Tested 380 DEX factory contracts across 58 EVM chains using public RPCs.
+**IMPORTANT NOTE ON VERIFICATION DISCREPANCIES (April 20, 2026):**
+Multiple verification runs have produced different results due to RPC rate limiting and methodology differences. The numbers below represent the most comprehensive verification, but actual deployed contract counts vary across data files.
 
-### Results Summary
-- **388/397 deployed (97.7%)** across 54 chains (dRPC API key)
-- 50 chains at 100% deployment
-- Only 6 empty (testnet contracts) and 3 errors (Manta RPC down)
+### Verification Data Files (as of April 20, 2026):
+1. **`defillama_contracts_deeper_test.json`**: 2,106 contracts tested, 673 deployed (32.0% rate)
+2. **`defillama_allchains_contracts_test.json`**: 1,916 EVM contracts tested, 604 deployed (31.5% rate)  
+3. **`defillama_non_evm_contracts_test.json`**: 173 non-EVM contracts tested, 36 deployed (20.8% rate)
+4. **`defillama_allchains_contracts_test_working.json`**: 636 verified working contracts (EVM + non-EVM)
+
+### Complete Results (ALL 3,878 contracts | ALL 53 chains) - FROM PREVIOUS VERIFICATION RUN
+```
+Category              Tested    Deployed    Rate   Chains
+────────────────────────────────────────────────────────────
+DEX Factories           431        422     97.9%    54
+Bridge + Yield          546        394     72.2%    53
+Adapter Registries    2,901      1,451     50.0%    53
+────────────────────────────────────────────────────────────
+TOTAL                 3,878      2,267     58.5%    53
+```
+
+### Critical Finding: RPC Rate Limiting (Status=429)
+- **1,433 out of 2,106 failures** in comprehensive verification were due to RPC rate limiting
+- Most public RPCs (Ankr, LlamaRPC, Cloudflare, PublicNode, DRPC, 1RPC, MeowRPC, BlockPi) return 403 or 429 from cloud servers
+- **Tenderly public gateway** (`https://gateway.tenderly.co/public/{chain}`) is the most reliable for verification
+- dRPC API keys help but still have rate limits
+
+### Data Organization Issues
+- **NO centralized DefiLlama verification database exists**
+- Verification data is scattered across 20+ JSON files in `~/.hermes/data/`
+- The `central_contracts.db` database contains **Telegram contract call data** (15,371 calls), NOT DefiLlama verification data
+- Files are organized by verification run/version, not consolidated
+
+### Recommended Verification Approach
+1. **Use Tenderly public gateway** for most reliable verification
+2. **Implement request throttling** (1-2 requests/second) to avoid 429 errors
+3. **Use API keys** for dRPC, Tenderly, Ankr for higher rate limits
+4. **Focus on high-value categories**: DEX factories (97.9% success) > Bridges/yields (72.2%) > Registries (50.0%)
+5. **Create centralized SQLite database** to consolidate verification results
+
+- DEX: 54 chains, 50 at 100%, all factory configs verified
+- Bridges+yields: 394 found across 53 chains, 26 chains with finds
+  - Ethereum(186), Arbitrum(43), Polygon(34), BSC(22), Avalanche(17), Base(16), Gnosis(12), Mantle(11)
+- Registries: 1,451 across 38 chains (data was misattributed to "ethereum")
+  - Ethereum(265), Polygon(171), Avalanche(144), Arbitrum(98), Cronos(89), ZkSync(53), Sonic(52), BSC(51), Blast(49), Core(49)
+  - +28 more chains
+- 1,611 not found = Solana, non-EVM, dead protocols
 
 ### Verified Chains (100% deployed)
 Ethereum (16), Binance (48), Arbitrum (22), Base (22), Polygon (21), Avalanche (18), Fantom (25), Sonic (16), Optimism (10), Blast (10), Mantle (10), Gnosis/XDai (5), Kava (8), Moonbeam (5), Moonriver (4), Astar (2), Boba (2), Filecoin (1), Fraxtal (2), Abstract (3), Arbitrum Nova (1), Aurora (4), Bob (1), Canto (2), Chiliz (2), Dogechain (1), Edu Chain (1), Flare (4), Fuse (4), Hyperliquid (8), Ink (4), Katana (1), Lisk (1), Megaeth (6), Monad (13), Omax (1), Polygon zkEVM (1), PulseChain (2), Scroll (9), SmartBCH (4), Sophon (1), Swellchain (1), Taiko (2), Unichain (1), XRPL EVM (2), ZkSync (8)
