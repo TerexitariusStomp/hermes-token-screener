@@ -256,6 +256,32 @@ def score_token(token: dict) -> tuple[float, list[str], list[str]]:
     if all_positive and pc_h1 and pc_h6 and pc_h24:
         score += 2  # bonus for all-positive
 
+    # ── 6.5. MICROSTRUCTURE SCANNER SIGNALS (0-10) ──
+    # Derived from live trade-flow heuristics inspired by memecoin scanner workflows.
+    scanner = token.get("scanner", {}) or {}
+    ew_score = scanner.get("early_warning_score", 0) or 0
+    heat_status = scanner.get("heat_status", "") or ""
+    whale_cluster = bool(scanner.get("whale_cluster", False))
+
+    if ew_score >= 8:
+        score += 5
+    elif ew_score >= 6:
+        score += 3
+    elif ew_score >= 4:
+        score += 1
+
+    if heat_status == "hot":
+        score += 2
+    elif heat_status == "building":
+        score += 1
+    elif heat_status == "peak":
+        score -= 2
+        negatives.append("overheated flow")
+
+    if whale_cluster:
+        score += 3
+        positives.append("whale cluster")
+
     # ── 7. AGE PENALTY (older = harder to move) ──
     if age_hours is not None:
         if age_hours > 720:

@@ -52,7 +52,7 @@ git push
 | 3 | RugCheck | Solana security (rug score, insiders) | No |
 | 4 | Etherscan | Contract verification | No |
 | 5 | De.Fi | Security analysis, holder concentration | No |
-| 6 | Derived | Computed signals from Dexscreener data | No |
+| 6 | Derived | Computed risk + microstructure signals (liq/fdv, tax, early-warning, heat, whale clusters) | No |
 | 7 | CoinGecko | Market data, exchange listings | No |
 | 8 | GMGN | Dev conviction, smart money, bot detection | No |
 | 9 | Social | Telegram DB + composite social score | No |

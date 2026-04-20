@@ -44,6 +44,9 @@ trading = [
     "solders>=0.21",
     "solana>=0.30",
     "PyYAML>=6.0",
+    "py-clob-client>=0.25.0",
+    "py-clob-client-v2>=1.0.0",
+    "pmxt>=2.31.1",
 ]
 ml = [
     "torch>=2.0",

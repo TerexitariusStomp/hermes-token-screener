@@ -14,6 +14,7 @@ All rewards are normalized to [-1.0, +1.0].
 """
 
 import math
+from typing import Optional
 
 
 class RewardCalculator:
@@ -147,5 +148,3 @@ class RewardCalculator:
         }
         return round(reward, 4), components
 
-
-# Make Optional available at module scope
