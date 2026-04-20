@@ -147,6 +147,12 @@ class DexAggregatorTrader:
     # Trade history file for persistence across restarts
     TRADE_HISTORY_FILE = os.path.expanduser("~/.hermes/data/trade_history.json")
 
+    # Gas reserves: minimum balance to keep for 3+ transactions
+    # Base L2: typical tx costs ~0.000001-0.000005 ETH; reserve 0.00003 ETH (6-30 txs)
+    BASE_GAS_RESERVE = Decimal("0.00003")
+    # Solana: typical tx costs ~0.000005-0.00001 SOL; reserve 0.00003 SOL (3-6 txs)
+    SOLANA_GAS_RESERVE = Decimal("0.00003")
+
     def __init__(self):
         self.evm_account = None
         self.solana_keypair = None
@@ -156,6 +162,16 @@ class DexAggregatorTrader:
         self._enso_rate_limited = False
         # Trade history: track failed attempts and completed trades
         self.trade_history = self._load_trade_history()
+        # Wallet discovery is expensive (many RPC calls). Keep it optional + cached
+        # so one slow RPC cannot stall the whole trading loop for long periods.
+        self.wallet_discovery_enabled = (
+            os.environ.get("HERMES_ENABLE_WALLET_DISCOVERY", "0").strip() == "1"
+        )
+        self.wallet_discovery_interval_sec = int(
+            os.environ.get("HERMES_WALLET_DISCOVERY_INTERVAL_SEC", "900")
+        )
+        self._last_wallet_discovery_ts = 0.0
+        self._cached_wallet_tokens = {}
         self.initialize()
 
     def initialize(self):
@@ -319,6 +335,65 @@ class DexAggregatorTrader:
         key = f"{chain}:{token}"
         return key in self.trade_history["buys"]
 
+    def _remove_stale_buy(self, token: str, chain: str, reason: str = ""):
+        """Remove stale buy entries that no longer exist on-chain.
+
+        This prevents repeated sell loops against positions that were already closed
+        externally or never settled into wallet balance.
+        """
+        key = f"{chain}:{token}"
+        if key in self.trade_history.get("buys", {}):
+            self.trade_history["buys"].pop(key, None)
+            self._save_trade_history()
+            extra = f" ({reason})" if reason else ""
+            logger.info(f"[History] Removed stale BUY: {token} on {chain}{extra}")
+
+    def _prune_stale_active_positions(
+        self, active_positions: Dict, holdings: Dict
+    ) -> int:
+        """Drop active positions that no longer have on-chain balance.
+
+        Returns number of removed stale positions.
+        """
+        removed = 0
+        sol_wallet = str(self.solana_keypair.pubkey()) if self.solana_keypair else ""
+
+        for token, position in list(active_positions.items()):
+            chain = position.get("chain", "base")
+            token_addr = position.get("address", "")
+            has_balance = False
+
+            try:
+                if chain == "base":
+                    # Fast path: reuse already-fetched holdings snapshot
+                    held = holdings.get(token)
+                    if held and Decimal(str(held.get("balance", 0))) > Decimal("0"):
+                        has_balance = True
+                    elif token_addr and token_addr.startswith("0x"):
+                        bal = self.get_token_balance(token_addr, "base")
+                        has_balance = bal > Decimal("0")
+
+                elif (
+                    chain == "solana"
+                    and self.solana_adapter
+                    and sol_wallet
+                    and token_addr
+                ):
+                    bal = self.solana_adapter.get_token_balance(token_addr, sol_wallet)
+                    has_balance = bal > 0
+            except Exception:
+                has_balance = False
+
+            if not has_balance:
+                logger.info(
+                    f"[Position Cleanup] Dropping stale {token} on {chain} (no on-chain balance)"
+                )
+                del active_positions[token]
+                self._remove_stale_buy(token, chain, reason="no on-chain balance")
+                removed += 1
+
+        return removed
+
     def get_web3(self) -> Optional[Web3]:
         """Get Web3 connection."""
         rpcs = [
@@ -400,6 +475,7 @@ class DexAggregatorTrader:
                     "tokenOut": token_out,
                     "amountIn": amount,
                 },
+                headers={"x-client-id": "hermes-bot"},
                 timeout=10,
             )
             return resp.json()
@@ -410,7 +486,7 @@ class DexAggregatorTrader:
     def kyberswap_build(
         self, chain: str, route: Dict, sender: str, recipient: str, slippage: int = 50
     ) -> Dict:
-        """Build swap transaction on KyberSwap."""
+        """Build swap transaction on KyberSwap (V1 API)."""
         chain_ids = {
             "base": "base",
             "ethereum": "ethereum",
@@ -420,6 +496,8 @@ class DexAggregatorTrader:
         }
         chain_id = chain_ids.get(chain, "base")
         try:
+            import time
+
             resp = requests.post(
                 f"{self.KYBERSWAP_API}/{chain_id}/api/v1/route/build",
                 json={
@@ -427,7 +505,10 @@ class DexAggregatorTrader:
                     "sender": sender,
                     "recipient": recipient,
                     "slippageTolerance": slippage,
+                    "deadline": int(time.time()) + 1800,
+                    "source": "hermes-bot",
                 },
+                headers={"x-client-id": "hermes-bot"},
                 timeout=10,
             )
             return resp.json()
@@ -1018,8 +1099,17 @@ class DexAggregatorTrader:
         # 1. Tokens from screener pipeline (highest priority - scored)
         screener_tokens = self._load_screener_tokens()
 
-        # 2. Tokens the wallet actually holds (discovery scan)
-        wallet_tokens = self._discover_wallet_tokens()
+        # 2. Optional wallet discovery scan (expensive) with cache/interval guard
+        wallet_tokens = {}
+        if self.wallet_discovery_enabled:
+            now = time.time()
+            if now - self._last_wallet_discovery_ts >= max(
+                30, self.wallet_discovery_interval_sec
+            ):
+                logger.info("Running wallet token discovery scan (cached mode)")
+                self._cached_wallet_tokens = self._discover_wallet_tokens()
+                self._last_wallet_discovery_ts = now
+            wallet_tokens = dict(self._cached_wallet_tokens)
 
         # Merge: screener takes priority for naming, wallet fills gaps
         all_tokens = {**wallet_tokens, **screener_tokens}
@@ -1102,17 +1192,16 @@ class DexAggregatorTrader:
             amount_wei = str(int(sell_amount * Decimal(10**token_decimals)))
             weth = "0x4200000000000000000000000000000000000006"
 
-            # Get KyberSwap quote
+            # Get KyberSwap quote via GET (V1 API uses GET with query params)
             quote_url = f"https://aggregator-api.kyberswap.com/base/api/v1/routes"
-            quote_resp = requests.post(
+            quote_resp = requests.get(
                 quote_url,
-                json={
+                params={
                     "tokenIn": token_address,
                     "tokenOut": weth,
                     "amountIn": amount_wei,
-                    "saveGas": False,
-                    "slippageTolerance": 500,  # 5%
                 },
+                headers={"x-client-id": "hermes-bot"},
                 timeout=15,
             )
 
@@ -1130,10 +1219,18 @@ class DexAggregatorTrader:
                 logger.error(f"Failed to approve {token_name} for KyberSwap")
                 return False
 
-            # Build swap transaction
+            # Build swap transaction (V1 API requires sender, recipient, slippage, deadline)
             build_resp = requests.post(
                 "https://aggregator-api.kyberswap.com/base/api/v1/route/build",
-                json={"routeSummary": route_data.get("routeSummary")},
+                json={
+                    "routeSummary": route_data.get("routeSummary"),
+                    "sender": self.evm_account.address,
+                    "recipient": self.evm_account.address,
+                    "slippageTolerance": 500,
+                    "deadline": int(time.time()) + 1800,
+                    "source": "hermes-bot",
+                },
+                headers={"x-client-id": "hermes-bot"},
                 timeout=15,
             )
 
@@ -1175,6 +1272,115 @@ class DexAggregatorTrader:
 
         except Exception as e:
             logger.error(f"KyberSwap sell error: {e}")
+            import traceback
+
+            traceback.print_exc()
+            return False
+
+    def _sell_via_velora(
+        self, token_name: str, token_address: str, sell_amount: Decimal
+    ) -> bool:
+        """Sell via Velora (ParaSwap) API."""
+        try:
+            token_decimals = self.get_token_decimals(token_address, "base")
+            amount_wei = str(int(sell_amount * Decimal(10**token_decimals)))
+            weth = "0x4200000000000000000000000000000000000006"
+
+            # Get price quote
+            price_resp = requests.get(
+                f"{self.VELORA_API}/prices",
+                params={
+                    "srcToken": token_address,
+                    "destToken": weth,
+                    "amount": amount_wei,
+                    "srcDecimals": token_decimals,
+                    "destDecimals": 18,
+                    "network": 8453,
+                    "version": 6.2,
+                },
+                timeout=15,
+            )
+
+            if price_resp.status_code != 200:
+                logger.error(
+                    f"Velora quote failed: {price_resp.status_code} - {price_resp.text[:200]}"
+                )
+                return False
+
+            price_data = price_resp.json()
+            if "priceRoute" not in price_data:
+                logger.error("Velora: no priceRoute in response")
+                return False
+
+            dest_amount = price_data["priceRoute"].get("destAmount", "0")
+            if int(dest_amount) == 0:
+                logger.error("Velora: zero output amount")
+                return False
+
+            logger.info(
+                f"Velora quote: {sell_amount} {token_name} -> {int(dest_amount)/1e18:.8f} WETH"
+            )
+
+            # Build transaction
+            build_resp = requests.post(
+                f"{self.VELORA_API}/transactions/8453",
+                json={
+                    "priceRoute": price_data["priceRoute"],
+                    "srcToken": token_address,
+                    "destToken": weth,
+                    "srcAmount": amount_wei,
+                    "destAmount": dest_amount,
+                    "userAddress": self.evm_account.address,
+                    "partner": "hermes-bot",
+                },
+                params={"ignoreChecks": "true"},
+                timeout=15,
+            )
+
+            if build_resp.status_code != 200:
+                logger.error(f"Velora build failed: {build_resp.status_code}")
+                return False
+
+            tx_data = build_resp.json()
+
+            # Approve token spending
+            if not self._erc20_approve_if_needed(
+                token_address, tx_data.get("to", ""), int(amount_wei)
+            ):
+                logger.error(f"Failed to approve {token_name} for Velora router")
+                return False
+
+            # Send transaction
+            tx = {
+                "from": self.evm_account.address,
+                "to": Web3.to_checksum_address(tx_data.get("to")),
+                "data": tx_data.get("data"),
+                "value": int(tx_data.get("value", "0")),
+                "gas": int(tx_data.get("gas", 300000)),
+                "maxFeePerGas": self.w3.eth.gas_price,
+                "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
+                "nonce": self.w3.eth.get_transaction_count(
+                    self.evm_account.address, "pending"
+                ),
+                "chainId": 8453,
+            }
+
+            signed = self.evm_account.sign_transaction(tx)
+            tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
+            logger.info(f"Velora sell sent: {tx_hash.hex()}")
+
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
+            if receipt.status == 1:
+                logger.info(
+                    f"Velora sell confirmed: {token_name} -> WETH | tx: {tx_hash.hex()}"
+                )
+                return True
+            else:
+                logger.error(f"Velora sell failed: {tx_hash.hex()}")
+                return False
+
+        except Exception as e:
+            logger.error(f"Velora sell error: {e}")
             import traceback
 
             traceback.print_exc()
@@ -1687,6 +1893,7 @@ class DexAggregatorTrader:
         logger.warning(f"All direct swaps failed for {token_name}, trying aggregators")
         for agg_name, agg_func in [
             ("KyberSwap", self._sell_via_kyberswap),
+            ("Velora", self._sell_via_velora),
             ("Odos", self._sell_via_odos),
         ]:
             try:
@@ -1736,8 +1943,8 @@ class DexAggregatorTrader:
                     logger.error(
                         f"Odos sell quote failed: {quote_resp.status_code} - {quote_resp.text[:200]}"
                     )
-                # Try KyberSwap as fallback
-                return self._sell_via_kyberswap(token_name, token_address, sell_amount)
+                # Try Velora as fallback (KyberSwap API is unreliable)
+                return self._sell_via_velora(token_name, token_address, sell_amount)
 
             quote = quote_resp.json()
 
@@ -1779,7 +1986,7 @@ class DexAggregatorTrader:
                 logger.error(
                     "Odos assemble returned empty calldata — tx would revert, aborting"
                 )
-                return self._sell_via_kyberswap(token_name, token_address, sell_amount)
+                return self._sell_via_velora(token_name, token_address, sell_amount)
 
             tx = {
                 "from": self.evm_account.address,
@@ -1898,7 +2105,7 @@ class DexAggregatorTrader:
     def execute_bridge(
         self, from_chain: str, to_chain: str, token: str, amount: str
     ) -> bool:
-        """Execute cross-chain bridge."""
+        """Execute cross-chain bridge using LiFi."""
         quote = self.bridge_quote(from_chain, to_chain, token, amount)
         if not quote:
             logger.error("Failed to get bridge quote")
@@ -1911,8 +2118,85 @@ class DexAggregatorTrader:
             return False
 
         logger.info(f"Bridge quote: {amount} {token} from {from_chain} to {to_chain}")
-        # Execute transaction (similar to swap execution)
-        return True
+
+        # Execute the bridge transaction
+        try:
+            if from_chain == "base" and self.w3 and self.evm_account:
+                # EVM chain bridge (Base -> Solana)
+                tx = {
+                    "from": self.evm_account.address,
+                    "to": tx_data.get("to"),
+                    "data": tx_data.get("data"),
+                    "value": (
+                        int(tx_data.get("value", "0"), 16)
+                        if isinstance(tx_data.get("value"), str)
+                        else int(tx_data.get("value", 0))
+                    ),
+                    "gas": (
+                        int(tx_data.get("gasLimit", "0"), 16)
+                        if isinstance(tx_data.get("gasLimit"), str)
+                        else int(tx_data.get("gasLimit", 100000))
+                    ),
+                    "gasPrice": (
+                        int(tx_data.get("gasPrice", "0"), 16)
+                        if isinstance(tx_data.get("gasPrice"), str)
+                        else int(tx_data.get("gasPrice", 0))
+                    ),
+                    "nonce": self.w3.eth.get_transaction_count(
+                        self.evm_account.address
+                    ),
+                    "chainId": 8453,  # Base chain ID
+                }
+
+                # Sign and send transaction
+                signed_tx = self.evm_account.sign_transaction(tx)
+                tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+                logger.info(f"Bridge transaction sent: {tx_hash.hex()}")
+
+                # Wait for confirmation
+                receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)
+                if receipt.status == 1:
+                    logger.info(f"Bridge successful! TX: {tx_hash.hex()}")
+                    return True
+                else:
+                    logger.error(f"Bridge transaction failed: {tx_hash.hex()}")
+                    return False
+
+            elif from_chain == "solana" and self.solana_keypair:
+                # Solana bridge (Solana -> Base)
+                # LiFi returns Solana transaction as base64
+                import base64
+                from solders.transaction import VersionedTransaction
+
+                solana_tx_b64 = tx_data.get("transaction", "")
+                if not solana_tx_b64:
+                    logger.error("No Solana transaction data in bridge quote")
+                    return False
+
+                # Decode and sign the transaction
+                tx_bytes = base64.b64decode(solana_tx_b64)
+                tx = VersionedTransaction.from_bytes(tx_bytes)
+                signed_tx = VersionedTransaction(tx.message, [self.solana_keypair])
+
+                # Send the transaction
+                if self.solana_adapter:
+                    sig = self.solana_adapter.send_tx(signed_tx)
+                    if sig:
+                        logger.info(f"Bridge successful! TX: {sig}")
+                        return True
+                    else:
+                        logger.error("Bridge transaction failed")
+                        return False
+                else:
+                    logger.error("No Solana adapter available for bridge")
+                    return False
+            else:
+                logger.error(f"Unsupported bridge from {from_chain}")
+                return False
+
+        except Exception as e:
+            logger.error(f"Bridge execution error: {e}")
+            return False
 
     # ==================== LIQUIDITY POOLING ====================
 
@@ -2163,6 +2447,7 @@ class DexAggregatorTrader:
                             "deadline": int(_time.time()) + 1800,
                             "source": "hermes-bot",
                         },
+                        headers={"x-client-id": "hermes-bot"},
                         timeout=15,
                     )
                     if build_resp.status_code == 200:
@@ -2195,6 +2480,38 @@ class DexAggregatorTrader:
                     "output": vel_quote["priceRoute"].get("destAmount", "0"),
                     "gas": vel_quote["priceRoute"].get("gasCost", "0"),
                 }
+                # Build Velora tx for contract execution
+                try:
+                    import time as _time2
+
+                    vel_build = requests.post(
+                        f"{self.VELORA_API}/transactions/8453",
+                        json={
+                            "priceRoute": vel_quote["priceRoute"],
+                            "srcToken": token_in,
+                            "destToken": token_out,
+                            "srcAmount": amount,
+                            "destAmount": vel_quote["priceRoute"].get(
+                                "destAmount", "0"
+                            ),
+                            "userAddress": self.evm_account.address,
+                            "partner": "hermes-bot",
+                        },
+                        params={
+                            "ignoreChecks": "true",
+                        },
+                        timeout=15,
+                    )
+                    if vel_build.status_code == 200:
+                        vbd = vel_build.json()
+                        quotes["velora"]["_tx"] = {
+                            "to": vbd.get("to"),
+                            "data": vbd.get("data"),
+                            "gas": vbd.get("gas", 300000),
+                            "value": vbd.get("value", "0"),
+                        }
+                except Exception as e:
+                    logger.debug(f"Velora build failed: {e}")
 
             # Odos (also collect assembled tx for contract execution)
             odos_quote = self.odos_quote(chain, token_in, token_out, amount)
@@ -2269,6 +2586,138 @@ class DexAggregatorTrader:
 
         return quotes
 
+    def refuel_base_gas(self, min_eth: float = 0.00005) -> bool:
+        """Swap USDC -> ETH on Base when ETH is critically low. Uses KyberSwap API.
+        Mirrors the working _sell_via_kyberswap pattern."""
+        if not self.w3 or not self.evm_account:
+            return False
+        try:
+            usdc_addr = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+            weth = "0x4200000000000000000000000000000000000006"
+
+            # Check current USDC balance
+            usdc_bal = self.get_token_balance(usdc_addr, "base")
+            if usdc_bal < Decimal("0.05"):
+                logger.warning(f"[Refuel] USDC too low ({usdc_bal:.4f}) to refuel gas")
+                return False
+
+            # Check if we actually need refueling
+            eth_bal = Decimal(
+                str(self.w3.eth.get_balance(self.evm_account.address) / 1e18)
+            )
+            if eth_bal >= Decimal(str(min_eth)):
+                logger.debug(
+                    f"[Refuel] ETH sufficient ({eth_bal:.8f}), skipping refuel"
+                )
+                return True
+
+            # Swap ~$0.10 USDC -> ETH (100000 = 0.10 USDC in 6 decimals)
+            swap_amount = min(int(usdc_bal * 1_000_000), 100000)  # max 0.10 USDC
+            if swap_amount < 50000:  # less than $0.05
+                logger.warning(f"[Refuel] Swap amount too small: {swap_amount}")
+                return False
+            amount_wei = str(swap_amount)
+
+            # Get KyberSwap quote via GET (V1 API)
+            quote_url = "https://aggregator-api.kyberswap.com/base/api/v1/routes"
+            quote_resp = requests.get(
+                quote_url,
+                params={
+                    "tokenIn": usdc_addr,
+                    "tokenOut": weth,
+                    "amountIn": amount_wei,
+                },
+                headers={"x-client-id": "hermes-bot"},
+                timeout=15,
+            )
+            if quote_resp.status_code != 200:
+                logger.error(f"[Refuel] Quote failed: {quote_resp.status_code}")
+                return False
+
+            route_data = quote_resp.json().get("data", {})
+            router_address = route_data.get("routerAddress", "")
+            route_summary = route_data.get("routeSummary", {})
+            amount_out = int(route_summary.get("amountOut", 0))
+            if amount_out == 0:
+                logger.error("[Refuel] Zero output from quote")
+                return False
+
+            eth_out = amount_out / 1e18
+            logger.info(
+                f"[Refuel] Quote: {swap_amount/1e6:.4f} USDC -> {eth_out:.8f} ETH (via WETH)"
+            )
+
+            # Approve USDC spending via the helper (checks existing allowance first)
+            if not self._erc20_approve_if_needed(
+                usdc_addr, router_address, swap_amount
+            ):
+                logger.error("[Refuel] Failed to approve USDC for KyberSwap")
+                return False
+
+            # Build swap transaction (V1 API)
+            build_resp = requests.post(
+                "https://aggregator-api.kyberswap.com/base/api/v1/route/build",
+                json={
+                    "routeSummary": route_summary,
+                    "sender": self.evm_account.address,
+                    "recipient": self.evm_account.address,
+                    "slippageTolerance": 500,
+                    "deadline": int(time.time()) + 1800,
+                    "source": "hermes-bot",
+                },
+                headers={"x-client-id": "hermes-bot"},
+                timeout=15,
+            )
+            if build_resp.status_code != 200:
+                logger.error(f"[Refuel] Build failed: {build_resp.status_code}")
+                return False
+
+            tx_data = build_resp.json().get("data", {})
+
+            # Construct and send swap tx (matching _sell_via_kyberswap pattern)
+            swap_tx = {
+                "from": self.evm_account.address,
+                "to": Web3.to_checksum_address(
+                    tx_data.get("routerAddress", router_address)
+                ),
+                "data": tx_data.get("data"),
+                "value": 0,  # ERC20 -> WETH: no native ETH value
+                "gas": int(tx_data.get("gas", 300000)),
+                "maxFeePerGas": self.w3.eth.gas_price,
+                "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
+                "nonce": self.w3.eth.get_transaction_count(
+                    self.evm_account.address, "pending"
+                ),
+                "chainId": 8453,
+            }
+
+            signed = self.evm_account.sign_transaction(swap_tx)
+            tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
+            logger.info(f"[Refuel] Swap sent: {tx_hash.hex()}")
+
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
+            if receipt.status == 1:
+                new_eth = Decimal(
+                    str(self.w3.eth.get_balance(self.evm_account.address) / 1e18)
+                )
+                logger.info(f"[Refuel] SUCCESS! New ETH balance: {new_eth:.8f} ETH")
+                # Unwrap WETH to native ETH if we got WETH
+                weth_bal = self.get_token_balance(weth, "base")
+                if weth_bal > Decimal("0.00001"):
+                    logger.info(f"[Refuel] Unwrapping {weth_bal:.8f} WETH to ETH")
+                    self._unwrap_weth(weth_bal)
+                return True
+            else:
+                logger.error(f"[Refuel] Swap tx failed: {tx_hash.hex()}")
+                return False
+
+        except Exception as e:
+            logger.error(f"[Refuel] Error: {e}")
+            import traceback
+
+            traceback.print_exc()
+            return False
+
     def execute_base_trade(
         self, token_symbol: str, token_addr: str, eth_amount: float
     ) -> bool:
@@ -2281,7 +2730,7 @@ class DexAggregatorTrader:
             WETH = "0x4200000000000000000000000000000000000006"
             t_in = WETH  # Use WETH for API quotes (native ETH handled by value field)
             quotes = self.compare_quotes("base", t_in, token_addr, str(amount_wei))
-            for proto in ["kyberswap", "odos"]:
+            for proto in ["kyberswap", "odos", "velora"]:
                 if proto in quotes and "_tx" in quotes[proto]:
                     api_routes[proto] = quotes[proto]["_tx"]
                     logger.info(
@@ -2357,6 +2806,7 @@ class DexAggregatorTrader:
             build_resp = requests.post(
                 "https://aggregator-api.kyberswap.com/base/api/v1/route/build",
                 json=build_body,
+                headers={"x-client-id": "hermes-bot"},
                 timeout=15,
             )
 
@@ -2439,34 +2889,55 @@ class DexAggregatorTrader:
     def execute_solana_trade(
         self, token_symbol: str, token_mint: str, sol_amount: float
     ) -> bool:
-        """Execute a trade on Solana. Tries adapter (Jupiter→Raydium→Meteora), falls back to CLI."""
+        """Execute a trade on Solana. For pump.fun tokens, uses PumpFun CLI directly."""
 
         SOL_MINT = "So11111111111111111111111111111111111111112"
         amount_base = int(sol_amount * 1e9)
 
-        # === PRIMARY: Solana adapter with multiple DEX fallbacks ===
+        # === OPTIMIZATION: For pump.fun tokens, use PumpFun CLI when SOL buffer is sufficient ===
+        if "pump" in token_mint.lower():
+            current_sol = self.get_balance("solana")
+            # PumpFun buys often need extra SOL headroom for rent/ATA creation.
+            if current_sol >= Decimal("0.0045"):
+                logger.info(
+                    "[Solana] Pump.fun token detected, using PumpFun CLI directly"
+                )
+                try:
+                    if self.execute_pumpfun_trade(token_mint, sol_amount):
+                        return True
+                except Exception as e:
+                    logger.error(f"[PumpFun] Trade failed: {e}")
+                # If PumpFun fails, try Jupiter CLI as final fallback
+                return self._execute_solana_trade_cli(
+                    token_symbol, token_mint, sol_amount
+                )
+            else:
+                logger.info(
+                    f"[Solana] Pump.fun token but SOL={current_sol:.6f} below PumpFun safety buffer; trying Jupiter/Raydium/Meteora"
+                )
+
+        # === PRIMARY: Solana adapter with multiple DEX fallbacks for non-pump tokens ===
         if self.solana_adapter:
             # Route 1: Jupiter API (best for listed tokens)
-            if "pump" not in token_mint.lower():
-                try:
-                    logger.info(
-                        f"[Solana/Jupiter] Swapping {sol_amount:.6f} SOL -> {token_symbol}"
-                    )
-                    sig = self.solana_adapter.swap(
-                        input_mint=SOL_MINT,
-                        output_mint=token_mint,
-                        amount=amount_base,
-                        slippage_bps=100,
-                    )
-                    if sig:
-                        logger.info(f"[Solana/Jupiter] Trade confirmed: {sig}")
-                        return True
-                    else:
-                        logger.warning("[Solana/Jupiter] Swap returned None")
-                except Exception as e:
-                    logger.warning(f"[Solana/Jupiter] Error: {e}")
+            try:
+                logger.info(
+                    f"[Solana/Jupiter] Swapping {sol_amount:.6f} SOL -> {token_symbol}"
+                )
+                sig = self.solana_adapter.swap(
+                    input_mint=SOL_MINT,
+                    output_mint=token_mint,
+                    amount=amount_base,
+                    slippage_bps=100,
+                )
+                if sig:
+                    logger.info(f"[Solana/Jupiter] Trade confirmed: {sig}")
+                    return True
+                else:
+                    logger.warning("[Solana/Jupiter] Swap returned None")
+            except Exception as e:
+                logger.warning(f"[Solana/Jupiter] Error: {e}")
 
-            # Route 2: Raydium CPMM (works for pump.fun graduated tokens)
+            # Route 2: Raydium CPMM (works for graduated tokens)
             try:
                 logger.info(
                     f"[Solana/Raydium] Quoting {sol_amount:.6f} SOL -> {token_symbol}"
@@ -2515,6 +2986,98 @@ class DexAggregatorTrader:
 
         # === FALLBACK: Jupiter CLI ===
         return self._execute_solana_trade_cli(token_symbol, token_mint, sol_amount)
+
+    def execute_pumpfun_trade(self, token_mint: str, sol_amount: float) -> bool:
+        """Execute a pump.fun / PumpSwap trade using pumpfun-cli.
+
+        This handles bonding curve vs PumpSwap AMM automatically.
+        Requires pumpfun-cli and a configured wallet (PUMPFUN_PASSWORD, keyfile).
+        Uses RPC fallback chain if primary is down.
+        """
+        try:
+            import subprocess
+
+            amount_str = str(sol_amount)
+
+            # Build RPC fallback chain (primary first)
+            primary_rpc = os.environ.get(
+                "PUMPFUN_RPC",
+                os.environ.get(
+                    "SOLANA_RPC_URL",
+                    "https://mainnet.helius-rpc.com/?api-key=bb6ff3e9-e38d-4362-9e7a-669a00d497a8",
+                ),
+            )
+            fallback_raw = os.environ.get(
+                "PUMPFUN_RPC_FALLBACKS",
+                "https://api.mainnet-beta.solana.com,https://rpc.ankr.com/solana",
+            )
+            rpc_chain = [primary_rpc] + [
+                r.strip() for r in fallback_raw.split(",") if r.strip()
+            ]
+
+            env = {
+                **os.environ,
+                "PUMPFUN_PASSWORD": os.environ.get("PUMPFUN_PASSWORD", "hermes"),
+                # Ensure pumpfun executable is found even in daemon PATH
+                "PATH": os.environ.get("PATH", "") + ":/home/terexitarius/.local/bin",
+                # Ensure pumpfun-cli can find its IDL
+                "PYTHONPATH": os.environ.get("PYTHONPATH", "")
+                + ":/home/terexitarius/.local/share/uv/tools/pumpfun-cli/lib/python3.12/site-packages",
+            }
+
+            for rpc in rpc_chain:
+                cmd = [
+                    "pumpfun",
+                    "--rpc",
+                    rpc,
+                    "buy",
+                    token_mint,
+                    amount_str,
+                    "--slippage",
+                    "15",
+                    "--confirm",
+                    "--json",
+                ]
+
+                logger.info(
+                    f"[PumpFun] Executing via RPC {rpc}: {amount_str} SOL -> {token_mint}"
+                )
+
+                # Dry-run first for safety
+                dry_cmd = cmd + ["--dry-run"]
+                dry = subprocess.run(
+                    dry_cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=180,
+                    env=env,
+                )
+                if dry.returncode != 0:
+                    logger.error(
+                        f"[PumpFun] Dry-run failed on {rpc}: {dry.stderr[:200]}"
+                    )
+                    continue
+
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=180,
+                    env=env,
+                )
+
+                if result.returncode == 0:
+                    logger.info(f"[PumpFun] Buy successful: {result.stdout[:200]}")
+                    return True
+                else:
+                    logger.error(
+                        f"[PumpFun] Buy failed on {rpc}: {result.stderr[:200]}"
+                    )
+
+        except Exception as e:
+            logger.error(f"[PumpFun] Error: {e}")
+
+        return False
 
     def _execute_solana_trade_cli(
         self, token_symbol: str, token_mint: str, sol_amount: float
@@ -2850,6 +3413,16 @@ class DexAggregatorTrader:
                     f"Balances - Base: {base_bal:.6f} ETH, Solana: {sol_bal:.6f} SOL"
                 )
 
+                # ==================== REFUEL BASE GAS FROM USDC ====================
+                # If ETH critically low, try swapping USDC -> ETH via KyberSwap
+                if base_bal < self.BASE_GAS_RESERVE:
+                    logger.info(
+                        f"Base ETH low ({base_bal:.8f}), attempting USDC refuel..."
+                    )
+                    if self.refuel_base_gas():
+                        base_bal = self.get_balance("base")
+                        logger.info(f"Post-refuel Base balance: {base_bal:.8f} ETH")
+
                 # ==================== CHECK ALL HOLDINGS ====================
                 holdings = self.get_all_holdings()
                 if holdings:
@@ -2857,6 +3430,16 @@ class DexAggregatorTrader:
                         f"{k}: {v['balance']:.2f}" for k, v in holdings.items()
                     )
                     logger.info(f"Token holdings: {holding_str}")
+
+                # ==================== PRUNE STALE POSITIONS ====================
+                # Prevent repeated sell loops for positions that no longer exist on-chain.
+                removed_stale = self._prune_stale_active_positions(
+                    active_positions, holdings
+                )
+                if removed_stale > 0:
+                    logger.info(
+                        f"[Position Cleanup] Removed {removed_stale} stale positions before rotation"
+                    )
 
                 # ==================== FREE UP ETH FROM TOKEN HOLDINGS ====================
                 # If ETH is too low to trade but we have token holdings, sell some to get ETH
@@ -2904,21 +3487,85 @@ class DexAggregatorTrader:
                     ):
                         if chain == "base":
                             token_addr = self.get_token_address(token, "base")
-                            if token_addr and base_bal > Decimal("0.000005"):
+                            # Check actual token balance before attempting sell
+                            if token_addr:
+                                token_bal = self.get_token_balance(token_addr, "base")
+                                if token_bal <= Decimal("0"):
+                                    logger.info(
+                                        f"[Position Cleanup] Dropping stale {token} on base "
+                                        f"(no on-chain balance during rotation)"
+                                    )
+                                    self._remove_stale_buy(
+                                        token, chain, reason="no balance at rotation"
+                                    )
+                                    del active_positions[token]
+                                    continue
+                            else:
+                                # No address found - can't sell
+                                logger.info(
+                                    f"[Position Cleanup] Dropping {token} on base "
+                                    f"(no token address found)"
+                                )
+                                self._remove_stale_buy(
+                                    token, chain, reason="no address"
+                                )
+                                del active_positions[token]
+                                continue
+                            if base_bal > self.BASE_GAS_RESERVE:
                                 logger.info(
                                     f"Rotating: selling {token} on Base to chase faster movers"
                                 )
                                 sold = self.sell_token_for_eth(
-                                    token, token_addr, sell_pct=1.0
+                                    token,
+                                    token_addr,
+                                    sell_pct=1.0,
+                                    known_balance=token_bal if token_addr else None,
                                 )
                                 if sold:
                                     self.record_sell(token, chain)
                                     del active_positions[token]
                                     time.sleep(3)
                                     base_bal = self.get_balance("base")
+                                else:
+                                    # If sell failed due to no balance, clean up
+                                    check_bal = self.get_token_balance(
+                                        token_addr, "base"
+                                    )
+                                    if check_bal <= Decimal("0"):
+                                        logger.info(
+                                            f"[Position Cleanup] Dropping stale {token} on base "
+                                            f"(sell failed - no on-chain balance)"
+                                        )
+                                        self._remove_stale_buy(
+                                            token,
+                                            chain,
+                                            reason="sell failed, no balance",
+                                        )
+                                        del active_positions[token]
+                            elif token_addr and base_bal <= self.BASE_GAS_RESERVE:
+                                logger.debug(
+                                    f"Skipping rotation sell for {token}: "
+                                    f"insufficient ETH for gas ({base_bal:.8f})"
+                                )
                         elif chain == "solana":
                             token_addr = position.get("address", "")
                             sol_bal = self.get_balance("solana")
+                            # Check actual token balance before attempting sell
+                            if token_addr and self.solana_adapter:
+                                wallet = str(self.solana_keypair.pubkey())
+                                on_chain_bal = self.solana_adapter.get_token_balance(
+                                    token_addr, wallet
+                                )
+                                if on_chain_bal <= 0:
+                                    logger.info(
+                                        f"[Position Cleanup] Dropping stale {token} on solana "
+                                        f"(no on-chain balance during rotation)"
+                                    )
+                                    self._remove_stale_buy(
+                                        token, chain, reason="no balance at rotation"
+                                    )
+                                    del active_positions[token]
+                                    continue
                             if token_addr and sol_bal > Decimal("0.001"):
                                 logger.info(
                                     f"Rotating: selling {token} on Solana to free up SOL"
@@ -2932,6 +3579,28 @@ class DexAggregatorTrader:
                                     time.sleep(3)
                                 else:
                                     logger.warning(f"Failed to sell {token} on Solana")
+                                    # Re-check: if no balance, clean up stale position
+                                    if self.solana_adapter:
+                                        wallet = str(self.solana_keypair.pubkey())
+                                        recheck = self.solana_adapter.get_token_balance(
+                                            token_addr, wallet
+                                        )
+                                        if recheck <= 0:
+                                            logger.info(
+                                                f"[Position Cleanup] Dropping stale {token} on solana "
+                                                f"(sell failed - no on-chain balance)"
+                                            )
+                                            self._remove_stale_buy(
+                                                token,
+                                                chain,
+                                                reason="sell failed, no balance",
+                                            )
+                                            del active_positions[token]
+                            elif sol_bal <= self.SOLANA_GAS_RESERVE:
+                                logger.debug(
+                                    f"Skipping rotation sell for {token}: "
+                                    f"insufficient SOL ({sol_bal:.6f})"
+                                )
 
                 # ==================== SIGNAL-BASED TRADING ====================
                 try:
@@ -2987,16 +3656,24 @@ class DexAggregatorTrader:
 
                             traded = False
 
-                            if chain == "base" and base_bal > Decimal("0.00001"):
-                                # Trade 50% of ETH balance
-                                trade_amount = float(base_bal) * 0.5
+                            if chain == "base" and base_bal > Decimal("0.000001"):
+                                # Refresh Base balance per trade so back-to-back buys don't
+                                # reuse stale pre-trade balance and overspend.
+                                fresh_base_bal = self.get_balance("base")
+                                gas_reserve = self.BASE_GAS_RESERVE
+                                spendable = fresh_base_bal - gas_reserve
+                                if spendable < Decimal("0"):
+                                    spendable = Decimal("0")
 
-                                # Check if trade is > 1 cent
+                                # Trade 50% of spendable ETH (after gas reserve)
+                                trade_amount = float(spendable * Decimal("0.5"))
+
+                                # Check if trade is > 0.1 cent (Base L2 gas is ~0.0000009 ETH)
                                 if (
-                                    trade_amount > 0.000005
+                                    trade_amount > 0.0000005
                                 ):  # allow tiny Base test trades
                                     logger.info(
-                                        f"Trading {trade_amount:.6f} ETH for {token} on Base"
+                                        f"Trading {trade_amount:.6f} ETH for {token} on Base (fresh balance {fresh_base_bal:.6f})"
                                     )
                                     success = self.execute_base_trade(
                                         token, token_addr, trade_amount
@@ -3024,8 +3701,11 @@ class DexAggregatorTrader:
                                     )
 
                             elif chain == "solana" and sol_bal > Decimal("0.002"):
-                                # Trade 50% of SOL balance
-                                trade_amount = float(sol_bal) * 0.5
+                                # Trade 50% of SOL balance, minus gas reserve
+                                sol_spendable = sol_bal - self.SOLANA_GAS_RESERVE
+                                if sol_spendable < Decimal("0"):
+                                    sol_spendable = Decimal("0")
+                                trade_amount = float(sol_spendable * Decimal("0.5"))
 
                                 # Check if trade is > 5 cents
                                 if trade_amount > 0.0003:  # ~$0.03 minimum
@@ -3064,9 +3744,9 @@ class DexAggregatorTrader:
                                     )
 
                             if not traded:
-                                if chain == "base" and base_bal <= Decimal("0.00001"):
+                                if chain == "base" and base_bal <= Decimal("0.000001"):
                                     logger.warning(
-                                        f"Insufficient Base balance ({base_bal:.8f} ETH) for {token} - need >0.00001 ETH"
+                                        f"Insufficient Base balance ({base_bal:.8f} ETH) for {token} - need >0.000001 ETH"
                                     )
                                 elif chain == "solana" and sol_bal <= Decimal("0.001"):
                                     logger.warning(
@@ -3085,18 +3765,21 @@ class DexAggregatorTrader:
                     traceback.print_exc()
 
                 # Log funding status if no trades were possible
-                if base_bal < Decimal("0.000005") and sol_bal < Decimal("0.003"):
+                if (
+                    base_bal < self.BASE_GAS_RESERVE
+                    and sol_bal < self.SOLANA_GAS_RESERVE
+                ):
                     logger.warning(
                         f"LOW FUNDS - cannot trade on either chain. Base: {base_bal:.8f} ETH, Solana: {sol_bal:.6f} SOL"
                     )
-                elif base_bal < Decimal("0.000005") and not holdings:
+                elif base_bal < self.BASE_GAS_RESERVE and not holdings:
                     logger.info(
                         f"Base balance low ({base_bal:.8f} ETH) and no token holdings to sell"
                     )
 
                 # ==================== BRIDGING OPPORTUNITIES ====================
                 # Check if we should bridge between chains
-                if base_bal > Decimal("0.0001") and sol_bal < Decimal("0.003"):
+                if base_bal > Decimal("0.0001") and sol_bal < self.SOLANA_GAS_RESERVE:
                     # More ETH than SOL - consider bridging
                     logger.info("Checking bridging opportunities: Base -> Solana")
                     bridge_amount = str(int(float(base_bal) * 0.3 * 1e18))  # 30% of ETH
@@ -3107,11 +3790,25 @@ class DexAggregatorTrader:
                         bridge_amount,
                     )
                     if bridge_quote:
-                        logger.info(
-                            f"Bridge quote available: {bridge_quote.get('estimate', {}).get('toAmount', 'N/A')}"
+                        to_amount = bridge_quote.get("estimate", {}).get(
+                            "toAmount", "N/A"
                         )
+                        logger.info(f"Bridge quote available: {to_amount}")
+                        # Execute the bridge
+                        if self.execute_bridge(
+                            "base",
+                            "solana",
+                            "0x4200000000000000000000000000000000000006",
+                            bridge_amount,
+                        ):
+                            logger.info("Bridge executed successfully: Base -> Solana")
+                            time.sleep(5)  # Wait for bridge to complete
+                            sol_bal = self.get_balance("solana")
+                            base_bal = self.get_balance("base")
+                        else:
+                            logger.warning("Bridge execution failed: Base -> Solana")
 
-                elif sol_bal > Decimal("0.003") and base_bal < Decimal("0.00005"):
+                elif sol_bal > Decimal("0.003") and base_bal < self.BASE_GAS_RESERVE:
                     # More SOL than ETH - consider bridging
                     logger.info("Checking bridging opportunities: Solana -> Base")
                     bridge_amount = str(int(float(sol_bal) * 0.3 * 1e9))  # 30% of SOL
@@ -3122,9 +3819,23 @@ class DexAggregatorTrader:
                         bridge_amount,
                     )
                     if bridge_quote:
-                        logger.info(
-                            f"Bridge quote available: {bridge_quote.get('estimate', {}).get('toAmount', 'N/A')}"
+                        to_amount = bridge_quote.get("estimate", {}).get(
+                            "toAmount", "N/A"
                         )
+                        logger.info(f"Bridge quote available: {to_amount}")
+                        # Execute the bridge
+                        if self.execute_bridge(
+                            "solana",
+                            "base",
+                            "So11111111111111111111111111111111111111112",
+                            bridge_amount,
+                        ):
+                            logger.info("Bridge executed successfully: Solana -> Base")
+                            time.sleep(5)  # Wait for bridge to complete
+                            sol_bal = self.get_balance("solana")
+                            base_bal = self.get_balance("base")
+                        else:
+                            logger.warning("Bridge execution failed: Solana -> Base")
 
                 # ==================== LIQUIDITY POOLING ====================
                 # Check for liquidity pooling opportunities when we have idle capital
