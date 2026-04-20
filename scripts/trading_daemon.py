@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-Trading Daemon - Runs all trading components continuously.
+Trading Daemon - Runs all trading and screener components continuously.
 
 Components:
 1. AI Trading Brain - token analysis & trade decisions (every 10 min)
 2. Trade Monitor - position monitoring (every 1 min)
 3. Copytrade Monitor - smart money tracking (every 60 min)
+4. Token Enricher - enriches discovered tokens (every 5 min)
+5. Token Discovery - discovers new tokens (every 30 min)
 
 Usage: python3 trading_daemon.py [--dry-run]
 """
@@ -37,11 +39,15 @@ SCRIPTS_DIR = Path.home() / ".hermes" / "scripts"
 AI_BRAIN = SCRIPTS_DIR / "ai_trading_brain.py"
 TRADE_MONITOR = SCRIPTS_DIR / "trade_monitor.py"
 COPYTRADE_MONITOR = SCRIPTS_DIR / "copytrade_monitor.py"
+TOKEN_ENRICHER = SCRIPTS_DIR / "token_enricher.py"
+TOKEN_DISCOVERY = SCRIPTS_DIR / "token_discovery.py"
 
 # Intervals (seconds)
 AI_BRAIN_INTERVAL = 600  # 10 minutes
 TRADE_MONITOR_INTERVAL = 60  # 1 minute
 COPYTRADE_INTERVAL = 3600  # 60 minutes
+ENRICHER_INTERVAL = 300  # 5 minutes
+DISCOVERY_INTERVAL = 1800  # 30 minutes
 
 # State
 running = True
@@ -58,10 +64,28 @@ signal.signal(signal.SIGTERM, signal_handler)
 signal.signal(signal.SIGINT, signal_handler)
 
 
-def run_script(script_path: Path, name: str, execute: bool = True) -> bool:
+def run_script(
+    script_path: Path,
+    name: str,
+    execute: bool = True,
+    use_flock: bool = False,
+    timeout: int = 300,
+    log_file: str = None,
+) -> bool:
     """Run a script and return success status."""
     try:
-        cmd = [sys.executable, str(script_path)]
+        cmd = []
+
+        # Add flock if requested (like cron does)
+        if use_flock:
+            cmd.extend(["flock", "-n", f"/tmp/{script_path.stem}.lock"])
+
+        # Add timeout wrapper
+        cmd.extend(["timeout", str(timeout)])
+
+        cmd.append(sys.executable)
+        cmd.append(str(script_path))
+
         # Only ai_trading_brain and trade_monitor take --execute
         if execute and script_path.name in ("ai_trading_brain.py", "trade_monitor.py"):
             cmd.append("--execute")
@@ -69,12 +93,28 @@ def run_script(script_path: Path, name: str, execute: bool = True) -> bool:
             cmd.append("--dry-run")
 
         logger.info(f"[{name}] Running...")
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=300,  # 5 min timeout
-        )
+
+        # Set up stdout/stderr
+        stdout_dest = subprocess.PIPE
+        stderr_dest = subprocess.PIPE
+
+        if log_file:
+            # Redirect to log file (like cron)
+            with open(log_file, "a") as log:
+                result = subprocess.run(
+                    cmd,
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                    timeout=timeout + 10,  # Slightly more than internal timeout
+                )
+        else:
+            # Capture output for logging
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=timeout + 10,
+            )
 
         if result.returncode == 0:
             logger.info(f"[{name}] Completed successfully")
@@ -105,23 +145,33 @@ def main():
     logger.info(f"AI Brain interval: {AI_BRAIN_INTERVAL}s")
     logger.info(f"Trade Monitor interval: {TRADE_MONITOR_INTERVAL}s")
     logger.info(f"Copytrade interval: {COPYTRADE_INTERVAL}s")
+    logger.info(f"Token Enricher interval: {ENRICHER_INTERVAL}s")
+    logger.info(f"Token Discovery interval: {DISCOVERY_INTERVAL}s")
     logger.info("=" * 60)
 
     # Track last run times
     last_brain = 0
     last_monitor = 0
     last_copytrade = 0
+    last_enricher = 0
+    last_discovery = 0
 
     # Track failures
     brain_failures = 0
     monitor_failures = 0
     copytrade_failures = 0
+    enricher_failures = 0
+    discovery_failures = 0
 
     # Initial run
     run_script(AI_BRAIN, "AI Brain")
     run_script(TRADE_MONITOR, "Trade Monitor")
     run_script(COPYTRADE_MONITOR, "Copytrade")
-    last_brain = last_monitor = last_copytrade = time.time()
+    run_script(TOKEN_ENRICHER, "Token Enricher")
+    run_script(TOKEN_DISCOVERY, "Token Discovery")
+    last_brain = last_monitor = last_copytrade = last_enricher = last_discovery = (
+        time.time()
+    )
 
     while running:
         now = time.time()
@@ -155,6 +205,34 @@ def main():
             else:
                 copytrade_failures += 1
             last_copytrade = now
+
+        # Token Enricher (every 5 min)
+        if now - last_enricher >= ENRICHER_INTERVAL:
+            success = run_script(
+                TOKEN_ENRICHER,
+                "Token Enricher",
+                use_flock=True,
+                timeout=270,
+                log_file=str(LOG_DIR / "token_screener.log"),
+            )
+            if success:
+                enricher_failures = 0
+            else:
+                enricher_failures += 1
+            last_enricher = now
+
+        # Token Discovery (every 30 min)
+        if now - last_discovery >= DISCOVERY_INTERVAL:
+            success = run_script(
+                TOKEN_DISCOVERY,
+                "Token Discovery",
+                log_file=str(LOG_DIR / "token_discovery.log"),
+            )
+            if success:
+                discovery_failures = 0
+            else:
+                discovery_failures += 1
+            last_discovery = now
 
         # Sleep for a short interval to avoid busy waiting
         # Check every 10 seconds
