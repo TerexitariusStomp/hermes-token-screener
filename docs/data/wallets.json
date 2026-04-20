@@ -4328,7 +4328,7 @@
       "last_updated": 1776302102.6241345,
       "source_tokens": "unc",
       "source_token_count": 1,
-      "wallet_score": 40.0,
+      "wallet_score": 41.0,
       "realized_pnl": 5530.12931261607,
       "unrealized_pnl": 10950.716506430026,
       "total_profit": 16480.845819046095,
@@ -8001,5 +8001,5 @@
       "mcap_tier": "< $50K"
     }
   ],
-  "generated_at_iso": "2026-04-20T03:49:31.180993+00:00"
+  "generated_at_iso": "2026-04-20T04:25:15.777496+00:00"
 }
