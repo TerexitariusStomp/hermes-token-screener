@@ -1209,17 +1209,16 @@ class DexAggregatorTrader:
                 logger.error(f"KyberSwap quote failed: {quote_resp.status_code}")
                 return False
 
-            route_data = quote_resp.json().get("data", {})
-            router_address = route_data.get("routerAddress")
-
-            # Approve KyberSwap router
-            if router_address and not self._erc20_approve_if_needed(
-                token_address, router_address, int(amount_wei)
-            ):
-                logger.error(f"Failed to approve {token_name} for KyberSwap")
+            quote_json = quote_resp.json()
+            if quote_json.get("code", -1) != 0:
+                logger.error(
+                    f"KyberSwap quote error: {quote_json.get('message', 'Unknown')}"
+                )
                 return False
 
-            # Build swap transaction (V1 API requires sender, recipient, slippage, deadline)
+            route_data = quote_json.get("data", {})
+
+            # Build swap transaction FIRST (V1 API: router address only in build response)
             build_resp = requests.post(
                 "https://aggregator-api.kyberswap.com/base/api/v1/route/build",
                 json={
@@ -1238,7 +1237,22 @@ class DexAggregatorTrader:
                 logger.error(f"KyberSwap build failed: {build_resp.status_code}")
                 return False
 
-            tx_data = build_resp.json().get("data", {})
+            build_json = build_resp.json()
+            if build_json.get("code", -1) != 0:
+                logger.error(
+                    f"KyberSwap build error: {build_json.get('message', 'Unknown')}"
+                )
+                return False
+
+            tx_data = build_json.get("data", {})
+            router_address = tx_data.get("routerAddress")
+
+            # Approve KyberSwap router (now that we have router address)
+            if router_address and not self._erc20_approve_if_needed(
+                token_address, router_address, int(amount_wei)
+            ):
+                logger.error(f"Failed to approve {token_name} for KyberSwap")
+                return False
 
             tx = {
                 "from": self.evm_account.address,
@@ -2634,8 +2648,14 @@ class DexAggregatorTrader:
                 logger.error(f"[Refuel] Quote failed: {quote_resp.status_code}")
                 return False
 
-            route_data = quote_resp.json().get("data", {})
-            router_address = route_data.get("routerAddress", "")
+            quote_json = quote_resp.json()
+            if quote_json.get("code", -1) != 0:
+                logger.error(
+                    f"[Refuel] Quote error: {quote_json.get('message', 'Unknown')}"
+                )
+                return False
+
+            route_data = quote_json.get("data", {})
             route_summary = route_data.get("routeSummary", {})
             amount_out = int(route_summary.get("amountOut", 0))
             if amount_out == 0:
@@ -2647,14 +2667,7 @@ class DexAggregatorTrader:
                 f"[Refuel] Quote: {swap_amount/1e6:.4f} USDC -> {eth_out:.8f} ETH (via WETH)"
             )
 
-            # Approve USDC spending via the helper (checks existing allowance first)
-            if not self._erc20_approve_if_needed(
-                usdc_addr, router_address, swap_amount
-            ):
-                logger.error("[Refuel] Failed to approve USDC for KyberSwap")
-                return False
-
-            # Build swap transaction (V1 API)
+            # Build swap transaction FIRST (V1 API: router address only in build response)
             build_resp = requests.post(
                 "https://aggregator-api.kyberswap.com/base/api/v1/route/build",
                 json={
@@ -2672,7 +2685,22 @@ class DexAggregatorTrader:
                 logger.error(f"[Refuel] Build failed: {build_resp.status_code}")
                 return False
 
-            tx_data = build_resp.json().get("data", {})
+            build_json = build_resp.json()
+            if build_json.get("code", -1) != 0:
+                logger.error(
+                    f"[Refuel] Build error: {build_json.get('message', 'Unknown')}"
+                )
+                return False
+
+            tx_data = build_json.get("data", {})
+            router_address = tx_data.get("routerAddress", "")
+
+            # Approve USDC spending (now that we have router address)
+            if not self._erc20_approve_if_needed(
+                usdc_addr, router_address, swap_amount
+            ):
+                logger.error("[Refuel] Failed to approve USDC for KyberSwap")
+                return False
 
             # Construct and send swap tx (matching _sell_via_kyberswap pattern)
             swap_tx = {
