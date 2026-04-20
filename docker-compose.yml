@@ -1,22 +1,76 @@
+version: '3.8'
+
 services:
-  dashboard:
-    build: .
+  # FastAPI application
+  hermes-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: hermes-dashboard
     restart: unless-stopped
-    ports:
-      - "8080:8080"
-    volumes:
-      - ~/.hermes/data:/root/.hermes/data:ro
-      - ~/.hermes/logs:/root/.hermes/logs:ro
-      - ~/.hermes/.env:/root/.hermes/.env:ro
     environment:
-      - HERMES_HOME=/root/.hermes
-      - LOG_LEVEL=INFO
-      - LOG_JSON=false
-      - METRICS_ENABLED=false
+      - HERMES_HOME=/app
+      - PYTHONPATH=/app
+      - PORT=8080
+    volumes:
+      - ./data:/app/.hermes/data
+      - ./logs:/app/.hermes/logs
+    networks:
+      - hermes-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
+
+  # Caddy reverse proxy (automatic HTTPS)
+  caddy:
+    image: caddy:2-alpine
+    container_name: hermes-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"  # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy-data:/data
+      - ./caddy-config:/config
+    environment:
+      - DOMAIN=${DOMAIN:-hermes-token-screener.com}
+      - EMAIL=${EMAIL:-hermeticsintellegencia@proton.me}
+    networks:
+      - hermes-network
+    depends_on:
+      hermes-dashboard:
+        condition: service_healthy
+
+  # Nginx alternative (if Caddy fails)
+  nginx:
+    image: nginx:alpine
+    container_name: hermes-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx-data:/usr/share/nginx/html
+    networks:
+      - hermes-network
+    depends_on:
+      hermes-dashboard:
+        condition: service_healthy
+    profiles:
+      - nginx  # Only start with --profile nginx
+
+networks:
+  hermes-network:
+    driver: bridge
+
+volumes:
+  data:
+  logs:
+  caddy-data:
+  caddy-config:
+  nginx-data:

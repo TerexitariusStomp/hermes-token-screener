@@ -1,52 +1,131 @@
 # Hermes Token Screener Dashboard
 
-Multi-chain token screening and smart money tracking dashboard.
+Multi-chain token screening and smart money tracking dashboard with automatic HTTPS deployment.
 
-## Live Dashboard
+## 🚀 Quick Start
 
-The dashboard is available at: **https://hermes-token-screener.onrender.com**
-
-## Features
-
-- Multi-chain token discovery and screening
-- Smart money wallet tracking
-- Real-time token scoring with conservative methodology
-- Duplicate name filtering per blockchain
-- FDV/volume analysis with strong fundamentals bonuses
-
-## Deployment
-
-### Render.com (Recommended)
-
-1. Fork this repository
-2. Go to [Render.com](https://render.com)
-3. Create a new Web Service
-4. Connect your forked repository
-5. Render will automatically detect the `render.yaml` configuration
-6. Deploy!
-
-### Docker
+### Option 1: One-Command Deployment (Recommended)
 
 ```bash
-# Build the Docker image
-docker build -t hermes-token-screener .
+# Clone the repository
+git clone https://github.com/TerexitariusStomp/hermes-token-screener.git
+cd hermes-token-screener
 
-# Run the container
-docker run -p 8080:8080 hermes-token-screener
+# Run quick start (installs Docker if needed)
+sudo ./quickstart.sh
 ```
 
-### Local Development
+### Option 2: Manual Deployment
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# Clone the repository
+git clone https://github.com/TerexitariusStomp/hermes-token-screener.git
+cd hermes-token-screener
 
-# Run the dashboard
-uvicorn hermes_screener.dashboard.app:app --reload --host 0.0.0.0 --port 8080
+# Deploy with Docker Compose
+./deploy.sh
 ```
 
-## API Endpoints
+### Option 3: Docker Compose Only
 
+```bash
+# Clone and deploy
+git clone https://github.com/TerexitariusStomp/hermes-token-screener.git
+cd hermes-token-screener
+
+# Create directories
+mkdir -p data logs caddy-data caddy-config nginx-data
+
+# Start services
+docker-compose up -d
+```
+
+## 🌐 Access Your Dashboard
+
+After deployment, your dashboard will be available at:
+
+- **HTTP**: `http://YOUR_SERVER_IP`
+- **HTTPS**: `https://YOUR_SERVER_IP` (if domain configured)
+
+### Default URLs:
+- **Dashboard**: `http://YOUR_SERVER_IP/`
+- **Wallets**: `http://YOUR_SERVER_IP/wallets`
+- **Token Detail**: `http://YOUR_SERVER_IP/token/{address}`
+- **API**: `http://YOUR_SERVER_IP/api/top100`
+- **Health Check**: `http://YOUR_SERVER_IP/health`
+
+## 🏗️ Architecture
+
+### Components:
+1. **Hermes Dashboard** (FastAPI): Backend API and web interface
+2. **Caddy**: Reverse proxy with automatic HTTPS (Let's Encrypt)
+3. **Nginx**: Alternative reverse proxy (optional)
+4. **Docker Compose**: Container orchestration
+
+### Data Flow:
+```
+User → Caddy (HTTPS) → FastAPI Dashboard → Token Data
+```
+
+## ⚙️ Configuration
+
+### Environment Variables (.env file):
+```bash
+# Domain configuration (for HTTPS)
+DOMAIN=hermes-token-screener.com
+EMAIL=hermeticsintellegencia@proton.me
+
+# Application settings
+PORT=8080
+HERMES_HOME=/app
+PYTHONPATH=/app
+```
+
+### Custom Domain Setup:
+1. Point your domain to your server IP
+2. Update `.env` file with your domain:
+   ```bash
+   DOMAIN=your-domain.com
+   EMAIL=your-email@example.com
+   ```
+3. Restart services:
+   ```bash
+   docker-compose down
+   docker-compose up -d
+   ```
+
+## 🔧 Management
+
+### View Logs:
+```bash
+# All services
+docker-compose logs -f
+
+# Specific service
+docker-compose logs -f hermes-dashboard
+docker-compose logs -f caddy
+```
+
+### Stop Services:
+```bash
+docker-compose down
+```
+
+### Restart Services:
+```bash
+docker-compose restart
+```
+
+### Update Application:
+```bash
+git pull
+docker-compose build
+docker-compose up -d
+```
+
+## 📊 API Endpoints
+
+### Main Endpoints:
 - `GET /` - Main dashboard
 - `GET /wallets` - Wallet tracking
 - `GET /token/{address}` - Token detail page
@@ -55,23 +134,120 @@ uvicorn hermes_screener.dashboard.app:app --reload --host 0.0.0.0 --port 8080
 - `GET /api/top100` - Top 100 tokens API
 - `GET /api/wallets` - Wallets API
 
-## Data Sources
+### Example API Call:
+```bash
+# Get top 100 tokens
+curl http://YOUR_SERVER_IP/api/top100
 
-- Dexscreener (token data)
-- GMGN (smart money data)
-- RugCheck (security data)
-- Helius (Solana data)
-- Birdeye (market data)
+# Get wallets
+curl http://YOUR_SERVER_IP/api/wallets?min_score=50
+```
 
-## Scoring Methodology
+## 🐳 Docker Details
 
-The token scoring uses a conservative methodology that prioritizes:
+### Docker Compose Services:
+1. **hermes-dashboard**: FastAPI application
+2. **caddy**: Reverse proxy with automatic HTTPS
+3. **nginx**: Alternative reverse proxy (optional)
 
-1. **Strong fundamentals**: High FDV, holder count, liquidity
-2. **Reduced penalties**: For tokens with strong fundamentals
-3. **Duplicate filtering**: Only top-scoring token per symbol/chain
-4. **Security checks**: Rug pull detection, honeypot detection
+### Volumes:
+- `./data` → `/app/.hermes/data` (token data)
+- `./logs` → `/app/.hermes/logs` (application logs)
+- `./caddy-data` → `/data` (Caddy certificates)
+- `./caddy-config` → `/config` (Caddy configuration)
 
-## License
+### Ports:
+- **80**: HTTP (Caddy)
+- **443**: HTTPS (Caddy)
+- **8080**: Direct FastAPI access (optional)
 
-MIT License
+## 🔒 Security Features
+
+### Automatic HTTPS:
+- Let's Encrypt certificates
+- Automatic certificate renewal
+- HTTP to HTTPS redirect
+
+### Security Headers:
+- HSTS (Strict-Transport-Security)
+- X-Frame-Options: DENY
+- X-Content-Type-Options: nosniff
+- X-XSS-Protection: 1; mode=block
+- Referrer-Policy: strict-origin-when-cross-origin
+
+### Rate Limiting:
+- API: 10 requests/second
+- Burst: 20 requests
+
+## 🛠️ Troubleshooting
+
+### Port 80 Already in Use:
+```bash
+# Check what's using port 80
+sudo netstat -tlnp | grep :80
+
+# Stop conflicting service
+sudo systemctl stop apache2  # or nginx
+```
+
+### Permission Denied:
+```bash
+# Make scripts executable
+chmod +x deploy.sh quickstart.sh
+
+# Run with sudo
+sudo ./deploy.sh
+```
+
+### Docker Not Running:
+```bash
+# Start Docker
+sudo systemctl start docker
+
+# Enable Docker on boot
+sudo systemctl enable docker
+```
+
+### View Container Status:
+```bash
+docker-compose ps
+docker stats
+```
+
+## 📈 Monitoring
+
+### Health Checks:
+- Application: `http://localhost:8080/health`
+- Caddy: Automatic health monitoring
+- Docker: Built-in health checks
+
+### Logs:
+- Application logs: `./logs/`
+- Caddy logs: `./caddy-data/logs/`
+- Docker logs: `docker-compose logs`
+
+## 🔄 Updates
+
+### Automatic Updates:
+The dashboard automatically updates with new token data from the enrichment pipeline.
+
+### Manual Updates:
+```bash
+# Pull latest changes
+git pull
+
+# Rebuild and restart
+docker-compose build
+docker-compose up -d
+```
+
+## 📝 License
+
+MIT License - See LICENSE file for details.
+
+## 🆘 Support
+
+For issues or questions:
+- GitHub Issues: https://github.com/TerexitariusStomp/hermes-token-screener/issues
+- Email: hermeticsintellegencia@proton.me
+- Telegram: @terexserverbot
