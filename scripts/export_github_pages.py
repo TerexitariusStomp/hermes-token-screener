@@ -796,8 +796,7 @@ def export_smart_money():
     try:
         # ── Export SM tokens enriched with pipeline data ──
         BLOCKED_SM_SYMBOLS = {"wsol", "weth", "usdc", "usdt", "dai", "busd", "wbtc", "steth"}
-        sm_token_rows = conn.execute(
-            """
+        sm_token_rows = conn.execute("""
             SELECT t.token_address, t.chain, t.symbol, t.buyer_count,
                    t.total_buy_usd, t.avg_buy_usd, t.top_buyer_score,
                    t.first_seen_at, t.discovery_wallets, t.score as sm_score
@@ -805,8 +804,7 @@ def export_smart_money():
             WHERE t.buyer_count >= 2
             ORDER BY t.buyer_count DESC, t.total_buy_usd DESC
             LIMIT 200
-        """
-        ).fetchall()
+        """).fetchall()
 
         tokens = []
         for r in sm_token_rows:
@@ -876,8 +874,7 @@ def export_smart_money():
 
         # ── Export SM wallets (wallets from smart_money_purchases) ──
         # Get unique wallets that bought SM tokens
-        sm_wallet_rows = conn.execute(
-            """
+        sm_wallet_rows = conn.execute("""
             SELECT p.wallet_address, p.chain,
                    MAX(p.wallet_score) as wallet_score,
                    COUNT(DISTINCT p.token_address) as sm_token_count,
@@ -888,8 +885,7 @@ def export_smart_money():
             HAVING sm_token_count >= 1
             ORDER BY wallet_score DESC, sm_token_count DESC
             LIMIT 200
-        """
-        ).fetchall()
+        """).fetchall()
 
         # Load enriched token data for FDV lookup
         token_fdv = {}
@@ -968,16 +964,14 @@ def export_smart_money():
             print(f"Exported {len(wallets)} smart money wallets to {dst}")
 
         # ── Export recent purchases ──
-        purchase_rows = conn.execute(
-            """
+        purchase_rows = conn.execute("""
             SELECT p.wallet_address, p.chain, p.token_address, p.token_symbol,
                    p.amount_usd, p.price_usd, p.timestamp, p.wallet_score, p.wallet_tags
             FROM smart_money_purchases p
             WHERE p.side = 'buy'
             ORDER BY p.timestamp DESC
             LIMIT 1000
-        """
-        ).fetchall()
+        """).fetchall()
 
         purchases = [
             {

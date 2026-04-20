@@ -58,10 +58,7 @@ class SimpleTokenDiscovery:
 
         # Find the RickBurp channel
         async for dialog in self.client.iter_dialogs():
-            if (
-                hasattr(dialog.entity, "title")
-                and "rickburp" in dialog.entity.title.lower()
-            ):
+            if hasattr(dialog.entity, "title") and "rickburp" in dialog.entity.title.lower():
                 self.channel = dialog.entity
                 print(f"Found channel: {self.channel.title} (ID: {self.channel.id})")
                 break
@@ -173,9 +170,7 @@ class SimpleTokenDiscovery:
         if discovered_tokens:
             print("\nDiscovered Tokens:")
             for i, token in enumerate(discovered_tokens, 1):
-                print(
-                    f"{i:2d}. {token['name']:15} | {token['address'][:20]}... | {token.get('chain', 'N/A')}"
-                )
+                print(f"{i:2d}. {token['name']:15} | {token['address'][:20]}... | {token.get('chain', 'N/A')}")
 
         # Close database
         if self.db_conn:

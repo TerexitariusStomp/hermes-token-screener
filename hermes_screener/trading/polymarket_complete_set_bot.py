@@ -33,8 +33,7 @@ log = get_logger("polymarket_complete_set")
 GAMMA_MARKETS_URL = "https://gamma-api.polymarket.com/markets"
 DEFAULT_HOST = "https://clob.polymarket.com"
 DEFAULT_GOLDSKY = (
-    "https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/"
-    "subgraphs/orderbook-subgraph/0.0.1/gn"
+    "https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/" "subgraphs/orderbook-subgraph/0.0.1/gn"
 )
 LOCK_FILE = "/tmp/hermes_polymarket_complete_set.lock"
 STATE_FILE = Path.home() / ".hermes" / "data" / "token_screener" / "polymarket_bot_state.json"
@@ -408,15 +407,22 @@ def run_cycle(args: argparse.Namespace, state: dict) -> dict:
     poly_volume_map = load_poly_data_volume_map(args.poly_data_dir)
 
     if args.quote_source == "clob":
-        client = init_live_client_v1(args.host) if args.mode == "live" else __import__("py_clob_client.client", fromlist=["ClobClient"]).ClobClient(args.host)
+        client = (
+            init_live_client_v1(args.host)
+            if args.mode == "live"
+            else __import__("py_clob_client.client", fromlist=["ClobClient"]).ClobClient(args.host)
+        )
+
         def top_ask_fn(tok):
             return top_ask_clob(client, tok)
+
     else:
         try:
             import pmxt
         except Exception as e:
             raise RuntimeError("pmxt is not installed. Install with: pip install pmxt") from e
         ex = pmxt.Polymarket()
+
         def top_ask_fn(tok):
             return top_ask_pmxt(ex, tok)
 
@@ -451,8 +457,8 @@ def run_cycle(args: argparse.Namespace, state: dict) -> dict:
         msg = f"SKIP: edge {candidate.edge:.4f} below min-edge {args.min_edge:.4f}"
         append_log(
             Path(args.log_file),
-            f'{ts},{args.mode},{args.query},{candidate.slug},{candidate.yes.best_ask:.6f},{candidate.no.best_ask:.6f},'
-            f'{candidate.cost:.6f},{candidate.edge:.6f},{candidate.score:.6f},{candidate.poly_volume:.6f},'
+            f"{ts},{args.mode},{args.query},{candidate.slug},{candidate.yes.best_ask:.6f},{candidate.no.best_ask:.6f},"
+            f"{candidate.cost:.6f},{candidate.edge:.6f},{candidate.score:.6f},{candidate.poly_volume:.6f},"
             f'{candidate.subgraph_trades_24h},{shares:.6f},{yes_usdc:.6f},{no_usdc:.6f},SKIP,"{csv_safe(msg)}"',
         )
         return {"status": "skip", "edge": candidate.edge}
@@ -462,8 +468,8 @@ def run_cycle(args: argparse.Namespace, state: dict) -> dict:
         msg = "PAPER: no live orders sent"
         append_log(
             Path(args.log_file),
-            f'{ts},{args.mode},{args.query},{candidate.slug},{candidate.yes.best_ask:.6f},{candidate.no.best_ask:.6f},'
-            f'{candidate.cost:.6f},{candidate.edge:.6f},{candidate.score:.6f},{candidate.poly_volume:.6f},'
+            f"{ts},{args.mode},{args.query},{candidate.slug},{candidate.yes.best_ask:.6f},{candidate.no.best_ask:.6f},"
+            f"{candidate.cost:.6f},{candidate.edge:.6f},{candidate.score:.6f},{candidate.poly_volume:.6f},"
             f'{candidate.subgraph_trades_24h},{shares:.6f},{yes_usdc:.6f},{no_usdc:.6f},PAPER,"{csv_safe(msg)}"',
         )
         return {"status": "paper", "edge": candidate.edge}
@@ -484,8 +490,8 @@ def run_cycle(args: argparse.Namespace, state: dict) -> dict:
 
     append_log(
         Path(args.log_file),
-        f'{ts},{args.mode},{args.query},{candidate.slug},{candidate.yes.best_ask:.6f},{candidate.no.best_ask:.6f},'
-        f'{candidate.cost:.6f},{candidate.edge:.6f},{candidate.score:.6f},{candidate.poly_volume:.6f},'
+        f"{ts},{args.mode},{args.query},{candidate.slug},{candidate.yes.best_ask:.6f},{candidate.no.best_ask:.6f},"
+        f"{candidate.cost:.6f},{candidate.edge:.6f},{candidate.score:.6f},{candidate.poly_volume:.6f},"
         f'{candidate.subgraph_trades_24h},{shares:.6f},{yes_usdc:.6f},{no_usdc:.6f},LIVE,"{csv_safe(details)}"',
     )
     return {"status": "live", "edge": candidate.edge, "details": details}
@@ -495,8 +501,8 @@ def acquire_lock():
     fd = open(LOCK_FILE, "a+")
     try:
         fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except BlockingIOError:
-        raise RuntimeError("Another polymarket daemon instance is already running")
+    except BlockingIOError as err:
+        raise RuntimeError("Another polymarket daemon instance is already running") from err
     try:
         fd.seek(0)
         fd.truncate(0)
@@ -606,7 +612,9 @@ def run(args: argparse.Namespace) -> int:
             try:
                 result = run_cycle(args, state)
                 daemon_cycles += 1
-                log.info("daemon_cycle", result=result, daemon_cycles=daemon_cycles, total_cycles=state.get("cycles", 0))
+                log.info(
+                    "daemon_cycle", result=result, daemon_cycles=daemon_cycles, total_cycles=state.get("cycles", 0)
+                )
             except Exception as e:
                 state["errors"] = state.get("errors", 0) + 1
                 daemon_cycles += 1

@@ -57,8 +57,7 @@ def get_tracked_wallets(conn) -> set[str]:
 
 def ensure_purchases_table(conn):
     """Create smart_money_purchases table if it doesn't exist."""
-    conn.executescript(
-        """
+    conn.executescript("""
         CREATE TABLE IF NOT EXISTS smart_money_purchases (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             tx_hash TEXT NOT NULL,
@@ -102,25 +101,18 @@ def ensure_purchases_table(conn):
             score REAL DEFAULT 0,
             PRIMARY KEY (chain, token_address)
         );
-    """
-    )
+    """)
     conn.commit()
 
 
 def poll_smart_money_trades(chain: str, limit: int) -> list[dict]:
     """Poll GMGN for recent smart money trades on a chain."""
-    data = gmgn_cmd(
-        ["track", "smartmoney", "--chain", chain, "--limit", str(limit), "--raw"]
-    )
+    data = gmgn_cmd(["track", "smartmoney", "--chain", chain, "--limit", str(limit), "--raw"])
 
     if not data:
         return []
 
-    items = (
-        data.get("list", [])
-        if isinstance(data, dict)
-        else (data if isinstance(data, list) else [])
-    )
+    items = data.get("list", []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
     trades = []
     for item in items:
         trades.append(
@@ -149,9 +141,7 @@ def process_trades(conn, trades: list[dict], tracked: set[str], chain: str):
 
     # Load wallet scores for enrichment
     wallet_scores = {}
-    for row in conn.execute(
-        "SELECT address, wallet_score, wallet_tags FROM tracked_wallets"
-    ).fetchall():
+    for row in conn.execute("SELECT address, wallet_score, wallet_tags FROM tracked_wallets").fetchall():
         wallet_scores[row[0]] = {"score": row[1], "tags": row[2]}
 
     for trade in trades:
@@ -323,9 +313,7 @@ def run(chain_filter: str | None = None, limit: int = SMART_MONEY_LIMIT):
         buys = [t for t in trades if t["side"] == "buy"]
         print(f"  {len(buys)} buys, {len(trades) - len(buys)} sells")
 
-        new, tracked_buys, new_token_count = process_trades(
-            conn, trades, tracked, chain
-        )
+        new, tracked_buys, new_token_count = process_trades(conn, trades, tracked, chain)
         print(f"  New purchases logged: {new}")
         print(f"  Tracked wallet buys: {tracked_buys}")
         print(f"  New tokens to enrich: {new_token_count}")
@@ -336,9 +324,7 @@ def run(chain_filter: str | None = None, limit: int = SMART_MONEY_LIMIT):
 
         # Insert new tokens into contracts DB for enrichment pipeline
         if new_token_count > 0:
-            chain_name = {"sol": "solana", "base": "base", "bsc": "bsc"}.get(
-                chain, chain
-            )
+            chain_name = {"sol": "solana", "base": "base", "bsc": "bsc"}.get(chain, chain)
             recent_tokens = conn.execute(
                 """
                 SELECT DISTINCT token_address, token_symbol
@@ -351,19 +337,13 @@ def run(chain_filter: str | None = None, limit: int = SMART_MONEY_LIMIT):
             ).fetchall()
 
             for token_addr, symbol in recent_tokens:
-                upsert_to_contracts_db(
-                    chain_name, token_addr, symbol or "", f"smart_money_buy_{chain}"
-                )
-            print(
-                f"  Inserted {len(recent_tokens)} tokens into contracts DB for enrichment"
-            )
+                upsert_to_contracts_db(chain_name, token_addr, symbol or "", f"smart_money_buy_{chain}")
+            print(f"  Inserted {len(recent_tokens)} tokens into contracts DB for enrichment")
 
     conn.close()
 
     print(f"\n{'=' * 60}")
-    print(
-        f"Summary: {total_new} new purchases, {total_tracked_buys} by tracked wallets, {total_new_tokens} new tokens"
-    )
+    print(f"Summary: {total_new} new purchases, {total_tracked_buys} by tracked wallets, {total_new_tokens} new tokens")
     print(f"{'=' * 60}")
 
 
@@ -371,12 +351,8 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Smart Money Purchase Monitor")
-    parser.add_argument(
-        "--chain", type=str, default=None, help="Chain: sol / base / bsc"
-    )
-    parser.add_argument(
-        "--limit", type=int, default=SMART_MONEY_LIMIT, help="Trades per chain"
-    )
+    parser.add_argument("--chain", type=str, default=None, help="Chain: sol / base / bsc")
+    parser.add_argument("--limit", type=int, default=SMART_MONEY_LIMIT, help="Trades per chain")
     args = parser.parse_args()
     run(args.chain, args.limit)
 

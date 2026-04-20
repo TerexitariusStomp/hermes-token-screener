@@ -4,6 +4,7 @@ Solana On-Chain Price Fetcher v3
 Fetches prices from 125+ Solana DEX pools across 11 token pairs.
 For arbitrage: compares prices across all sources to find spreads.
 """
+
 import base64
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed

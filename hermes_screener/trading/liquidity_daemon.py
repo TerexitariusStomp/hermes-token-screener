@@ -51,7 +51,9 @@ class LiquidityDaemon:
             TokenSpec(symbol="WETH", chain="base", address="0x4200000000000000000000000000000000000006", decimals=18),
             TokenSpec(symbol="USDC", chain="base", address="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", decimals=6),
             TokenSpec(symbol="SOL", chain="solana", address="So11111111111111111111111111111111111111112", decimals=9),
-            TokenSpec(symbol="USDC", chain="solana", address="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", decimals=6),
+            TokenSpec(
+                symbol="USDC", chain="solana", address="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", decimals=6
+            ),
         ]
 
     def _tracked_tokens(self) -> list[TokenSpec]:

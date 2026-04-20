@@ -1021,7 +1021,9 @@ async def _enrich_derived(enriched: list) -> int:
             liq_ratio = liq / fdv
             derived["liq_fdv_ratio"] = round(liq_ratio, 4)
             derived["liq_risk"] = (
-                "critical" if liq_ratio < 0.02 else ("high" if liq_ratio < 0.05 else "moderate" if liq_ratio < 0.10 else "healthy")
+                "critical"
+                if liq_ratio < 0.02
+                else ("high" if liq_ratio < 0.05 else "moderate" if liq_ratio < 0.10 else "healthy")
             )
 
         # Tax + authority risk (GoPlus + GMGN)

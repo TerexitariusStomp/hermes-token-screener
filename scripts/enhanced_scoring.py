@@ -121,9 +121,7 @@ def compute_enhanced_token_score(token: dict) -> float:
     smart_money_score = 0.0
 
     # Smart wallet count
-    smart_wallets = (
-        token.get("gmgn_smart_wallets") or token.get("smart_wallet_count") or 0
-    )
+    smart_wallets = token.get("gmgn_smart_wallets") or token.get("smart_wallet_count") or 0
     if smart_wallets > 0:
         if smart_wallets >= 50:
             smart_money_score += 15  # Very high smart money
@@ -507,15 +505,9 @@ def enhance_existing_tokens(tokens: list[dict]) -> list[dict]:
 
         # Add scoring breakdown for transparency
         enhanced_token["scoring_breakdown"] = {
-            "liquidity": min(
-                20, max(0, 20 - (token.get("liq_risk") == "critical") * 5)
-            ),
-            "distribution": min(
-                15, max(0, 15 - (token.get("insider_percentage", 0) > 20) * 5)
-            ),
-            "twitter": min(
-                15, max(0, 15 - (token.get("tw_sentiment_score", 0) < 0.4) * 5)
-            ),
+            "liquidity": min(20, max(0, 20 - (token.get("liq_risk") == "critical") * 5)),
+            "distribution": min(15, max(0, 15 - (token.get("insider_percentage", 0) > 20) * 5)),
+            "twitter": min(15, max(0, 15 - (token.get("tw_sentiment_score", 0) < 0.4) * 5)),
             "community": min(10, max(0, 10 - (token.get("channel_count", 0) < 2) * 5)),
         }
 

@@ -90,8 +90,7 @@ def get_leaderboard(limit: int = 50) -> list[dict[str, Any]]:
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    c.execute(
-        f"""
+    c.execute(f"""
         SELECT address, chain, wallet_score, realized_pnl, avg_roi,
                win_rate, total_trades, tokens_profitable, tokens_total,
                smart_money_tag, wallet_tags, twitter_username,
@@ -101,8 +100,7 @@ def get_leaderboard(limit: int = 50) -> list[dict[str, Any]]:
         WHERE wallet_score > 0
         ORDER BY wallet_score DESC
         LIMIT {limit}
-    """
-    )
+    """)
 
     leaderboard = []
     for row in c.fetchall():
@@ -163,9 +161,7 @@ def generate_insights() -> dict[str, Any]:
         tokens = data.get("tokens", [])
         insights["tokens"] = {
             "total": len(tokens),
-            "avg_score": round(
-                sum(t.get("score", 0) for t in tokens) / max(len(tokens), 1), 1
-            ),
+            "avg_score": round(sum(t.get("score", 0) for t in tokens) / max(len(tokens), 1), 1),
             "top_5": [
                 {
                     "symbol": t.get("symbol"),
@@ -203,15 +199,13 @@ def generate_insights() -> dict[str, Any]:
         # Leaderboard
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-        cur.execute(
-            """
+        cur.execute("""
             SELECT address, chain, wallet_score, realized_pnl, avg_roi,
                    win_rate, total_trades, smart_money_tag, trading_pattern,
                    insider_flag
             FROM tracked_wallets WHERE wallet_score > 0
             ORDER BY wallet_score DESC LIMIT 20
-        """
-        )
+        """)
         insights["top_wallets"] = [dict(r) for r in cur.fetchall()]
 
         conn.close()
@@ -288,12 +282,8 @@ def main():
     tok = insights.get("tokens", {})
     wal = insights.get("wallets", {})
     log.info(f"Tokens: {tok.get('total', 0)} (avg score: {tok.get('avg_score', 0)})")
-    log.info(
-        f"Wallets: {wal.get('total', 0)} (avg: {wal.get('avg_score', 0)}, max: {wal.get('max_score', 0)})"
-    )
-    log.info(
-        f"Insiders: {wal.get('insiders', 0)}, Copy-traders: {wal.get('copy_traders', 0)}"
-    )
+    log.info(f"Wallets: {wal.get('total', 0)} (avg: {wal.get('avg_score', 0)}, max: {wal.get('max_score', 0)})")
+    log.info(f"Insiders: {wal.get('insiders', 0)}, Copy-traders: {wal.get('copy_traders', 0)}")
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ Solana DEX Price Scanner
 Finds real-time prices across 37+ DEX programs for any token pair.
 Uses Jupiter routing to discover pools, reads on-chain state for direct quotes.
 """
+
 import base64
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed

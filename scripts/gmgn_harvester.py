@@ -37,9 +37,7 @@ def get_db():
     return open_sqlite_rw(DB_PATH)
 
 
-def upsert_contract(
-    conn, chain: str, address: str, source: str, channel_id: str, message_text: str = ""
-):
+def upsert_contract(conn, chain: str, address: str, source: str, channel_id: str, message_text: str = ""):
     """Insert or update a contract in telegram_contracts_unique."""
     now = time.time()
     try:
@@ -245,9 +243,7 @@ def main():
     gmgn_count = conn.execute(
         "SELECT COUNT(*) FROM telegram_contracts_unique WHERE last_source LIKE 'gmgn_%'"
     ).fetchone()[0]
-    total_count = conn.execute(
-        "SELECT COUNT(*) FROM telegram_contracts_unique"
-    ).fetchone()[0]
+    total_count = conn.execute("SELECT COUNT(*) FROM telegram_contracts_unique").fetchone()[0]
 
     print(f"\nDone: {total_seen} tokens processed this run")
     print(f"DB: {gmgn_count} GMGN-sourced / {total_count} total contracts")

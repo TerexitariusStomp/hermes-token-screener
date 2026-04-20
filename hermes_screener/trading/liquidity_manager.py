@@ -113,7 +113,9 @@ class LiquidityManager:
             )
 
         idle_after_usd = self._sum_usd(available, prices_usd)
-        utilization_pct = 100.0 if deployable_before_usd == 0 else (1.0 - idle_after_usd / deployable_before_usd) * 100.0
+        utilization_pct = (
+            100.0 if deployable_before_usd == 0 else (1.0 - idle_after_usd / deployable_before_usd) * 100.0
+        )
         return DeploymentPlan(
             actions=actions,
             projected_idle=available,
@@ -136,9 +138,7 @@ class LiquidityManager:
         opportunities: list[PoolOpportunity],
     ) -> PoolOpportunity | None:
         candidates = [
-            x
-            for x in opportunities
-            if x.supports_single_sided and (x.token_a == token or x.token_b == token)
+            x for x in opportunities if x.supports_single_sided and (x.token_a == token or x.token_b == token)
         ]
         if not candidates:
             return None
@@ -149,11 +149,7 @@ class LiquidityManager:
         token: str,
         opportunities: list[PoolOpportunity],
     ) -> PoolOpportunity | None:
-        candidates = [
-            x
-            for x in opportunities
-            if x.token_b is not None and (x.token_a == token or x.token_b == token)
-        ]
+        candidates = [x for x in opportunities if x.token_b is not None and (x.token_a == token or x.token_b == token)]
         if not candidates:
             return None
         return sorted(candidates, key=lambda x: x.apr, reverse=True)[0]

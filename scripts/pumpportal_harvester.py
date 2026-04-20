@@ -151,9 +151,7 @@ class PumpPortalHarvester:
                 self._creators[creator].append(token_label)
 
                 # Store creator as a "wallet" contract entry (solana chain)
-                creator_msg = (
-                    f"pumpfun_dev | tokens: {', '.join(self._creators[creator][:5])}"
-                )
+                creator_msg = f"pumpfun_dev | tokens: {', '.join(self._creators[creator][:5])}"
                 conn.execute(
                     """
                     INSERT INTO telegram_contracts_unique
@@ -238,9 +236,7 @@ class PumpPortalHarvester:
                 break
 
             try:
-                async with websockets.connect(
-                    WS_URL, ping_interval=20, ping_timeout=10
-                ) as ws:
+                async with websockets.connect(WS_URL, ping_interval=20, ping_timeout=10) as ws:
                     # Subscribe to new token creation
                     await ws.send(json.dumps({"method": "subscribeNewToken"}))
 
@@ -276,9 +272,7 @@ class PumpPortalHarvester:
             except Exception as e:
                 self._reconnect_count += 1
                 delay = min(RECONNECT_DELAY * self._reconnect_count, 60)
-                print(
-                    f"Connection error: {e} (reconnect #{self._reconnect_count} in {delay}s)"
-                )
+                print(f"Connection error: {e} (reconnect #{self._reconnect_count} in {delay}s)")
                 if self._reconnect_count > MAX_RECONNECT:
                     print("Max reconnects reached, stopping")
                     break
@@ -331,14 +325,12 @@ def show_stats():
     print(f"  PumpPortal (last 1h): {recent}")
 
     # Sample recent
-    rows = conn.execute(
-        """
+    rows = conn.execute("""
         SELECT contract_address, last_message_text, last_seen_at
         FROM telegram_contracts_unique
         WHERE last_source LIKE '%pumpportal%'
         ORDER BY last_seen_at DESC LIMIT 5
-    """
-    ).fetchall()
+    """).fetchall()
     if rows:
         print("\nRecent pumpportal tokens:")
         for addr, msg, ts in rows:
@@ -355,9 +347,7 @@ async def main():
     sys.stdout.reconfigure(line_buffering=True)
     sys.stderr.reconfigure(line_buffering=True)
     parser = argparse.ArgumentParser(description="PumpPortal WebSocket Harvester")
-    parser.add_argument(
-        "--test", type=int, default=0, help="Test for N seconds (0=forever)"
-    )
+    parser.add_argument("--test", type=int, default=0, help="Test for N seconds (0=forever)")
     parser.add_argument("--count", action="store_true", help="Show DB stats")
     args = parser.parse_args()
 

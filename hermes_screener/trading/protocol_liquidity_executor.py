@@ -258,9 +258,7 @@ class ProtocolLiquidityExecutor:
         ce.approve_token(spec1.address, manager_addr, dep1)
 
         manager = ce.w3.eth.contract(address=manager_addr, abi=GAMMA_MANAGER_ABI)
-        tx_hash = self._build_and_send(
-            manager.functions.deposit(dep0, dep1, ce.account.address, ce.account.address)
-        )
+        tx_hash = self._build_and_send(manager.functions.deposit(dep0, dep1, ce.account.address, ce.account.address))
         return bool(tx_hash)
 
     def _execute_kamino(self, action: dict, target: LiquidityTarget) -> bool:

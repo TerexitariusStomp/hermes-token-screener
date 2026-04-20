@@ -303,9 +303,7 @@ def rescore_tokens(
         smart_avg_roi = sum(w.get("avg_roi", 0) or 0 for w in tw) / max(smart_count, 1)
         smart_total_profit = sum(w.get("total_profit", 0) or 0 for w in tw)
         insider_count = sum(1 for w in tw if w.get("insider_flag"))
-        sniper_count = sum(
-            1 for w in tw if "sniper" in (w.get("wallet_tags") or "").lower()
-        )
+        sniper_count = sum(1 for w in tw if "sniper" in (w.get("wallet_tags") or "").lower())
 
         new_score = revised_compute_enhanced_token_score(
             token=token,
@@ -322,9 +320,7 @@ def rescore_tokens(
         token["_original_score"] = token.get("score", 0)
         token["score"] = new_score
         token["smart_wallet_count"] = smart_count
-        token["smart_wallet_avg_score"] = round(
-            smart_score_sum / max(smart_count, 1), 1
-        )
+        token["smart_wallet_avg_score"] = round(smart_score_sum / max(smart_count, 1), 1)
         token["insider_count"] = insider_count
         token["sniper_count"] = sniper_count
 
@@ -536,9 +532,7 @@ def rescore_wallets(
         entries = wallet_token_map.get(w["address"], [])
         top_tokens = [e for e in entries if e["token_address"] in token_by_addr]
         top_count = len(top_tokens)
-        avg_score = sum(
-            token_by_addr[e["token_address"]].get("score", 0) for e in top_tokens
-        ) / max(top_count, 1)
+        avg_score = sum(token_by_addr[e["token_address"]].get("score", 0) for e in top_tokens) / max(top_count, 1)
         wallet_top_token_counts.append(top_count)
         wallet_avg_token_scores.append(avg_score)
 
@@ -704,9 +698,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Cross-scoring pipeline")
     parser.add_argument("--min-wallet-score", type=float, default=30)
-    parser.add_argument(
-        "--iterations", type=int, default=1, help="Feedback loop iterations"
-    )
+    parser.add_argument("--iterations", type=int, default=1, help="Feedback loop iterations")
     parser.add_argument("--top-n", type=int, default=100)
     args = parser.parse_args()
 

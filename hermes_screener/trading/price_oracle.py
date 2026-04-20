@@ -51,7 +51,9 @@ class PriceOracle:
         if base_contracts:
             try:
                 url = "https://api.coingecko.com/api/v3/simple/token_price/base"
-                resp = requests.get(url, params={"contract_addresses": ",".join(base_contracts), "vs_currencies": "usd"}, timeout=15)
+                resp = requests.get(
+                    url, params={"contract_addresses": ",".join(base_contracts), "vs_currencies": "usd"}, timeout=15
+                )
                 if resp.status_code == 200:
                     base_prices = resp.json()
             except Exception:
@@ -60,7 +62,9 @@ class PriceOracle:
         if sol_contracts:
             try:
                 url = "https://api.coingecko.com/api/v3/simple/token_price/solana"
-                resp = requests.get(url, params={"contract_addresses": ",".join(sol_contracts), "vs_currencies": "usd"}, timeout=15)
+                resp = requests.get(
+                    url, params={"contract_addresses": ",".join(sol_contracts), "vs_currencies": "usd"}, timeout=15
+                )
                 if resp.status_code == 200:
                     sol_prices = resp.json()
             except Exception:

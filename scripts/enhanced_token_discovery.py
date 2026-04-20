@@ -65,10 +65,7 @@ class EnhancedTokenDiscovery:
 
         # Find the RickBurp channel
         async for dialog in self.client.iter_dialogs():
-            if (
-                hasattr(dialog.entity, "title")
-                and "rickburp" in dialog.entity.title.lower()
-            ):
+            if hasattr(dialog.entity, "title") and "rickburp" in dialog.entity.title.lower():
                 self.channel = dialog.entity
                 print(f"Found channel: {self.channel.title} (ID: {self.channel.id})")
                 break
@@ -109,10 +106,7 @@ class EnhancedTokenDiscovery:
             for msg in messages_after:
                 if msg.id > last_msg_id_before and msg.message:
                     # Check if this is from the bot (Rick)
-                    if (
-                        msg.sender_id
-                        and msg.sender_id != (await self.client.get_me()).id
-                    ):
+                    if msg.sender_id and msg.sender_id != (await self.client.get_me()).id:
                         # This is likely the bot's response
                         bot_response = msg.message
                         break
@@ -120,15 +114,19 @@ class EnhancedTokenDiscovery:
             if not bot_response:
                 # Fallback: look for any message with relevant keywords
                 for msg in messages_after:
-                    if msg.message and len(msg.message) > 50 and any(
-                        keyword in msg.message.lower()
-                        for keyword in [
-                            "trending",
-                            "best",
-                            "runners",
-                            "popular",
-                            "hot",
-                        ]
+                    if (
+                        msg.message
+                        and len(msg.message) > 50
+                        and any(
+                            keyword in msg.message.lower()
+                            for keyword in [
+                                "trending",
+                                "best",
+                                "runners",
+                                "popular",
+                                "hot",
+                            ]
+                        )
                     ):
                         bot_response = msg.message
                         break
@@ -233,18 +231,14 @@ class EnhancedTokenDiscovery:
             if i < len(tokens_to_process) - 1:
                 await asyncio.sleep(0.5)
 
-        print(
-            f"\nSuccessfully enriched {len(self.discovered_tokens)} tokens with addresses"
-        )
+        print(f"\nSuccessfully enriched {len(self.discovered_tokens)} tokens with addresses")
 
     def generate_report(self) -> str:
         """Generate a summary report."""
         report_lines = []
         report_lines.append("=" * 60)
         report_lines.append("ENHANCED TOKEN DISCOVERY REPORT")
-        report_lines.append(
-            f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-        )
+        report_lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         report_lines.append("=" * 60)
 
         report_lines.append(f"\nTotal tokens discovered: {len(self.discovered_tokens)}")
@@ -270,16 +264,12 @@ class EnhancedTokenDiscovery:
             dexes[dex].append(token)
 
         report_lines.append("\nTokens by DEX:")
-        for dex, tokens in sorted(dexes.items(), key=lambda x: len(x[1]), reverse=True)[
-            :10
-        ]:
+        for dex, tokens in sorted(dexes.items(), key=lambda x: len(x[1]), reverse=True)[:10]:
             report_lines.append(f"  {dex}: {len(tokens)} tokens")
 
         # Top tokens by liquidity
         report_lines.append("\nTop Tokens by Liquidity:")
-        tokens_with_liquidity = [
-            t for t in self.discovered_tokens if t.get("liquidity")
-        ]
+        tokens_with_liquidity = [t for t in self.discovered_tokens if t.get("liquidity")]
         sorted_tokens = sorted(
             tokens_with_liquidity,
             key=lambda x: float(x.get("liquidity", 0)),
@@ -288,9 +278,7 @@ class EnhancedTokenDiscovery:
 
         for i, token in enumerate(sorted_tokens[:10], 1):
             liquidity = float(token.get("liquidity", 0))
-            report_lines.append(
-                f"{i:2d}. {token['name']:15} | ${liquidity:12,.2f} | {token.get('dex', 'N/A')}"
-            )
+            report_lines.append(f"{i:2d}. {token['name']:15} | ${liquidity:12,.2f} | {token.get('dex', 'N/A')}")
 
         return "\n".join(report_lines)
 
@@ -323,9 +311,7 @@ class EnhancedTokenDiscovery:
             print("\n" + report)
 
             # Save report to file
-            report_path = (
-                Path.home() / ".hermes" / "enhanced_token_discovery_report.txt"
-            )
+            report_path = Path.home() / ".hermes" / "enhanced_token_discovery_report.txt"
             with open(report_path, "w") as f:
                 f.write(report)
 

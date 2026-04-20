@@ -105,9 +105,7 @@ def get_wallet_classification(wallet: str, blockchain: str = "solana") -> dict:
 
     # Mobula returns trader_type/classification in various formats
     trader_type = (
-        wallet_data.get("trader_type")
-        or wallet_data.get("classification")
-        or wallet_data.get("wallet_type", "")
+        wallet_data.get("trader_type") or wallet_data.get("classification") or wallet_data.get("wallet_type", "")
     )
     if trader_type:
         result["mobula_trader_type"] = trader_type
@@ -126,9 +124,7 @@ def get_wallet_classification(wallet: str, blockchain: str = "solana") -> dict:
         result["mobula_pnl_30d"] = pnl
 
     # Trade count
-    result["mobula_trade_count"] = wallet_data.get("trade_count") or wallet_data.get(
-        "total_trades", 0
-    )
+    result["mobula_trade_count"] = wallet_data.get("trade_count") or wallet_data.get("total_trades", 0)
 
     return result
 

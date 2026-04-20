@@ -137,9 +137,7 @@ def main():
     print(f"\n{'='*80}")
     print(" TOP 30 CHAINS BY LIQUIDITY")
     print(f"{'='*80}")
-    sorted_results = sorted(
-        results.items(), key=lambda x: x[1]["total_liquidity_usd"], reverse=True
-    )
+    sorted_results = sorted(results.items(), key=lambda x: x[1]["total_liquidity_usd"], reverse=True)
     for chain_id, r in sorted_results[:30]:
         dex_str = ", ".join(r["dexes"][:2])
         print(

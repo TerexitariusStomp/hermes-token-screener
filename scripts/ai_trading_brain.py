@@ -35,12 +35,8 @@ log = get_logger("ai_trading_brain")
 collector = ExperienceCollector(source_script="ai_trading_brain")
 
 TOP_TOKENS_PATH = settings.output_path
-TRADE_LOG_PATH = (
-    settings.hermes_home / "data" / "token_screener" / "trade_decisions.json"
-)
-POSITIONS_PATH = (
-    settings.hermes_home / "data" / "token_screener" / "active_positions.json"
-)
+TRADE_LOG_PATH = settings.hermes_home / "data" / "token_screener" / "trade_decisions.json"
+POSITIONS_PATH = settings.hermes_home / "data" / "token_screener" / "active_positions.json"
 
 # Bonsai-8B endpoint
 BONSAI_URL = "http://localhost:8082/v1/chat/completions"
@@ -76,12 +72,7 @@ def call_bonsai(system: str, prompt: str, max_tokens: int = 150) -> str | None:
             timeout=45,
         )
         if resp.status_code == 200:
-            return (
-                resp.json()
-                .get("choices", [{}])[0]
-                .get("message", {})
-                .get("content", "")
-            )
+            return resp.json().get("choices", [{}])[0].get("message", {}).get("content", "")
     except Exception as e:
         log.error("bonsai_call_failed", error=str(e))
     return None
@@ -381,22 +372,19 @@ def run_trading_brain(
             # Record training experience for this AI decision
             try:
                 collector.record_trade_decision(
-                    token          = token,
-                    decision       = decision.get("decision", "hold"),
-                    confidence     = float(decision.get("confidence", 50)),
-                    position_pct   = float(decision.get("position_pct", 0)),
-                    stop_loss_pct  = float(decision.get("stop_loss_pct", 15)),
-                    take_profit_pct = float(decision.get("take_profit_pct", 100)),
-                    reason         = decision.get("reason", ""),
+                    token=token,
+                    decision=decision.get("decision", "hold"),
+                    confidence=float(decision.get("confidence", 50)),
+                    position_pct=float(decision.get("position_pct", 0)),
+                    stop_loss_pct=float(decision.get("stop_loss_pct", 15)),
+                    take_profit_pct=float(decision.get("take_profit_pct", 100)),
+                    reason=decision.get("reason", ""),
                 )
             except Exception:
                 pass
             decisions.append(decision)
 
-            if (
-                decision.get("decision") == "buy"
-                and decision.get("confidence", 0) >= 70
-            ):
+            if decision.get("decision") == "buy" and decision.get("confidence", 0) >= 70:
                 buy_signals += 1
 
     # Ensure minimum positions are maintained
@@ -410,9 +398,7 @@ def run_trading_brain(
             needed=needed,
         )
         # Force buy the best available token (highest score)
-        forced_buys = sorted(tradeable, key=lambda t: t.get("score", 0), reverse=True)[
-            :needed
-        ]
+        forced_buys = sorted(tradeable, key=lambda t: t.get("score", 0), reverse=True)[:needed]
         for token in forced_buys:
             forced_decision = {
                 "decision": "buy",
@@ -434,20 +420,12 @@ def run_trading_brain(
     # Execute buy orders
     executed = []
     if execute and buy_signals > 0:
-        buy_decisions = [
-            d
-            for d in decisions
-            if d.get("decision") == "buy" and d.get("confidence", 0) >= 70
-        ]
+        buy_decisions = [d for d in decisions if d.get("decision") == "buy" and d.get("confidence", 0) >= 70]
         buy_decisions.sort(key=lambda d: d.get("confidence", 0), reverse=True)
 
         for decision in buy_decisions[:max_trades]:
             token = next(
-                (
-                    t
-                    for t in tradeable
-                    if t.get("contract_address") == decision.get("address")
-                ),
+                (t for t in tradeable if t.get("contract_address") == decision.get("address")),
                 None,
             )
             if token:
@@ -506,12 +484,8 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="AI Trading Brain")
-    parser.add_argument(
-        "--execute", action="store_true", help="Execute approved trades"
-    )
-    parser.add_argument(
-        "--dry-run", action="store_true", default=True, help="Simulate only"
-    )
+    parser.add_argument("--execute", action="store_true", help="Execute approved trades")
+    parser.add_argument("--dry-run", action="store_true", default=True, help="Simulate only")
     parser.add_argument("--max-trades", type=int, default=3)
     args = parser.parse_args()
 

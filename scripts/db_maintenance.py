@@ -60,11 +60,7 @@ MARKET_CAP_TIERS: list[tuple[float, float, str]] = [
 def get_market_cap(token: dict) -> float:
     """Extract market cap from token data. Prefers FDV over market_cap."""
     return float(
-        token.get("fdv")
-        or token.get("zerion_fdv")
-        or token.get("market_cap")
-        or token.get("zerion_market_cap")
-        or 0
+        token.get("fdv") or token.get("zerion_fdv") or token.get("market_cap") or token.get("zerion_market_cap") or 0
     )
 
 
@@ -109,14 +105,12 @@ def prune_contracts_tiered(max_per_tier: int, dry_run: bool = False) -> dict[str
     c = conn.cursor()
 
     # Load all contracts with scores
-    c.execute(
-        """
+    c.execute("""
         SELECT tcu.chain, tcu.contract_address, tcu.channel_count,
                COALESCE(tcu.last_seen_at, 0) as last_seen
         FROM telegram_contracts_unique tcu
         ORDER BY tcu.channel_count DESC
-    """
-    )
+    """)
     contracts = c.fetchall()
 
     # Load top100.json for enrichment data (scores, FDV)
@@ -276,9 +270,7 @@ def prune_wallets_tiered(max_per_tier: int, dry_run: bool = False) -> dict[str, 
 
         if to_remove and not dry_run:
             for w in to_remove:
-                c.execute(
-                    "DELETE FROM tracked_wallets WHERE address = ?", (w["address"],)
-                )
+                c.execute("DELETE FROM tracked_wallets WHERE address = ?", (w["address"],))
                 c.execute(
                     "DELETE FROM wallet_token_entries WHERE wallet_address = ?",
                     (w["address"],),
@@ -330,9 +322,7 @@ def clean_orphans(dry_run: bool = False) -> int:
 
     if orphans and not dry_run:
         for addr in set(orphans):
-            c2.execute(
-                "DELETE FROM wallet_token_entries WHERE token_address = ?", (addr,)
-            )
+            c2.execute("DELETE FROM wallet_token_entries WHERE token_address = ?", (addr,))
         conn_wallets.commit()
 
     conn_wallets.close()
@@ -372,9 +362,7 @@ def report_tiers():
 
     log.info("=" * 65)
     log.info("TIER DISTRIBUTION")
-    log.info(
-        f"Contracts: {total_contracts} | Wallets: {total_wallets} | Scored tokens: {len(scored)}"
-    )
+    log.info(f"Contracts: {total_contracts} | Wallets: {total_wallets} | Scored tokens: {len(scored)}")
     log.info("-" * 65)
 
     for low, high, name in MARKET_CAP_TIERS:

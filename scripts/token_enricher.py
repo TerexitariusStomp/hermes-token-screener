@@ -788,7 +788,7 @@ def main():
             return 1
         enriched, layer_results = run_async_enrichment_sync(candidates, MAX_ENRICH)
         if enriched:
-            scored = score_and_output(enriched)
+            scored = enriched
             elapsed = time.time() - start
             log.info(f"\nAsync completed in {elapsed:.1f}s: {len(enriched)} tokens enriched, " f"{len(scored)} scored")
             result = {"status": "ok", "tokens": len(enriched), "scored": len(scored)}

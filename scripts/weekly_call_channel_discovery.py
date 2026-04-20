@@ -120,19 +120,16 @@ class CallChannelTracker:
         cursor = self.db_conn.cursor()
 
         # Create tables if they don't exist
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS weekly_reports (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
                 report_type TEXT,
                 data_json TEXT
             )
-        """
-        )
+        """)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS call_channels (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -143,11 +140,9 @@ class CallChannelTracker:
                 avg_gain REAL,
                 details_json TEXT
             )
-        """
-        )
+        """)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS token_performances (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -160,11 +155,9 @@ class CallChannelTracker:
                 source_channel TEXT,
                 command_used TEXT
             )
-        """
-        )
+        """)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS token_socials (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -176,11 +169,9 @@ class CallChannelTracker:
                 website TEXT,
                 source_command TEXT
             )
-        """
-        )
+        """)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS clan_performance (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -189,8 +180,7 @@ class CallChannelTracker:
                 performance_score REAL,
                 details_json TEXT
             )
-        """
-        )
+        """)
 
         self.db_conn.commit()
         print("Database initialized")
@@ -226,16 +216,20 @@ class CallChannelTracker:
             if not bot_response:
                 # Fallback: look for any message with relevant keywords
                 for msg in messages_after:
-                    if msg.message and len(msg.message) > 50 and any(
-                        keyword in msg.message.lower()
-                        for keyword in [
-                            "leaderboard",
-                            "best",
-                            "trending",
-                            "runners",
-                            "hot",
-                            "tokens",
-                        ]
+                    if (
+                        msg.message
+                        and len(msg.message) > 50
+                        and any(
+                            keyword in msg.message.lower()
+                            for keyword in [
+                                "leaderboard",
+                                "best",
+                                "trending",
+                                "runners",
+                                "hot",
+                                "tokens",
+                            ]
+                        )
                     ):
                         bot_response = msg.message
                         break

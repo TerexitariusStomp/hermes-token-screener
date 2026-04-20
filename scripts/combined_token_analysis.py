@@ -262,14 +262,12 @@ def load_telegram_data() -> dict:
         }
 
     # Daily metrics (latest per symbol)
-    rows = db.execute(
-        """
+    rows = db.execute("""
         SELECT symbol, sentiment_score, sentiment_label, telegram_members, telegram_community_name
         FROM daily_metrics
         WHERE date = (SELECT MAX(date) FROM daily_metrics)
         ORDER BY rank
-    """
-    ).fetchall()
+    """).fetchall()
     for r in rows:
         sym = r["symbol"].upper() if r["symbol"] else ""
         if sym in tg:
@@ -279,14 +277,12 @@ def load_telegram_data() -> dict:
             tg[sym]["telegram_community"] = r["telegram_community_name"] or ""
 
     # Metrics history (latest member count)
-    rows = db.execute(
-        """
+    rows = db.execute("""
         SELECT symbol, members FROM telegram_metrics_history
         WHERE id IN (
             SELECT MAX(id) FROM telegram_metrics_history GROUP BY symbol
         )
-    """
-    ).fetchall()
+    """).fetchall()
     for r in rows:
         sym = r["symbol"].upper() if r["symbol"] else ""
         if sym in tg and r["members"]:
@@ -332,9 +328,7 @@ def main():
         )
 
         # Twitter sentiment (standalone, not combined with TG)
-        tw_sent_score = twitter.get("twitter_sentiment", {}).get(
-            "sentiment_score", None
-        )
+        tw_sent_score = twitter.get("twitter_sentiment", {}).get("sentiment_score", None)
         tw_sent_label = twitter.get("twitter_sentiment", {}).get("sentiment_label", "-")
 
         entry = {
@@ -360,11 +354,7 @@ def main():
         results.append(entry)
 
         # Print
-        tg_s = (
-            f"{t['sentiment_score']:>5.1f}"
-            if t["sentiment_score"] is not None
-            else "    -"
-        )
+        tg_s = f"{t['sentiment_score']:>5.1f}" if t["sentiment_score"] is not None else "    -"
         tw_s = f"{tw_sent_score:>5.1f}" if tw_sent_score is not None else "    -"
 
         print(
@@ -386,16 +376,8 @@ def main():
     print(f"{'-'*4} {'-'*10} {'-'*7} {'-'*8} {'-'*7} {'-'*7} {'-'*7} {'-'*8} {'-'*12}")
 
     for r in results:
-        tg_s = (
-            f"{r['telegram_sentiment_score']:.0f}"
-            if r["telegram_sentiment_score"] is not None
-            else "-"
-        )
-        tw_s = (
-            f"{r['twitter_sentiment_score']:.0f}"
-            if r["twitter_sentiment_score"] is not None
-            else "-"
-        )
+        tg_s = f"{r['telegram_sentiment_score']:.0f}" if r["telegram_sentiment_score"] is not None else "-"
+        tw_s = f"{r['twitter_sentiment_score']:.0f}" if r["twitter_sentiment_score"] is not None else "-"
 
         print(
             f"{r['rank']:>4} {r['symbol']:>10} {r['telegram_members']:>7,} {tg_s:>8} "

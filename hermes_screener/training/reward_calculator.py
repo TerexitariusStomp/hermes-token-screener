@@ -146,4 +146,3 @@ class RewardCalculator:
             "scoring_reward": round(reward, 4),
         }
         return round(reward, 4), components
-

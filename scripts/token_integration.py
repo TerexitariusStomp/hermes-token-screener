@@ -75,8 +75,7 @@ class TokenIntegrationPipeline:
         cursor = self.integration_conn.cursor()
 
         # Create integrated_tokens table
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS integrated_tokens (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -94,12 +93,10 @@ class TokenIntegrationPipeline:
                 priority_reason TEXT,
                 status TEXT DEFAULT 'discovered'
             )
-        """
-        )
+        """)
 
         # Create integration_runs table
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS integration_runs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -110,8 +107,7 @@ class TokenIntegrationPipeline:
                 prioritized_tokens INTEGER,
                 run_duration REAL
             )
-        """
-        )
+        """)
 
         self.integration_conn.commit()
 
@@ -127,14 +123,12 @@ class TokenIntegrationPipeline:
 
         # Get discovered tokens
         try:
-            cursor.execute(
-                """
+            cursor.execute("""
                 SELECT token_name, token_address, chain, dex, price, liquidity, volume_24h, source
                 FROM discovered_tokens
                 WHERE token_address IS NOT NULL
                 ORDER BY timestamp DESC
-            """
-            )
+            """)
 
             for row in cursor.fetchall():
                 token = {
@@ -175,14 +169,12 @@ class TokenIntegrationPipeline:
 
         try:
             # Get unique contracts with mention counts
-            cursor.execute(
-                """
+            cursor.execute("""
                 SELECT chain, contract_address, mentions, channels_seen, last_message_text
                 FROM telegram_contracts_unique
                 WHERE contract_address IS NOT NULL
                 ORDER BY mentions DESC, last_seen_at DESC
-            """
-            )
+            """)
 
             for row in cursor.fetchall():
                 token = {

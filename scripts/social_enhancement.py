@@ -65,9 +65,7 @@ PHASE4_WALLETS = DATA_DIR / "token_screener" / "wallets_phase4_final.json"
 LATEST_OUTPUT = settings.output_path  # top100.json (always latest)
 
 SURF_CLI = (
-    shutil.which("surf")
-    if (shutil := __import__("shutil"))
-    else str(settings.hermes_home / "local" / "bin" / "surf")
+    shutil.which("surf") if (shutil := __import__("shutil")) else str(settings.hermes_home / "local" / "bin" / "surf")
 )
 
 
@@ -76,9 +74,7 @@ SURF_CLI = (
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def save_phase_output(
-    path: Path, tokens: list[dict], phase: str, extra_meta: dict = None
-) -> None:
+def save_phase_output(path: Path, tokens: list[dict], phase: str, extra_meta: dict = None) -> None:
     """Save a phase output with metadata."""
     path.parent.mkdir(parents=True, exist_ok=True)
     clean = [{k: v for k, v in t.items() if not k.startswith("_")} for t in tokens]
@@ -163,9 +159,7 @@ def collect_telegram_signals(tokens: list[dict]) -> dict[str, dict]:
 
         # Mention velocity (mentions in last 48h / 48 for broader signal)
         recent_cutoff = now - (48 * 3600)
-        recent_mentions = [
-            m for m in mentions if (m["observed_at"] or 0) > recent_cutoff
-        ]
+        recent_mentions = [m for m in mentions if (m["observed_at"] or 0) > recent_cutoff]
         velocity = len(recent_mentions) / 48.0 if recent_mentions else 0
 
         # Viral score: fast detection via recent acceleration
@@ -186,9 +180,7 @@ def collect_telegram_signals(tokens: list[dict]) -> dict[str, dict]:
             viral_score = 0
 
         # Also boost viral if spreading to new channels fast
-        h2_channels = set(
-            m["channel_id"] for m in mentions if (m["observed_at"] or 0) > h2_cutoff
-        )
+        h2_channels = set(m["channel_id"] for m in mentions if (m["observed_at"] or 0) > h2_cutoff)
         all_channels = set(m["channel_id"] for m in mentions)
         if len(all_channels) > 0:
             channel_spread = len(h2_channels) / len(all_channels)
@@ -213,12 +205,8 @@ def collect_telegram_signals(tokens: list[dict]) -> dict[str, dict]:
             "tg_mention_velocity": round(velocity, 2),
             "tg_viral_score": round(viral_score, 1),
             "tg_channel_quality": round(channel_quality, 2),
-            "tg_first_mention_hours_ago": (
-                round(first_hours, 1) if first_hours else None
-            ),
-            "tg_last_mention_minutes_ago": (
-                round(last_minutes, 1) if last_minutes else None
-            ),
+            "tg_first_mention_hours_ago": (round(first_hours, 1) if first_hours else None),
+            "tg_last_mention_minutes_ago": (round(last_minutes, 1) if last_minutes else None),
         }
 
     conn.close()
@@ -285,11 +273,7 @@ def collect_twitter_signals(tokens: list[dict]) -> dict[str, dict]:
 
         if data:
             # Handle Surf search-social-posts response format
-            tweets = (
-                data
-                if isinstance(data, list)
-                else data.get("data", data.get("results", data.get("tweets", [])))
-            )
+            tweets = data if isinstance(data, list) else data.get("data", data.get("results", data.get("tweets", [])))
             if isinstance(tweets, list) and tweets:
                 signal["tw_mention_count"] = len(tweets)
 
@@ -323,9 +307,7 @@ def collect_twitter_signals(tokens: list[dict]) -> dict[str, dict]:
                 for tweet in tweets[:20]:
                     text = ""
                     if isinstance(tweet, dict):
-                        text = tweet.get(
-                            "text", tweet.get("content", tweet.get("tweet", ""))
-                        )
+                        text = tweet.get("text", tweet.get("content", tweet.get("tweet", "")))
                     elif isinstance(tweet, str):
                         text = tweet
                     text_lower = text.lower()
@@ -343,15 +325,10 @@ def collect_twitter_signals(tokens: list[dict]) -> dict[str, dict]:
                 for tweet in tweets[:10] if isinstance(tweets, list) else []:
                     if isinstance(tweet, dict):
                         stats = tweet.get("stats", {})
-                        eng = (stats.get("likes", 0) or 0) + (
-                            stats.get("retweets", 0) or 0
-                        ) * 2
+                        eng = (stats.get("likes", 0) or 0) + (stats.get("retweets", 0) or 0) * 2
                         if not stats:
-                            eng = (
-                                tweet.get("likes", tweet.get("favorite_count", 0)) or 0
-                            ) + (
-                                tweet.get("retweets", tweet.get("retweet_count", 0))
-                                or 0
+                            eng = (tweet.get("likes", tweet.get("favorite_count", 0)) or 0) + (
+                                tweet.get("retweets", tweet.get("retweet_count", 0)) or 0
                             ) * 2
                         engagement_scores.append(eng)
 
@@ -459,24 +436,16 @@ def rescore_tokens_with_social(
     """Re-score tokens: keep smart money score, add social enhancement."""
 
     # Compute max values for normalization
-    max_tg_velocity = max(
-        (s.get("tg_mention_velocity", 0) for s in tg_signals.values()), default=1
-    )
-    max_viral = max(
-        (s.get("tg_viral_score", 0) for s in tg_signals.values()), default=1
-    )
-    max_tw_mentions = max(
-        (s.get("tw_mention_count", 0) for s in tw_signals.values()), default=1
-    )
+    max_tg_velocity = max((s.get("tg_mention_velocity", 0) for s in tg_signals.values()), default=1)
+    max_viral = max((s.get("tg_viral_score", 0) for s in tg_signals.values()), default=1)
+    max_tw_mentions = max((s.get("tw_mention_count", 0) for s in tw_signals.values()), default=1)
 
     for token in tokens:
         addr = token.get("contract_address", "")
         tg = tg_signals.get(addr, {})
         tw = tw_signals.get(addr, {})
 
-        social_score, social_details = compute_social_score(
-            tg, tw, max_tg_velocity, max_tw_mentions, max_viral
-        )
+        social_score, social_details = compute_social_score(tg, tw, max_tg_velocity, max_tw_mentions, max_viral)
 
         # Store previous score
         token["_smartmoney_score"] = token.get("score", 0)
@@ -650,10 +619,7 @@ def run_social_enhancement(
                 "generated_at_iso": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                 "phase": "phase4_wallets_final",
                 "total_wallets": len(wallets),
-                "wallets": [
-                    {k: v for k, v in w.items() if not k.startswith("_")}
-                    for w in wallets[:500]
-                ],
+                "wallets": [{k: v for k, v in w.items() if not k.startswith("_")} for w in wallets[:500]],
             }
             PHASE4_WALLETS.parent.mkdir(parents=True, exist_ok=True)
             with open(PHASE4_WALLETS, "w") as f:
@@ -816,9 +782,7 @@ def main():
     parser.add_argument("--skip-telegram", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--top-n", type=int, default=100)
-    parser.add_argument(
-        "--full-pipeline", action="store_true", help="Run Phases 3+4 together"
-    )
+    parser.add_argument("--full-pipeline", action="store_true", help="Run Phases 3+4 together")
     args = parser.parse_args()
 
     if args.full_pipeline:

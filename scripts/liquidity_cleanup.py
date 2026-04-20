@@ -106,14 +106,10 @@ def cleanup_top10_db():
     placeholders = ",".join("?" * len(bad_syms))
 
     # current_top10
-    db.execute(
-        f"DELETE FROM current_top10 WHERE UPPER(symbol) IN ({placeholders})", bad_syms
-    )
+    db.execute(f"DELETE FROM current_top10 WHERE UPPER(symbol) IN ({placeholders})", bad_syms)
 
     # daily_metrics (active)
-    db.execute(
-        f"DELETE FROM daily_metrics WHERE UPPER(symbol) IN ({placeholders})", bad_syms
-    )
+    db.execute(f"DELETE FROM daily_metrics WHERE UPPER(symbol) IN ({placeholders})", bad_syms)
 
     # telegram_metrics_history (active tracking)
     db.execute(
@@ -143,9 +139,7 @@ def cleanup_json(filename: str):
 
     data = json.loads(path.read_text())
     before = len(data)
-    cleaned = [
-        t for t in data if (t.get("fdv") or 0) > 0 or (t.get("screener_score") or 0) > 0
-    ]
+    cleaned = [t for t in data if (t.get("fdv") or 0) > 0 or (t.get("screener_score") or 0) > 0]
 
     # For twitter analysis, check if twitter_followers > 0 OR twitter_search_score > 0
     if "profile" in str(data[0]) if data else False:
@@ -161,11 +155,7 @@ def cleanup_json(filename: str):
 
     # For combined, check telegram_members > 0 OR twitter_followers > 0
     if "telegram_members" in str(data[0]) if data else False:
-        cleaned = [
-            t
-            for t in data
-            if (t.get("telegram_members", 0) > 0 or t.get("twitter_followers", 0) > 0)
-        ]
+        cleaned = [t for t in data if (t.get("telegram_members", 0) > 0 or t.get("twitter_followers", 0) > 0)]
 
     removed = before - len(cleaned)
     if removed > 0:

@@ -24,8 +24,15 @@ DB_PATH = DATA_DIR / "central_contracts.db"
 
 # Dexscreener chain IDs
 SUPPORTED_CHAINS = [
-    "solana", "ethereum", "base", "bsc", "arbitrum",
-    "polygon", "avalanche", "optimism", "sui",
+    "solana",
+    "ethereum",
+    "base",
+    "bsc",
+    "arbitrum",
+    "polygon",
+    "avalanche",
+    "optimism",
+    "sui",
 ]
 
 
@@ -42,15 +49,18 @@ def upsert_contract(conn, chain: str, address: str, source: str, description: st
     chan_str = f"discovery:{source}"
     try:
         msg_id = int(now * 1000) + hash(address) % 10000
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO telegram_contract_calls
                 (channel_id, message_id, chain, contract_address, raw_address,
                  address_source, message_text, observed_at, session_source, inserted_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (chan_str, msg_id, chain, address, address, source,
-              description[:500], now, "dexscreener_discovery", now))
+        """,
+            (chan_str, msg_id, chain, address, address, source, description[:500], now, "dexscreener_discovery", now),
+        )
 
-        conn.execute("""
+        conn.execute(
+            """
             INSERT INTO telegram_contracts_unique
                 (chain, contract_address, first_seen_at, last_seen_at, mentions,
                  last_channel_id, last_message_id, last_raw_address, last_source,
@@ -67,8 +77,24 @@ def upsert_contract(conn, chain: str, address: str, source: str, description: st
                     WHEN channels_seen = '' OR channels_seen IS NULL THEN ?
                     WHEN ',' || channels_seen || ',' LIKE '%,' || ? || ',%'
                     THEN channels_seen ELSE channels_seen || ',' || ? END
-        """, (chain, address, now, now, chan_str, msg_id, address, source,
-              description[:500], chan_str, chan_str, chan_str, chan_str, chan_str))
+        """,
+            (
+                chain,
+                address,
+                now,
+                now,
+                chan_str,
+                msg_id,
+                address,
+                source,
+                description[:500],
+                chan_str,
+                chan_str,
+                chan_str,
+                chan_str,
+                chan_str,
+            ),
+        )
         return True
     except sqlite3.IntegrityError:
         return False
@@ -90,8 +116,7 @@ def fetch_boosted():
             chain = t.get("chainId", "")
             addr = t.get("tokenAddress", "")
             if chain and addr:
-                results.append((chain, addr, "dexscreener_boost",
-                               f"Boosted: {t.get('description', '')[:100]}"))
+                results.append((chain, addr, "dexscreener_boost", f"Boosted: {t.get('description', '')[:100]}"))
         return results
     except Exception as e:
         print(f"  Boosted error: {e}")
@@ -114,8 +139,7 @@ def fetch_profiles():
             chain = t.get("chainId", "")
             addr = t.get("tokenAddress", "")
             if chain and addr:
-                results.append((chain, addr, "dexscreener_profile",
-                               f"Profile: {t.get('description', '')[:100]}"))
+                results.append((chain, addr, "dexscreener_profile", f"Profile: {t.get('description', '')[:100]}"))
         return results
     except Exception as e:
         print(f"  Profiles error: {e}")
@@ -136,12 +160,14 @@ def fetch_trending(chain_id: str):
         results = []
         for t in data:
             if t.get("chainId") == chain_id and t.get("tokenAddress"):
-                results.append((
-                    chain_id,
-                    t["tokenAddress"],
-                    f"dexscreener_trending_{chain_id}",
-                    f"Trending on {chain_id}: {t.get('description', '')[:80]}"
-                ))
+                results.append(
+                    (
+                        chain_id,
+                        t["tokenAddress"],
+                        f"dexscreener_trending_{chain_id}",
+                        f"Trending on {chain_id}: {t.get('description', '')[:80]}",
+                    )
+                )
         return results
     except Exception:
         return []
@@ -159,8 +185,7 @@ def run(chain_filter=None):
     print("\nFetching boosted tokens...")
     boosted = fetch_boosted()
     print(f"  Found {len(boosted)} boosted tokens")
-    new = sum(1 for chain, addr, src, desc in boosted
-              if upsert_contract(conn, chain, addr, src, desc))
+    new = sum(1 for chain, addr, src, desc in boosted if upsert_contract(conn, chain, addr, src, desc))
     total_new += new
     print(f"  New: {new}")
 
@@ -168,8 +193,7 @@ def run(chain_filter=None):
     print("\nFetching token profiles...")
     profiles = fetch_profiles()
     print(f"  Found {len(profiles)} profiles")
-    new = sum(1 for chain, addr, src, desc in profiles
-              if upsert_contract(conn, chain, addr, src, desc))
+    new = sum(1 for chain, addr, src, desc in profiles if upsert_contract(conn, chain, addr, src, desc))
     total_new += new
     print(f"  New: {new}")
 
@@ -182,8 +206,7 @@ def run(chain_filter=None):
     print(f"\nFetching trending for {len(chains)} chains...")
     for chain in chains:
         trending = fetch_trending(chain)
-        new = sum(1 for c, addr, src, desc in trending
-                  if upsert_contract(conn, c, addr, src, desc))
+        new = sum(1 for c, addr, src, desc in trending if upsert_contract(conn, c, addr, src, desc))
         if new > 0:
             print(f"  {chain}: {new} new")
 
@@ -207,6 +230,7 @@ def run(chain_filter=None):
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="Dexscreener trending discovery")
     parser.add_argument("--chain", type=str, default=None)
     args = parser.parse_args()
