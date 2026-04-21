@@ -151,7 +151,7 @@ class DexAggregatorTrader:
                     if len(solana_pk) == 64:
                         try:
                             self.solana_keypair = Keypair.from_base58_string(solana_pk)
-                        except:
+                        except Exception:
                             self.solana_keypair = Keypair.from_seed(bytes.fromhex(solana_pk[:64]))
                     elif len(solana_pk) in [87, 88]:
                         self.solana_keypair = Keypair.from_base58_string(solana_pk)
@@ -204,7 +204,7 @@ class DexAggregatorTrader:
                 w3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={"timeout": 10}))
                 if w3.is_connected():
                     return w3
-            except:
+            except Exception:
                 continue
         return None
 
@@ -734,7 +734,7 @@ class DexAggregatorTrader:
             raw = contract.functions.balanceOf(self.evm_account.address).call()
             try:
                 decimals = contract.functions.decimals().call()
-            except:
+            except Exception:
                 decimals = 18
             return Decimal(raw) / Decimal(10**decimals)
         except Exception as e:
