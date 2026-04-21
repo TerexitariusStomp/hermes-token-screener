@@ -40,7 +40,7 @@ def get_sol_balance(wallet: str) -> float:
             data = json.loads(resp.read())
             lamports = data.get("result", {}).get("value", 0)
             return lamports / 1e9
-    except:
+    except Exception:
         return 0
 
 
