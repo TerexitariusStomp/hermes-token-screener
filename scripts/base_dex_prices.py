@@ -41,7 +41,7 @@ def rpc_call(method, params=None):
             )
             with urllib.request.urlopen(req, timeout=15, context=ctx) as resp:
                 return json.loads(resp.read().decode())
-        except:
+        except Exception:
             rpc_idx += 1
             time.sleep(1)
     return {"error": "failed"}
