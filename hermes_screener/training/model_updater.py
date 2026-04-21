@@ -22,6 +22,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from hermes_screener import tor_config  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +129,6 @@ class ModelUpdater:
         for adapter in adapters[keep:]:
             if adapter["path"] != current:
                 import shutil
-from hermes_screener import tor_config  # noqa: F401
 
                 shutil.rmtree(adapter["path"], ignore_errors=True)
                 removed.append(adapter["path"])
