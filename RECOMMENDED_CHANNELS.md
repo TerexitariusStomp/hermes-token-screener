@@ -3,44 +3,40 @@
 Curated list of Telegram channels that have historically provided quality Solana token calls.
 **Not scraped automatically** — join manually for alpha signals. Data sources are pumpportal, DexScreener, and GMGN (no Telegram dependency).
 
-## Top Channels by Historical Performance
+## Quick Join Links
 
-| Channel | Unique Contracts | Source | Notes |
-|---------|-----------------|--------|-------|
-| Alpha Calls | 228 | Rick Burp Bot ecosystem | Highest volume of unique calls |
-| Rick Burp Bot | 106 | `@RickBurpBot` | Command-based, use `/runners`, `/burp`, `/dt` |
-| Whale Alerts | 93 | Crypto whale tracking | Large-cap movements |
-| Smart Money | 48 | Wallet-based calls | Follow-the-money signals |
-| Gem Calls | 58 | Micro-cap focus | High-risk, high-reward |
-| Degen Alpha | 42 | Degen plays | Pump.fun focused |
+Click to join directly in Telegram:
 
-## How to Use
+| Channel | Contracts | Link |
+|---------|-----------|------|
+| **Rick Burp Bot** | 106 unique | [t.me/RickBurpBot](https://t.me/RickBurpBot) |
+| **Cherry Trending: SOL, PUMPFUN** | 42 unique | [t.me/cherrytrending](https://t.me/cherrytrending) |
+| **SOL TRENDING** | 58 unique | [t.me/trendingssol](https://t.me/trendingssol) |
+| **Memento Alpha** | 228 unique (top) | [t.me/memento_alpha](https://t.me/memento_alpha) |
+| **Juicy Calls** | — | [t.me/Juicycalls](https://t.me/Juicycalls) |
 
-1. **Join channels manually** via Telegram search or invite links
-2. **Use Rick Burp Bot** commands: `/runners`, `/burp`, `/dt_trending`, `/pft_trending`
-3. **Cross-reference** calls with DexScreener data before trading
+## How to Use Rick Burp Bot
+
+Start a chat with [@RickBurpBot](https://t.me/RickBurpBot) and send commands:
+- `/runners` — tokens with strong momentum
+- `/burp` — high-conviction calls
+- `/dt_trending` — DexScreener trending
+- `/pft_trending` — Pump.fun trending
+- `/ga_leaderboard` — top gainers
 
 ## Data Sources (No Telegram Required)
 
 The token screener uses these primary sources — no Telegram account needed:
 
-| Source | Contracts | Type |
-|--------|-----------|------|
-| DexScreener | 9,106+ | Boosted + profiled tokens |
-| PumpPortal | 1,563+ | Real-time new launches |
-| GMGN Trenches | 119+ | Trending Solana tokens |
+| Source | Script | Contracts | Type |
+|--------|--------|-----------|------|
+| **DexScreener** | `dexscreener_discovery.py` | 9,106+ | Boosted + profiled tokens |
+| **PumpPortal** | `pumpportal_harvester.py` | 1,563+ | Real-time new launches |
+| **GMGN Trenches** | `gmgn_harvester.py` | 119+ | Trending Solana tokens |
 
-## Channel Username References
+## Joining Tips
 
-These usernames appear in historical scraped messages and may link to active channels:
-- `@cherrytrending` — Cherry Trending: SOL, PUMPFUN
-- `@trendingssol` — SOL TRENDING
-- `@SpikeOnSolanaChat` — Solana token alerts
-- `@RickBurp` — Rick Burp Bot channel
-- `@RickBurpBot` — Rick Burp Bot (command interface)
-
-## Notes
-
-- Telegram accounts can get frozen for joining too many channels too quickly
-- Recommended: join 1-2 channels per day max
-- The screener works fine without Telegram — pumpportal + DexScreener are the primary data sources
+- **Don't join too fast** — Telegram freezes accounts that join 5+ channels in quick succession
+- **Recommended pace**: 1-2 channels per day max
+- **Wait between joins**: 60+ seconds minimum
+- **The screener works fine without Telegram** — pumpportal + DexScreener are the primary data sources
