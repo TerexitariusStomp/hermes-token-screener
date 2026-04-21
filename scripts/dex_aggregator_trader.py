@@ -175,7 +175,7 @@ class DexAggregatorTrader:
                     if len(solana_pk) == 64:
                         try:
                             self.solana_keypair = Keypair.from_base58_string(solana_pk)
-                        except:
+                        except Exception:
                             self.solana_keypair = Keypair.from_seed(bytes.fromhex(solana_pk[:64]))
                     elif len(solana_pk) in [87, 88]:
                         self.solana_keypair = Keypair.from_base58_string(solana_pk)
@@ -230,7 +230,7 @@ class DexAggregatorTrader:
                 w3 = Web3(Web3.HTTPProvider(rpc, request_kwargs={"timeout": 10}))
                 if w3.is_connected():
                     return w3
-            except:
+            except Exception:
                 continue
         return None
 
@@ -793,7 +793,7 @@ class DexAggregatorTrader:
                 raw = contract.functions.balanceOf(self.evm_account.address).call()
                 try:
                     decimals = contract.functions.decimals().call()
-                except:
+                except Exception:
                     decimals = 18
                 return Decimal(raw) / Decimal(10**decimals)
             except Exception:
@@ -1141,7 +1141,7 @@ class DexAggregatorTrader:
             from protocol_registry import PROTOCOL_REGISTRY
 
             base_protocols = PROTOCOL_REGISTRY.get("base", {})
-        except:
+        except Exception:
             base_protocols = {}
 
         # SushiSwap RouteProcessor4 (processRoute)
@@ -1472,7 +1472,7 @@ class DexAggregatorTrader:
                     logger.error(
                         f"Odos sell quote failed: {quote_resp.status_code} - {err_body.get('detail', err_body.get('message', quote_resp.text[:200]))}"
                     )
-                except:
+                except Exception:
                     logger.error(f"Odos sell quote failed: {quote_resp.status_code} - {quote_resp.text[:200]}")
                 # Try KyberSwap as fallback
                 return self._sell_via_kyberswap(token_name, token_address, sell_amount)
