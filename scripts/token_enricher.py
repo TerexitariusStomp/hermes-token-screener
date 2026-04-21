@@ -550,7 +550,7 @@ class SocialSignalEnricher:
                     if hours_active > 0:
                         velocity = mentions / hours_active
                         signals["mention_velocity"] = round(velocity, 2)
-                except:
+                except Exception:
                     pass
 
             # Determine social quality
