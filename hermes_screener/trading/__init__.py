@@ -19,3 +19,8 @@ __all__ = [
     "ProtocolLiquidityExecutor",
     "run_polymarket_complete_set",
 ]
+
+
+def get_trader() -> DexAggregatorTrader:
+    """Convenience factory for DexAggregatorTrader."""
+    return DexAggregatorTrader()
