@@ -70,7 +70,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     if token.get("gmgn_honeypot"):
         return 0, [], ["HONEYPOT"]
     if token.get("goplus_is_honeypot"):
-        return 0, [], ["HONEYPOT (GoPlus)"]
+        return 0, [], ["HONEYPOT"]
     if token.get("rugcheck_rugged"):
         return 0, [], ["RUGGED"]
     if token.get("defi_scammed"):

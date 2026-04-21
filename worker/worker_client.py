@@ -30,7 +30,7 @@ async def remote_enrich(
 
     Args:
         tokens: [{"chain": "base", "address": "0x..."}, ...]
-        layers: ["dexscreener", "goplus", "rugcheck", "etherscan", "coingecko"]
+        layers: ["dexscreener", "rugcheck", "etherscan", "coingecko"]
         worker_url: Override worker URL (default: HERMES_WORKER_URL env)
 
     Returns:
@@ -38,7 +38,7 @@ async def remote_enrich(
     """
     url = worker_url or WORKER_URL
     if not layers:
-        layers = ["dexscreener", "goplus", "rugcheck", "etherscan", "coingecko"]
+        layers = ["dexscreener", "rugcheck", "etherscan", "coingecko"]
 
     payload = {"tokens": tokens, "layers": layers}
 

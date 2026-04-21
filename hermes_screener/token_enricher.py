@@ -105,7 +105,7 @@ async def enrich_via_worker(tokens: list[dict], layers: list[str] | None = None)
         raise ValueError("HERMES_WORKER_URL not set - cannot use remote worker")
 
     if not layers:
-        layers = ["dexscreener", "goplus", "rugcheck", "etherscan", "coingecko"]
+        layers = ["dexscreener", "rugcheck", "etherscan", "coingecko"]
 
     payload = {"tokens": tokens, "layers": layers}
 

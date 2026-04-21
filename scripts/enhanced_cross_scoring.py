@@ -8,7 +8,7 @@ This module enhances the token scoring to fully utilize all enriched data:
 - Social signals from SocialSignalEnricher
 - Insider analysis from RugCheck
 - Smart money from GMGN
-- Security from GoPlus/RugCheck/De.Fi
+- Security from RugCheck/De.Fi
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ def compute_enhanced_token_score(
       Social Signals         15  (Telegram + Twitter + velocity + momentum)
       Volume & FDV           10  (Dexscreener volume, FDV, turnover)
       Price Momentum         10  (price_change_h1, h6, h24)
-      Security               5   (GoPlus/RugCheck/De.Fi security scores)
+      Security               5   (RugCheck/De.Fi security scores)
       Token Fundamentals     5   (age, dev_hold, negatives)
     """
     # ── HARD EXCLUSIONS (return 0 immediately) ──

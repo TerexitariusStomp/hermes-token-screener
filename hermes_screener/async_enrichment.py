@@ -7,7 +7,7 @@ using asyncio + httpx (~1-2 min depending on API latency).
 Architecture:
   Layer 0 (Dexscreener): REQUIRED — runs first, blocking (enriches raw candidates with market data)
   Layers 1-11: OPTIONAL — all run in parallel via asyncio.gather()
-    - HTTP enrichers (Surf, GoPlus, RugCheck, Etherscan, De.Fi, CoinGecko, Zerion):
+    - HTTP enrichers (Surf, RugCheck, Etherscan, De.Fi, CoinGecko, Zerion):
       use httpx.AsyncClient with per-enricher semaphores for rate limiting
     - CLI enrichers (Surf CLI, GMGN MCP): use asyncio.to_thread()
     - Derived (no API): runs directly (pure computation)
@@ -261,46 +261,6 @@ class AsyncHttpEnricher:
 # INDIVIDUAL LAYER ASYNC IMPLEMENTATIONS
 # ═══════════════════════════════════════════════════════════════════════════════
 
-
-async def _enrich_goplus(token: dict, client: httpx.AsyncClient) -> None:
-    """Layer 2: GoPlus security check (EVM chains only)."""
-    chain = token.get("chain", "").lower()
-    if chain not in ("ethereum", "eth", "base", "binance", "bsc", "polygon"):
-        return
-
-    chain_map = {
-        "eth": "1",
-        "ethereum": "1",
-        "bsc": "56",
-        "binance": "56",
-        "base": "8453",
-    }
-    chain_id = chain_map.get(chain, "")
-    if not chain_id:
-        return
-
-    addr = token["contract_address"]
-    resp = await client.get(
-        f"https://api.gopluslabs.io/api/v2/token_security/{chain_id}",
-        params={"contract_addresses": addr},
-    )
-    if resp.status_code != 200:
-        return
-
-    data = resp.json()
-    result = data.get("result", {}).get(addr.lower(), {})
-    if not result:
-        return
-
-    token["goplus"] = {
-        "is_honeypot": result.get("is_honeypot") == "1",
-        "buy_tax": float(result.get("buy_tax", 0) or 0),
-        "sell_tax": float(result.get("sell_tax", 0) or 0),
-        "can_take_back_ownership": result.get("can_take_back_ownership") == "1",
-        "is_mintable": result.get("is_mintable") == "1",
-        "owner_can_change_balance": result.get("owner_can_change_balance") == "1",
-        "holder_count": int(result.get("holder_count", 0) or 0),
-    }
 
 
 async def _enrich_rugcheck(token: dict, client: httpx.AsyncClient) -> None:
@@ -1026,21 +986,10 @@ async def _enrich_derived(enriched: list) -> int:
                 else ("high" if liq_ratio < 0.05 else "moderate" if liq_ratio < 0.10 else "healthy")
             )
 
-        # Tax + authority risk (GoPlus + GMGN)
-        goplus = token.get("goplus", {}) or {}
+        # Authority risk (GMGN only - GoPlus removed)
         gmgn = token.get("gmgn", {}) or {}
 
-        buy_tax = float(goplus.get("buy_tax", 0) or 0)
-        sell_tax = float(goplus.get("sell_tax", 0) or 0)
-        if goplus:
-            if buy_tax > 0.10 or sell_tax > 0.10:
-                derived["tax_risk"] = "high"
-            elif buy_tax > 0.05 or sell_tax > 0.05:
-                derived["tax_risk"] = "moderate"
-            else:
-                derived["tax_risk"] = "low"
-
-        has_mint_authority = bool(goplus.get("is_mintable") or gmgn.get("has_mint_authority"))
+        has_mint_authority = bool(gmgn.get("has_mint_authority"))
         derived["has_mint_authority"] = has_mint_authority
 
         # Microstructure (adapted from memecoin.watch + dexscreener-analysis-bot)
@@ -1184,9 +1133,6 @@ async def run_async_enrichment(
         # ═══ Phase 2: All optional layers in parallel ═══
         log.info("phase2_parallel", layers=11, tokens=len(enriched))
 
-        # GoPlus
-        goplus_enricher = AsyncHttpEnricher("GoPlus", concurrency=3, delay=0.3)
-
         # RugCheck
         rugcheck_enricher = AsyncHttpEnricher("RugCheck", concurrency=3, delay=0.3)
 
@@ -1221,14 +1167,6 @@ async def run_async_enrichment(
         bitquery_enricher = AsyncHttpEnricher("Bitquery", concurrency=1, delay=2.0)
 
         # Define all parallel tasks
-        async def run_goplus():
-            start = time.time()
-            try:
-                ok, total = await goplus_enricher.enrich_batch(_enrich_goplus, enriched, client)
-                return LayerResult("GoPlus", True, ok, total, time.time() - start)
-            except Exception as e:
-                return LayerResult("GoPlus", False, 0, len(enriched), time.time() - start, str(e))
-
         async def run_rugcheck():
             start = time.time()
             try:
@@ -1353,7 +1291,6 @@ async def run_async_enrichment(
         # ═══ RUN ALL IN PARALLEL ═══
         phase2_start = time.time()
         layer_results = await asyncio.gather(
-            run_goplus(),
             run_rugcheck(),
             run_etherscan(),
             run_defi(),

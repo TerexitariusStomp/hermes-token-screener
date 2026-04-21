@@ -73,7 +73,7 @@ def classify_regime(token: dict[str, Any]) -> RegimeResult:
     dex = token.get("dex") or {}
     reasons: list[str] = []
 
-    # Extract security signals
+    # Extract security signals (goplus_is_honeypot is generic honeypot flag, not GoPlus-specific)
     honeypot = bool(token.get("gmgn_honeypot") or token.get("goplus_is_honeypot"))
     rugged = bool(token.get("rugcheck_rugged") or token.get("derived_possible_rug"))
     scammed = bool(token.get("defi_scammed"))

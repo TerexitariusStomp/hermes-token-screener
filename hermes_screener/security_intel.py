@@ -2,19 +2,16 @@
 Security Intelligence Aggregator
 =================================
 
-Chains multiple security providers (GoPlus, RugCheck, Helius, De.Fi, public fallback),
+Chains multiple security providers (RugCheck, De.Fi, public fallback),
 propagating enriched context forward between providers. Uses the highest risk score as
 primary and merges all flags from successful providers.
 
-Adapted from memecoin-bot's security_intel.py SecurityIntelAggregator pattern.
-
 Usage:
     from hermes_screener.security_intel import (
-        GoPlusProvider, RugCheckProvider, PublicFallbackProvider, aggregate_security
+        RugCheckProvider, PublicFallbackProvider, aggregate_security
     )
 
     result = aggregate_security(token_dict, providers=[
-        GoPlusProvider(),
         RugCheckProvider(),
         PublicFallbackProvider(),
     ])
@@ -87,65 +84,7 @@ def _dedupe(items: list[str]) -> list[str]:
 # ─── Provider Implementations ──────────────────────────────────────────────────
 
 
-@dataclass(slots=True)
-class GoPlusProvider:
-    """GoPlus Labs security check (EVM chains)."""
 
-    provider_name: str = "goplus"
-    timeout_seconds: int = 10
-
-    def fetch(self, token: dict[str, Any]) -> dict[str, Any]:
-        try:
-            from hermes_screener.async_enrichment import enrich_goplus
-
-            enrich_goplus(token)
-        except Exception as exc:
-            return ProviderResult(
-                provider_name=self.provider_name,
-                status="error",
-                risk_score=0.0,
-                verdict="unknown",
-                reasons=[],
-                security_flags={},
-                error=str(exc),
-            ).to_dict()
-
-        # Parse enriched data from the token dict
-        is_honeypot = bool(token.get("goplus_is_honeypot"))
-        mintable = bool(token.get("goplus_mintable"))
-        freezable = bool(token.get("goplus_freezable"))
-        holder_count = token.get("goplus_holder_count")
-
-        risk_score = 0.0
-        reasons: list[str] = []
-
-        if is_honeypot:
-            risk_score += 0.95
-            reasons.append("honeypot_goplus")
-        if mintable:
-            risk_score += 0.22
-            reasons.append("mintable_goplus")
-        if freezable:
-            risk_score += 0.18
-            reasons.append("freezable_goplus")
-        if holder_count is not None and holder_count < 100:
-            risk_score += 0.08
-            reasons.append("low_holder_count_goplus")
-
-        risk_score = min(1.0, round(risk_score, 4))
-        return ProviderResult(
-            provider_name=self.provider_name,
-            status="ok",
-            risk_score=risk_score,
-            verdict=_verdict_from_score(risk_score),
-            reasons=reasons,
-            security_flags={
-                "is_honeypot": is_honeypot,
-                "mintable": mintable,
-                "freezable": freezable,
-                "holder_count": holder_count,
-            },
-        ).to_dict()
 
 
 @dataclass(slots=True)
@@ -346,7 +285,6 @@ def aggregate_security(
     """
     if providers is None:
         providers = [
-            GoPlusProvider(),
             RugCheckProvider(),
             DeFiProvider(),
             PublicFallbackProvider(),
@@ -431,6 +369,7 @@ def apply_security_to_token(
     token["security_honeypot_suspected"] = verdict.honeypot_suspected
 
     # Map to fields used by revised_scoring.py disqualifiers
+    # NOTE: goplus_is_honeypot kept as field name for backwards compatibility with scoring
     if verdict.honeypot_suspected:
         token["goplus_is_honeypot"] = True
     if "rugged_rugcheck" in verdict.reasons:

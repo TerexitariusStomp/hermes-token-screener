@@ -6,7 +6,7 @@ Offloads all internet-dependent operations from the local hermes daemon
 to a free cloud VPS (Oracle Cloud Free Tier, Render, Fly.io, Railway).
 
 Endpoints:
-  POST /enrich          - Token enrichment pipeline (Dexscreener, GoPlus, RugCheck, etc.)
+  POST /enrich          - Token enrichment pipeline (Dexscreener, RugCheck, etc.)
   POST /proxy           - Generic HTTP proxy for API calls (avoids local IP rate limits)
   GET  /health          - Health check
   GET  /                - Service info
@@ -130,7 +130,7 @@ class TokenInput(BaseModel):
 class EnrichRequest(BaseModel):
     tokens: list[TokenInput]
     layers: list[str] = Field(
-        default_factory=lambda: ["dexscreener", "goplus", "rugcheck", "etherscan", "coingecko"]
+        default_factory=lambda: ["dexscreener", "rugcheck", "etherscan", "coingecko"]
     )
 
 
@@ -478,7 +478,6 @@ async def enrich(req: EnrichRequest):
     # Run enrichment layers
     enrichment_map = {
         "dexscreener": _enrich_dexscreener,
-        "goplus": _enrich_goplus,
         "rugcheck": _enrich_rugcheck,
         "etherscan": _enrich_etherscan,
         "coingecko": _enrich_coingecko,

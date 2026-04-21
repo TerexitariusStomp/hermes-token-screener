@@ -4,7 +4,7 @@ Token Enricher - Unified multi-source enrichment pipeline with resilient try/byp
 
 Consolidates all data sources into one self-contained script:
   Layer 0: Dexscreener (core market data)         [REQUIRED - pipeline stops if this fails]
-  Layer 2: GoPlus (EVM security)                   [optional]
+  Layer 2: GoPlus (EVM security)                   [REMOVED]
   Layer 3: RugCheck (Solana security)              [optional]
   Layer 4: Etherscan (contract verification)       [optional]
   Layer 5: De.Fi (security analysis)               [optional]
@@ -120,7 +120,7 @@ def score_token(token: dict) -> tuple[float, list[str], list[str]]:
     if token.get("gmgn_honeypot"):
         return 0, [], ["HONEYPOT"]
     if token.get("goplus_is_honeypot"):
-        return 0, [], ["HONEYPOT (GoPlus)"]
+        return 0, [], ["HONEYPOT"]
     if token.get("rugcheck_rugged"):
         return 0, [], ["RUGGED"]
     if token.get("defi_scammed"):

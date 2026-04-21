@@ -7,7 +7,7 @@ for liquidity analysis, token distribution, Twitter sentiment, and community met
 
 Key Improvements:
 1. Better liquidity analysis using existing Dexscreener data
-2. Better token distribution scoring using existing GoPlus/RugCheck data
+2. Better token distribution scoring using existing RugCheck/De.Fi data
 3. Better Twitter sentiment scoring using existing Nitter data
 4. Better community metrics using existing Telegram data
 
