@@ -35,8 +35,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Import existing enrichment modules
 from hermes_screener.logging import get_logger
-try:
-    from hermes_screener.logging import get_logger
 
 log = get_logger("token_integration")
 
