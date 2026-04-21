@@ -54,6 +54,22 @@ After deployment, your dashboard will be available at:
 - **API**: `http://YOUR_SERVER_IP/api/top100`
 - **Health Check**: `http://YOUR_SERVER_IP/health`
 
+## 📡 Data Sources
+
+The screener uses these **non-Telegram** data sources — no Telegram account required:
+
+| Source | Script | Contracts | Description |
+|--------|--------|-----------|-------------|
+| **DexScreener** | `dexscreener_discovery.py` | 9,106+ | Boosted + profiled tokens across chains |
+| **PumpPortal** | `pumpportal_harvester.py` | 1,563+ | Real-time Solana token launches |
+| **GMGN Trenches** | `gmgn_harvester.py` | 119+ | Trending Solana tokens |
+
+### Optional: Telegram Channels
+
+Telegram call channels provide supplementary alpha signals but require manual joining.
+See [RECOMMENDED_CHANNELS.md](RECOMMENDED_CHANNELS.md) for curated channel recommendations.
+The `telegram_scraper.py` script is archived due to Telegram account restrictions.
+
 ## 🏗️ Architecture
 
 ### Components:
@@ -64,7 +80,9 @@ After deployment, your dashboard will be available at:
 
 ### Data Flow:
 ```
-User → Caddy (HTTPS) → FastAPI Dashboard → Token Data
+DexScreener API ─┐
+PumpPortal WS ───┼─→ Token DB → FastAPI Dashboard → Caddy → User
+GMGN API ────────┘
 ```
 
 ## ⚙️ Configuration
