@@ -10,8 +10,12 @@ import time
 from dataclasses import dataclass
 from typing import Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
-SOLANA_RPC = "https://api.mainnet-beta.solana.com"
+SOLANA_RPC = "https://mainnet.helius-rpc.com/?api-key=bb6ff3e9-e38d-4362-9e7a-669a00d497a8"
 
 # ═══════════════════════════════════════════════════════════════
 # TOKEN REGISTRY

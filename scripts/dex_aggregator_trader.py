@@ -16,6 +16,10 @@ import requests
 from dotenv import load_dotenv
 from eth_account import Account
 from web3 import Web3
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 load_dotenv(os.path.expanduser("~/.hermes/.env"))
 
@@ -147,11 +151,12 @@ class DexAggregatorTrader:
     # Trade history file for persistence across restarts
     TRADE_HISTORY_FILE = os.path.expanduser("~/.hermes/data/trade_history.json")
 
-    # Gas reserves: minimum balance to keep for 3+ transactions
+    # Gas reserves: minimum balance to keep for transactions
     # Base L2: typical tx costs ~0.000001-0.000005 ETH; reserve 0.00003 ETH (6-30 txs)
     BASE_GAS_RESERVE = Decimal("0.00003")
-    # Solana: typical tx costs ~0.000005-0.00001 SOL; reserve 0.00003 SOL (3-6 txs)
-    SOLANA_GAS_RESERVE = Decimal("0.00003")
+    # Solana: reserve $0.15 USD worth of SOL (calculated dynamically per run)
+    _SOLANA_GAS_RESERVE_USD = Decimal("0.15")
+    SOLANA_GAS_RESERVE = Decimal("0.001")  # fallback, refreshed in __init__
 
     def __init__(self):
         self.evm_account = None
@@ -173,6 +178,8 @@ class DexAggregatorTrader:
         self._last_wallet_discovery_ts = 0.0
         self._cached_wallet_tokens = {}
         self.initialize()
+        # Refresh SOL gas reserve from live price
+        self._refresh_sol_gas_reserve()
 
     def initialize(self):
         """Initialize wallets."""
@@ -246,6 +253,25 @@ class DexAggregatorTrader:
         except Exception as e:
             logger.error(f"Initialization failed: {e}")
             raise
+
+    def _refresh_sol_gas_reserve(self):
+        """Calculate SOL gas reserve from live price: $0.15 USD worth of SOL."""
+        try:
+            resp = requests.get(
+                "https://coins.llama.fi/prices/current/coingecko:solana",
+                timeout=5,
+            )
+            sol_price = Decimal(str(resp.json()["coins"]["coingecko:solana"]["price"]))
+            reserve = self._SOLANA_GAS_RESERVE_USD / sol_price
+            # Floor at 0.0001 SOL to avoid dust issues
+            self.SOLANA_GAS_RESERVE = max(reserve, Decimal("0.0001"))
+            logger.info(
+                f"SOL gas reserve: {self.SOLANA_GAS_RESERVE:.6f} SOL "
+                f"(${self._SOLANA_GAS_RESERVE_USD} at ${sol_price}/SOL)"
+            )
+        except Exception as e:
+            logger.warning(f"SOL price fetch failed, using fallback reserve: {e}")
+            # Keep default fallback of 0.001 SOL
 
     # ==================== TRADE HISTORY ====================
 
@@ -3411,6 +3437,9 @@ class DexAggregatorTrader:
     def run(self):
         """Main trading loop - executes actual trades with all capabilities."""
         logger.info("Starting DEX Aggregator Trader...")
+
+        # Refresh SOL gas reserve from live price each cycle
+        self._refresh_sol_gas_reserve()
 
         # Track positions and strategies
         # Load existing positions from trade history (survives restarts)

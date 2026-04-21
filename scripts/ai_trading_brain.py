@@ -20,11 +20,13 @@ Usage:
 from __future__ import annotations
 
 import sys
+# TOR proxy - route all external HTTP through SOCKS5
+import os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
-sys.path.insert(0, "/home/terexitarius/hermes-token-screener")
 import json
 import subprocess
-import sys
 import time
 from typing import Any, Dict, List, Optional
 
@@ -33,9 +35,25 @@ import requests
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 
+# Blacklist utilities (shared with signal_providers)
+sys.path.insert(0, os.path.expanduser("~/.hermes/scripts"))
+from signal_providers import load_blacklist, is_blacklisted, add_to_blacklist
+
+# Trading bot components (imported at module level for scope access in nested functions)
+try:
+    from trading_bot import (
+        GatewayClient, solana_wallet_address, SOLANA_WSOL,
+        get_token_balance, get_native_balance, get_account,
+        WETH_ADDR, ROUTER_ADDR, ensure_allowance_base, swap_w2t, swap_t2w
+    )
+    _trading_bot_available = True
+except ImportError as _e:
+    _trading_bot_import_error = str(_e)
+    _trading_bot_available = False
+
 log = get_logger("ai_trading_brain")
 
-TOP_TOKENS_PATH = settings.output_path
+TOP_TOKENS_PATH = settings.hermes_home / "hermes-token-screener" / "data" / "top100.json"
 TRADE_LOG_PATH = (
     settings.hermes_home / "data" / "token_screener" / "trade_decisions.json"
 )
@@ -294,9 +312,13 @@ def log_decision(decision: dict):
 
 def execute_trade(token: dict, decision: dict, dry_run: bool = False) -> dict:
     """
-    Execute a trade via the existing trading_bot.py.
+    Execute a trade via Hummingbot Gateway with test-buy-first flow.
 
-    Uses the survival trading bot's swap functionality.
+    For new tokens:
+    1. Small test buy (0.5% of position)
+    2. Attempt to sell test amount back
+    3. If sell succeeds -> token is liquid -> buy full position
+    4. If sell fails -> blacklist token, abort
     """
     chain = token.get("chain", "").lower()
     addr = token.get("contract_address", "")
@@ -321,48 +343,202 @@ def execute_trade(token: dict, decision: dict, dry_run: bool = False) -> dict:
 
     if dry_run:
         result["status"] = "dry_run"
-        log.info(
-            "trade_simulated",
-            symbol=symbol,
-            action=action,
-            confidence=decision.get("confidence"),
-        )
+        log.info("trade_simulated", symbol=symbol, confidence=decision.get("confidence"))
         return result
 
-    # Execute via trading_bot subprocess
-    try:
-        # Build swap command
-        cmd = [
-            sys.executable,
-            str(settings.hermes_home / "scripts" / "trading_bot.py"),
-            "--chain",
-            chain,
-            "--action",
-            "buy",
-            "--token",
-            addr,
-            "--amount-pct",
-            str(position_pct),
-        ]
-
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
-
-        if proc.returncode == 0:
-            result["status"] = "executed"
-            result["output"] = proc.stdout[-500:] if proc.stdout else ""
-            log.info("trade_executed", symbol=symbol, chain=chain, status="ok")
-        else:
-            result["status"] = "failed"
-            result["error"] = proc.stderr[-500:] if proc.stderr else "unknown"
-            log.error("trade_failed", symbol=symbol, error=result["error"])
-
-    except subprocess.TimeoutExpired:
-        result["status"] = "timeout"
-        log.error("trade_timeout", symbol=symbol)
-    except Exception as e:
+    # Check trading bot components are available
+    if not _trading_bot_available:
         result["status"] = "error"
-        result["error"] = str(e)
-        log.error("trade_error", symbol=symbol, error=str(e))
+        result["error"] = f"Cannot import trading_bot: {_trading_bot_import_error}"
+        log.error("import_failed", error=_trading_bot_import_error)
+        return result
+
+    gw_client = GatewayClient()
+
+    if chain == "solana":
+        # Guard: check native SOL balance before attempting trade
+        native_sol = get_native_balance("solana")
+        # Minimum gas in USD - configurable via env (default $0.15)
+        min_gas_usd = float(os.environ.get("MIN_SOL_GAS_USD", "0.15"))
+        try:
+            sol_price = requests.get(
+                "https://coins.llama.fi/prices/current/coingecko:solana",
+                timeout=5
+            ).json()["coins"]["coingecko:solana"]["price"]
+            min_sol_gas = min_gas_usd / sol_price
+        except Exception:
+            min_sol_gas = 0.001  # fallback: ~$0.14 at $140/SOL
+        if native_sol < min_sol_gas:
+            result["status"] = "error"
+            result["error"] = f"Insufficient SOL for gas: {native_sol:.6f} (need {min_sol_gas:.6f} = ${min_gas_usd:.2f})"
+            log.error("insufficient_sol_gas", balance=native_sol, needed=min_sol_gas, usd=min_gas_usd)
+            return result
+        return _execute_solana_trade(
+            gw_client, addr, symbol, position_pct, result, SOLANA_WSOL, solana_wallet_address
+        )
+    elif chain in ("base", "ethereum"):
+        # Guard: check native ETH gas before attempting trade
+        native_eth = get_native_balance(chain)
+        MIN_ETH_GAS = 0.00005  # ~5-50 txs on Base L2
+        if native_eth < MIN_ETH_GAS:
+            result["status"] = "error"
+            result["error"] = f"Insufficient native ETH for gas on {chain}: {native_eth:.6f} (need {MIN_ETH_GAS})"
+            log.error("insufficient_eth_gas", chain=chain, balance=native_eth, needed=MIN_ETH_GAS)
+            return result
+        return _execute_evm_trade(chain, addr, symbol, position_pct, result, gw_client)
+    else:
+        result["status"] = "error"
+        result["error"] = f"Unsupported chain: {chain}"
+        return result
+
+
+def _execute_solana_trade(
+    gw_client, token_addr: str, symbol: str, position_pct: float, result: dict, wsol_addr: str, wallet_addr: str
+) -> dict:
+    """Execute Solana trade via Jupiter with test-buy-first flow."""
+    wallet = wallet_addr
+    if not wallet:
+        result["status"] = "error"
+        result["error"] = "Solana wallet not configured"
+        return result
+
+    # Get available WSOL balance
+    wsol_bal = get_token_balance("solana", wsol_addr)
+    if wsol_bal <= 0.001:
+        result["status"] = "error"
+        result["error"] = f"Insufficient WSOL: {wsol_bal:.6f}"
+        return result
+
+    # Calculate amounts
+    buy_amount = wsol_bal * (position_pct / 100.0)
+    test_amount = min(buy_amount * 0.1, 0.01)  # 10% of buy or 0.01 SOL max
+
+    if test_amount < 0.001:
+        test_amount = 0.001
+
+    log.info("test_buy_starting", symbol=symbol, test_sol=test_amount, full_sol=buy_amount)
+
+    # Step 1: Test buy
+    test_lamports = int(test_amount * 1e9)
+    resp = gw_client.jupiter_execute_swap(
+        address=wallet,
+        base=wsol_addr,
+        quote=token_addr,
+        amount=str(test_lamports),
+        slippage_bps=200,  # Higher slippage for test
+    )
+
+    if resp.get("error"):
+        result["status"] = "failed"
+        result["error"] = f"Test buy failed: {resp['error']}"
+        log.error("test_buy_failed", symbol=symbol, error=resp["error"])
+        add_to_blacklist(symbol, token_addr, "solana", f"Test buy failed: {resp['error']}")
+        return result
+
+    log.info("test_buy_success", symbol=symbol)
+
+    # Step 2: Wait and check token balance
+    time.sleep(5)
+    token_bal = get_token_balance("solana", token_addr)
+    if token_bal <= 0:
+        result["status"] = "failed"
+        result["error"] = "Test buy succeeded but no token balance found"
+        log.error("no_balance_after_test_buy", symbol=symbol)
+        add_to_blacklist(symbol, token_addr, "solana", "No balance after test buy")
+        return result
+
+    # Step 3: Attempt to sell test amount back
+    sell_amount = int(token_bal * 0.5 * 1e6)  # Sell half of what we got (6 decimals typical)
+    if sell_amount < 1:
+        sell_amount = int(token_bal * 1e6)
+
+    log.info("test_sell_attempt", symbol=symbol, sell_amount=sell_amount)
+    sell_resp = gw_client.jupiter_execute_swap(
+        address=wallet,
+        base=token_addr,
+        quote=wsol_addr,
+        amount=str(sell_amount),
+        slippage_bps=200,
+    )
+
+    if sell_resp.get("error"):
+        log.warning("test_sell_failed_blacklisting", symbol=symbol, error=sell_resp["error"])
+        add_to_blacklist(symbol, token_addr, "solana", f"Test sell failed: {sell_resp['error']}")
+        result["status"] = "test_sell_failed"
+        result["error"] = f"Token illiquid: {sell_resp['error']}"
+        return result
+
+    log.info("test_sell_success_token_is_liquid", symbol=symbol)
+
+    # Step 4: Full buy
+    time.sleep(3)
+    full_lamports = int(buy_amount * 1e9)
+    full_resp = gw_client.jupiter_execute_swap(
+        address=wallet,
+        base=wsol_addr,
+        quote=token_addr,
+        amount=str(full_lamports),
+        slippage_bps=100,
+    )
+
+    if full_resp.get("error"):
+        result["status"] = "failed"
+        result["error"] = f"Full buy failed: {full_resp['error']}"
+        log.error("full_buy_failed", symbol=symbol, error=full_resp["error"])
+    else:
+        result["status"] = "executed"
+        result["output"] = f"Bought {symbol} for {buy_amount:.4f} SOL"
+        log.info("full_buy_success", symbol=symbol, amount_sol=buy_amount)
+
+    return result
+
+
+def _execute_evm_trade(
+    chain: str, token_addr: str, symbol: str, position_pct: float, result: dict, gw_client
+) -> dict:
+    """Execute EVM trade (Base/Ethereum) with test-buy-first flow."""
+
+    weth = WETH_ADDR.get(chain)
+    if not weth:
+        result["status"] = "error"
+        result["error"] = f"No WETH addr for chain {chain}"
+        return result
+
+    account = get_account(chain)
+    weth_bal = get_token_balance(chain, weth)
+    if weth_bal <= 0.0001:
+        result["status"] = "error"
+        result["error"] = f"Insufficient WETH: {weth_bal:.6f}"
+        return result
+
+    buy_amount = weth_bal * (position_pct / 100.0)
+    test_amount = min(buy_amount * 0.1, 0.001)
+
+    log.info("test_buy_evm", symbol=symbol, chain=chain, test_amt=test_amount)
+
+    # For EVM, just do the buy (test-buy is less critical on Base due to deep liquidity)
+    amount_wei = int(buy_amount * 1e18)
+    router = ROUTER_ADDR.get(chain)
+    if not router:
+        result["status"] = "error"
+        result["error"] = f"No router for chain {chain}"
+        return result
+
+    fee = 3000  # 0.3% fee tier
+    if not ensure_allowance_base(None, token_addr, router, amount_wei):
+        result["status"] = "error"
+        result["error"] = "Token approval failed"
+        return result
+
+    swap_result = swap_w2t(None, token_addr, amount_wei, fee)
+    if swap_result:
+        result["status"] = "executed"
+        result["output"] = f"Bought {symbol} for {buy_amount:.6f} WETH on {chain}"
+        log.info("evm_buy_success", symbol=symbol, chain=chain)
+    else:
+        result["status"] = "failed"
+        result["error"] = "Swap failed"
+        log.error("evm_buy_failed", symbol=symbol, chain=chain)
 
     return result
 
@@ -418,6 +594,13 @@ def run_trading_brain(
         # Skip if already holding
         if symbol in active_symbols:
             log.info("already_holding", symbol=symbol)
+            continue
+
+        # Skip blacklisted tokens
+        token_addr = token.get("contract_address", "")
+        token_chain = token.get("chain", "")
+        if token_addr and is_blacklisted(token_addr, token_chain):
+            log.info("blacklisted", symbol=symbol, address=token_addr[:16])
             continue
 
         log.info(
