@@ -492,7 +492,7 @@ class TokenIntegrationPipeline:
                 # Clean up temporary file
                 try:
                     os.unlink(temp_file)
-                except:
+                except Exception:
                     pass
 
         except Exception as e:
@@ -595,7 +595,7 @@ class TokenIntegrationPipeline:
                         elif liq_val > 10000:
                             score += 20  # Increased from 10
                             reasons.append(f"Moderate liquidity (Rick): ${liq_val:,.0f}")
-                    except:
+                    except Exception:
                         pass
 
                 # Volume scoring (from Rick Burp)
@@ -612,7 +612,7 @@ class TokenIntegrationPipeline:
                         elif vol_val > 10000:
                             score += 10
                             reasons.append(f"Moderate volume (Rick): ${vol_val:,.0f}")
-                    except:
+                    except Exception:
                         pass
 
                 # Price data from Rick Burp
@@ -623,7 +623,7 @@ class TokenIntegrationPipeline:
                         if price_val > 0:
                             score += 5
                             reasons.append("Price data available (Rick)")
-                    except:
+                    except Exception:
                         pass
 
                 # DEX information from Rick Burp
@@ -694,7 +694,7 @@ class TokenIntegrationPipeline:
                         elif change_val < -50:
                             score -= 10  # Penalty for large drops
                             reasons.append(f"Large drop: {change_val:.1f}%")
-                    except:
+                    except Exception:
                         pass
 
                 # Transaction activity
@@ -727,7 +727,7 @@ class TokenIntegrationPipeline:
                         if fdv_val > 0:
                             score += 5
                             reasons.append(f"FDV: ${fdv_val:,.0f}")
-                    except:
+                    except Exception:
                         pass
 
             # Source bonus (prioritize Rick Burp tokens)
