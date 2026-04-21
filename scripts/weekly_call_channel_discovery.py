@@ -629,7 +629,7 @@ class CallChannelTracker:
 
             try:
                 return float(cap_str) * multiplier
-            except:
+            except Exception:
                 return 0.0
 
         first = parse_cap(first_cap)
