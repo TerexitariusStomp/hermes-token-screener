@@ -973,7 +973,7 @@ class ContractExecutor:
                             if r[0] > best_output:
                                 best_output = r[0]
                                 best_dex = f"{proto_name}(fee={fee})"
-                        except:
+                        except Exception:
                             continue
 
                 elif ptype == "sushi_rp":
