@@ -62,7 +62,7 @@ POSITIONS_PATH = (
 )
 
 # Bonsai-8B endpoint
-BONSAI_URL = "http://localhost:8080/v1/chat/completions"
+BONSAI_URL = "http://localhost:8083/v1/chat/completions"
 BONSAI_MODEL = "Bonsai-8B.gguf"
 
 # ═══════════════════════════════════════════════════════════════════════════════
