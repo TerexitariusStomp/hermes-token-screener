@@ -1,15 +1,15 @@
 {
-  "generated_at_iso": "2026-04-21T01:30:03.862718+00:00",
+  "generated_at_iso": "2026-04-21T01:40:02.068408+00:00",
   "tokens": [
     {
       "symbol": "KICAU",
       "chain": "solana",
       "token_address": "GqfH94prwfx5xSPXLqGTPEcUn94G2Zm65s2Xh2khpump",
       "score": 10.12,
-      "fdv": 117113,
-      "volume_h24": 1374706.08,
-      "price_change_h1": -5.93,
-      "price_change_h6": 5.17,
+      "fdv": 117486,
+      "volume_h24": 1375596.83,
+      "price_change_h1": 3.36,
+      "price_change_h6": -16.56,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -21,17 +21,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 23.145577732611763
+      "age_hours": 23.264291095513236
     },
     {
       "symbol": "BRO",
       "chain": "solana",
       "token_address": "D9rVDNrD33KdgubeJFzp1GSQaLtwKwKbfeXQXTWGpump",
       "score": 10.12,
-      "fdv": 40468,
-      "volume_h24": 622475.19,
-      "price_change_h1": 5.56,
-      "price_change_h6": 16.36,
+      "fdv": 39107,
+      "volume_h24": 623466.98,
+      "price_change_h1": 9.64,
+      "price_change_h6": 12.45,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -43,17 +43,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 5.54460676574707
+      "age_hours": 5.663318222384983
     },
     {
       "symbol": "HOLD",
       "chain": "solana",
       "token_address": "5vRKL81u2DfjEWoN5Z5hyiVtKCvijRxAGqShNKXTpump",
       "score": 8.86,
-      "fdv": 142475,
-      "volume_h24": 643216.39,
-      "price_change_h1": -14.67,
-      "price_change_h6": 23.01,
+      "fdv": 136406,
+      "volume_h24": 644359.68,
+      "price_change_h1": -12.54,
+      "price_change_h6": 20.22,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -65,17 +65,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 23.559511341824003
+      "age_hours": 23.678226916571724
     },
     {
       "symbol": "CHLOE",
       "chain": "solana",
       "token_address": "FvaJfHiXnjx2xDWzpkfxZAfTTaPxpqT92UmV2ESPpump",
       "score": 8.35,
-      "fdv": 89550,
-      "volume_h24": 65054.47,
-      "price_change_h1": 152,
-      "price_change_h6": 152,
+      "fdv": 71616,
+      "volume_h24": 68183.03,
+      "price_change_h1": 101,
+      "price_change_h6": 101,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -87,7 +87,7 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 0.7903446529812282
+      "age_hours": 0.9090602285427517
     },
     {
       "symbol": "SOR",
@@ -96,8 +96,8 @@
       "score": 5.5,
       "fdv": 425740,
       "volume_h24": 22516.63,
-      "price_change_h1": 0.26,
-      "price_change_h6": 35.54,
+      "price_change_h1": 0.25,
+      "price_change_h6": 35.82,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -107,17 +107,17 @@
       "mcap_tier": "$250K-$1M",
       "dex_url": "https://dexscreener.com/solana/ebjxhwtjzkonqk19g9zqbxqgv2wv1kpfbdiw8jusmnwz",
       "positives": [],
-      "age_hours": 6.0623845275878905
+      "age_hours": 6.181095983954536
     },
     {
       "symbol": "trust",
       "chain": "solana",
       "token_address": "3zxyYUZ5qF6tY5Sg2Wc9vqPucyZUX5m917pTgZSfpump",
       "score": 5.06,
-      "fdv": 61238,
-      "volume_h24": 734545.93,
-      "price_change_h1": -21.96,
-      "price_change_h6": 77.48,
+      "fdv": 57138,
+      "volume_h24": 735097.69,
+      "price_change_h1": -31.76,
+      "price_change_h6": 65.6,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -129,17 +129,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 5.5036332667371965
+      "age_hours": 5.6223466269259985
     },
     {
       "symbol": "SCHIZO",
       "chain": "solana",
       "token_address": "BKkHDMm5EJmEKBE7yjsH1hxrht3wsHRkUDgqSxcbpump",
       "score": 5.06,
-      "fdv": 1667913,
-      "volume_h24": 4012723.34,
-      "price_change_h1": 46.42,
-      "price_change_h6": -24.83,
+      "fdv": 1650368,
+      "volume_h24": 4023623.49,
+      "price_change_h1": 39.78,
+      "price_change_h6": -31.2,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -151,7 +151,7 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 22.421411056043837
+      "age_hours": 22.54012441901313
     },
     {
       "symbol": "HIGHER",
@@ -180,10 +180,10 @@
       "chain": "solana",
       "token_address": "4wMWXp7okGLbTcJpcmhfoVNa3B2JLx2yuzGFD51Ppump",
       "score": 4.05,
-      "fdv": 145864,
-      "volume_h24": 391904.42,
-      "price_change_h1": 364,
-      "price_change_h6": 311,
+      "fdv": 155044,
+      "volume_h24": 405798.99,
+      "price_change_h1": 429,
+      "price_change_h6": 337,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -195,17 +195,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 2.0906224497477215
+      "age_hours": 2.2093380249701604
     },
     {
       "symbol": "MLG",
       "chain": "solana",
       "token_address": "A1u5BNJQ8GpuEU5MAkJCLxXpr5aAahtG18oiJTYupump",
       "score": 1.63,
-      "fdv": 43939,
-      "volume_h24": 2494967.58,
-      "price_change_h1": 17.72,
-      "price_change_h6": -40.19,
+      "fdv": 42782,
+      "volume_h24": 2495943.99,
+      "price_change_h1": 21.12,
+      "price_change_h6": -48.31,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -217,17 +217,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 15.023355482109917
+      "age_hours": 15.14206884229872
     },
     {
       "symbol": "GMAR",
       "chain": "solana",
       "token_address": "H3fneDN1q6vepZajtx9iFiXMRdnVBCcJ3vkmrSEyGMAR",
       "score": 1.32,
-      "fdv": 4788714,
-      "volume_h24": 42936.42,
-      "price_change_h1": -0.68,
-      "price_change_h6": 19.68,
+      "fdv": 4813046,
+      "volume_h24": 44259.39,
+      "price_change_h1": -0.95,
+      "price_change_h6": 20.29,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -237,7 +237,7 @@
       "mcap_tier": "$1M-$10M",
       "dex_url": "https://dexscreener.com/solana/9jmblzwbjpjx9u1os7ftu27yc1p7a1mf4mtdk8dajbdt",
       "positives": [],
-      "age_hours": 25.771551181572807
+      "age_hours": 25.890262637464737
     },
     {
       "symbol": "ONBOARD",
@@ -265,11 +265,11 @@
       "symbol": "PBETS",
       "chain": "solana",
       "token_address": "6tRFQZdxmXSUEZYDXKZEmpX6MBX42JwgCo5hCn2epump",
-      "score": 0.81,
+      "score": 0.73,
       "fdv": 11336,
       "volume_h24": 20842.85,
-      "price_change_h1": -1.93,
-      "price_change_h6": 30.57,
+      "price_change_h1": -2.16,
+      "price_change_h6": -12.17,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -281,17 +281,39 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 1274.1643290001764
+      "age_hours": 1274.2830404567464
+    },
+    {
+      "symbol": "CAR",
+      "chain": "solana",
+      "token_address": "6CLdUe2YDzALdFVsU8v1ZDp5YSocuxwGC8AyGqZkpump",
+      "score": 0.71,
+      "fdv": 66099,
+      "volume_h24": 471938.71,
+      "price_change_h1": -51.34,
+      "price_change_h6": 90.08,
+      "avg_buy_usd": 0,
+      "total_buy_usd": 0,
+      "buyer_count": 0,
+      "buyer_wallets": [],
+      "top_buyer_score": 0,
+      "gmgn_smart_wallets": 0,
+      "mcap_tier": "$50K-$250K",
+      "dex_url": "https://dexscreener.com/solana/2hrx2j84ds4r16pjuerc8xfmckcz9jmex6aqednj6vce",
+      "positives": [
+        "burned"
+      ],
+      "age_hours": 2.784013335910373
     },
     {
       "symbol": "MARYJ",
       "chain": "solana",
       "token_address": "MARYJkS2kHxmVkQp8baNUL7d3R1pddLr65GgsArJAYY",
       "score": 0.57,
-      "fdv": 55076,
-      "volume_h24": 37639.1,
-      "price_change_h1": -46.7,
-      "price_change_h6": 56.57,
+      "fdv": 54939,
+      "volume_h24": 37804.39,
+      "price_change_h1": -47.79,
+      "price_change_h6": 56.18,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -303,39 +325,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 1.8075222081163194
-    },
-    {
-      "symbol": "CAR",
-      "chain": "solana",
-      "token_address": "6CLdUe2YDzALdFVsU8v1ZDp5YSocuxwGC8AyGqZkpump",
-      "score": 0.35,
-      "fdv": 45696,
-      "volume_h24": 462945.65,
-      "price_change_h1": -64.37,
-      "price_change_h6": 31.41,
-      "avg_buy_usd": 0,
-      "total_buy_usd": 0,
-      "buyer_count": 0,
-      "buyer_wallets": [],
-      "top_buyer_score": 0,
-      "gmgn_smart_wallets": 0,
-      "mcap_tier": "<$50K",
-      "dex_url": "https://dexscreener.com/solana/2hrx2j84ds4r16pjuerc8xfmckcz9jmex6aqednj6vce",
-      "positives": [
-        "burned"
-      ],
-      "age_hours": 2.6652999780273436
+      "age_hours": 1.9262355657958985
     },
     {
       "symbol": "Plumpshies",
       "chain": "solana",
       "token_address": "44cwrg1f4dYa1SgEH89w73kjnjEeDddnpe3nRQoepump",
-      "score": 0.09,
-      "fdv": 14228,
-      "volume_h24": 354058.96,
-      "price_change_h1": -7.08,
-      "price_change_h6": -59.73,
+      "score": 0.1,
+      "fdv": 13073,
+      "volume_h24": 354308.97,
+      "price_change_h1": 2.99,
+      "price_change_h6": -63,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -347,83 +347,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 3.3648390116373696
-    },
-    {
-      "symbol": "hehehe",
-      "chain": "solana",
-      "token_address": "7hdNNfqHqCb6NH99ix7pHtHTJteAZeNYX8YYzMM8pump",
-      "score": 0.05,
-      "fdv": 10526,
-      "volume_h24": 125824.86,
-      "price_change_h1": 4.04,
-      "price_change_h6": -70.47,
-      "avg_buy_usd": 0,
-      "total_buy_usd": 0,
-      "buyer_count": 0,
-      "buyer_wallets": [],
-      "top_buyer_score": 0,
-      "gmgn_smart_wallets": 0,
-      "mcap_tier": "<$50K",
-      "dex_url": "https://dexscreener.com/solana/679qd37zbb2z471em6knsxczu6jrfvtxfjm2rrqf3yjs",
-      "positives": [
-        "burned"
-      ],
-      "age_hours": 2.9165511678738065
-    },
-    {
-      "symbol": "BERTIE",
-      "chain": "solana",
-      "token_address": "39WiEBooDLMfLaV6EKRndsmUkqyGosfKixbtj3Nbpump",
-      "score": 0.05,
-      "fdv": 10158,
-      "volume_h24": 116527.69,
-      "price_change_h1": 16.32,
-      "price_change_h6": -71.2,
-      "avg_buy_usd": 0,
-      "total_buy_usd": 0,
-      "buyer_count": 0,
-      "buyer_wallets": [],
-      "top_buyer_score": 0,
-      "gmgn_smart_wallets": 0,
-      "mcap_tier": "<$50K",
-      "dex_url": "https://dexscreener.com/solana/g1a8szaru1cvctqyhqfb1pmnyehpetmdkdqua18snx5q",
-      "positives": [
-        "burned"
-      ],
-      "age_hours": 4.019561237182617
-    },
-    {
-      "symbol": "GOATPrintR",
-      "chain": "solana",
-      "token_address": "4EWh9uXVtSJtNf9z7VCN1zVvDMpurjYCwjfNk9B1brrr",
-      "score": 0.05,
-      "fdv": 19300,
-      "volume_h24": 68240.99,
-      "price_change_h1": -9.4,
-      "price_change_h6": -75.2,
-      "avg_buy_usd": 0,
-      "total_buy_usd": 0,
-      "buyer_count": 0,
-      "buyer_wallets": [],
-      "top_buyer_score": 0,
-      "gmgn_smart_wallets": 0,
-      "mcap_tier": "<$50K",
-      "dex_url": "https://dexscreener.com/solana/2c8b8ukyik3u3bbjtjl5qg45ne3pk3w3gsbsuo3qcy3k",
-      "positives": [
-        "burned"
-      ],
-      "age_hours": 2.809283464219835
+      "age_hours": 3.4835522332085502
     },
     {
       "symbol": "printa",
       "chain": "solana",
       "token_address": "4QYDyKGTM6WmUoh19jFJ5VLhMNuUAiXk76QSqsjNbrrr",
       "score": 0.05,
-      "fdv": 11984,
-      "volume_h24": 228530,
-      "price_change_h1": -2.76,
-      "price_change_h6": -75.14,
+      "fdv": 12774,
+      "volume_h24": 228714.35,
+      "price_change_h1": 8.05,
+      "price_change_h6": -73.5,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -435,17 +369,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 5.760995641682943
+      "age_hours": 5.879707098253038
     },
     {
       "symbol": "ZAK",
       "chain": "solana",
       "token_address": "6Z8ofSPU8Z4LzoQZ1tB7B7KBZLgtQzYiXNKc2pmwpump",
-      "score": 0.02,
-      "fdv": 6534,
-      "volume_h24": 42812.68,
-      "price_change_h1": 2.1,
-      "price_change_h6": -81.01,
+      "score": 0.05,
+      "fdv": 7361,
+      "volume_h24": 43012.34,
+      "price_change_h1": 45.46,
+      "price_change_h6": -78.61,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -457,17 +391,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 1.7593289687771267
+      "age_hours": 1.8780404252794054
     },
     {
-      "symbol": "apu",
+      "symbol": "GOATPrintR",
       "chain": "solana",
-      "token_address": "7mVpi9BtHr554pHDqx1K6QWNYihRGW1CGBD3YNWgMdKF",
-      "score": 0,
-      "fdv": 6707,
-      "volume_h24": 326588.63,
-      "price_change_h1": -65.3,
-      "price_change_h6": -88.82,
+      "token_address": "4EWh9uXVtSJtNf9z7VCN1zVvDMpurjYCwjfNk9B1brrr",
+      "score": 0.02,
+      "fdv": 17286,
+      "volume_h24": 68613.89,
+      "price_change_h1": -27.2,
+      "price_change_h6": -77.79,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -475,19 +409,21 @@
       "top_buyer_score": 0,
       "gmgn_smart_wallets": 0,
       "mcap_tier": "<$50K",
-      "dex_url": "https://dexscreener.com/solana/5fqwldfscoqkpu5utt8a6kbftmwryrfuc7hustzfju63",
-      "positives": [],
-      "age_hours": 2.2752999832492407
+      "dex_url": "https://dexscreener.com/solana/2c8b8ukyik3u3bbjtjl5qg45ne3pk3w3gsbsuo3qcy3k",
+      "positives": [
+        "burned"
+      ],
+      "age_hours": 2.927996684434679
     },
     {
       "symbol": "WHITEROCK",
       "chain": "solana",
       "token_address": "7fTMb6uz78kaFzecNrZbYQbSgezCSYCTufNkBVfjwhhu",
-      "score": 0.0,
-      "fdv": 2417,
-      "volume_h24": 163477.09,
-      "price_change_h1": -48.6,
-      "price_change_h6": -93.19,
+      "score": 0.02,
+      "fdv": 2378,
+      "volume_h24": 163494.72,
+      "price_change_h1": -14.34,
+      "price_change_h6": -93.3,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -499,17 +435,77 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 1.4136779811604818
+      "age_hours": 1.5323935570610894
+    },
+    {
+      "symbol": "hehehe",
+      "chain": "solana",
+      "token_address": "7hdNNfqHqCb6NH99ix7pHtHTJteAZeNYX8YYzMM8pump",
+      "score": 0,
+      "fdv": 9517,
+      "volume_h24": 126014.03,
+      "price_change_h1": -7.76,
+      "price_change_h6": -73.31,
+      "avg_buy_usd": 0,
+      "total_buy_usd": 0,
+      "buyer_count": 0,
+      "buyer_wallets": [],
+      "top_buyer_score": 0,
+      "gmgn_smart_wallets": 0,
+      "mcap_tier": "<$50K",
+      "dex_url": "https://dexscreener.com/solana/679qd37zbb2z471em6knsxczu6jrfvtxfjm2rrqf3yjs",
+      "positives": [],
+      "age_hours": 3.035262618611654
+    },
+    {
+      "symbol": "BERTIE",
+      "chain": "solana",
+      "token_address": "39WiEBooDLMfLaV6EKRndsmUkqyGosfKixbtj3Nbpump",
+      "score": 0,
+      "fdv": 8965,
+      "volume_h24": 116767.1,
+      "price_change_h1": 3.68,
+      "price_change_h6": -74.58,
+      "avg_buy_usd": 0,
+      "total_buy_usd": 0,
+      "buyer_count": 0,
+      "buyer_wallets": [],
+      "top_buyer_score": 0,
+      "gmgn_smart_wallets": 0,
+      "mcap_tier": "<$50K",
+      "dex_url": "https://dexscreener.com/solana/g1a8szaru1cvctqyhqfb1pmnyehpetmdkdqua18snx5q",
+      "positives": [],
+      "age_hours": 4.138274458889431
+    },
+    {
+      "symbol": "apu",
+      "chain": "solana",
+      "token_address": "7mVpi9BtHr554pHDqx1K6QWNYihRGW1CGBD3YNWgMdKF",
+      "score": 0,
+      "fdv": 6432,
+      "volume_h24": 326663.63,
+      "price_change_h1": -64.92,
+      "price_change_h6": -89.28,
+      "avg_buy_usd": 0,
+      "total_buy_usd": 0,
+      "buyer_count": 0,
+      "buyer_wallets": [],
+      "top_buyer_score": 0,
+      "gmgn_smart_wallets": 0,
+      "mcap_tier": "<$50K",
+      "dex_url": "https://dexscreener.com/solana/5fqwldfscoqkpu5utt8a6kbftmwryrfuc7hustzfju63",
+      "positives": [],
+      "age_hours": 2.3940133409288196
     },
     {
       "symbol": "OMI",
       "chain": "solana",
       "token_address": "EkhxVJY6JVtdFUJeMHDoZvJ2XMWeP53py5X5Rqfnpump",
       "score": 0.0,
-      "fdv": 2489,
-      "volume_h24": 665935.57,
-      "price_change_h1": -97.25,
-      "price_change_h6": -92.98,
+      "fdv": 2486,
+      "volume_h24": 665935.85,
+      "price_change_h1": -97.33,
+      "price_change_h6": -92.99,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -521,17 +517,17 @@
       "positives": [
         "burned"
       ],
-      "age_hours": 1.8230777733696832
+      "age_hours": 1.941791131117079
     },
     {
       "symbol": "BOOGIE",
       "chain": "solana",
       "token_address": "3UrG28wYXBkhxGCfX1HGLdd2g8ahDxqntp5nUAPnpump",
       "score": 0,
-      "fdv": 2729,
-      "volume_h24": 577885.5,
-      "price_change_h1": -98.13,
-      "price_change_h6": -92.31,
+      "fdv": 2806,
+      "volume_h24": 577930.96,
+      "price_change_h1": -8.19,
+      "price_change_h6": -92.09,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -541,17 +537,17 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/9rgvfzdtcs3w3pdfv7swhgd3gbr287extvuwqzuanq4a",
       "positives": [],
-      "age_hours": 3.165900219523112
+      "age_hours": 3.2846157950168187
     },
     {
       "symbol": "APPLE",
       "chain": "solana",
       "token_address": "GT81dAR2wEZQ1gcvBeRnf661Ni7JPdrLRJPozQHupump",
       "score": 0,
-      "fdv": 8102,
-      "volume_h24": 61680.28,
-      "price_change_h1": 18.68,
-      "price_change_h6": -77.04,
+      "fdv": 8034,
+      "volume_h24": 61715.25,
+      "price_change_h1": -2.41,
+      "price_change_h6": -77.24,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -561,17 +557,17 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/7b8cevr9lnwm8ibfvo6oyqcub43hg5ndsmv38xtyzfzt",
       "positives": [],
-      "age_hours": 3.4456723474799262
+      "age_hours": 3.5643855691867405
     },
     {
       "symbol": "GME",
       "chain": "solana",
       "token_address": "E89kJBg8MeCN2bnNWPrmTuzRHSrWF1HP8XvaGJUZpump",
       "score": 0,
-      "fdv": 3285,
-      "volume_h24": 161161.6,
-      "price_change_h1": 2.02,
-      "price_change_h6": -90.77,
+      "fdv": 3132,
+      "volume_h24": 161215.23,
+      "price_change_h1": -6.76,
+      "price_change_h6": -91.2,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -581,17 +577,17 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/ez4zvrbjsn5urupzzplpvqxgseh4fkj1pmtfsk1yfp1k",
       "positives": [],
-      "age_hours": 2.456133314005534
+      "age_hours": 2.574846671685113
     },
     {
       "symbol": "hijabunc",
       "chain": "solana",
       "token_address": "APXdsrtBf8ensg45iEvc3BjWGbJvRTXsSJJCtN29pump",
       "score": 0,
-      "fdv": 3473,
-      "volume_h24": 5029742.5,
-      "price_change_h1": 0.63,
-      "price_change_h6": -99.25,
+      "fdv": 3436,
+      "volume_h24": 5029743.07,
+      "price_change_h1": 0.85,
+      "price_change_h6": -99.24,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -601,7 +597,7 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/gdxpccftuq4ocfkzbq1cidf8i2ke4eenzng5sb4yguuu",
       "positives": [],
-      "age_hours": 10.290855470377604
+      "age_hours": 10.409568830566407
     },
     {
       "symbol": "MOONROCKS",
@@ -611,7 +607,7 @@
       "fdv": 2276,
       "volume_h24": 112354.14,
       "price_change_h1": -0.24,
-      "price_change_h6": -10.85,
+      "price_change_h6": -6.94,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -621,7 +617,7 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/3dysxbr9ytft2ju5sdt9a7a7z3bevrubbnbdrucskapd",
       "positives": [],
-      "age_hours": 21.809466608615452
+      "age_hours": 21.928179971110026
     },
     {
       "symbol": "GayHormuz",
@@ -641,17 +637,17 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/4gcmnru6yqhp7wjqgxbvhh91ujtgme8w6hzntjki6fvz",
       "positives": [],
-      "age_hours": 13.761688840332031
+      "age_hours": 13.880402203301324
     },
     {
       "symbol": "TUSK",
       "chain": "solana",
       "token_address": "4gi5yGkrwAMcSGJjKSyfWs8rerRYZYyuMsNFCf3Rpump",
       "score": 0,
-      "fdv": 7818,
-      "volume_h24": 658543.79,
-      "price_change_h1": 12.68,
-      "price_change_h6": -57.86,
+      "fdv": 7110,
+      "volume_h24": 658774.05,
+      "price_change_h1": 2.38,
+      "price_change_h6": -61.67,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -661,7 +657,7 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/3z5wcuhaiocdk9rol3naphqax7mne5juwuauz8kfc7el",
       "positives": [],
-      "age_hours": 17.060299958428278
+      "age_hours": 17.17901332139757
     },
     {
       "symbol": "UFC",
@@ -681,17 +677,17 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/a4zyxgqk4resadnjqwryeuy62tjlznezp4i8ri1hsbpo",
       "positives": [],
-      "age_hours": 3.9028446877712675
+      "age_hours": 4.021560262112088
     },
     {
       "symbol": "LONELINESS",
       "chain": "solana",
       "token_address": "G6syBZhJEk9b7vP6iRtQtzTbEwMsa3FteMGG1xc9pump",
       "score": 0,
-      "fdv": 2136,
-      "volume_h24": 135208.74,
-      "price_change_h1": -58.45,
-      "price_change_h6": -93.97,
+      "fdv": 2119,
+      "volume_h24": 135214.54,
+      "price_change_h1": -52.79,
+      "price_change_h6": -94.02,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -701,7 +697,7 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/p8bt9z3jhd74qhqbqfgmaedowfrkjqnbxgjzkah7xvh",
       "positives": [],
-      "age_hours": 3.4928446908230253
+      "age_hours": 3.611560264960395
     },
     {
       "symbol": "TUSK",
@@ -711,7 +707,7 @@
       "fdv": 1945,
       "volume_h24": 913142.93,
       "price_change_h1": 0.54,
-      "price_change_h6": -97.97,
+      "price_change_h6": -98.04,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -721,7 +717,7 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/9kypv726dbb5ntk3vmsov9mupa7rmgjfkt6tmtxgccv1",
       "positives": [],
-      "age_hours": 8.31312243862576
+      "age_hours": 8.431838014390733
     },
     {
       "symbol": "BAS",
@@ -741,7 +737,7 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/hbvnnrauugm8zbkjdxrqmzymxdalpbhnn95tizyszvoc",
       "positives": [],
-      "age_hours": 9.894005679660374
+      "age_hours": 10.012718901231553
     },
     {
       "symbol": "UNSTMONEY",
@@ -750,7 +746,7 @@
       "score": 0,
       "fdv": 1855,
       "volume_h24": 512574.65,
-      "price_change_h1": 0.35,
+      "price_change_h1": 0.22,
       "price_change_h6": -94.93,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
@@ -761,17 +757,17 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/jdbjm6jav65juj1r822hnurbpubirm2kzljexssjb4qw",
       "positives": [],
-      "age_hours": 4.201505682440864
+      "age_hours": 4.320218904215495
     },
     {
       "symbol": "ROCCO",
       "chain": "solana",
       "token_address": "EV5px3Vge5UR5tpyjrAj835WGVCNLUxgo9EKii2Ypump",
       "score": 0,
-      "fdv": 5200,
-      "volume_h24": 232788.24,
-      "price_change_h1": -11.86,
-      "price_change_h6": -85.23,
+      "fdv": 5422,
+      "volume_h24": 232926.38,
+      "price_change_h1": -26.77,
+      "price_change_h6": -84.6,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -781,7 +777,7 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/95rfzmlqqbzd4k4pq1p63y6zmxuwsenvkpffwwa2cy42",
       "positives": [],
-      "age_hours": 5.817339018147787
+      "age_hours": 5.936052238430447
     },
     {
       "symbol": "KITTY",
@@ -801,17 +797,17 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/d4v4cc1qqo66fnwcq8yulksa3nussh2zhkbkqn44enas",
       "positives": [],
-      "age_hours": 4.383727911309136
+      "age_hours": 4.502441131591797
     },
     {
       "symbol": "slot",
       "chain": "solana",
       "token_address": "FZqzkDhwZcfRfobV1wPLUSdBxRxBwqaszHXiQfXkpump",
       "score": 0,
-      "fdv": 3986,
-      "volume_h24": 283586.13,
-      "price_change_h1": -9.29,
-      "price_change_h6": -88.56,
+      "fdv": 3946,
+      "volume_h24": 283611.41,
+      "price_change_h1": -20.89,
+      "price_change_h6": -88.68,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -821,17 +817,17 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/4ruqwfxthqtepveqfxzkcpcboekq4faq7k5ggusb5nwv",
       "positives": [],
-      "age_hours": 5.0073845211452905
+      "age_hours": 5.126095977647569
     },
     {
       "symbol": "big",
       "chain": "solana",
       "token_address": "7gKrpxd2XU98CL9EeAUqmZkeBkYFXibkFBaVPfD6mqDY",
       "score": 0,
-      "fdv": 4257,
-      "volume_h24": 334169.77,
-      "price_change_h1": -4.27,
-      "price_change_h6": -72.34,
+      "fdv": 4274,
+      "volume_h24": 334173.76,
+      "price_change_h1": -5.19,
+      "price_change_h6": -57.57,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -841,7 +837,7 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/7aeonzurkwfnwuvsvgcohdfmqzf9it4aodpzoszswnfb",
       "positives": [],
-      "age_hours": 6.766273429497613
+      "age_hours": 6.884984886067708
     },
     {
       "symbol": "chickunc",
@@ -861,17 +857,17 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/6dmk8tbw1cbfvo3nvhvud5kgrk52zm4t8ok4tp4e23mr",
       "positives": [],
-      "age_hours": 16.23187849806044
+      "age_hours": 16.350585999484593
     },
     {
       "symbol": "Granny",
       "chain": "solana",
       "token_address": "CuEQgQirFW8Yz5ppFCXb2QoEC9kJ2ZiETrP9ZrNzpump",
       "score": 0,
-      "fdv": 9570,
-      "volume_h24": 1897784.87,
-      "price_change_h1": -0.44,
-      "price_change_h6": -73.04,
+      "fdv": 10307,
+      "volume_h24": 1898535.93,
+      "price_change_h1": 17.04,
+      "price_change_h6": -72.76,
       "avg_buy_usd": 0,
       "total_buy_usd": 0,
       "buyer_count": 0,
@@ -881,7 +877,7 @@
       "mcap_tier": "<$50K",
       "dex_url": "https://dexscreener.com/solana/5mo3mf1djglgenqh9lmrztkpsc21ahtscfyxhdnxnycr",
       "positives": [],
-      "age_hours": 7.3696562797715925
+      "age_hours": 7.488363785332574
     },
     {
       "symbol": "punc",
