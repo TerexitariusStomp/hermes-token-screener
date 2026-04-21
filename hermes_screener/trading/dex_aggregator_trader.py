@@ -64,6 +64,8 @@ def release_lock():
 
 import atexit
 
+from hermes_screener import tor_config  # noqa: F401
+
 logging.basicConfig(
     level=logging.INFO,
     format="[%(asctime)s] %(levelname)s: %(message)s",
@@ -1769,7 +1771,6 @@ def main():
     except Exception as e:
         logger.error(f"Error: {e}")
         import traceback
-from hermes_screener import tor_config  # noqa: F401
 
         traceback.print_exc()
 
