@@ -19,6 +19,7 @@ from solders.keypair import Keypair
 from solders.message import MessageV0
 from solders.pubkey import Pubkey
 from solders.transaction import VersionedTransaction
+from hermes_screener import tor_config  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -248,7 +249,6 @@ class SolanaProgramAdapter:
         except Exception as e:
             logger.error(f"Jupiter build tx error: {e}")
             import traceback
-from hermes_screener import tor_config  # noqa: F401
 
             traceback.print_exc()
             return None
