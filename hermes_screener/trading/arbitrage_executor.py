@@ -13,6 +13,7 @@ from decimal import Decimal
 from typing import Optional
 
 from .arbitrage_scanner import CHAIN_RPCS, ArbOpportunity, _rpc_indices, ssl_ctx
+from hermes_screener import tor_config  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -121,7 +122,6 @@ def _execute_v2_swap(
     try:
         from eth_account import Account
         from web3 import Web3
-from hermes_screener import tor_config  # noqa: F401
 
         rpcs = CHAIN_RPCS.get(chain, [])
         w3 = None
