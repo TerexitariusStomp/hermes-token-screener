@@ -157,7 +157,7 @@ def generate_wallets(mnemonic=None, index=0):
                 "bip44_coin": coin_enum.name,
                 "vm_type": _get_vm_type(chain_name),
             }
-        except:
+        except Exception:
             pass
 
     # Add Substrate chains
