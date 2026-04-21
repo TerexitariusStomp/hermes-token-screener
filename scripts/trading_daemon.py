@@ -71,6 +71,7 @@ def run_script(
     use_flock: bool = False,
     timeout: int = 600,
     log_file: str = None,
+    extra_args: list = None,
 ) -> bool:
     """Run a script and return success status."""
     try:
@@ -92,6 +93,10 @@ def run_script(
             cmd.append("--execute")
         if dry_run and script_path.name != "copytrade_monitor.py":
             cmd.append("--dry-run")
+
+        # Append any extra arguments
+        if extra_args:
+            cmd.extend(extra_args)
 
         logger.info(f"[{name}] Running...")
 
@@ -119,7 +124,7 @@ def run_script(
 
         if result.returncode == 0:
             logger.info(f"[{name}] Completed successfully")
-            if result.stdout.strip():
+            if result.stdout and result.stdout.strip():
                 # Log last few lines of output
                 lines = result.stdout.strip().split("\n")
                 for line in lines[-3:]:
@@ -215,6 +220,7 @@ def main():
                 use_flock=True,
                 timeout=600,  # 10 minutes for enrichment pipeline
                 log_file=str(LOG_DIR / "token_screener.log"),
+                extra_args=["--async-mode"],
             )
             if success:
                 enricher_failures = 0
