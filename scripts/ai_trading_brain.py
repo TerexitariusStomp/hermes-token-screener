@@ -643,6 +643,14 @@ def run_trading_brain(
             :needed
         ]
         for token in forced_buys:
+            # Skip blacklisted tokens in forced buy path too
+            ftoken_addr = token.get("contract_address", "")
+            ftoken_chain = token.get("chain", "")
+            if ftoken_addr and is_blacklisted(ftoken_addr, ftoken_chain):
+                log.info("blacklisted_forced_buy_skipped", 
+                         symbol=token.get("dex", {}).get("symbol", "?"),
+                         address=ftoken_addr[:16])
+                continue
             fdex = token.get("dex", {})
             forced_decision = {
                 "decision": "buy",
