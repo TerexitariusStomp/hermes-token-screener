@@ -20,10 +20,34 @@ Key Changes:
 
 from __future__ import annotations
 
+import json
 import logging
+import os
 
 # Use standard logging instead of hermes_screener.logging to avoid circular import
 log = logging.getLogger("revised_scoring")
+
+# ── Load priority token addresses from tokens×wallets page ──
+# These tokens should receive a scoring boost per user instruction (Apr 22, 2026).
+_PRIORITY_PATH = os.path.expanduser("~/.hermes/data/token_screener/priority_tokens.json")
+_PRIORITY_TOKENS: set[tuple[str, str]] = set()  # {(chain, addr), …}
+
+def _load_priority_tokens() -> None:
+    global _PRIORITY_TOKENS
+    try:
+        if os.path.exists(_PRIORITY_PATH):
+            with open(_PRIORITY_PATH) as f:
+                data = json.load(f)
+            for item in data:
+                chain = (item.get("chain") or "").lower()
+                addr = (item.get("contract_address") or "").lower()
+                if chain and addr:
+                    _PRIORITY_TOKENS.add((chain, addr))
+            log.info("priority_tokens_loaded", extra={"count": len(_PRIORITY_TOKENS), "path": _PRIORITY_PATH})
+    except Exception as e:
+        log.warning("priority_tokens_load_failed", extra={"error": str(e)})
+
+_load_priority_tokens()
 
 
 def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
@@ -401,6 +425,17 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
         positives.append("good liquidity ($100K+)")
     elif liquidity > 50_000:
         score *= 1.1  # 10% bonus for $50K+ liquidity
+
+    # ── CHART SENTIMENT (OHLCV → Bonsai) ──
+    chart_mult = token.get("chart_multiplier", 1.0)
+    if chart_mult != 1.0:
+        score *= chart_mult
+    sentiment = token.get("chart_sentiment", "neutral")
+    reason = token.get("chart_reason", "") or ""
+    if sentiment == "bullish":
+        positives.append("chart bullish" + (f": {reason}" if reason else ""))
+    elif sentiment == "bearish":
+        negatives.append("chart bearish" + (f": {reason}" if reason else ""))
 
     return round(score, 2), positives, negatives
 

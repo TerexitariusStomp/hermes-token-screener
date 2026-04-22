@@ -28,11 +28,15 @@ Output: ~/.hermes/data/token_screener/top100.json
 import argparse
 import asyncio
 import json
+import os
 import sqlite3
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
+
+# Make hermes_screener package importable from repo root
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
 
 # Import async enrichment
 from hermes_screener.async_enrichment import run_async_enrichment
@@ -41,6 +45,7 @@ from hermes_screener.logging import get_logger
 from hermes_screener.metrics import start_metrics_server
 from hermes_screener.revised_scoring import revised_score_token
 from hermes_screener.training import ExperienceCollector
+from hermes_screener.chart_sentiment import analyze_chart_sentiment
 
 # ── Config (from centralized settings) ───────────────────────────────────────
 DB_PATH = settings.db_path
@@ -645,6 +650,11 @@ def run_enricher():
     for token in enriched:
         try:
             collector.record_token_enriched(token)
+        except Exception:
+            pass
+        # Enrich with OHLCV-based chart sentiment via Bonsai-8B
+        try:
+            token.update(analyze_chart_sentiment(token))
         except Exception:
             pass
         score, positives, negatives = revised_score_token(token)
