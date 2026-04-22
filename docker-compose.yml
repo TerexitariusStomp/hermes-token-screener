@@ -19,33 +19,38 @@ services:
       - hermes-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 30s
+      interval: 10s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 30s
 
-  # Caddy reverse proxy (automatic HTTPS with Cloudflare)
-  caddy:
+  hermes-caddy:
     image: caddy:2-alpine
     container_name: hermes-caddy
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"  # HTTP/3
+      - "8280:80"
+      - "8243:443"
+      - "8243:443/udp"  # HTTP/3
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./caddy-data:/data
       - ./caddy-config:/config
     environment:
       - DOMAIN=${DOMAIN:-localhost}
-      - CF_API_TOKEN=${CF_API_TOKEN:-}
+      - CF_API_TOKEN=***
       - CF_EMAIL=${CF_EMAIL:-}
     networks:
       - hermes-network
     depends_on:
       hermes-dashboard:
         condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hermes.rule=Host(`trading.templeearth.cc`) || Host(`wxycsvcwxolmbydp3duqeiyp.98.97.106.157.sslip.io`)"
+      - "traefik.http.routers.hermes.entrypoints=websecure"
+      - "traefik.http.routers.hermes.tls.certresolver=default"
+      - "traefik.http.services.hermes.loadbalancer.server.port=80"
 
 networks:
   hermes-network:

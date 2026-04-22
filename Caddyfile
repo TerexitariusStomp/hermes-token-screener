@@ -1,7 +1,7 @@
 # Caddy configuration for Hermes Token Screener
-# Automatic HTTPS with Let's Encrypt
+# Traefik handles TLS termination and host routing, Caddy listens on plain HTTP
 
-{$DOMAIN} {
+:80 {
     # Reverse proxy to FastAPI app
     reverse_proxy hermes-dashboard:8080 {
         # Health check
@@ -9,15 +9,12 @@
         health_interval 30s
         health_timeout 5s
         
-        # Load balancing
-        lb_policy round_robin
-        
         # Headers
         header_up X-Real-IP {remote_host}
         header_up X-Forwarded-For {remote_host}
         header_up X-Forwarded-Proto {scheme}
     }
-    
+
     # Security headers
     header {
         # Enable HSTS
@@ -38,10 +35,10 @@
         # Remove server header
         -Server
     }
-    
+
     # Compression
     encode gzip zstd
-    
+
     # Logging
     log {
         output file /data/logs/caddy.log {
@@ -50,22 +47,5 @@
         }
         format json
         level INFO
-    }
-}
-
-# HTTP to HTTPS redirect
-http://{$DOMAIN} {
-    redir https://{$DOMAIN}{uri} permanent
-}
-
-# API endpoints
-{$DOMAIN}/api/* {
-    reverse_proxy hermes-dashboard:8080
-    
-    # CORS headers for API
-    header {
-        Access-Control-Allow-Origin "*"
-        Access-Control-Allow-Methods "GET, POST, OPTIONS"
-        Access-Control-Allow-Headers "Content-Type, Authorization"
     }
 }

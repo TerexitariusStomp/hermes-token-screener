@@ -243,8 +243,10 @@ def _nav(active):
 <div class="nav">
   <a href="/" class="{'active' if active=='tokens' else ''}">Tokens</a>
   <a href="/wallets" class="{'active' if active=='wallets' else ''}">Smart Money</a>
-  <a href="/cross/tokens" class="{'active' if active=='cross-tokens' else ''}">Tokens×Wallets</a>
-  <a href="/cross/wallets" class="{'active' if active=='cross-wallets' else ''}">Wallets×Tokens</a>
+  <a href="/cross/tokens" class="{'active' if active=='cross-tokens' else ''}">Tokens x Wallets</a>
+  <a href="/cross/wallets" class="{'active' if active=='cross-wallets' else ''}">Wallets x Tokens</a>
+  <a href="/active/tokens" class="{'active' if active=='active-tokens' else ''}">Active Tokens</a>
+  <a href="/active/wallets" class="{'active' if active=='active-wallets' else ''}">Active Wallets</a>
   <a href="/api/top100" target="_blank">API</a>
   <a href="/health" target="_blank">Health</a>
 </div></nav>"""
@@ -366,32 +368,89 @@ async def index():
 
 @app.get("/wallets", response_class=HTMLResponse)
 async def wallets(min_score: float = Query(0), chain: str = Query("")):
+    """Smart Money: old tracked wallets ranked against new found wallets from top tokens."""
     conn = _get_wallet_db()
-    if not conn:
-        return _page(
-            "Smart Money",
-            "wallets",
-            "<h1>Smart Money Wallets</h1><p class='sub'>Wallet DB not available</p>",
-        )
 
-    q = "SELECT * FROM tracked_wallets WHERE wallet_score >= ?"
-    params: list[float | str] = [min_score]
+    # Get new found wallets from smart_money_purchases (wallets buying top100 tokens)
+    new_wallets = _cross_reference_wallets_by_tokens()
+    new_wallet_map = {w["address"]: w for w in new_wallets}
+
+    # Get old tracked wallets
+    old_wallets = []
+    if conn:
+        q = "SELECT * FROM tracked_wallets WHERE wallet_score >= ?"
+        params: list[float | str] = [min_score]
+        if chain:
+            q += " AND chain = ?"
+            params.append(chain)
+        q += " ORDER BY wallet_score DESC"
+        try:
+            rows = conn.execute(q, params).fetchall()
+            old_wallets = [dict(r) for r in rows]
+        except Exception:
+            pass
+        conn.close()
+
+    # Merge: old wallets + new wallets not in old
+    merged: dict[str, dict] = {}
+    for w in old_wallets:
+        addr = w.get("address", "")
+        merged[addr] = {
+            "address": addr,
+            "chain": w.get("chain", ""),
+            "wallet_score": w.get("wallet_score", 0) or 0,
+            "total_profit": w.get("total_profit"),
+            "avg_roi": w.get("avg_roi"),
+            "win_rate": w.get("win_rate"),
+            "total_trades": w.get("total_trades", 0),
+            "wallet_tags": w.get("wallet_tags", ""),
+            "insider_flag": w.get("insider_flag"),
+            "last_active_at": w.get("last_active_at"),
+            "source": "tracked",
+            "weighted_score": 0,
+            "active_token_count": 0,
+        }
+
+    for addr, nw in new_wallet_map.items():
+        if addr not in merged:
+            merged[addr] = {
+                "address": addr,
+                "chain": nw.get("chain", ""),
+                "wallet_score": 0,
+                "total_profit": None,
+                "avg_roi": None,
+                "win_rate": None,
+                "total_trades": 0,
+                "wallet_tags": "",
+                "insider_flag": None,
+                "last_active_at": nw.get("last_active_at"),
+                "source": "new",
+                "weighted_score": nw.get("weighted_score", 0),
+                "active_token_count": nw.get("token_count", 0),
+            }
+        else:
+            # Old wallet also found buying top tokens — boost it
+            merged[addr]["weighted_score"] = nw.get("weighted_score", 0)
+            merged[addr]["active_token_count"] = nw.get("token_count", 0)
+            merged[addr]["source"] = "both"
+
+    # Filter by chain if specified
     if chain:
-        q += " AND chain = ?"
-        params.append(chain)
-    q += " ORDER BY wallet_score DESC LIMIT 100"
+        merged = {k: v for k, v in merged.items() if v["chain"] == chain}
 
-    try:
-        rows = conn.execute(q, params).fetchall()
-        wallets_list = [dict(r) for r in rows]
-    except Exception:
-        wallets_list = []
-    conn.close()
+    # Rank: combine wallet_score + weighted_score for unified ranking
+    ranked = sorted(
+        merged.values(),
+        key=lambda w: (w["wallet_score"] + w["weighted_score"], w["wallet_score"]),
+        reverse=True,
+    )
 
     rows_html = ""
-    for i, w in enumerate(wallets_list, 1):
+    for i, w in enumerate(ranked[:100], 1):
         score = w.get("wallet_score", 0) or 0
-        sc_cls = _score_cls(score)
+        ws = w.get("weighted_score", 0) or 0
+        combined = score + ws
+        sc_cls = _score_cls(combined)
         profit = w.get("total_profit")
         profit_cls = "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
         tags_html = ""
@@ -402,17 +461,23 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
                 tags_html += f'<span class="tag {tag_cls}">{t}</span>'
         if w.get("insider_flag"):
             tags_html += '<span class="tag tag-y">INSIDER</span>'
+        src = w.get("source", "")
+        src_cls = "tag-g" if src == "both" else "tag-y" if src == "new" else ""
 
         rows_html += f"""<tr>
   <td>{i}</td>
   <td class="mono"><a href="https://app.zerion.io/{w.get('address','')}/overview" target="_blank">{_trunc(w.get('address',''))}</a></td>
   <td><span class="badge {_chain_cls(w.get('chain',''))}">{w.get('chain','')}</span></td>
-  <td class="sc {sc_cls}">{score:.0f}</td>
+  <td class="sc {sc_cls}">{combined:.0f}</td>
+  <td>{score:.0f}</td>
+  <td>{ws:.1f}</td>
   <td class="{profit_cls}">{_fmt_usd(profit)}</td>
   <td class="{_pct_cls(w.get('avg_roi'))}">{_fmt_pct(w.get('avg_roi'))}</td>
   <td>{(w.get('win_rate',0) or 0)*100:.0f}%</td>
   <td>{w.get('total_trades',0)}</td>
+  <td>{w.get('active_token_count',0)}</td>
   <td>{tags_html}</td>
+  <td><span class="tag {src_cls}">{src}</span></td>
   <td>{_time_ago(w.get('last_active_at'))}</td>
 </tr>"""
 
@@ -421,9 +486,9 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
         "wallets",
         f"""
 <h1>Smart Money Wallets</h1>
-<div class="sub">{len(wallets_list)} wallets tracked</div>
+<div class="sub">{len(ranked)} wallets (tracked + discovered from top tokens)</div>
 <div class="tbl"><table>
-<thead><tr><th>#</th><th>Address</th><th>Chain</th><th>Score</th><th>PnL</th><th>ROI</th><th>Win</th><th>Trades</th><th>Tags</th><th>Active</th></tr></thead>
+<thead><tr><th>#</th><th>Address</th><th>Chain</th><th>Combined</th><th>Tracked</th><th>Weighted</th><th>PnL</th><th>ROI</th><th>Win</th><th>Trades</th><th>Tokens</th><th>Tags</th><th>Source</th><th>Active</th></tr></thead>
 <tbody>{rows_html}</tbody>
 </table></div>""",
     )
@@ -801,10 +866,11 @@ def _get_wallets_holding_token(token_address: str) -> set[str]:
 
 def _cross_reference_tokens_by_wallets() -> list[dict]:
     """
-    Rank tokens by how many smart money wallets hold them.
+    Rank top100 tokens by how many new wallets bought them.
 
-    For each top token, queries wallet_token_entries (case-insensitive) to find
-    which tracked wallets hold it. Only counts wallets with wallet_score > 0.
+    For each top100 token, finds ALL wallets that bought it (from
+    smart_money_purchases and smart_money_tokens). Tokens with more
+    smart money buyers rank higher.
     """
     data = _load_top100()
     tokens = data.get("tokens", [])
@@ -822,27 +888,42 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
             continue
 
         try:
-            # Find wallets holding this token (case-insensitive match)
+            seen = set()
+            buy_wallets = []
+
+            # Source 1: smart_money_purchases (recent buys)
             rows = conn.execute(
-                "SELECT wte.wallet_address, COALESCE(tw.wallet_score, 0) as ws "
-                "FROM wallet_token_entries wte "
-                "LEFT JOIN tracked_wallets tw ON wte.wallet_address = tw.address "
-                "WHERE LOWER(wte.token_address) = LOWER(?) AND wte.token_address IS NOT NULL",
+                "SELECT DISTINCT smp.wallet_address "
+                "FROM smart_money_purchases smp "
+                "WHERE LOWER(smp.token_address) = LOWER(?) AND smp.side = 'buy'",
                 (t_addr,),
             ).fetchall()
-
-            # Deduplicate and filter to scored wallets
-            seen = set()
-            scored_wallets = []
-            for addr, score in rows:
+            for (addr,) in rows:
                 if addr and addr not in seen:
                     seen.add(addr)
-                    scored_wallets.append((addr, score or 0))
+                    buy_wallets.append(addr)
 
-            # Sort by score descending, take top 10
-            scored_wallets.sort(key=lambda x: x[1], reverse=True)
-            t["wallet_count"] = len(scored_wallets)
-            t["holding_wallets"] = [w[0] for w in scored_wallets[:10]]
+            # Source 2: smart_money_tokens (discovery wallets)
+            import json as _json
+
+            smt_row = conn.execute(
+                "SELECT discovery_wallets FROM smart_money_tokens "
+                "WHERE LOWER(token_address) = LOWER(?)",
+                (t_addr,),
+            ).fetchone()
+            if smt_row and smt_row[0]:
+                try:
+                    dw = _json.loads(smt_row[0]) if smt_row[0].startswith("[") else smt_row[0].split(",")
+                except Exception:
+                    dw = smt_row[0].split(",")
+                for waddr in dw:
+                    waddr = waddr.strip()
+                    if waddr and waddr not in seen:
+                        seen.add(waddr)
+                        buy_wallets.append(waddr)
+
+            t["wallet_count"] = len(buy_wallets)
+            t["holding_wallets"] = buy_wallets[:10]
         except Exception:
             t["wallet_count"] = 0
             t["holding_wallets"] = []
@@ -857,15 +938,23 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
 
 def _cross_reference_wallets_by_tokens() -> list[dict]:
     """
-    Rank wallets by how many top tokens they hold.
+    Discover wallets that bought top100 tokens, ranked by weighted token score.
 
-    For each wallet, counts how many top-100 tokens they hold by querying
-    wallet_token_entries. Only returns wallets that hold at least 1 top token.
+    For each wallet, computes a weighted score = sum(token_score * weight) where
+    higher-scoring tokens contribute more weight. This surfaces wallets buying
+    the highest-quality tokens from the screener.
+
+    Sources: smart_money_purchases (recent buys), smart_money_tokens (discovery).
     """
     data = _load_top100()
     tokens = data.get("tokens", [])
-    top_token_addrs = {t.get("contract_address", "").lower() for t in tokens if t.get("contract_address")}
-    if not top_token_addrs:
+    # Build token lookup: address -> token info
+    token_map: dict[str, dict] = {}
+    for t in tokens:
+        addr = (t.get("contract_address") or "").lower()
+        if addr:
+            token_map[addr] = t
+    if not token_map:
         return []
 
     conn = _get_wallet_db()
@@ -873,67 +962,365 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
         return []
 
     try:
-        # Find all wallets that hold any top token, with their wallet info
-        placeholders = ",".join("?" for _ in top_token_addrs)
-        lower_checks = " OR ".join(f"LOWER(wte.token_address) = ?" for _ in top_token_addrs)
-
-        rows = conn.execute(
-            f"SELECT wte.wallet_address, wte.token_address, wte.token_symbol, "
-            f"COALESCE(tw.wallet_score, 0) as ws, "
-            f"tw.chain, tw.realized_pnl, tw.avg_roi, tw.win_rate, "
-            f"tw.total_trades, tw.wallet_tags, tw.insider_flag, "
-            f"tw.last_active_at "
-            f"FROM wallet_token_entries wte "
-            f"LEFT JOIN tracked_wallets tw ON wte.wallet_address = tw.address "
-            f"WHERE ({lower_checks}) AND wte.token_address IS NOT NULL",
-            list(top_token_addrs),
-        ).fetchall()
-
-        # Aggregate by wallet
         wallet_map: dict[str, dict] = {}
-        for row in rows:
-            addr = row[0]
-            token_addr = row[1].lower() if row[1] else ""
-            token_sym = row[2] or "?"
+        import json as _json
 
-            if addr not in wallet_map:
-                wallet_map[addr] = {
-                    "address": addr,
-                    "wallet_score": row[3] or 0,
-                    "chain": row[4] or "",
-                    "realized_pnl": row[5],
-                    "avg_roi": row[6],
-                    "win_rate": row[7],
-                    "total_trades": row[8] or 0,
-                    "wallet_tags": row[9] or "",
-                    "insider_flag": row[10],
-                    "last_active_at": row[11],
-                    "top_tokens_set": set(),
-                }
+        # Source 1: smart_money_purchases — ALL buys of top100 tokens
+        addr_list = list(token_map.keys())
+        batch_size = 50
+        for i in range(0, len(addr_list), batch_size):
+            batch = addr_list[i : i + batch_size]
+            checks = " OR ".join(f"LOWER(smp.token_address) = ?" for _ in batch)
+            rows = conn.execute(
+                f"SELECT smp.wallet_address, smp.token_address, smp.token_symbol, "
+                f"smp.amount_usd, smp.timestamp, smp.chain "
+                f"FROM smart_money_purchases smp "
+                f"WHERE ({checks}) AND smp.side = 'buy' AND smp.token_address IS NOT NULL",
+                batch,
+            ).fetchall()
+            for row in rows:
+                waddr = row[0]
+                taddr = (row[1] or "").lower()
+                tsym = row[2] or "?"
+                amt = row[3] or 0
+                ts = row[4] or 0
+                chain = row[5] or ""
+                tok = token_map.get(taddr, {})
+                score = tok.get("score", 0) or 0
+                if waddr not in wallet_map:
+                    wallet_map[waddr] = {
+                        "address": waddr,
+                        "chain": chain,
+                        "weighted_score": 0.0,
+                        "total_buy_usd": 0.0,
+                        "token_count": 0,
+                        "tokens_set": set(),
+                        "token_scores": {},
+                        "last_active": 0,
+                    }
+                w = wallet_map[waddr]
+                w["weighted_score"] += score * (1 + score / 100)  # exponential weighting
+                w["total_buy_usd"] += amt
+                if taddr not in w["tokens_set"]:
+                    w["tokens_set"].add(taddr)
+                    w["token_count"] += 1
+                w["token_scores"][tsym] = score
+                if ts > w["last_active"]:
+                    w["last_active"] = ts
+                # Track chain from first seen
+                if not w["chain"] and chain:
+                    w["chain"] = chain
 
-            if token_addr in top_token_addrs:
-                wallet_map[addr]["top_tokens_set"].add(token_sym)
+        # Source 2: smart_money_tokens discovery_wallets
+        smt_rows = conn.execute(
+            "SELECT token_address, symbol, discovery_wallets, chain "
+            "FROM smart_money_tokens"
+        ).fetchall()
+        for taddr, sym, disc_wallets, chain in smt_rows:
+            taddr_lower = (taddr or "").lower()
+            if taddr_lower not in token_map:
+                continue
+            if not disc_wallets:
+                continue
+            try:
+                wallets = _json.loads(disc_wallets) if disc_wallets.startswith("[") else disc_wallets.split(",")
+            except Exception:
+                wallets = disc_wallets.split(",")
+            tok = token_map.get(taddr_lower, {})
+            score = tok.get("score", 0) or 0
+            for waddr in wallets:
+                waddr = waddr.strip()
+                if not waddr:
+                    continue
+                if waddr not in wallet_map:
+                    wallet_map[waddr] = {
+                        "address": waddr,
+                        "chain": chain or "",
+                        "weighted_score": 0.0,
+                        "total_buy_usd": 0.0,
+                        "token_count": 0,
+                        "tokens_set": set(),
+                        "token_scores": {},
+                        "last_active": 0,
+                    }
+                w = wallet_map[waddr]
+                w["weighted_score"] += score * (1 + score / 100)
+                if taddr_lower not in w["tokens_set"]:
+                    w["tokens_set"].add(taddr_lower)
+                    w["token_count"] += 1
+                w["token_scores"][sym or "?"] = score
+                if not w["chain"] and chain:
+                    w["chain"] = chain
 
-        # Build final list
-        wallet_results = []
+        # Build final list — only wallets that bought at least 1 top token
+        results = []
         for addr, w in wallet_map.items():
-            result = dict(w)
-            result["top_token_count"] = len(w["top_tokens_set"])
-            result["top_tokens"] = sorted(w["top_tokens_set"])[:10]
-            del result["top_tokens_set"]
-            wallet_results.append(result)
+            if w["token_count"] == 0:
+                continue
+            # Sort tokens by score desc for display
+            sorted_tokens = sorted(w["token_scores"].items(), key=lambda x: x[1], reverse=True)
+            results.append({
+                "address": addr,
+                "chain": w["chain"],
+                "weighted_score": round(w["weighted_score"], 1),
+                "total_buy_usd": round(w["total_buy_usd"], 2),
+                "token_count": w["token_count"],
+                "top_tokens": [t[0] for t in sorted_tokens[:10]],
+                "last_active_at": w["last_active"],
+            })
 
-        # Sort by top_token_count DESC, then wallet_score DESC
-        wallet_results.sort(
-            key=lambda w: (w.get("top_token_count", 0), w.get("wallet_score", 0)),
-            reverse=True,
-        )
-        return wallet_results
+        results.sort(key=lambda x: x["weighted_score"], reverse=True)
+        return results
 
     except Exception:
         return []
     finally:
         conn.close()
+
+
+def _get_active_tokens(top_n_wallets: int = 50) -> list[dict]:
+    """
+    Tokens that top wallets (from cross/wallets) are actively buying.
+    Aggregated from smart_money_purchases, sorted by unique buyers then volume.
+    """
+    top_wallets = _cross_reference_wallets_by_tokens()
+    wallet_addrs = [w["address"] for w in top_wallets[:top_n_wallets]]
+    if not wallet_addrs:
+        return []
+
+    conn = _get_wallet_db()
+    if not conn:
+        return []
+
+    try:
+        token_map: dict[str, dict] = {}
+        batch_size = 50
+        for i in range(0, len(wallet_addrs), batch_size):
+            batch = wallet_addrs[i : i + batch_size]
+            placeholders = ",".join("?" for _ in batch)
+            rows = conn.execute(
+                f"SELECT token_address, token_symbol, chain, wallet_address, "
+                f"side, amount_usd, timestamp "
+                f"FROM smart_money_purchases "
+                f"WHERE wallet_address IN ({placeholders}) AND side = 'buy'",
+                batch,
+            ).fetchall()
+            for token_addr, sym, chain, waddr, side, amt, ts in rows:
+                key = token_addr.lower() if token_addr else ""
+                if not key:
+                    continue
+                if key not in token_map:
+                    token_map[key] = {
+                        "token_address": token_addr,
+                        "symbol": sym or "?",
+                        "chain": chain or "",
+                        "total_buy_usd": 0.0,
+                        "unique_buyers": set(),
+                        "buy_count": 0,
+                        "last_buy_at": 0,
+                    }
+                token_map[key]["total_buy_usd"] += amt or 0
+                token_map[key]["unique_buyers"].add(waddr)
+                token_map[key]["buy_count"] += 1
+                if ts and ts > token_map[key]["last_buy_at"]:
+                    token_map[key]["last_buy_at"] = ts
+
+        data = _load_top100()
+        token_scores = {
+            t.get("contract_address", "").lower(): t.get("score", 0) or 0
+            for t in data.get("tokens", [])
+            if t.get("contract_address")
+        }
+
+        results = []
+        for key, tm in token_map.items():
+            score = token_scores.get(key, 0)
+            results.append({
+                "token_address": tm["token_address"],
+                "symbol": tm["symbol"],
+                "chain": tm["chain"],
+                "total_buy_usd": round(tm["total_buy_usd"], 2),
+                "unique_buyers": len(tm["unique_buyers"]),
+                "buy_count": tm["buy_count"],
+                "screener_score": score,
+                "last_buy_at": tm["last_buy_at"],
+            })
+
+        results.sort(key=lambda x: (x["unique_buyers"], x["total_buy_usd"]), reverse=True)
+        return results
+
+    except Exception:
+        return []
+    finally:
+        conn.close()
+
+
+def _get_active_wallets(active_tokens: list[dict]) -> list[dict]:
+    """
+    Top wallets that bought the active tokens, ranked by token count and volume.
+    Merges new found wallets with old tracked_wallets scores.
+    """
+    active_addrs = {t["token_address"].lower() for t in active_tokens if t.get("token_address")}
+    if not active_addrs:
+        return []
+
+    conn = _get_wallet_db()
+    if not conn:
+        return []
+
+    try:
+        wallet_map: dict[str, dict] = {}
+        addr_list = list(active_addrs)
+        batch_size = 50
+        for i in range(0, len(addr_list), batch_size):
+            batch = addr_list[i : i + batch_size]
+            lower_checks = " OR ".join("LOWER(smp.token_address) = ?" for _ in batch)
+            rows = conn.execute(
+                f"SELECT smp.wallet_address, smp.token_address, smp.token_symbol, "
+                f"smp.chain, smp.amount_usd, smp.timestamp, "
+                f"COALESCE(tw.wallet_score, 0) as ws, tw.wallet_tags "
+                f"FROM smart_money_purchases smp "
+                f"LEFT JOIN tracked_wallets tw ON smp.wallet_address = tw.address "
+                f"WHERE ({lower_checks}) AND smp.side = 'buy'",
+                batch,
+            ).fetchall()
+            for waddr, taddr, tsym, chain, amt, ts, ws, wtags in rows:
+                if waddr not in wallet_map:
+                    wallet_map[waddr] = {
+                        "address": waddr,
+                        "chain": chain or "",
+                        "wallet_score": ws or 0,
+                        "wallet_tags": wtags or "",
+                        "total_buy_usd": 0.0,
+                        "active_tokens_set": set(),
+                        "buy_count": 0,
+                        "last_active_at": 0,
+                    }
+                wallet_map[waddr]["total_buy_usd"] += amt or 0
+                wallet_map[waddr]["active_tokens_set"].add(tsym or "?")
+                wallet_map[waddr]["buy_count"] += 1
+                if ts and ts > wallet_map[waddr]["last_active_at"]:
+                    wallet_map[waddr]["last_active_at"] = ts
+
+        results = []
+        for addr, w in wallet_map.items():
+            tokens_sorted = sorted(w["active_tokens_set"])
+            results.append({
+                "address": addr,
+                "chain": w["chain"],
+                "wallet_score": w["wallet_score"],
+                "wallet_tags": w["wallet_tags"],
+                "total_buy_usd": round(w["total_buy_usd"], 2),
+                "active_token_count": len(w["active_tokens_set"]),
+                "active_tokens": tokens_sorted[:10],
+                "buy_count": w["buy_count"],
+                "last_active_at": w["last_active_at"],
+            })
+
+        results.sort(key=lambda x: (x["active_token_count"], x["total_buy_usd"]), reverse=True)
+        return results
+
+    except Exception:
+        return []
+    finally:
+        conn.close()
+
+
+@app.get("/active/tokens", response_class=HTMLResponse)
+async def active_tokens():
+    """Tokens that top wallets are actively buying."""
+    active = _get_active_tokens()
+
+    rows = ""
+    for i, t in enumerate(active[:100], 1):
+        sc = t.get("screener_score", 0) or 0
+        sc_cls = _score_cls(sc)
+        buyers = t.get("unique_buyers", 0)
+        buyer_cls = "sc-h" if buyers >= 5 else "sc-m" if buyers >= 2 else "sc-l"
+        addr = t.get("token_address", "")
+
+        rows += f"""<tr>
+  <td>{i}</td>
+  <td><strong>{t.get('symbol','???')}</strong></td>
+  <td><span class="badge {_chain_cls(t.get('chain',''))}">{t.get('chain','')}</span></td>
+  <td class="mono"><a href="{_explorer(t.get('chain',''), addr)}" target="_blank">{_trunc(addr)}</a></td>
+  <td class="sc {sc_cls}">{sc:.1f}</td>
+  <td class="sc {buyer_cls}">{buyers}</td>
+  <td>{t.get('buy_count', 0)}</td>
+  <td>{_fmt_usd(t.get('total_buy_usd'))}</td>
+  <td>{_time_ago(t.get('last_buy_at'))}</td>
+</tr>"""
+
+    return _page(
+        "Active Tokens",
+        "active-tokens",
+        f"""
+<h1>Active Tokens</h1>
+<div class="sub">Tokens being bought by top smart money wallets &middot; {len(active)} tokens</div>
+<div class="tbl"><table>
+<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>Buyers</th><th>Buys</th><th>Volume</th><th>Last Buy</th></tr></thead>
+<tbody>{rows}</tbody>
+</table></div>""",
+    )
+
+
+@app.get("/active/wallets", response_class=HTMLResponse)
+async def active_wallets():
+    """Top wallets that bought active tokens."""
+    active = _get_active_tokens()
+    wallets = _get_active_wallets(active)
+
+    rows = ""
+    for i, w in enumerate(wallets[:100], 1):
+        ws = w.get("wallet_score", 0) or 0
+        ws_cls = _score_cls(ws)
+        addr = w.get("address", "")
+        tags_html = ""
+        for t in (w.get("wallet_tags") or "").split(","):
+            t = t.strip()
+            if t:
+                tags_html += f'<span class="tag tag-g">{t}</span>'
+        token_badges = " ".join(
+            f'<span class="tag tag-y">{t}</span>' for t in w.get("active_tokens", [])[:6]
+        )
+
+        rows += f"""<tr>
+  <td>{i}</td>
+  <td class="mono"><a href="https://app.zerion.io/{addr}/overview" target="_blank">{_trunc(addr)}</a></td>
+  <td><span class="badge {_chain_cls(w.get('chain',''))}">{w.get('chain','')}</span></td>
+  <td class="sc {ws_cls}">{ws:.0f}</td>
+  <td>{w.get('active_token_count', 0)}</td>
+  <td>{_fmt_usd(w.get('total_buy_usd'))}</td>
+  <td>{w.get('buy_count', 0)}</td>
+  <td>{_time_ago(w.get('last_active_at'))}</td>
+  <td>{tags_html}</td>
+  <td>{token_badges}</td>
+</tr>"""
+
+    return _page(
+        "Active Wallets",
+        "active-wallets",
+        f"""
+<h1>Active Wallets</h1>
+<div class="sub">Top wallets buying active tokens &middot; {len(wallets)} wallets</div>
+<div class="tbl"><table>
+<thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Score</th><th>Tokens</th><th>Volume</th><th>Buys</th><th>Active</th><th>Tags</th><th>Buying</th></tr></thead>
+<tbody>{rows}</tbody>
+</table></div>""",
+    )
+
+
+@app.get("/api/active/tokens")
+async def api_active_tokens():
+    """API: Active tokens by top wallet buys."""
+    return _get_active_tokens()
+
+
+@app.get("/api/active/wallets")
+async def api_active_wallets():
+    """API: Active wallets buying active tokens."""
+    active = _get_active_tokens()
+    return _get_active_wallets(active)
 
 
 @app.get("/cross/tokens", response_class=HTMLResponse)
@@ -991,52 +1378,35 @@ async def cross_tokens():
 
 @app.get("/cross/wallets", response_class=HTMLResponse)
 async def cross_wallets():
-    """Wallets ranked by how many top tokens they hold."""
+    """Wallets ranked by weighted score of tokens they bought."""
     wallets = _cross_reference_wallets_by_tokens()
 
     rows = ""
     for i, w in enumerate(wallets[:100], 1):
-        score = w.get("wallet_score", 0) or 0
-        sc_cls = _score_cls(score)
-        tc = w.get("top_token_count", 0)
-        tc_cls = "sc-h" if tc >= 10 else "sc-m" if tc >= 5 else "sc-l"
+        ws = w.get("weighted_score", 0) or 0
+        ws_cls = "sc-h" if ws >= 50 else "sc-m" if ws >= 20 else "sc-l"
         addr = w.get("address", "")
-        profit = w.get("total_profit")
-        profit_cls = "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
-        top_tokens = w.get("top_tokens", [])
-        token_badges = " ".join(f'<span class="tag tag-g">{t}</span>' for t in top_tokens[:6])
-        tags_html = ""
-        for t in (w.get("wallet_tags") or "").split(","):
-            t = t.strip()
-            if t:
-                tag_cls = "tag-r" if t in ("sniper", "insider") else "tag-g" if t == "smart" else ""
-                tags_html += f'<span class="tag {tag_cls}">{t}</span>'
-        if w.get("insider_flag"):
-            tags_html += '<span class="tag tag-y">INSIDER</span>'
+        token_badges = " ".join(f'<span class="tag tag-g">{t}</span>' for t in w.get("top_tokens", [])[:6])
 
         rows += f"""<tr>
   <td>{i}</td>
   <td class="mono"><a href="https://app.zerion.io/{addr}/overview" target="_blank">{_trunc(addr)}</a></td>
   <td><span class="badge {_chain_cls(w.get('chain',''))}">{w.get('chain','')}</span></td>
-  <td class="sc {sc_cls}">{score:.0f}</td>
-  <td class="sc {tc_cls}">{tc}</td>
-  <td class="{profit_cls}">{_fmt_usd(profit)}</td>
-  <td class="{_pct_cls(w.get('avg_roi'))}">{_fmt_pct(w.get('avg_roi'))}</td>
-  <td>{(w.get('win_rate', 0) or 0) * 100:.0f}%</td>
-  <td>{w.get('total_trades', 0)}</td>
-  <td>{tags_html}</td>
+  <td class="sc {ws_cls}">{ws:.1f}</td>
+  <td>{w.get('token_count', 0)}</td>
+  <td>{_fmt_usd(w.get('total_buy_usd'))}</td>
   <td>{_time_ago(w.get('last_active_at'))}</td>
   <td>{token_badges}</td>
 </tr>"""
 
     return _page(
-        "Wallets × Tokens",
+        "Wallets x Tokens",
         "cross-wallets",
         f"""
-<h1>Wallets Ranked by Top Token Count</h1>
-<div class="sub">Smart money wallets sorted by how many top-100 tokens they hold &middot; {len(wallets)} wallets analyzed</div>
+<h1>Wallets Ranked by Token Weight</h1>
+<div class="sub">Smart money wallets that bought top-100 tokens, ranked by weighted token score &middot; {len(wallets)} wallets discovered</div>
 <div class="tbl"><table>
-<thead><tr><th>#</th><th>Address</th><th>Chain</th><th>Score</th><th>🧬</th><th>PnL</th><th>ROI</th><th>Win</th><th>Trades</th><th>Tags</th><th>Active</th><th>Top Tokens</th></tr></thead>
+<thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Weighted Score</th><th>Tokens</th><th>Total Bought</th><th>Active</th><th>Top Tokens</th></tr></thead>
 <tbody>{rows}</tbody>
 </table></div>""",
     )

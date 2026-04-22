@@ -25,6 +25,20 @@ TOR_ENABLED = os.environ.get("HERMES_TOR_ENABLED", "true").lower() in ("true", "
 # Patch 1: requests library
 # ─────────────────────────────────────────────────────────────────────────────
 
+def _should_bypass_tor(url):
+    """Check if URL should bypass TOR (e.g., localhost/private addresses)."""
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(url.lower())
+        host = parsed.hostname or ""
+        # Bypass for localhost and common private addresses
+        if host in ("localhost", "127.0.0.1", "::1"):
+            return True
+        # Could add more private ranges if needed
+        return False
+    except Exception:
+        return False
+
 def _patch_requests():
     """Patch the requests library to use TOR SOCKS5 proxy."""
     if not TOR_ENABLED:
@@ -35,15 +49,20 @@ def _patch_requests():
         _orig_request = _requests.Session.request
 
         def _tor_request(self, method, url, **kwargs):
-            kwargs.setdefault("proxies", {
-                "http": TOR_SOCKS5,
-                "https": TOR_SOCKS5,
-            })
+            # Bypass TOR for localhost/private addresses
+            if _should_bypass_tor(url):
+                # Remove proxy settings for direct connection
+                kwargs.pop("proxies", None)
+            else:
+                kwargs.setdefault("proxies", {
+                    "http": TOR_SOCKS5,
+                    "https": TOR_SOCKS5,
+                })
             kwargs.setdefault("timeout", kwargs.get("timeout", 30))
             return _orig_request(self, method, url, **kwargs)
 
         _requests.Session.request = _tor_request
-        log.info(f"[TOR] requests patched -> {TOR_SOCKS5}")
+        log.info(f"[TOR] requests patched -> {TOR_SOCKS5} (with localhost bypass)")
     except ImportError:
         pass
     except Exception as e:
@@ -65,7 +84,13 @@ def _patch_httpx():
         _orig_init = _httpx.AsyncClient.__init__
 
         def _tor_async_init(self, *args, **kwargs):
-            kwargs.setdefault("proxy", TOR_SOCKS5.replace("socks5h://", "socks5://"))
+            # Bypass TOR for localhost/private addresses - check if URL is in params
+            url = kwargs.get('url')
+            if url and _should_bypass_tor(url):
+                # Remove proxy settings for direct connection
+                kwargs.pop('proxy', None)
+            else:
+                kwargs.setdefault("proxy", TOR_SOCKS5.replace("socks5h://", "socks5://"))
             return _orig_init(self, *args, **kwargs)
 
         _httpx.AsyncClient.__init__ = _tor_async_init
@@ -73,12 +98,18 @@ def _patch_httpx():
         _orig_sync_init = _httpx.Client.__init__
 
         def _tor_sync_init(self, *args, **kwargs):
-            kwargs.setdefault("proxy", TOR_SOCKS5.replace("socks5h://", "socks5://"))
+            # Bypass TOR for localhost/private addresses - check if URL is in params
+            url = kwargs.get('url')
+            if url and _should_bypass_tor(url):
+                # Remove proxy settings for direct connection
+                kwargs.pop('proxy', None)
+            else:
+                kwargs.setdefault("proxy", TOR_SOCKS5.replace("socks5h://", "socks5://"))
             return _orig_sync_init(self, *args, **kwargs)
 
         _httpx.Client.__init__ = _tor_sync_init
 
-        log.info(f"[TOR] httpx patched -> {TOR_SOCKS5}")
+        log.info(f"[TOR] httpx patched -> {TOR_SOCKS5} (with localhost bypass)")
     except ImportError:
         pass
     except Exception as e:

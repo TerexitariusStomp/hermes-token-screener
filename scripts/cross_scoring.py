@@ -28,6 +28,25 @@ from revised_enhanced_scoring import revised_compute_enhanced_token_score
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 
+
+# ── Priority token boost (tokens×wallets selection) ──
+_PRIORITY_PATH = os.path.expanduser("~/.hermes/data/token_screener/priority_tokens.json")
+def _load_priority_tokens() -> set[tuple[str, str]]:
+    tokens = set()
+    try:
+        if os.path.exists(_PRIORITY_PATH):
+            with open(_PRIORITY_PATH) as f:
+                data = json.load(f)
+            for item in data:
+                chain = (item.get("chain") or "").lower().strip()
+                addr = (item.get("contract_address") or item.get("address") or "").lower().strip()
+                if chain and addr:
+                    tokens.add((chain, addr))
+    except Exception:
+        pass
+    return tokens
+_PRIORITY_TOKENS = _load_priority_tokens()
+
 log = get_logger("cross_scoring")
 
 DB_PATH = settings.db_path
@@ -114,7 +133,16 @@ def _compute_token_composite_score(
     """
     score = 0.0
 
-    # ── Smart Money Presence (0-30) ──
+   
+    # ── PRIORITY TOKEN BOOST (tokens×wallets) ──
+    addr = (token.get("contract_address") or token.get("address") or "").lower().strip()
+    chain = (token.get("chain") or "").lower().strip()
+    if chain in ("eth", "ether"): chain = "ethereum"
+    if chain in ("sol", "solan"): chain = "solana"
+    if chain in ("bnc", "binance"): chain = "bsc"
+    if (chain, addr) in _PRIORITY_TOKENS:
+        score += 25.0
+ # ── Smart Money Presence (0-30) ──
     if max_smart_wallets > 0:
         # Normalize wallet count (more = better)
         wallet_ratio = min(smart_wallet_count / max(max_smart_wallets * 0.5, 1), 1.0)

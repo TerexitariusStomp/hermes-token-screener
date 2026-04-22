@@ -9,6 +9,29 @@ This module provides a more conservative scoring approach for Phase 3
 from __future__ import annotations
 
 
+import json
+import os
+from typing import Final
+
+# ── Priority token boost (tokens×wallets selection) ──
+_PRIORITY_PATH: Final[str] = os.path.expanduser("~/.hermes/data/token_screener/priority_tokens.json")
+_PRIORITY_TOKENS: Final[set[tuple[str, str]]] = _load_priority_tokens()
+
+def _load_priority_tokens() -> set[tuple[str, str]]:
+    tokens = set()
+    try:
+        if os.path.exists(_PRIORITY_PATH):
+            with open(_PRIORITY_PATH) as f:
+                data = json.load(f)
+            for item in data:
+                chain = (item.get("chain") or "").lower().strip()
+                addr = (item.get("contract_address") or item.get("address") or "").lower().strip()
+                if chain and addr:
+                    tokens.add((chain, addr))
+    except Exception:
+        pass
+    return tokens
+
 def revised_compute_enhanced_token_score(
     token: dict,
     smart_wallet_count: int,
@@ -46,6 +69,15 @@ def revised_compute_enhanced_token_score(
         return 0.0
 
     score = 0.0
+
+    # ── PRIORITY TOKEN BOOST (tokens×wallets) ──
+    addr = (token.get("contract_address") or token.get("address") or "").lower().strip()
+    chain = (token.get("chain") or "").lower().strip()
+    if chain in ("eth", "ether", "evm"): chain = "ethereum"
+    if chain in ("sol", "solan"): chain = "solana"
+    if chain in ("bnc", "binance"): chain = "bsc"
+    if (chain, addr) in _PRIORITY_TOKENS:
+        score += 25.0
 
     # ═══════════════════════════════════════════════════════════════════════════
     # 1. SMART MONEY PRESENCE (0-15 points) - REDUCED FROM 25
