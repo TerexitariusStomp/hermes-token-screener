@@ -33,6 +33,60 @@ app = FastAPI(
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
+def _normalize_token(t: dict[str, Any]) -> dict[str, Any]:
+    """Normalize token data: flatten nested dex.* fields to flat top-level fields.
+
+    The enricher stores market data inside a nested 'dex' dict, but the dashboard
+    templates expect flat fields like fdv, volume_h24, price_change_h1, etc.
+    """
+    dex = t.get("dex") or {}
+
+    # Flatten dex fields → top-level (only if not already set)
+    if not t.get("fdv"):
+        t["fdv"] = dex.get("fdv") or dex.get("market_cap")
+    if not t.get("volume_h24"):
+        t["volume_h24"] = dex.get("volume_h24")
+    if not t.get("volume_h1"):
+        t["volume_h1"] = dex.get("volume_h1")
+    if not t.get("price_change_h1"):
+        t["price_change_h1"] = dex.get("price_change_h1")
+    if not t.get("price_change_h6"):
+        t["price_change_h6"] = dex.get("price_change_h6")
+    if not t.get("price_change_h24"):
+        t["price_change_h24"] = dex.get("price_change_h24")
+    if not t.get("price_usd"):
+        t["price_usd"] = dex.get("price_usd")
+    if not t.get("pair_address"):
+        t["pair_address"] = dex.get("pair_address")
+    if not t.get("dex_url"):
+        t["dex_url"] = dex.get("url")
+    if not t.get("liquidity_usd"):
+        t["liquidity_usd"] = dex.get("liquidity")
+
+    # Compute age_hours from first_seen_at if not set
+    if not t.get("age_hours"):
+        fse = t.get("first_seen_at")
+        if fse:
+            t["age_hours"] = max(0, (time.time() - float(fse)) / 3600)
+        else:
+            age_dex = dex.get("age_hours")
+            t["age_hours"] = age_dex if age_dex else 0
+
+    # gmgn_smart_wallets ← gmgn_holder_count
+    if not t.get("gmgn_smart_wallets"):
+        t["gmgn_smart_wallets"] = t.get("gmgn_holder_count", 0) or 0
+
+    # Back-fill gmgn fields from flat enricher fields
+    if not t.get("gmgn_symbol"):
+        t["gmgn_symbol"] = t.get("symbol")
+    if not t.get("gmgn_liquidity"):
+        t["gmgn_liquidity"] = dex.get("liquidity")
+    if not t.get("gmgn_burn_status"):
+        t["gmgn_burn_status"] = t.get("gmgn_burn_status", "")
+
+    return t
+
+
 def _load_top100() -> dict[str, Any]:
     path = settings.output_path
     if not path.exists():
@@ -42,6 +96,9 @@ def _load_top100() -> dict[str, Any]:
     # Normalize: support both "tokens" and "top_tokens" keys
     if "tokens" not in data and "top_tokens" in data:
         data["tokens"] = data["top_tokens"]
+    # Normalize all tokens: flatten dex.* to flat fields
+    if "tokens" in data:
+        data["tokens"] = [_normalize_token(t) for t in data["tokens"]]
     return data
 
 
@@ -206,13 +263,14 @@ def _page(title, active, body, extra_css=""):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def _chart_html(symbol, chain, address, dex_url, pair_address, current_price, fdv, vol24):
-    """Generate full chart page with TradingView Lightweight Charts."""
+def _dexscreener_embed_html(symbol, chain, address, dex_url, pair_address, fdv, vol24):
+    """Generate chart page with embedded Dexscreener chart (replaces GeckoTerminal)."""
+    # Use Dexscreener embed URL — works without API auth or TLS fingerprint
+    embed_url = f"https://dexscreener.com/{chain}/{address}?embed=1&theme=dark&info=0"
+    detail_url = f"/token/{address}"
     return f"""<!DOCTYPE html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{symbol} Chart — Hermes</title>
-<style>{CSS}{CHART_CSS}</style>
-<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+<title>{symbol} Chart — Hermes</title><style>{CSS}</style>
 </head>
 <body>
 {_nav("tokens")}
@@ -220,170 +278,25 @@ def _chart_html(symbol, chain, address, dex_url, pair_address, current_price, fd
   <h1>{symbol} <span style="color:var(--t2);font-weight:normal">Chart</span></h1>
   <div class="sub">
     <span class="badge {_chain_cls(chain)}">{chain}</span>
-    <a href="/token/{address}">&larr; Token Detail</a>
-    &middot; <a href="{dex_url}" target="_blank">Dexscreener</a>
+    <a href="{detail_url}">&larr; Token Detail</a>
+    &middot; <a href="{dex_url}" target="_blank">Dexscreener &nearr;</a>
   </div>
 
-  <div class="price-info">
-    <div class="item"><span class="label">Price</span><br><span class="val" id="current-price">{f'${float(current_price):.8f}' if current_price else '—'}</span></div>
-    <div class="item"><span class="label">FDV</span><br><span class="val">{_fmt_usd(fdv)}</span></div>
-    <div class="item"><span class="label">Vol 24h</span><br><span class="val">{_fmt_usd(vol24)}</span></div>
-    <div class="item"><span class="label">24h Change</span><br><span class="val" id="day-change">—</span></div>
+  <div class="price-info" style="display:flex;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap">
+    <div class="item" style="font-size:.82rem"><span style="color:var(--t2)">FDV</span><br><span style="font-weight:bold;font-size:1rem">{_fmt_usd(fdv)}</span></div>
+    <div class="item" style="font-size:.82rem"><span style="color:var(--t2)">Vol 24h</span><br><span style="font-weight:bold;font-size:1rem">{_fmt_usd(vol24)}</span></div>
   </div>
 
-  <div class="controls">
-    <button onclick="setTimeframe('minute', 5)" id="btn-5m">5m</button>
-    <button onclick="setTimeframe('minute', 15)" id="btn-15m">15m</button>
-    <button onclick="setTimeframe('hour', 1)" class="active" id="btn-1h">1H</button>
-    <button onclick="setTimeframe('hour', 4)" id="btn-4h">4H</button>
-    <button onclick="setTimeframe('day', 1)" id="btn-1d">1D</button>
-    <select id="chart-type" onchange="setChartType(this.value)">
-      <option value="candlestick">Candlestick</option>
-      <option value="line">Line</option>
-      <option value="area">Area</option>
-    </select>
+  <div style="width:100%;border:1px solid var(--b);border-radius:8px;overflow:hidden">
+    <iframe
+      src="{embed_url}"
+      style="width:100%;height:600px;border:none;background:#0a0e17">
+    </iframe>
   </div>
-
-  <div id="chart-container">
-    <div class="loading">Loading chart data...</div>
-  </div>
-  <div class="chart-footer">
-    Data from GeckoTerminal &middot; Auto-refreshes every 60s &middot;
-    <span id="candle-count">0</span> candles loaded
+  <div style="margin-top:.75rem;font-size:.72rem;color:var(--t2)">
+    Powered by Dexscreener &middot; Auto-updates in real-time
   </div>
 </div>
-
-<script>
-const CHAIN = {json.dumps(chain)};
-const ADDRESS = {json.dumps(address)};
-const POOL_CACHE = {{}};
-let chart, candleSeries, volumeSeries, currentTf = 'hour', currentAgg = 1;
-let chartType = 'candlestick';
-
-// ── Chart Init ──
-function initChart() {{
-  const container = document.getElementById('chart-container');
-  container.innerHTML = '';
-  chart = LightweightCharts.createChart(container, {{
-    width: container.clientWidth,
-    height: 500,
-    layout: {{ background: {{ type: 'solid', color: '#0a0e17' }}, textColor: '#9ca3af' }},
-    grid: {{ vertLines: {{ color: '#1f2937' }}, horzLines: {{ color: '#1f2937' }} }},
-    crosshair: {{
-      mode: LightweightCharts.CrosshairMode.Normal,
-      vertLine: {{ color: '#06b6d4', width: 1, style: 2 }},
-      horzLine: {{ color: '#06b6d4', width: 1, style: 2 }},
-    }},
-    rightPriceScale: {{ borderColor: '#374151' }},
-    timeScale: {{ borderColor: '#374151', timeVisible: true, secondsVisible: false }},
-  }});
-
-  candleSeries = chart.addCandlestickSeries({{
-    upColor: '#10b981', downColor: '#ef4444',
-    borderUpColor: '#10b981', borderDownColor: '#ef4444',
-    wickUpColor: '#10b981', wickDownColor: '#ef4444',
-  }});
-
-  volumeSeries = chart.addHistogramSeries({{
-    color: '#26a69a',
-    priceFormat: {{ type: 'volume' }},
-    priceScaleId: '',
-  }});
-  volumeSeries.priceScale().applyOptions({{
-    scaleMargins: {{ top: 0.8, bottom: 0 }},
-  }});
-
-  chart.timeScale().fitContent();
-  window.addEventListener('resize', () => chart.applyOptions({{ width: container.clientWidth }}));
-}}
-
-// ── Data Fetch ──
-async function fetchPoolAddress() {{
-  if (POOL_CACHE[ADDRESS]) return POOL_CACHE[ADDRESS];
-  try {{
-    const resp = await fetch(`/api/pool/${{CHAIN}}/${{ADDRESS}}`);
-    const data = await resp.json();
-    POOL_CACHE[ADDRESS] = data.pool_address;
-    return data.pool_address;
-  }} catch {{ return null; }}
-}}
-
-async function fetchOHLCV(tf, agg) {{
-  const pool = await fetchPoolAddress();
-  if (!pool) return [];
-  try {{
-    const resp = await fetch(`/api/chart/${{CHAIN}}/${{pool}}?timeframe=${{tf}}&aggregate=${{agg}}&limit=200`);
-    const data = await resp.json();
-    return data.candles || [];
-  }} catch {{ return []; }}
-}}
-
-// ── Render ──
-async function loadChart(tf, agg) {{
-  currentTf = tf; currentAgg = agg;
-  document.getElementById('chart-container').innerHTML = '<div class="loading">Loading...</div>';
-  initChart();
-
-  const candles = await fetchOHLCV(tf, agg);
-  if (!candles.length) {{
-    document.getElementById('chart-container').innerHTML = '<div class="loading">No chart data available for this pair</div>';
-    return;
-  }}
-
-  const candleData = candles.map(c => ({{ time: c[0], open: c[1], high: c[2], low: c[3], close: c[4] }}));
-  const volumeData = candles.map(c => ({{
-    time: c[0], value: c[5] || 0,
-    color: c[4] >= c[1] ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'
-  }}));
-
-  candleSeries.setData(candleData);
-  volumeSeries.setData(volumeData);
-  chart.timeScale().fitContent();
-
-  // Update 24h change
-  if (candleData.length > 1) {{
-    const first = candleData[0].open;
-    const last = candleData[candleData.length - 1].close;
-    const change = ((last - first) / first * 100).toFixed(2);
-    const el = document.getElementById('day-change');
-    el.textContent = (change > 0 ? '+' : '') + change + '%';
-    el.className = 'val ' + (change > 0 ? 'pos' : 'neg');
-  }}
-  document.getElementById('candle-count').textContent = candleData.length;
-}}
-
-// ── Controls ──
-function setTimeframe(tf, agg) {{
-  document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
-  document.getElementById(`btn-${{agg}}${{tf[0]}}`).classList.add('active');
-  loadChart(tf, agg);
-}}
-
-function setChartType(type) {{
-  chartType = type;
-  // Remove existing series and re-add
-  chart.removeSeries(candleSeries);
-  if (type === 'candlestick') {{
-    candleSeries = chart.addCandlestickSeries({{
-      upColor: '#10b981', downColor: '#ef4444',
-      borderUpColor: '#10b981', borderDownColor: '#ef4444',
-      wickUpColor: '#10b981', wickDownColor: '#ef4444',
-    }});
-  }} else if (type === 'line') {{
-    candleSeries = chart.addLineSeries({{ color: '#06b6d4', lineWidth: 2 }});
-  }} else {{
-    candleSeries = chart.addAreaSeries({{
-      lineColor: '#06b6d4', lineWidth: 2,
-      topColor: 'rgba(6,182,212,0.3)', bottomColor: 'rgba(6,182,212,0)',
-    }});
-  }}
-  loadChart(currentTf, currentAgg);
-}}
-
-// ── Init ──
-initChart();
-loadChart('hour', 1);
-</script>
 </body></html>"""
 
 
@@ -590,13 +503,12 @@ async def token_chart(address: str):
         return _page("Chart", "tokens", "<h1>Chart</h1><p class='sub'>Token not found</p>")
 
     return HTMLResponse(
-        _chart_html(
+        _dexscreener_embed_html(
             symbol=token.get("symbol", "???"),
             chain=token.get("chain", "solana"),
             address=address,
             dex_url=token.get("dex_url", ""),
             pair_address=token.get("pair_address", ""),
-            current_price=token.get("fdv"),
             fdv=token.get("fdv"),
             vol24=token.get("volume_h24"),
         )
@@ -869,89 +781,159 @@ def _get_wallet_token_holdings(wallet_address: str) -> list[str]:
         conn.close()
 
 
+def _get_wallets_holding_token(token_address: str) -> set[str]:
+    """Get wallet addresses that hold a specific token (case-insensitive)."""
+    conn = _get_wallet_db()
+    if not conn:
+        return set()
+    try:
+        rows = conn.execute(
+            "SELECT DISTINCT wallet_address FROM wallet_token_entries "
+            "WHERE LOWER(token_address) = LOWER(?) AND token_address IS NOT NULL",
+            (token_address,),
+        ).fetchall()
+        return {r[0] for r in rows if r[0]}
+    except Exception:
+        return set()
+    finally:
+        conn.close()
+
+
 def _cross_reference_tokens_by_wallets() -> list[dict]:
     """
-    Rank tokens by how many top wallets hold them.
+    Rank tokens by how many smart money wallets hold them.
 
-    Returns tokens sorted by wallet_count DESC, then by token score.
+    For each top token, queries wallet_token_entries (case-insensitive) to find
+    which tracked wallets hold it. Only counts wallets with wallet_score > 0.
     """
-    # Load top tokens
     data = _load_top100()
     tokens = data.get("tokens", [])
     if not tokens:
         return []
 
-    # Get top wallets
-    top_wallets = _get_top_wallets(200)
-    if not top_wallets:
-        return tokens  # type: ignore[no-any-return]  # Fallback: return tokens sorted by score
+    conn = _get_wallet_db()
+    use_db = conn is not None
 
-    # For each top wallet, get their token holdings
-    wallet_holdings: dict[str, set[str]] = {}  # token_address -> set of wallet addresses
-    for w in top_wallets:
-        addr = w["address"]
-        held_tokens = _get_wallet_token_holdings(addr)
-        for token_addr in held_tokens:
-            if token_addr not in wallet_holdings:
-                wallet_holdings[token_addr] = set()
-            wallet_holdings[token_addr].add(addr)
-
-    # Annotate tokens with wallet_count
     for t in tokens:
         t_addr = t.get("contract_address", "")
-        t["wallet_count"] = len(wallet_holdings.get(t_addr, set()))
-        t["holding_wallets"] = list(wallet_holdings.get(t_addr, set()))[:10]
+        if not t_addr or not use_db:
+            t["wallet_count"] = 0
+            t["holding_wallets"] = []
+            continue
+
+        try:
+            # Find wallets holding this token (case-insensitive match)
+            rows = conn.execute(
+                "SELECT wte.wallet_address, COALESCE(tw.wallet_score, 0) as ws "
+                "FROM wallet_token_entries wte "
+                "LEFT JOIN tracked_wallets tw ON wte.wallet_address = tw.address "
+                "WHERE LOWER(wte.token_address) = LOWER(?) AND wte.token_address IS NOT NULL",
+                (t_addr,),
+            ).fetchall()
+
+            # Deduplicate and filter to scored wallets
+            seen = set()
+            scored_wallets = []
+            for addr, score in rows:
+                if addr and addr not in seen:
+                    seen.add(addr)
+                    scored_wallets.append((addr, score or 0))
+
+            # Sort by score descending, take top 10
+            scored_wallets.sort(key=lambda x: x[1], reverse=True)
+            t["wallet_count"] = len(scored_wallets)
+            t["holding_wallets"] = [w[0] for w in scored_wallets[:10]]
+        except Exception:
+            t["wallet_count"] = 0
+            t["holding_wallets"] = []
+
+    if conn:
+        conn.close()
 
     # Sort by wallet_count DESC, then score DESC
     tokens.sort(key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True)
-    return tokens  # type: ignore[no-any-return]
+    return tokens
 
 
 def _cross_reference_wallets_by_tokens() -> list[dict]:
     """
     Rank wallets by how many top tokens they hold.
 
-    Returns wallets sorted by top_token_count DESC, then by wallet score.
+    For each wallet, counts how many top-100 tokens they hold by querying
+    wallet_token_entries. Only returns wallets that hold at least 1 top token.
     """
-    # Load top tokens
     data = _load_top100()
     tokens = data.get("tokens", [])
-    top_token_addrs = {t.get("contract_address", "") for t in tokens if t.get("contract_address")}
-
+    top_token_addrs = {t.get("contract_address", "").lower() for t in tokens if t.get("contract_address")}
     if not top_token_addrs:
         return []
 
-    # Get top wallets
-    top_wallets = _get_top_wallets(500)
-    if not top_wallets:
+    conn = _get_wallet_db()
+    if not conn:
         return []
 
-    # For each wallet, count how many top tokens they hold
-    wallet_results = []
-    for w in top_wallets:
-        addr = w["address"]
-        held_tokens = _get_wallet_token_holdings(addr)
-        held_set = set(held_tokens)
-        top_token_overlap = held_set & top_token_addrs
+    try:
+        # Find all wallets that hold any top token, with their wallet info
+        placeholders = ",".join("?" for _ in top_token_addrs)
+        lower_checks = " OR ".join(f"LOWER(wte.token_address) = ?" for _ in top_token_addrs)
 
-        # Get symbols for held top tokens
-        held_symbols = []
-        for t in tokens:
-            if t.get("contract_address") in top_token_overlap:
-                held_symbols.append(t.get("symbol", "?"))
+        rows = conn.execute(
+            f"SELECT wte.wallet_address, wte.token_address, wte.token_symbol, "
+            f"COALESCE(tw.wallet_score, 0) as ws, "
+            f"tw.chain, tw.realized_pnl, tw.avg_roi, tw.win_rate, "
+            f"tw.total_trades, tw.wallet_tags, tw.insider_flag, "
+            f"tw.last_active_at "
+            f"FROM wallet_token_entries wte "
+            f"LEFT JOIN tracked_wallets tw ON wte.wallet_address = tw.address "
+            f"WHERE ({lower_checks}) AND wte.token_address IS NOT NULL",
+            list(top_token_addrs),
+        ).fetchall()
 
-        # Include ALL wallet fields for display
-        result = dict(w)
-        result["top_token_count"] = len(top_token_overlap)
-        result["top_tokens"] = held_symbols[:10]
-        wallet_results.append(result)
+        # Aggregate by wallet
+        wallet_map: dict[str, dict] = {}
+        for row in rows:
+            addr = row[0]
+            token_addr = row[1].lower() if row[1] else ""
+            token_sym = row[2] or "?"
 
-    # Sort by top_token_count DESC, then wallet_score DESC
-    wallet_results.sort(
-        key=lambda w: (w.get("top_token_count", 0), w.get("wallet_score", 0)),
-        reverse=True,
-    )
-    return wallet_results
+            if addr not in wallet_map:
+                wallet_map[addr] = {
+                    "address": addr,
+                    "wallet_score": row[3] or 0,
+                    "chain": row[4] or "",
+                    "realized_pnl": row[5],
+                    "avg_roi": row[6],
+                    "win_rate": row[7],
+                    "total_trades": row[8] or 0,
+                    "wallet_tags": row[9] or "",
+                    "insider_flag": row[10],
+                    "last_active_at": row[11],
+                    "top_tokens_set": set(),
+                }
+
+            if token_addr in top_token_addrs:
+                wallet_map[addr]["top_tokens_set"].add(token_sym)
+
+        # Build final list
+        wallet_results = []
+        for addr, w in wallet_map.items():
+            result = dict(w)
+            result["top_token_count"] = len(w["top_tokens_set"])
+            result["top_tokens"] = sorted(w["top_tokens_set"])[:10]
+            del result["top_tokens_set"]
+            wallet_results.append(result)
+
+        # Sort by top_token_count DESC, then wallet_score DESC
+        wallet_results.sort(
+            key=lambda w: (w.get("top_token_count", 0), w.get("wallet_score", 0)),
+            reverse=True,
+        )
+        return wallet_results
+
+    except Exception:
+        return []
+    finally:
+        conn.close()
 
 
 @app.get("/cross/tokens", response_class=HTMLResponse)
