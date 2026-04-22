@@ -25,6 +25,10 @@ Usage:
 Output: ~/.hermes/data/token_screener/top100.json
 """
 
+import os
+import sys
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+
 import argparse
 import asyncio
 import json
@@ -45,7 +49,7 @@ from hermes_screener.logging import get_logger
 from hermes_screener.metrics import start_metrics_server
 from hermes_screener.revised_scoring import revised_score_token
 from hermes_screener.training import ExperienceCollector
-from hermes_screener.chart_sentiment import analyze_chart_sentiment
+from hermes_screener.chart_sentiment_v2 import analyze_chart_sentiment
 
 # ── Config (from centralized settings) ───────────────────────────────────────
 DB_PATH = settings.db_path
