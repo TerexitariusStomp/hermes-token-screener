@@ -12,10 +12,7 @@ Usage:
     from hermes_screener.provider_reliability import ProviderTracker
 
     tracker = ProviderTracker()
-    tracker.record("coingecko", success=True, elapsed_ms=230)
-    tracker.record("coingecko", success=False, elapsed_ms=15000, error="timeout")
 
-    health = tracker.health("coingecko")
     if health.quarantined:
         # Skip this provider
         pass

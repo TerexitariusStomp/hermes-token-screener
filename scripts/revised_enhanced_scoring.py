@@ -8,29 +8,9 @@ This module provides a more conservative scoring approach for Phase 3
 
 from __future__ import annotations
 
-
 import json
 import os
 from typing import Final
-
-# ── Priority token boost (tokens×wallets selection) ──
-_PRIORITY_PATH: Final[str] = os.path.expanduser("~/.hermes/data/token_screener/priority_tokens.json")
-_PRIORITY_TOKENS: Final[set[tuple[str, str]]] = _load_priority_tokens()
-
-def _load_priority_tokens() -> set[tuple[str, str]]:
-    tokens = set()
-    try:
-        if os.path.exists(_PRIORITY_PATH):
-            with open(_PRIORITY_PATH) as f:
-                data = json.load(f)
-            for item in data:
-                chain = (item.get("chain") or "").lower().strip()
-                addr = (item.get("contract_address") or item.get("address") or "").lower().strip()
-                if chain and addr:
-                    tokens.add((chain, addr))
-    except Exception:
-        pass
-    return tokens
 
 def revised_compute_enhanced_token_score(
     token: dict,
@@ -70,15 +50,6 @@ def revised_compute_enhanced_token_score(
 
     score = 0.0
 
-    # ── PRIORITY TOKEN BOOST (tokens×wallets) ──
-    addr = (token.get("contract_address") or token.get("address") or "").lower().strip()
-    chain = (token.get("chain") or "").lower().strip()
-    if chain in ("eth", "ether", "evm"): chain = "ethereum"
-    if chain in ("sol", "solan"): chain = "solana"
-    if chain in ("bnc", "binance"): chain = "bsc"
-    if (chain, addr) in _PRIORITY_TOKENS:
-        score += 25.0
-
     # ═══════════════════════════════════════════════════════════════════════════
     # 1. SMART MONEY PRESENCE (0-15 points) - REDUCED FROM 25
     # ═══════════════════════════════════════════════════════════════════════════
@@ -99,6 +70,19 @@ def revised_compute_enhanced_token_score(
         if max_score_sum > 0 and smart_wallet_count > 0:
             quality_ratio = min(smart_wallet_score_sum / max_score_sum, 1.0)
             score += quality_ratio * 5  # REDUCED from 8
+
+        # ROI Conviction: weight by average ROI of holding wallets (up to 5 pts)
+        if smart_wallet_avg_roi > 0:
+            if smart_wallet_avg_roi >= 500:
+                score += 5.0
+            elif smart_wallet_avg_roi >= 200:
+                score += 4.0
+            elif smart_wallet_avg_roi >= 100:
+                score += 3.0
+            elif smart_wallet_avg_roi >= 50:
+                score += 2.0
+            elif smart_wallet_avg_roi >= 10:
+                score += 1.0
 
         # Insider/sniper presence bonus
         if insider_count > 0:
@@ -225,6 +209,25 @@ def revised_compute_enhanced_token_score(
         else:
             score -= 1  # Kept same penalty
 
+    # Liquidity Turnover: capital efficiency = vol24 / liquidity (up to 4 pts)
+    liquidity = token.get("gmgn_liquidity", 0) or 0
+    if not liquidity and birdeye and birdeye.get("liquidity"):
+        liquidity = birdeye.get("liquidity", 0)
+    if liquidity > 0 and vol24 > 0:
+        turnover = vol24 / liquidity
+        if turnover >= 10:
+            score += 4.0  # extremely high turnover
+        elif turnover >= 5:
+            score += 3.0
+        elif turnover >= 2:
+            score += 2.0
+        elif turnover >= 1:
+            score += 1.0
+        elif turnover >= 0.5:
+            score += 0.5
+        else:
+            score -= 1.0  # stagnant pool
+
     # LP lock status (from RugCheck)
     lp_locked = rugcheck.get("lp_locked", False)
     if lp_locked:
@@ -306,47 +309,56 @@ def revised_compute_enhanced_token_score(
             score += 0.5  # REDUCED from 1
 
     if vol1h > 0 and vol24 > 0:
-        # Recent momentum: 1h volume / 24h volume * 24
+        # Volume Velocity: detect exploding vs collapsing volume
         hourly_momentum = (vol1h / vol24) * 24
-        if hourly_momentum > 1.5:
-            score += 1  # REDUCED from 3
+        if hourly_momentum > 3.0:
+            score += 5.0  # volume exploding
+        elif hourly_momentum > 1.5:
+            score += 3.0  # accelerating
         elif hourly_momentum > 1.0:
-            score += 0.5  # REDUCED from 2
+            score += 1.5  # steady
+        elif hourly_momentum > 0.5:
+            score += 0.5  # slowing
         else:
-            score += 0.25  # REDUCED from 1
+            score -= 2.0  # collapsing volume
 
     # ═══════════════════════════════════════════════════════════════════════════
-    # 6. PRICE MOMENTUM (0-5 points) - REDUCED FROM 10
+    # 6. MOMENTUM CONSISTENCY (up to 8 pts, down to -5) - REPLACES ISOLATED TIMEFRAME POINTS
     # ═══════════════════════════════════════════════════════════════════════════
     p1h = token.get("price_change_h1")
     p6h = token.get("price_change_h6")
     p24h = token.get("price_change_h24")
 
-    if p1h is not None:
-        if 5 <= p1h <= 50:
-            score += 2  # REDUCED from 4
-        elif 0 < p1h < 5:
-            score += 1.5  # REDUCED from 3
-        elif -10 < p1h <= 0:
-            score += 1  # REDUCED from 2
-        elif p1h > 50:
-            score += 0.5  # REDUCED from 1
+    # Only score if we have at least two timeframe data points
+    prices = [p for p in (p1h, p6h, p24h) if p is not None]
+    if len(prices) >= 2:
+        # All positive = momentum building; all negative = distribution
+        all_positive = all(p > 0 for p in prices)
+        all_negative = all(p < 0 for p in prices)
+
+        if all_positive:
+            # Check accelerating vs decelerating momentum
+            if p1h is not None and p6h is not None and p24h is not None:
+                if p1h > p6h > p24h:
+                    score += 8.0  # accelerating momentum (short > med > long)
+                elif p1h < p6h < p24h:
+                    score += 4.0  # decelerating but still positive
+                else:
+                    score += 5.0  # mixed positive
+            else:
+                score += 5.0  # positive across available timeframes
+        elif all_negative:
+            score -= 5.0  # consistent decline = distribution phase
         else:
-            score += 0  # Kept same
+            # Mixed directions - small penalty for uncertainty
+            score -= 1.0
 
-    if p6h is not None:
-        if p6h > 10:
-            score += 1.5  # REDUCED from 3
-        elif p6h > 0:
-            score += 1  # REDUCED from 2
-        elif p6h > -15:
-            score += 0.5  # REDUCED from 1
-
-    if p24h is not None:
-        if p24h > 20:
-            score += 1.5  # REDUCED from 3
-        elif p24h > 0:
-            score += 1  # REDUCED from 2
+    # Parabolic risk: 1h > 50% gets small bonus but capped
+    if p1h is not None and p1h > 50:
+        score += 0.5  # parabolic short term (risky, don't overreward)
+    # Severe dump protection: 1h < -20%
+    if p1h is not None and p1h < -20:
+        score -= 3.0
 
     # ═══════════════════════════════════════════════════════════════════════════
     # 7. SECURITY (0-3 points) - REDUCED FROM 5
@@ -484,6 +496,14 @@ def revised_compute_enhanced_token_score(
     elif liquidity > 50_000:
         score *= 1.1  # 10% bonus for $50K+ liquidity
 
-    # Note: Fresh tokens are desirable for pump potential - no penalty
+    # ═══════════════════════════════════════════════════════════════════════════
+    # FRESHNESS MULTIPLIER (applied at the end)
+    # ═══════════════════════════════════════════════════════════════════════════
+    if age < 6 and vol24 > 1000 and (p1h is not None and p1h > 5):
+        score *= 1.25  # very fresh + active + pumping = max potential
+    elif age < 24 and vol24 > 1000:
+        score *= 1.15  # fresh + active = good potential
+    elif age > 720:  # >30 days
+        score *= 0.6  # stale token, reduce score
 
     return round(max(0, min(100, score)), 2)

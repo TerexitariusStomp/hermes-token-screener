@@ -105,7 +105,7 @@ async def enrich_via_worker(tokens: list[dict], layers: list[str] | None = None)
         raise ValueError("HERMES_WORKER_URL not set - cannot use remote worker")
 
     if not layers:
-        layers = ["dexscreener", "rugcheck", "etherscan", "coingecko"]
+        layers = ["dexscreener", "rugcheck", "etherscan"]  # CoinGecko removed - Dexscreener is the sole market data provider
 
     payload = {"tokens": tokens, "layers": layers}
 
@@ -175,7 +175,7 @@ async def enrich_batch(chain: str | None = None, limit: int = 30) -> dict:
 def remote_proxy(url: str, method: str = "GET", headers: dict | None = None) -> dict:
     """
     Proxy an API call through the remote worker.
-    Useful for Dexscreener, CoinGecko, etc.
+    Useful for Dexscreener API calls.
     """
     if not WORKER_URL:
         # Fallback to direct call

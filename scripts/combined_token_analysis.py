@@ -5,7 +5,7 @@ Combined Telegram + Twitter Analysis for Top 10 Tokens
 Merges:
   - Telegram: members, sentiment_score, sentiment_label from top10_tokens.db
   - Twitter: profile quality, search quality, tweet-level sentiment from twitter_token_analysis.json
-  - Twitter sentiment: keyword-based scoring (same approach as CoinGecko up/down ratio)
+  - Twitter sentiment: keyword-based scoring (same approach as Dexscreener buy/sell ratio)
 """
 
 import json
@@ -171,7 +171,7 @@ NEUTRAL_WORDS = {
 
 
 def compute_tweet_sentiment(tweets: list) -> dict:
-    """Compute sentiment from tweet texts using keyword scoring (CoinGecko-style)."""
+    """Compute sentiment from tweet texts using keyword scoring (Dexscreener-style)."""
     if not tweets:
         return {
             "sentiment_score": None,
@@ -208,14 +208,14 @@ def compute_tweet_sentiment(tweets: list) -> dict:
             neutral_count += 1
 
     n = len(tweets)
-    # Normalize to -100..100 scale (matching CoinGecko sentiment)
+    # Normalize to -100..100 scale (matching Dexscreener sentiment)
     if n > 0:
         raw = total_score / n  # -1 to +1
         sentiment_score = round(raw * 100, 1)
     else:
         sentiment_score = 0.0
 
-    # Label (same as CoinGecko approach)
+    # Label (same as Dexscreener approach)
     if sentiment_score > 60:
         label = "very_positive"
     elif sentiment_score > 20:

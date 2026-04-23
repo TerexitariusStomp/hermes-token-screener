@@ -8,7 +8,6 @@ Usage:
     from hermes_screener.config import settings
 
     db_path = settings.db_path
-    api_key = settings.coingecko_api_key
 """
 
 from __future__ import annotations
@@ -73,7 +72,6 @@ class Settings(BaseSettings):
 
     # ── API Keys (all optional — graceful degradation) ───────────────────────
     # pydantic-settings auto-maps UPPER_SNAKE_CASE env vars to snake_case fields
-    coingecko_api_key: str = Field(default="")
     etherscan_api_key: str = Field(default="")
     defi_api_key: str = Field(default="")
     rugcheck_api_key: str = Field(default="")
@@ -86,7 +84,7 @@ class Settings(BaseSettings):
     birdeye_api_key: str = Field(default="")
     coinstats_api_key: str = Field(default="")
     quicknode_key: str = Field(default="")
-    zerion_api_key: str = Field(default="")
+    zerion_api_key: str = Field(default="zk_8acbcf31cbe241cc8523f8e3362c8e97")
     goldrush_api_key: str = Field(default="")
     bitquery_api_key: str = Field(default="")
     goldsky_api_key: str = Field(default="")
@@ -121,7 +119,7 @@ class Settings(BaseSettings):
     rate_limit_delay: float = Field(default=1.0)
 
     # ── Prometheus / Metrics ─────────────────────────────────────────────────
-    metrics_port: int = Field(default=9090)
+    metrics_port: int = Field(default=9091)
     metrics_enabled: bool = Field(default=True)
 
     # ── Logging ──────────────────────────────────────────────────────────────

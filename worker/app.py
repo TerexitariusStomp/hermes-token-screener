@@ -15,8 +15,6 @@ Environment:
   PORT                  - Server port (default: 10000)
   GMGN_API_KEY          - GMGN API key (optional)
   ETHERSCAN_API_KEY     - Etherscan API key (optional)
-  COINGECKO_API_KEY     - CoinGecko API key (optional)
-  RUGCHECK_SHIELD_KEY   - RugCheck shield key (optional)
 """
 
 import asyncio
@@ -37,9 +35,7 @@ from pydantic import BaseModel, Field
 
 PORT = int(os.environ.get("PORT", "10000"))
 GMGN_API_KEY = os.environ.get("GMGN_API_KEY", "")
-ETHERSCAN_API_KEY = os.environ.get("ETHERSCAN_API_KEY", "")
-COINGECKO_API_KEY = os.environ.get("COINGECKO_API_KEY", "")
-RUGCHECK_SHIELD_KEY = os.environ.get("RUGCHECK_SHIELD_KEY", "")
+ETHERSCAN_API_KEY = os.environ.get("ETHERSCAN_API_KEY", "")RUGCHECK_SHIELD_KEY = os.environ.get("RUGCHECK_SHIELD_KEY", "")
 
 GMGN_DELAY = 1.2  # seconds between GMGN calls
 GMGN_CONCURRENCY = 3
@@ -130,7 +126,7 @@ class TokenInput(BaseModel):
 class EnrichRequest(BaseModel):
     tokens: list[TokenInput]
     layers: list[str] = Field(
-        default_factory=lambda: ["dexscreener", "rugcheck", "etherscan", "coingecko"]
+        default_factory=lambda: ["dexscreener", "rugcheck", "etherscan"]
     )
 
 
@@ -297,50 +293,6 @@ async def _enrich_etherscan(tokens: list[dict]) -> dict[str, dict]:
     return results
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Enrichment: CoinGecko
-# ─────────────────────────────────────────────────────────────────────────────
-
-async def _enrich_coingecko(tokens: list[dict]) -> dict[str, dict]:
-    """CoinGecko market data (free tier, no key needed for basic)."""
-    results = {}
-    evm_tokens = [t for t in tokens if t["chain"].lower() not in ("solana", "sol")]
-    cg_chain_map = {
-        "ethereum": "ethereum", "bsc": "binance-smart-chain",
-        "polygon": "polygon-pos", "arbitrum": "arbitrum-one",
-        "optimism": "optimistic-ethereum", "base": "base",
-        "avalanche": "avalanche", "fantom": "fantom",
-    }
-    for t in evm_tokens:
-        chain = t["chain"].lower()
-        cg_chain = cg_chain_map.get(chain)
-        if not cg_chain:
-            continue
-        addr = t["address"]
-        try:
-            url = f"https://api.coingecko.com/api/v3/coins/{cg_chain}/contract/{addr.lower()}"
-            headers = {}
-            if COINGECKO_API_KEY:
-                headers["x-cg-demo-api-key"] = COINGECKO_API_KEY
-            resp = await _client.get(url, headers=headers)
-            if resp.status_code == 200:
-                data = resp.json()
-                md = data.get("market_data", {})
-                results[addr.lower()] = {
-                    "coingecko_id": data.get("id"),
-                    "coingecko_market_cap": md.get("market_cap", {}).get("usd"),
-                    "coingecko_total_volume": md.get("total_volume", {}).get("usd"),
-                    "coingecko_ath": md.get("ath", {}).get("usd"),
-                    "coingecko_ath_change_pct": md.get("ath_change_percentage", {}).get("usd"),
-                }
-            elif resp.status_code == 429:
-                log.warning("CoinGecko rate limited")
-                await asyncio.sleep(60)
-        except Exception as e:
-            log.debug(f"CoinGecko error for {addr}: {e}")
-        await asyncio.sleep(1.5)  # free tier is slow
-    return results
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # GMGN API (via direct HTTP, no CLI dependency on VPS)
@@ -462,7 +414,7 @@ async def enrich(req: EnrichRequest):
     """
     Enrich tokens with market/security data.
 
-    Layers: dexscreener, goplus, rugcheck, etherscan, coingecko
+    Layers: dexscreener, goplus, rugcheck, etherscan
     """
     t0 = time.time()
     tokens = [t.model_dump() for t in req.tokens]
@@ -480,7 +432,6 @@ async def enrich(req: EnrichRequest):
         "dexscreener": _enrich_dexscreener,
         "rugcheck": _enrich_rugcheck,
         "etherscan": _enrich_etherscan,
-        "coingecko": _enrich_coingecko,
     }
 
     for layer_name in req.layers:

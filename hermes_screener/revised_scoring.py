@@ -49,7 +49,6 @@ def _load_priority_tokens() -> None:
 
 _load_priority_tokens()
 
-
 def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     """
     Revised token scoring with more conservative methodology.
@@ -328,17 +327,6 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     if token.get("derived_has_freeze_authority"):
         score *= 0.4  # REDUCED from 0.5
 
-    # CoinGecko listings (unique signals)
-    if token.get("cg_is_listed"):
-        score *= 1.05  # REDUCED from 1.08
-        positives.append("CoinGecko listed")
-    if token.get("cg_listed_on_binance"):
-        score *= 1.05  # REDUCED from 1.10
-        positives.append("BINANCE")
-    elif token.get("cg_listed_on_coinbase"):
-        score *= 1.05  # REDUCED from 1.08
-        positives.append("COINBASE")
-
     # Volume penalties
     buys_h1 = (dex.get("txns_h1", {}) or {}).get("buys", 0) or 0
     sells_h1 = (dex.get("txns_h1", {}) or {}).get("sells", 0) or 0
@@ -439,7 +427,6 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
 
     return round(score, 2), positives, negatives
 
-
 def test_revised_scoring():
     """Test the revised scoring with sample tokens."""
     # Sample tokens from the user's list
@@ -484,7 +471,6 @@ def test_revised_scoring():
         print(f"  New score: {score}")
         print(f"  Positives: {positives}")
         print(f"  Negatives: {negatives}")
-
 
 if __name__ == "__main__":
     test_revised_scoring()

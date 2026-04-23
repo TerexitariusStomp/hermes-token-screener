@@ -1,13 +1,9 @@
-"""DeFi trading execution layer - multi-chain DEX aggregator + direct contract execution."""
+"""DeFi trading execution layer — lazy-loaded submodules.
 
-from hermes_screener.trading.contract_executor import ContractExecutor
-from hermes_screener.trading.dex_aggregator_trader import DexAggregatorTrader
-from hermes_screener.trading.liquidity_daemon import LiquidityDaemon
-from hermes_screener.trading.liquidity_manager import LiquidityManager
-from hermes_screener.trading.polymarket_complete_set_bot import run as run_polymarket_complete_set
-from hermes_screener.trading.portfolio_registry import PortfolioRegistry
-from hermes_screener.trading.price_oracle import PriceOracle
-from hermes_screener.trading.protocol_liquidity_executor import ProtocolLiquidityExecutor
+Imports are deferred until attribute access to avoid heavy dependency chains
+during partial use (e.g. only arbitrage_scanner)."""  # noqa: D401
+
+from __future__ import annotations
 
 __all__ = [
     "ContractExecutor",
@@ -17,5 +13,36 @@ __all__ = [
     "PortfolioRegistry",
     "PriceOracle",
     "ProtocolLiquidityExecutor",
-    "run_polymarket_complete_set",
+    "ProtocolRegistry",
+    "_import",  # testing hook
 ]
+
+_import = __import__  # expose for testing
+
+
+def __getattr__(name: str):
+    if name == "ContractExecutor":
+        from hermes_screener.trading.contract_executor import ContractExecutor
+        return ContractExecutor
+    if name == "DexAggregatorTrader":
+        from hermes_screener.trading.dex_aggregator_trader import DexAggregatorTrader
+        return DexAggregatorTrader
+    if name == "LiquidityManager":
+        from hermes_screener.trading.liquidity_manager import LiquidityManager
+        return LiquidityManager
+    if name == "LiquidityDaemon":
+        from hermes_screener.trading.liquidity_daemon import LiquidityDaemon
+        return LiquidityDaemon
+    if name == "PortfolioRegistry":
+        from hermes_screener.trading.portfolio_registry import PortfolioRegistry
+        return PortfolioRegistry
+    if name == "PriceOracle":
+        from hermes_screener.trading.price_oracle import PriceOracle
+        return PriceOracle
+    if name == "ProtocolLiquidityExecutor":
+        from hermes_screener.trading.protocol_liquidity_executor import ProtocolLiquidityExecutor
+        return ProtocolLiquidityExecutor
+    if name == "ProtocolRegistry":
+        from hermes_screener.trading.protocol_registry import ProtocolRegistry
+        return ProtocolRegistry
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

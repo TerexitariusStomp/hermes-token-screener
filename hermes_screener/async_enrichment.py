@@ -6,8 +6,8 @@ using asyncio + httpx (~1-2 min depending on API latency).
 
 Architecture:
   Layer 0 (Dexscreener): REQUIRED — runs first, blocking (enriches raw candidates with market data)
-  Layers 1-11: OPTIONAL — all run in parallel via asyncio.gather()
-    - HTTP enrichers (Surf, RugCheck, Etherscan, De.Fi, CoinGecko, Zerion):
+  Layers 1-10: OPTIONAL — all run in parallel via asyncio.gather()
+    - HTTP enrichers (Surf, RugCheck, Etherscan, De.Fi, Zerion):
       use httpx.AsyncClient with per-enricher semaphores for rate limiting
     - CLI enrichers (Surf CLI, GMGN MCP): use asyncio.to_thread()
     - Derived (no API): runs directly (pure computation)
@@ -372,37 +372,6 @@ async def _enrich_defi(token: dict, client: httpx.AsyncClient) -> None:
         "issue_count": len(issues),
         "critical_issues": len([i for i in issues if i.get("severity") == "CRITICAL"]),
         "is_honeypot": report.get("isHoneypot", False),
-    }
-
-
-async def _enrich_coingecko(token: dict, client: httpx.AsyncClient) -> None:
-    """Layer 7: CoinGecko market data."""
-    addr = token["contract_address"]
-    params = {"localization": "false", "tickers": "false", "community_data": "false"}
-    if settings.coingecko_api_key:
-        params["x_cg_demo_api_key"] = settings.coingecko_api_key
-
-    resp = await client.get(
-        f"https://api.coingecko.com/api/v3/coins/{addr}/contract/{addr}",
-        params=params,
-    )
-    if resp.status_code != 200:
-        # Try Solana contract lookup
-        resp = await client.get(
-            f"https://api.coingecko.com/api/v3/coins/solana/contract/{addr}",
-            params=params,
-        )
-        if resp.status_code != 200:
-            return
-
-    data = resp.json()
-    token["coingecko"] = {
-        "sentiment_up": data.get("sentiment_votes_up_percentage", 0),
-        "sentiment_down": data.get("sentiment_votes_down_percentage", 0),
-        "ath": data.get("market_data", {}).get("ath", {}).get("usd"),
-        "ath_change_pct": data.get("market_data", {}).get("ath_change_percentage", {}).get("usd"),
-        "exchanges": len(data.get("tickers", [])) if data.get("tickers") else 0,
-        "categories": data.get("categories", []),
     }
 
 
@@ -1142,8 +1111,6 @@ async def run_async_enrichment(
         # De.Fi
         defi_enricher = AsyncHttpEnricher("De.Fi", concurrency=2, delay=1.0)
 
-        # CoinGecko
-        coingecko_enricher = AsyncHttpEnricher("CoinGecko", concurrency=2, delay=1.5)
 
         # Zerion
         zerion_enricher = AsyncHttpEnricher("Zerion", concurrency=2, delay=1.0)
@@ -1190,14 +1157,6 @@ async def run_async_enrichment(
                 return LayerResult("De.Fi", True, ok, total, time.time() - start)
             except Exception as e:
                 return LayerResult("De.Fi", False, 0, len(enriched), time.time() - start, str(e))
-
-        async def run_coingecko():
-            start = time.time()
-            try:
-                ok, total = await coingecko_enricher.enrich_batch(_enrich_coingecko, enriched, client)
-                return LayerResult("CoinGecko", True, ok, total, time.time() - start)
-            except Exception as e:
-                return LayerResult("CoinGecko", False, 0, len(enriched), time.time() - start, str(e))
 
         async def run_zerion():
             start = time.time()
@@ -1294,8 +1253,7 @@ async def run_async_enrichment(
             run_rugcheck(),
             run_etherscan(),
             run_defi(),
-            run_coingecko(),
-            run_zerion(),
+                run_zerion(),
             run_solscan(),
             run_helius(),
             run_birdeye(),

@@ -30,7 +30,7 @@ def test_metrics_histogram_observe():
 
     metrics.token_score.observe(85.5)
     metrics.enrich_layer_duration.labels(layer="dexscreener").observe(1.23)
-    metrics.api_latency.labels(provider="coingecko").observe(0.45)
+    metrics.api_latency.labels(provider="dexscreener").observe(0.45)
 
 
 def test_metrics_wallet_patterns():

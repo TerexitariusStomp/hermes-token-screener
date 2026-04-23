@@ -227,7 +227,7 @@ BEARISH_WORDS = {
 
 
 def compute_sentiment(tweets: list) -> dict:
-    """Keyword-based sentiment scoring (-100 to +100), mirrors CoinGecko approach."""
+    """Keyword-based sentiment scoring (-100 to +100), mirrors Dexscreener approach."""
     if not tweets:
         return {
             "sentiment_score": None,

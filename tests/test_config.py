@@ -48,7 +48,6 @@ def test_computed_paths():
 
 def test_api_keys_empty_by_default():
     s = _fresh()
-    assert s.coingecko_api_key == ""
     assert s.etherscan_api_key == ""
     assert s.gmgn_api_key == ""
 
@@ -57,11 +56,9 @@ def test_env_override(tmp_path):
     from hermes_screener.config import Settings
 
     env_file = tmp_path / ".env"
-    env_file.write_text("top_n=50\n" "max_enrich=100\n" "coingecko_api_key=test_key_123\n" "log_level=DEBUG\n")
     s = Settings(hermes_home=tmp_path, _env_file=str(env_file))
     assert s.top_n == 50
     assert s.max_enrich == 100
-    assert s.coingecko_api_key == "test_key_123"
     assert s.log_level == "DEBUG"
 
 
@@ -77,11 +74,11 @@ def test_api_key_masked():
     s = _fresh()
     assert s.api_key_masked("nonexistent_key") == "<empty>"
 
-    s2 = _fresh(coingecko_api_key="short")
-    assert s2.api_key_masked("coingecko_api_key") == "***"
+    s2 = _fresh()
+    assert s2.api_key_masked() == "***"
 
-    s3 = _fresh(coingecko_api_key="abcdefghijklmnop")
-    assert s3.api_key_masked("coingecko_api_key") == "abcd...mnop"
+    s3 = _fresh()
+    assert s3.api_key_masked() == "abcd...mnop"
 
 
 def test_scoring_weights_sum():
