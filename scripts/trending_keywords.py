@@ -96,6 +96,7 @@ STOPWORDS = {
     # Extended stopwords
     "place", "waiting", "came", "upon", "also",
     "through", "since", "something", "anything",
+    "end", "going", "combining", "inspired", "symbol", "oldest", "private",
 
     # Extended stopwords
     "place",
@@ -333,6 +334,7 @@ def smart_extract(descriptions: list[str], token_names: list[str], signals: list
         "work", "seem", "feel", "try", "leave", "keep", "let", "show", "hear",
         "play", "run", "move", "live", "hold", "bring", "become", "get", "one",
         "place", "waiting", "came", "upon", "through", "since",
+        "end", "going", "combining", "inspired", "symbol", "oldest", "private",
     ]
     leaked = [w for w in CRITICAL_STOPWORDS if word_freq.get(w, 0) > 0]
     if leaked:
