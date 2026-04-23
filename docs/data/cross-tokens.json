@@ -1,6 +1,6 @@
 [
   {
-    "symbol": "?",
+    "symbol": "AlienPippin",
     "chain": "solana",
     "contract_address": "Ai5miuSWAhMzi2bWAAkSVrAUi8oG3xRX1n24CYgpump",
     "score": 47.05,
@@ -20,7 +20,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Untweeney",
     "chain": "solana",
     "contract_address": "Eh9xdfR9uxCjoyY85m3caC2K3MEEuSGNBXaCYpoEpump",
     "score": 39.14,
@@ -42,7 +42,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ASTRO",
     "chain": "ethereum",
     "contract_address": "0xdE4AC82A7593F7b3e999D8f085Daaa8674A28F6d",
     "score": 37.35,
@@ -62,7 +62,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "LARP",
     "chain": "solana",
     "contract_address": "HtHknhf3sFPMnEyz8EszVvjGs4pU8fFZXuqTN5C5pump",
     "score": 36.89,
@@ -82,7 +82,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "LEVR",
     "chain": "solana",
     "contract_address": "2m1evG1NAwhZpi4vCYS411YfXYMpLSKUsZsPhk63EFkX",
     "score": 35.71,
@@ -104,7 +104,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "SPLC",
     "chain": "solana",
     "contract_address": "2dG2u8emzTWwEvahmGPC7pNng4FDXVQyepgfAtmMpump",
     "score": 35.68,
@@ -124,7 +124,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "$ORG",
     "chain": "solana",
     "contract_address": "7XD1HNr265hKEo9UgzSMoTbc4pAxuQg4anrEoJ16pump",
     "score": 34.51,
@@ -144,7 +144,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ANDY",
     "chain": "solana",
     "contract_address": "7jF7tjSKLambtJMiAyCXfaj8nVrqF3UfJxgWP9tKLGwT",
     "score": 33.49,
@@ -164,7 +164,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "FLYYQ",
     "chain": "solana",
     "contract_address": "81iqEgzUJHzVipnKtwLGBDFdxwcN5DrzzFVg7MGkyAPZ",
     "score": 32.88,
@@ -184,7 +184,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "DUMBMONEY",
     "chain": "solana",
     "contract_address": "CAjtTHvC878f8cZ4zEwdvgjkjFM7rbYN8Mb1go1cpump",
     "score": 32.45,
@@ -204,7 +204,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Maya",
     "chain": "solana",
     "contract_address": "BkHwSqqJTbeFevvdqMDmpcbMU1eQRLrvY4BBM9Wcpump",
     "score": 32.35,
@@ -224,7 +224,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MYSTERY",
     "chain": "ethereum",
     "contract_address": "0x45547AB0100f5E8b158258b6d94D7586De69fc21",
     "score": 32.33,
@@ -244,7 +244,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "BENDY",
     "chain": "solana",
     "contract_address": "sKHrhKtHtR6wtpdwfKntoLo8MMnRM67P2BjLNBPpump",
     "score": 31.85,
@@ -264,7 +264,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "uncreal",
     "chain": "solana",
     "contract_address": "CeJbKqhsFwjPs7n6Z9E14bZAXLcZNdbqdAWV2LWopump",
     "score": 31.71,
@@ -284,7 +284,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "wif2",
     "chain": "solana",
     "contract_address": "9tCjcZFwaqMFSFkiYDRAGd3kxChxVguHDCREb6eSpump",
     "score": 31.7,
@@ -304,7 +304,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "PEPTIDE",
     "chain": "solana",
     "contract_address": "2fXcg8jZ7zByFhhdwPz7oyTjEpC7AsxdfbaAntsgAgzt",
     "score": 31.48,
@@ -324,7 +324,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "SPIKE",
     "chain": "solana",
     "contract_address": "BFiGUxnidogqcZAPVPDZRCfhx3nXnFLYqpQUaUGpump",
     "score": 31.23,
@@ -344,7 +344,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "seed",
     "chain": "solana",
     "contract_address": "HzirVh2UsgMUZ1je6wvDTdNHdiaReX54XMApq7cJpump",
     "score": 30.33,
@@ -364,7 +364,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "PUPR",
     "chain": "solana",
     "contract_address": "4EBnYa7BFUSK3SYVoC4xrrPUNmyBRG9H9jfGFeM6brrr",
     "score": 30.31,
@@ -384,7 +384,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MHGA",
     "chain": "solana",
     "contract_address": "2b9iJWg3sppbAAQMuKBXa1iuSSsuPvKwcdiA4VdNpump",
     "score": 29.8,
@@ -404,7 +404,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MTGA",
     "chain": "solana",
     "contract_address": "9VimYprbUJDzkpnQb2VNpaZ8yXiipfdj2w1M14RGpump",
     "score": 29.31,
@@ -424,7 +424,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "CLAW3DS",
     "chain": "solana",
     "contract_address": "FQ2RMjvsPNosWyH2hs8b4LiYcPPgQb1YMAzymPYgpump",
     "score": 28.91,
@@ -444,7 +444,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Rudi",
     "chain": "solana",
     "contract_address": "Hc2CZzfiuBuSjTg6mpUByHVryy5e4yu8L7L4vtppump",
     "score": 28.44,
@@ -464,7 +464,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MAPLE",
     "chain": "ethereum",
     "contract_address": "0xf1a1ba35b7b431e3b62219726363b95c3f15725e",
     "score": 28.35,
@@ -484,7 +484,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "dickface",
     "chain": "solana",
     "contract_address": "cVuD7VfY5mwbHt17HaNtku5EbBWYDW2Vy6EQYzYpump",
     "score": 27.99,
@@ -504,7 +504,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Etherium",
     "chain": "solana",
     "contract_address": "2fQkd9vyZ59vACsV6gWdqPVMiJnfgMYHpm9pPDpwpump",
     "score": 27.99,
@@ -524,7 +524,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "TOLY",
     "chain": "solana",
     "contract_address": "5Sw6NB9WzKMX6Nx41TdMPjvUrPpr5QseNBbVTjJEpump",
     "score": 27.79,
@@ -544,7 +544,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ASTROID",
     "chain": "solana",
     "contract_address": "8NwtzwGm4CV8Hm4fJXR69ac1MxDYuSaN3A9HVyikpump",
     "score": 27.68,
@@ -564,7 +564,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "CUP",
     "chain": "base",
     "contract_address": "0x08d1c6b78e8aa80E0C505829C30C0f81F984a668",
     "score": 27.53,
@@ -584,7 +584,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ooo",
     "chain": "solana",
     "contract_address": "G6mNZN8o16QBcTqfuEx6FzjiWa94B1XWhfyDxjDibrrr",
     "score": 27.41,
@@ -604,7 +604,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ELIEN",
     "chain": "solana",
     "contract_address": "Hktmoq7Xgv1SzntXgggZ846GoJGtCPN1juKYzrfSpump",
     "score": 26.84,
@@ -626,7 +626,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "LENNY",
     "chain": "solana",
     "contract_address": "91bA1u6ryqsvPRm9LKNe3iLFQmU6o6czsQjHqjJvbrrr",
     "score": 26.35,
@@ -646,7 +646,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "COBSON",
     "chain": "ethereum",
     "contract_address": "0xdbA1193EEd47b878333293E8CdF72eC87fDcCAE8",
     "score": 26.34,
@@ -666,7 +666,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "WCOR",
     "chain": "solana",
     "contract_address": "WCoRVxGcpiwE6EvtDjXHJq6Kcn4nWT9Ubt1PrJHNAzM",
     "score": 25.96,
@@ -686,7 +686,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "SAEP",
     "chain": "solana",
     "contract_address": "HEKVx7cxn4afiDKW56sWJGxzJe7wVBmhZhFzdqjApump",
     "score": 25.61,
@@ -706,7 +706,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "DOGE",
     "chain": "solana",
     "contract_address": "CxcRV9yjwReLXAqfYRxT5xtptvRRV7F9fvzukPUdpump",
     "score": 25.01,
@@ -726,7 +726,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ASTEROID",
     "chain": "solana",
     "contract_address": "DzYuYMiYi61qALbkeP1XUHsCMKfuPiXydM627tUudoge",
     "score": 25.01,
@@ -746,7 +746,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "M67GA",
     "chain": "solana",
     "contract_address": "AS8nmMKRSaaEz4kHWWe7TCZc3Ysy7o3VMEoDSYV2pump",
     "score": 24.51,
@@ -766,7 +766,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "BTW",
     "chain": "solana",
     "contract_address": "FqsNErRPVNbXY5J5LSmgEHxdGvASyf2kE4QcUoaoi9Cr",
     "score": 24.48,
@@ -786,7 +786,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "hallelujah",
     "chain": "solana",
     "contract_address": "9kH5nweQpZDw7o3n32Kh8HVWGzf871kgZmvSf8GVpump",
     "score": 24.42,
@@ -806,7 +806,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "PEPE",
     "chain": "solana",
     "contract_address": "DzRrQdFwDGMeXJJyZRn83h9wXCjZ9d9V8rnAQpcmpump",
     "score": 24.42,
@@ -826,7 +826,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ASTEROID",
     "chain": "solana",
     "contract_address": "F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2",
     "score": 24.11,
@@ -846,7 +846,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "US",
     "chain": "solana",
     "contract_address": "98nFfSodfwfP4vuoG1vRtHojzC55vQG4XRLESeRJpump",
     "score": 24.11,
@@ -866,7 +866,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "BUCKY",
     "chain": "ethereum",
     "contract_address": "0x40ce06B500828233ebEE4b0556b81f71C0Be4569",
     "score": 24.08,
@@ -888,7 +888,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "FED",
     "chain": "solana",
     "contract_address": "9RFqt1pNCQFb6fDVCFTRXfoGQTL5hHGvP9U7VzFCbrrr",
     "score": 24.0,
@@ -908,7 +908,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "WIFE",
     "chain": "solana",
     "contract_address": "6GdYR2J1FHmSGfUoqopjRD5rGNJug1J5PzDBTRzZX5gU",
     "score": 23.86,
@@ -930,7 +930,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Patapim",
     "chain": "solana",
     "contract_address": "W6wjBw8HJ65PyyHr9RkTXK7dKvrP1CNkgPWVEHDbrrr",
     "score": 23.58,
@@ -950,7 +950,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "INCEL",
     "chain": "solana",
     "contract_address": "GhmrFtvxGhKmwHJLWwTgzGALjkfPqtCrLtMeQW84pump",
     "score": 23.34,
@@ -970,7 +970,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MPFA",
     "chain": "solana",
     "contract_address": "dsaF5F9WaeVWw3GtyoXMAZQ9y6qrMARPDC165N4pump",
     "score": 23.09,
@@ -990,7 +990,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "unc",
     "chain": "solana",
     "contract_address": "ACtfUWtgvaXrQGNMiohTusi5jcx5RJf5zwu9aAxkpump",
     "score": 22.62,
@@ -1010,7 +1010,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ALTSZN",
     "chain": "solana",
     "contract_address": "CcLd8HTAKLWtQHatqPwBQjtuCA72FNB9E1ckRTEzpump",
     "score": 22.56,
@@ -1032,7 +1032,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "DANKDOGE",
     "chain": "solana",
     "contract_address": "9qMWbx3wDtEYJhw5dGKUpkwcHnunpUiwGzLi2hPopump",
     "score": 22.15,
@@ -1052,7 +1052,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "SMB",
     "chain": "solana",
     "contract_address": "E9TH58MePPnzoULVX2RtcaFfVNSBtAuC3dArdsKdsmb",
     "score": 22.04,
@@ -1072,7 +1072,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MintMan",
     "chain": "solana",
     "contract_address": "4LHXvF8nekaS2uagF8Sgh5NqJTNtQrXxn8koFWHnpump",
     "score": 21.45,
@@ -1092,7 +1092,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Skibidi",
     "chain": "solana",
     "contract_address": "FFvp48WygUSxCCNP3n9Zu5G7F2yatwXQHbpD2Mkkpump",
     "score": 21.41,
@@ -1112,7 +1112,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "phone",
     "chain": "solana",
     "contract_address": "3FyHNz9wCauQvjL7LBHrNt6eUtowfGz9htLHKPAUpump",
     "score": 21.2,
@@ -1132,7 +1132,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "LOL",
     "chain": "solana",
     "contract_address": "34q2KmCvapecJgR6ZrtbCTrzZVtkt3a5mHEA3TuEsWYb",
     "score": 21.08,
@@ -1152,7 +1152,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Sharon",
     "chain": "solana",
     "contract_address": "HX38toQHZzxxeY82uvSHVgfBP77aWqk3mv4ZtwEVpump",
     "score": 21.05,
@@ -1172,7 +1172,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "wyd",
     "chain": "solana",
     "contract_address": "g74Xh31eaq6Ft5PGJBrRCi6W94HiNzrF92bDTcgpump",
     "score": 21.0,
@@ -1192,7 +1192,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Scavenger",
     "chain": "solana",
     "contract_address": "EKFQ3qwEyWHQkAQrspzEPgfwyLEmELtPTpf9vDszpump",
     "score": 21.0,
@@ -1212,7 +1212,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "AFC",
     "chain": "solana",
     "contract_address": "74bTCKT5jhHu37bL94dMjGYmq6FPhxssrW1KQ8DApump",
     "score": 21.0,
@@ -1232,7 +1232,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Bridgoor",
     "chain": "solana",
     "contract_address": "4dsTyziGPdXSWDt5XP7uDYSkmMcGfgQAM14wvz5Qpump",
     "score": 20.99,
@@ -1252,7 +1252,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "papr",
     "chain": "solana",
     "contract_address": "DqrvC8tCidBAKKRS3iqt8cotdLAhqagf7PG67aZ5brrr",
     "score": 20.99,
@@ -1272,7 +1272,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MMXXVI",
     "chain": "solana",
     "contract_address": "uyJCAxSZLKVXodcLQbrb2gmkaZispsZKbw3iZLAaGWm",
     "score": 20.82,
@@ -1292,7 +1292,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "BABYASTEROID",
     "chain": "bsc",
     "contract_address": "0x0bb212d0f2e29f5ab51bf293f5c57d6c5fde4444",
     "score": 20.82,
@@ -1312,7 +1312,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Condom",
     "chain": "solana",
     "contract_address": "GneNdXnyRr11Nxca8AL4sFVqRAGHbs1iCnoUFHRupump",
     "score": 20.75,
@@ -1332,7 +1332,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "EVERYTHING",
     "chain": "solana",
     "contract_address": "9hphTxgwwhVB7gWnnUN98oqFCFZjDoToP1H1AHvNpump",
     "score": 20.75,
@@ -1352,7 +1352,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Flork",
     "chain": "solana",
     "contract_address": "DiZnqeSCxgeGTYTndJ26EhgpED28xu1SW62ohE4gpump",
     "score": 20.65,
@@ -1372,7 +1372,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ASTEROID",
     "chain": "solana",
     "contract_address": "4UeLCRqARmfb6e6KQijtiktqqXUxbfk6jZng7DhuBAGS",
     "score": 20.54,
@@ -1392,7 +1392,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "DOGE1",
     "chain": "solana",
     "contract_address": "4Zwa4LCn9aoX9vS728CpFNR9Ui74QKXYY4NcoMgopump",
     "score": 20.53,
@@ -1412,7 +1412,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "CULT",
     "chain": "solana",
     "contract_address": "8XLobbxncGMuaNiSZ2eymJW73RHihfC7gwkW8kuvpump",
     "score": 20.45,
@@ -1432,7 +1432,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "HOPE",
     "chain": "solana",
     "contract_address": "2Nf6MzfGwzPMJqHEMCi8EWjbhxftHm7mo4zR9Pb5pump",
     "score": 20.28,
@@ -1452,7 +1452,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Kroa",
     "chain": "solana",
     "contract_address": "dvVVJFAEdSHWEQdrwc7YaXKrU1TWgDdENPxmGKhpump",
     "score": 20.05,
@@ -1472,7 +1472,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ZOEY",
     "chain": "solana",
     "contract_address": "FMwQutk2FCLTv2sjTDHf2veQoGgTDsPGN8UzZKXKbrrr",
     "score": 19.95,
@@ -1492,7 +1492,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MOG",
     "chain": "solana",
     "contract_address": "71Ys7KutNBqoPtAkhdSALCpBZArnXaywYsxfM58tpump",
     "score": 19.9,
@@ -1512,7 +1512,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "BAYC",
     "chain": "ethereum",
     "contract_address": "0x5638A681AA0F099454861d9EF39d51561f5B964D",
     "score": 19.8,
@@ -1532,7 +1532,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Online",
     "chain": "solana",
     "contract_address": "HyX4QnjXVRFLJw4GtX6ESbhPyjWi6qptGMgrifctpump",
     "score": 19.59,
@@ -1552,7 +1552,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ALIENPEPE",
     "chain": "solana",
     "contract_address": "Ai9HeYDrjpJtrjpHfDwVXfVoCR5ja9Cmt9cHGg2kpump",
     "score": 19.26,
@@ -1572,7 +1572,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ADHD",
     "chain": "solana",
     "contract_address": "nHtKdt67T4DHX5FfcXuwAviHEhJM552nrXmHW7xpump",
     "score": 19.22,
@@ -1592,7 +1592,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MEOW",
     "chain": "solana",
     "contract_address": "2uj72keLfevquE1wReEv1hXqX3W3agEE41h6XcFApump",
     "score": 19.11,
@@ -1612,7 +1612,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "WAZZUP",
     "chain": "solana",
     "contract_address": "A2t8jVriahPQanFtVgfMSm1wW3ckMuSuuadLsXf7rEGG",
     "score": 19.07,
@@ -1632,7 +1632,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "UNCEROID",
     "chain": "solana",
     "contract_address": "BiBMG42BrmvJE5gY5UCXLURroGR6tBC1gfcYbZuEpump",
     "score": 19.06,
@@ -1652,7 +1652,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MEME",
     "chain": "solana",
     "contract_address": "CNokyqeWRk3FhDZ651t3gswzrmFLrEDavAwsuKrApump",
     "score": 19.01,
@@ -1672,7 +1672,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "aDOT",
     "chain": "polkadot",
     "contract_address": "5",
     "score": 19.0,
@@ -1692,7 +1692,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "HOODRAT",
     "chain": "solana",
     "contract_address": "EAGYtkmC3w4mxAdgfh4TdnEZ3pSchoo3MvZDxSbUpump",
     "score": 18.88,
@@ -1712,7 +1712,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Curak",
     "chain": "solana",
     "contract_address": "EEmHzKKTcuG4XS178MuYjbp4DPF7s3xZcsGoJfCpump",
     "score": 18.81,
@@ -1732,7 +1732,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MPGA",
     "chain": "solana",
     "contract_address": "GomVkoQFG3H8YEmcDqP2Xkp7DN1mzWhMAU41ci3ypump",
     "score": 18.64,
@@ -1752,7 +1752,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "BASTEROID",
     "chain": "ethereum",
     "contract_address": "0x682D9D317A077305D36C1FCc9821734046d4DE2B",
     "score": 18.47,
@@ -1772,7 +1772,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ACTM",
     "chain": "solana",
     "contract_address": "AWPu5D8tU9fAJCkK1XXag9Awq6t1v2W3M2k8jgG7pump",
     "score": 18.19,
@@ -1792,7 +1792,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ROCKET",
     "chain": "solana",
     "contract_address": "4YiLHDR4B4pE4R5GUMA8HG8YunyeLwcobtEtvwMupump",
     "score": 18.14,
@@ -1812,7 +1812,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "FLORKING",
     "chain": "solana",
     "contract_address": "H93Y74QYC7cpBBtCtSXv58w2esfNAnBsByiURMALpump",
     "score": 17.95,
@@ -1832,7 +1832,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "ily",
     "chain": "solana",
     "contract_address": "6DntmkaVenGwcsTnjwkj6nwRWRiv3JSTJHj6vbeDpump",
     "score": 17.81,
@@ -1852,7 +1852,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "LFP",
     "chain": "solana",
     "contract_address": "8jPSBB5Ebp6bRWJzwstUEm4Xs2p2jQadewyyxedxbrrr",
     "score": 17.7,
@@ -1872,7 +1872,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "hijabunc",
     "chain": "solana",
     "contract_address": "APXdsrtBf8ensg45iEvc3BjWGbJvRTXsSJJCtN29pump",
     "score": 17.65,
@@ -1892,7 +1892,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "VITALIEN",
     "chain": "ethereum",
     "contract_address": "0x07B326e2c03367834a2c5b4b4F9D7F615047E103",
     "score": 17.61,
@@ -1914,7 +1914,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "JINDO",
     "chain": "solana",
     "contract_address": "Gaqt6hKqBSRga8pfJ43CfTbc9ZGw8ostPnjytfbNpump",
     "score": 17.6,
@@ -1934,7 +1934,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "GOR",
     "chain": "solana",
     "contract_address": "D9bf81gETQ2NJz1qTvmfehRX4PhTeWPUPcirNs42pump",
     "score": 17.32,
@@ -1956,7 +1956,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "RIZO",
     "chain": "ethereum",
     "contract_address": "0x3009B6833f8925b7985C2408c49160dD1aB317CA",
     "score": 17.28,
@@ -1976,7 +1976,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "MPGA",
     "chain": "solana",
     "contract_address": "6uBE9ahM4qjY9rgWYcbzWaovV8UDHnnV1WDETStHpump",
     "score": 17.25,
@@ -1996,7 +1996,7 @@
     "holders": 0
   },
   {
-    "symbol": "?",
+    "symbol": "Dinosaur",
     "chain": "solana",
     "contract_address": "91fs4bJYaKMjFxEKeDKiZNEjUmFThJaWB2x97PwJpump",
     "score": 17.15,
