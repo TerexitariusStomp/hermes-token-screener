@@ -70,6 +70,8 @@ def _normalize_token(t: dict[str, Any]) -> dict[str, Any]:
             t["dex_url"] = f"https://dexscreener.com/solana/{pair}"
         elif chain == "base" and pair:
             t["dex_url"] = f"https://dexscreener.com/base/{pair}"
+        elif chain in ("bsc", "binance-smart-chain") and pair:
+            t["dex_url"] = f"https://dexscreener.com/bsc/{pair}"
         elif pair:
             t["dex_url"] = f"https://dexscreener.com/ethereum/{pair}"
     if not t.get("liquidity_usd"):
@@ -286,7 +288,8 @@ def _page(title, active, body, extra_css=""):
 def _dexscreener_embed_html(symbol, chain, address, dex_url, pair_address, fdv, vol24):
     """Generate chart page with embedded Dexscreener chart (replaces Dexscreener)."""
     # Use Dexscreener embed URL — works without API auth or TLS fingerprint
-    embed_url = f"https://dexscreener.com/{chain}/{address}?embed=1&theme=dark&info=0"
+    dex_chain = "bsc" if chain in ("bsc", "binance-smart-chain") else chain
+    embed_url = f"https://dexscreener.com/{dex_chain}/{address}?embed=1&theme=dark&info=0"
     detail_url = f"/token/{address}"
     return f"""<!DOCTYPE html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">

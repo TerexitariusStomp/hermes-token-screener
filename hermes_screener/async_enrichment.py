@@ -127,6 +127,11 @@ class AsyncDexscreenerEnricher:
                 volume = best.get("volume", {})
                 price_change = best.get("priceChange", {})
 
+                # Preserve original symbol/name when Dexscreener returns empty
+                orig_symbol = token.get("symbol")
+                orig_name = token.get("name")
+                ds_symbol = best.get("baseToken", {}).get("symbol")
+                ds_name = best.get("baseToken", {}).get("name")
                 dex_data = {
                     "fdv": best.get("fdv"),
                     "market_cap": best.get("marketCap"),
@@ -145,8 +150,8 @@ class AsyncDexscreenerEnricher:
                     "price_change_h24": price_change.get("h24"),
                     "age_hours": self._age_hours(best.get("pairCreatedAt")),
                     "dex": best.get("dexId"),
-                    "symbol": best.get("baseToken", {}).get("symbol"),
-                    "name": best.get("baseToken", {}).get("name"),
+                    "symbol": ds_symbol or orig_symbol,
+                    "name": ds_name or orig_name,
                     "pair_address": best.get("pairAddress"),
                 }
                 # Only correct chain from Dexscreener when original is unreliable.
