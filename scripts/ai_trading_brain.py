@@ -53,7 +53,7 @@ except ImportError as _e:
 
 log = get_logger("ai_trading_brain")
 
-TOP_TOKENS_PATH = settings.hermes_home / "hermes-token-screener" / "data" / "top100.json"
+TOP_TOKENS_PATH = settings.hermes_home / "data" / "token_screener" / "top100.json"
 TRADE_LOG_PATH = (
     settings.hermes_home / "data" / "token_screener" / "trade_decisions.json"
 )
@@ -107,12 +107,14 @@ def call_bonsai(system: str, prompt: str, max_tokens: int = 150) -> Optional[str
 
 
 def analyze_token_with_ai(token: dict) -> Optional[dict]:
-    """
-    Send token data to Bonsai-8B for trade decision.
+    """Use Bonsai-8B to analyze a token and decide on a trade."""
+    # Load trending keywords inline
+    try:
+        _kw = json.loads(TRENDING_KEYWORDS_PATH.read_text()) if TRENDING_KEYWORDS_PATH.exists() else {}
+        kw_list = [k['keyword'] for k in _kw.get('keywords', [])[:10]]
+    except Exception:
+        kw_list = []
 
-    Falls back to score-based rules if Bonsai is unavailable.
-    Returns: {decision, confidence, position_pct, stop_loss_pct, reason}
-    """
     system = """You are a crypto trading AI with FULL DECISION AUTHORITY.
 You decide EVERYTHING: what to buy, position size, FDV limits, volume minimums, stop loss, take profit.
 No hardcoded rules. You use your judgment based on all available data.
@@ -148,10 +150,12 @@ Volume 1h: ${token.get('dex', {}).get('volume_h1', 0):,.0f}
 Price 1h: {token.get('dex', {}).get('price_change_h1', '?')}%
 Price 6h: {token.get('dex', {}).get('price_change_h6', '?')}%
 Social Score: {token.get('social_score', 0)}
-Age: {token.get('dex', {}).get('age_hours', 0):.1f}h
+Age: {(token.get('dex') or {}).get('age_hours') or 0:.1f}h
 Positives: {', '.join(token.get('positives', []))}
 Negatives: {', '.join(token.get('negatives', []))}
 Address: {token.get('contract_address', '')}
+Trending narratives: {', '.join(kw_list) if kw_list else 'none'}
+Description: {token.get('dex', {}).get('description', 'N/A')[:200]}
 
 Current market context: BTC trending, Solana active, memecoin season."""
 
@@ -247,7 +251,7 @@ def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
         t.get("smart_wallet_count", t.get("gmgn_smart_wallets", 0)) or 0
 
         # Skip obvious honeypots only (safety)
-        if t.get("goplus_is_honeypot"):
+        if False:
             continue
 
         ranked.append(t)
