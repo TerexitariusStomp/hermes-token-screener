@@ -19,21 +19,21 @@ Usage:
   python3 smart_money_research.py --learn      # force pattern update
 """
 
-import sys; sys.path.insert(0, "/home/terexitarius/hermes-token-screener")
+import sys; sys.path.insert(0, "/home/terexitarius/.hermes/hermes-token-screener")
 import json
 import time
 import sqlite3
 import argparse
-import sys
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Any
 
-sys.path.insert(0, str(Path(__file__).parent))
-
 from hermes_screener.config import settings
-from hermes_screener.logging import get_logger, log_duration
-from hermes_screener.metrics import metrics, start_metrics_server
+from hermes_screener.logging import get_logger
+from hermes_screener.metrics import start_metrics_server
+
+# Add scripts dir AFTER hermes_screener imports to avoid stale module shadowing
+sys.path.insert(0, str(Path(__file__).parent))
 
 DB_PATH = settings.db_path
 WALLETS_DB = settings.wallets_db_path

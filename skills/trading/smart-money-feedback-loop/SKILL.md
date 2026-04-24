@@ -254,3 +254,5 @@ chain = (
 - Dex fields are nested, must flatten to top level or frontend shows "undefined" / 0 values
 - USD was accidentally appearing in top tokens — add BLOCKED_SYMBOLS to prevent
 - Pump.fun tokens have bonding curve that needs graduation to PumpSwap for real liquidity
+## Related Skills
+`token-screener`, `wallet-tracker`

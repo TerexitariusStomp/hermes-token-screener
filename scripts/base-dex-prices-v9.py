@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """BASE DEX PRICE FETCHER V9 — ETH/USDC from 28+ sources across 11+ DEXes.
-Sources: Dexscreener API (9 DEXes) + on-chain V2/V3 + Chainlink + ParaSwap + CoinGecko.
 """
 
 import json, urllib.request, ssl, time, os
 from datetime import datetime, timezone
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_PATH = os.path.join(SCRIPT_DIR, "base-dex-prices-cache.json")
@@ -124,8 +127,6 @@ def fetch_paraswap():
     return None
 
 
-def fetch_coingecko():
-    url = "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=10, context=ctx) as resp:
@@ -133,7 +134,6 @@ def fetch_coingecko():
             price = data.get("ethereum", {}).get("usd", 0)
             if price > 0:
                 return {
-                    "dex": "CoinGecko",
                     "price": round(price, 2),
                     "liq": 0,
                     "vol24": 0,
@@ -242,11 +242,8 @@ def main():
         all_sources.append(ps)
         print(f"  ParaSwap: ${ps['price']:,.2f}")
 
-    # Layer 4: CoinGecko
-    cg = fetch_coingecko()
     if cg:
         all_sources.append(cg)
-        print(f"  CoinGecko: ${cg['price']:,.2f}")
 
     # Layer 5: On-chain V2 pairs
     v2 = fetch_onchain_pairs()
@@ -365,7 +362,6 @@ tr:hover{{background:#252545}}
 </div>
 <table><thead><tr><th>Source</th><th>Price</th><th>Liquidity</th><th>Type</th><th>Contract</th><th>Δ Mean</th></tr></thead>
 <tbody>{sources_rows}</tbody></table>
-<div class="footer">Dexscreener API + on-chain V2/V3 + Chainlink + ParaSwap + CoinGecko</div>
 </body></html>"""
 
     with open(os.path.join(DASHBOARD_DIR, "dex-prices.html"), "w") as f:

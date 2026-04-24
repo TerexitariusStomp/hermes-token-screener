@@ -1,11 +1,12 @@
 import os
 import sqlite3
 import yaml
-from typing import Dict, List, Optional, Tuple, TypedDict
+from typing import Dict, List, Optional, TypedDict
 from pathlib import Path
 from datetime import datetime
 import json
 from tools.registry import registry
+
 
 class TemplateSuggestion(TypedDict):
     template: str
@@ -13,6 +14,7 @@ class TemplateSuggestion(TypedDict):
     rationale: str
     examples: List[Dict]
     metrics: Dict[str, float]
+
 
 class DSPOptimizer:
     def __init__(self):
@@ -38,24 +40,22 @@ class DSPOptimizer:
 
         history = []
         for row in rows:
-            history.append({
-                "input": json.loads(row[0]) if row[0] else {},
-                "output": json.loads(row[1]) if row[1] else {},
-                "success": bool(row[2]),
-                "timestamp": row[3],
-                "tokens_used": row[4],
-                "parameters": json.loads(row[5]) if row[5] else {}
-            })
+            history.append(
+                {
+                    "input": json.loads(row[0]) if row[0] else {},
+                    "output": json.loads(row[1]) if row[1] else {},
+                    "success": bool(row[2]),
+                    "timestamp": row[3],
+                    "tokens_used": row[4],
+                    "parameters": json.loads(row[5]) if row[5] else {},
+                }
+            )
         return history
 
     def _calculate_metrics(self, history: List[Dict]) -> Dict[str, float]:
         """Calculate performance metrics from execution history."""
         if not history:
-            return {
-                "success_rate": 0.0,
-                "avg_tokens": 0.0,
-                "success_tokens_ratio": 0.0
-            }
+            return {"success_rate": 0.0, "avg_tokens": 0.0, "success_tokens_ratio": 0.0}
 
         total = len(history)
         successes = sum(1 for h in history if h["success"])
@@ -69,7 +69,7 @@ class DSPOptimizer:
             "success_rate": success_rate,
             "avg_tokens": avg_tokens,
             "success_tokens_ratio": success_tokens_ratio,
-            "sample_size": total
+            "sample_size": total,
         }
 
     def _select_few_shot_examples(self, history: List[Dict], n: int = 3) -> List[Dict]:
@@ -86,7 +86,9 @@ class DSPOptimizer:
         scored.sort(reverse=True, key=lambda x: x[0])
         return [h for (_, h) in scored[:n]]
 
-    def _generate_template_variants(self, tool_name: str, current_template: str) -> List[str]:
+    def _generate_template_variants(
+        self, tool_name: str, current_template: str
+    ) -> List[str]:
         """Generate prompt template variants for A/B testing."""
         variants = []
 
@@ -126,7 +128,9 @@ class DSPOptimizer:
 
         return variants
 
-    def _score_template(self, template: str, history: List[Dict], metrics: Dict[str, float]) -> float:
+    def _score_template(
+        self, template: str, history: List[Dict], metrics: Dict[str, float]
+    ) -> float:
         """Score a template based on historical performance and structure."""
         score = 0.0
 
@@ -154,7 +158,7 @@ class DSPOptimizer:
             "optimized_at": datetime.now().isoformat(),
             "metrics": metadata.get("metrics", {}),
             "examples": metadata.get("examples", []),
-            "rationale": metadata.get("rationale", "")
+            "rationale": metadata.get("rationale", ""),
         }
         with open(template_path, "w") as f:
             yaml.dump(data, f)
@@ -175,7 +179,7 @@ class DSPOptimizer:
             return {
                 "status": "error",
                 "message": f"No execution history found for tool {tool_name}",
-                "suggestions": []
+                "suggestions": [],
             }
 
         # Calculate metrics
@@ -192,13 +196,15 @@ class DSPOptimizer:
             score = self._score_template(variant, history, metrics)
             rationale = self._generate_rationale(variant, metrics, examples)
 
-            suggestions.append(TemplateSuggestion(
-                template=variant,
-                score=score,
-                rationale=rationale,
-                examples=examples,
-                metrics=metrics
-            ))
+            suggestions.append(
+                TemplateSuggestion(
+                    template=variant,
+                    score=score,
+                    rationale=rationale,
+                    examples=examples,
+                    metrics=metrics,
+                )
+            )
 
         # Sort by score
         suggestions.sort(key=lambda x: x["score"], reverse=True)
@@ -212,8 +218,8 @@ class DSPOptimizer:
                 {
                     "metrics": metrics,
                     "examples": examples,
-                    "rationale": top_suggestion["rationale"]
-                }
+                    "rationale": top_suggestion["rationale"],
+                },
             )
 
         return {
@@ -221,37 +227,51 @@ class DSPOptimizer:
             "tool_name": tool_name,
             "current_metrics": metrics,
             "suggestions": suggestions,
-            "task_id": task_id
+            "task_id": task_id,
         }
 
-    def _generate_rationale(self, template: str, metrics: Dict[str, float], examples: List[Dict]) -> str:
+    def _generate_rationale(
+        self, template: str, metrics: Dict[str, float], examples: List[Dict]
+    ) -> str:
         """Generate rationale for why a template might perform well."""
         rationale = []
 
         if metrics["success_rate"] > 0.7:
-            rationale.append("High success rate in historical executions suggests this approach is reliable.")
+            rationale.append(
+                "High success rate in historical executions suggests this approach is reliable."
+            )
 
         if "{{parameters}}" in template:
-            rationale.append("Explicit parameter placeholders help ensure all required inputs are considered.")
+            rationale.append(
+                "Explicit parameter placeholders help ensure all required inputs are considered."
+            )
 
         if "{{context}}" in template:
-            rationale.append("Context placeholders allow for better situational adaptation.")
+            rationale.append(
+                "Context placeholders allow for better situational adaptation."
+            )
 
         if "step" in template.lower() or "analysis" in template.lower():
             rationale.append("Chain-of-thought elements may improve reasoning quality.")
 
         if len(template.split("\n")) > 5:
-            rationale.append("Detailed templates provide clearer guidance for execution.")
+            rationale.append(
+                "Detailed templates provide clearer guidance for execution."
+            )
 
         if not rationale:
-            rationale.append("This template provides a balanced approach to tool execution.")
+            rationale.append(
+                "This template provides a balanced approach to tool execution."
+            )
 
         return " ".join(rationale)
+
 
 def dspy_optimize_tool(tool_name: str, task_id: Optional[str] = None) -> Dict:
     """Tool handler for DSPy-inspired prompt optimization."""
     optimizer = DSPOptimizer()
     return optimizer.optimize_tool(tool_name, task_id)
+
 
 # Register the tool
 registry.register(
@@ -262,10 +282,10 @@ registry.register(
         "properties": {
             "tool_name": {
                 "type": "string",
-                "description": "Name of the tool or skill to optimize"
+                "description": "Name of the tool or skill to optimize",
             }
         },
-        "required": ["tool_name"]
+        "required": ["tool_name"],
     },
     handler=lambda args, **kw: dspy_optimize_tool(**args, task_id=kw.get("task_id")),
 )

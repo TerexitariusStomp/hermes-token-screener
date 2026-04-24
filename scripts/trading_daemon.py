@@ -13,6 +13,7 @@ Usage: python3 trading_daemon.py [--dry-run]
 """
 
 import subprocess
+import os
 import sys
 import time
 import signal
@@ -69,7 +70,7 @@ def run_script(
     name: str,
     execute: bool = True,
     use_flock: bool = False,
-    timeout: int = 600,
+    timeout: int = 1800,
     log_file: str = None,
     extra_args: list = None,
 ) -> bool:
@@ -105,13 +106,16 @@ def run_script(
         stderr_dest = subprocess.PIPE
 
         if log_file:
-            # Redirect to log file (like cron)
+            # Redirect to log file (like cron) — force unbuffered so logs appear immediately
             with open(log_file, "a") as log:
+                env = os.environ.copy()
+                env["PYTHONUNBUFFERED"] = "1"
                 result = subprocess.run(
                     cmd,
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     timeout=timeout + 10,  # Slightly more than internal timeout
+                    env=env,
                 )
         else:
             # Capture output for logging
@@ -169,12 +173,19 @@ def main():
     enricher_failures = 0
     discovery_failures = 0
 
-    # Initial run
-    run_script(AI_BRAIN, "AI Brain")
-    run_script(TRADE_MONITOR, "Trade Monitor")
-    run_script(COPYTRADE_MONITOR, "Copytrade")
-    run_script(TOKEN_ENRICHER, "Token Enricher")
-    run_script(TOKEN_DISCOVERY, "Token Discovery")
+    # Initial run (same args as loop)
+    run_script(AI_BRAIN, "AI Brain", execute=True, log_file=str(LOG_DIR / "ai_trading_brain.log"))
+    run_script(TRADE_MONITOR, "Trade Monitor", execute=True, timeout=300)
+    run_script(COPYTRADE_MONITOR, "Copytrade", timeout=1800)
+    run_script(
+        TOKEN_ENRICHER,
+        "Token Enricher",
+        use_flock=True,
+        timeout=1800,
+        log_file=str(LOG_DIR / "token_screener.log"),
+        extra_args=["--async-mode"],
+    )
+    run_script(TOKEN_DISCOVERY, "Token Discovery", timeout=1800)
     last_brain = last_monitor = last_copytrade = last_enricher = last_discovery = (
         time.time()
     )
@@ -184,7 +195,7 @@ def main():
 
         # AI Trading Brain (every 10 min)
         if now - last_brain >= AI_BRAIN_INTERVAL:
-            success = run_script(AI_BRAIN, "AI Brain")
+            success = run_script(AI_BRAIN, "AI Brain", log_file=str(LOG_DIR / "ai_trading_brain.log"))
             if success:
                 brain_failures = 0
             else:
@@ -218,7 +229,7 @@ def main():
                 TOKEN_ENRICHER,
                 "Token Enricher",
                 use_flock=True,
-                timeout=600,  # 10 minutes for enrichment pipeline
+                timeout=1800,  # 30 minutes for enrichment pipeline
                 log_file=str(LOG_DIR / "token_screener.log"),
                 extra_args=["--async-mode"],
             )
@@ -226,7 +237,7 @@ def main():
                 enricher_failures = 0
             else:
                 enricher_failures += 1
-            last_enricher = now
+            last_enricher = time.time()
 
         # Token Discovery (every 30 min)
         if now - last_discovery >= DISCOVERY_INTERVAL:
@@ -239,7 +250,7 @@ def main():
                 discovery_failures = 0
             else:
                 discovery_failures += 1
-            last_discovery = now
+            last_discovery = time.time()
 
         # Sleep for a short interval to avoid busy waiting
         # Check every 10 seconds

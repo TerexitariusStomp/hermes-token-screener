@@ -92,7 +92,7 @@ def call_bonsai(system: str, prompt: str, max_tokens: int = 150) -> Optional[str
                 "max_tokens": 100,
                 "temperature": 0.2,
             },
-            timeout=15,
+            timeout=120,
         )
         if resp.status_code == 200:
             return (
@@ -361,7 +361,13 @@ def execute_trade(token: dict, decision: dict, dry_run: bool = False) -> dict:
 
     if chain == "solana":
         # Guard: check native SOL balance before attempting trade
-        native_sol = get_native_balance("solana")
+        try:
+            native_sol = get_native_balance("solana")
+        except Exception as e:
+            result["status"] = "error"
+            result["error"] = f"Solana balance check failed: {e}"
+            log.error("sol_balance_check_failed", error=str(e))
+            return result
         # Minimum gas in USD - configurable via env (default $0.15)
         min_gas_usd = float(os.environ.get("MIN_SOL_GAS_USD", "0.15"))
         try:
@@ -371,7 +377,7 @@ def execute_trade(token: dict, decision: dict, dry_run: bool = False) -> dict:
             ).json()["coins"]["coingecko:solana"]["price"]
             min_sol_gas = min_gas_usd / sol_price
         except Exception:
-            min_sol_gas = 0.001  # fallback: ~$0.14 at $140/SOL
+            min_sol_gas = 0.001  # fallback: ~$0.15 at $150/SOL
         if native_sol < min_sol_gas:
             result["status"] = "error"
             result["error"] = f"Insufficient SOL for gas: {native_sol:.6f} (need {min_sol_gas:.6f} = ${min_gas_usd:.2f})"
@@ -382,18 +388,173 @@ def execute_trade(token: dict, decision: dict, dry_run: bool = False) -> dict:
         )
     elif chain in ("base", "ethereum"):
         # Guard: check native ETH gas before attempting trade
-        native_eth = get_native_balance(chain)
-        MIN_ETH_GAS = 0.00005  # ~5-50 txs on Base L2
-        if native_eth < MIN_ETH_GAS:
+        try:
+            native_eth = get_native_balance(chain)
+        except Exception as e:
             result["status"] = "error"
-            result["error"] = f"Insufficient native ETH for gas on {chain}: {native_eth:.6f} (need {MIN_ETH_GAS})"
-            log.error("insufficient_eth_gas", chain=chain, balance=native_eth, needed=MIN_ETH_GAS)
+            result["error"] = f"Base balance check failed: {e}"
+            log.error("base_balance_check_failed", error=str(e))
+            return result
+        # Minimum gas in USD - configurable via env (default $0.05)
+        min_eth_gas_usd = float(os.environ.get("MIN_ETH_GAS_USD", "0.05"))
+        try:
+            eth_price = requests.get(
+                "https://coins.llama.fi/prices/current/coingecko:ethereum",
+                timeout=5
+            ).json()["coins"]["coingecko:ethereum"]["price"]
+            min_eth_gas = min_eth_gas_usd / eth_price
+        except Exception:
+            min_eth_gas = 0.00002  # fallback: ~$0.05 at $2500/ETH
+        if native_eth < min_eth_gas:
+            result["status"] = "error"
+            result["error"] = f"Insufficient native ETH for gas on {chain}: {native_eth:.6f} (need {min_eth_gas:.6f} = ${min_eth_gas_usd:.2f})"
+            log.error("insufficient_eth_gas", chain=chain, balance=native_eth, needed=min_eth_gas)
             return result
         return _execute_evm_trade(chain, addr, symbol, position_pct, result, gw_client)
     else:
         result["status"] = "error"
         result["error"] = f"Unsupported chain: {chain}"
         return result
+
+
+def _is_pumpfun_token(mint: str) -> dict | None:
+    """Return pump.fun token info dict if mint is a pump.fun token, else None."""
+    rpc = os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com")
+    try:
+        cmd = [
+            "pumpfun",
+            "--rpc", rpc,
+            "info",
+            mint,
+            "--json",
+        ]
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=30
+        )
+        if result.returncode != 0:
+            return None
+        info = json.loads(result.stdout)
+        if info.get("bonding_curve") or info.get("graduated") is not None:
+            return info
+        return None
+    except Exception:
+        return None
+
+
+def _execute_pumpfun_solana_trade(
+    token_addr: str,
+    symbol: str,
+    position_pct: float,
+    result: dict,
+    wallet_addr: str,
+    pump_info: dict,
+) -> dict:
+    """Execute a Solana trade via pump.fun bonding curve or PumpSwap AMM."""
+    wallet = wallet_addr
+    is_graduated = pump_info.get("graduated", False)
+    venue = "pumpswap" if is_graduated else "pumpfun-bonding"
+    force_amm = ["--force-amm"] if is_graduated else []
+    rpc = os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com")
+
+    # Use native SOL balance
+    try:
+        native_sol = get_native_balance("solana")
+    except Exception as e:
+        result["status"] = "error"
+        result["error"] = f"Solana balance check failed: {e}"
+        log.error("sol_balance_check_failed", error=str(e))
+        return result
+    min_sol_trade = 0.001
+    if native_sol < min_sol_trade:
+        result["status"] = "error"
+        result["error"] = f"Insufficient SOL: {native_sol:.6f} (need {min_sol_trade:.6f})"
+        return result
+
+    buy_amount = native_sol * (position_pct / 100.0)
+    test_amount = min(buy_amount * 0.1, 0.01)
+    if test_amount < 0.001:
+        test_amount = 0.001
+
+    log.info("pumpfun_test_buy_starting", symbol=symbol, venue=venue, test_sol=test_amount)
+
+    # Step 1: Test buy via pumpfun
+    try:
+        cmd = [
+            "pumpfun", "--rpc", rpc,
+            "buy", token_addr, str(test_amount),
+        ] + force_amm + ["--confirm"]
+        buy_result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        if buy_result.returncode != 0:
+            result["status"] = "failed"
+            result["error"] = f"Pump.fun test buy failed: {buy_result.stderr.strip()}"
+            log.error("pumpfun_test_buy_failed", symbol=symbol, error=buy_result.stderr.strip())
+            add_to_blacklist(symbol, token_addr, "solana", result["error"])
+            return result
+        log.info("pumpfun_test_buy_success", symbol=symbol, stdout=buy_result.stdout.strip())
+    except Exception as e:
+        result["status"] = "error"
+        result["error"] = f"Pump.fun test buy exception: {e}"
+        log.error("pumpfun_test_buy_exception", symbol=symbol, error=str(e))
+        return result
+
+    # Step 2: Wait and check token balance
+    time.sleep(5)
+    token_bal = get_token_balance("solana", token_addr)
+    if token_bal <= 0:
+        result["status"] = "failed"
+        result["error"] = "Pump.fun test buy succeeded but no token balance found"
+        log.error("pumpfun_no_balance_after_test_buy", symbol=symbol)
+        add_to_blacklist(symbol, token_addr, "solana", result["error"])
+        return result
+
+    # Step 3: Attempt test sell
+    sell_amount = token_bal * 0.5
+    if sell_amount < 1e-9:
+        sell_amount = token_bal
+    log.info("pumpfun_test_sell_attempt", symbol=symbol, sell_amount=sell_amount)
+    try:
+        cmd = [
+            "pumpfun", "--rpc", rpc,
+            "sell", token_addr, "all",
+        ] + force_amm + ["--confirm"]
+        sell_result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        if sell_result.returncode != 0:
+            log.warning("pumpfun_test_sell_failed_blacklisting", symbol=symbol, error=sell_result.stderr.strip())
+            add_to_blacklist(symbol, token_addr, "solana", f"Pump.fun test sell failed: {sell_result.stderr.strip()}")
+            result["status"] = "test_sell_failed"
+            result["error"] = f"Token illiquid on pump.fun: {sell_result.stderr.strip()}"
+            return result
+        log.info("pumpfun_test_sell_success", symbol=symbol, stdout=sell_result.stdout.strip())
+    except Exception as e:
+        log.warning("pumpfun_test_sell_exception", symbol=symbol, error=str(e))
+        add_to_blacklist(symbol, token_addr, "solana", f"Pump.fun test sell exception: {e}")
+        result["status"] = "test_sell_failed"
+        result["error"] = f"Pump.fun test sell exception: {e}"
+        return result
+
+    # Step 4: Full buy via pumpfun
+    time.sleep(3)
+    log.info("pumpfun_full_buy_starting", symbol=symbol, amount_sol=buy_amount, venue=venue)
+    try:
+        cmd = [
+            "pumpfun", "--rpc", rpc,
+            "buy", token_addr, str(buy_amount),
+        ] + force_amm + ["--confirm"]
+        full_result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        if full_result.returncode != 0:
+            result["status"] = "failed"
+            result["error"] = f"Pump.fun full buy failed: {full_result.stderr.strip()}"
+            log.error("pumpfun_full_buy_failed", symbol=symbol, error=full_result.stderr.strip())
+        else:
+            result["status"] = "executed"
+            result["output"] = f"Bought {symbol} for {buy_amount:.4f} SOL via {venue}"
+            log.info("pumpfun_full_buy_success", symbol=symbol, amount_sol=buy_amount, venue=venue)
+    except Exception as e:
+        result["status"] = "error"
+        result["error"] = f"Pump.fun full buy exception: {e}"
+        log.error("pumpfun_full_buy_exception", symbol=symbol, error=str(e))
+
+    return result
 
 
 def _execute_solana_trade(
@@ -406,15 +567,39 @@ def _execute_solana_trade(
         result["error"] = "Solana wallet not configured"
         return result
 
-    # Get available WSOL balance
-    wsol_bal = get_token_balance("solana", wsol_addr)
-    if wsol_bal <= 0.001:
+    # --- Pump.fun / PumpSwap priority ---
+    pump_info = _is_pumpfun_token(token_addr)
+    if pump_info:
+        venue = "pumpswap" if pump_info.get("graduated") else "pumpfun-bonding"
+        log.info("pumpfun_token_detected", symbol=symbol, venue=venue, mint=token_addr)
+        return _execute_pumpfun_solana_trade(
+            token_addr, symbol, position_pct, result, wallet_addr, pump_info
+        )
+
+    # Use native SOL balance (Jupiter auto-wraps SOL->WSOL)
+    try:
+        native_sol = get_native_balance("solana")
+    except Exception as e:
         result["status"] = "error"
-        result["error"] = f"Insufficient WSOL: {wsol_bal:.6f}"
+        result["error"] = f"Solana balance check failed: {e}"
+        log.error("sol_balance_check_failed", error=str(e))
+        return result
+    min_sol_trade = float(os.environ.get("MIN_SOL_GAS_USD", "0.15")) / 150.0  # ~0.001 SOL fallback
+    try:
+        sol_price = requests.get(
+            "https://coins.llama.fi/prices/current/coingecko:solana",
+            timeout=5
+        ).json()["coins"]["coingecko:solana"]["price"]
+        min_sol_trade = 0.15 / sol_price
+    except Exception:
+        pass
+    if native_sol < min_sol_trade:
+        result["status"] = "error"
+        result["error"] = f"Insufficient SOL: {native_sol:.6f} (need {min_sol_trade:.6f})"
         return result
 
-    # Calculate amounts
-    buy_amount = wsol_bal * (position_pct / 100.0)
+    # Calculate amounts from native SOL
+    buy_amount = native_sol * (position_pct / 100.0)
     test_amount = min(buy_amount * 0.1, 0.01)  # 10% of buy or 0.01 SOL max
 
     if test_amount < 0.001:
@@ -423,13 +608,13 @@ def _execute_solana_trade(
     log.info("test_buy_starting", symbol=symbol, test_sol=test_amount, full_sol=buy_amount)
 
     # Step 1: Test buy
-    test_lamports = int(test_amount * 1e9)
     resp = gw_client.jupiter_execute_swap(
-        address=wallet,
-        base=wsol_addr,
-        quote=token_addr,
-        amount=str(test_lamports),
-        slippage_bps=200,  # Higher slippage for test
+        wallet_address=wallet,
+        base_token=token_addr,
+        quote_token=wsol_addr,
+        amount=test_amount,
+        side="BUY",
+        slippage_pct=2.0,
     )
 
     if resp.get("error"):
@@ -452,17 +637,18 @@ def _execute_solana_trade(
         return result
 
     # Step 3: Attempt to sell test amount back
-    sell_amount = int(token_bal * 0.5 * 1e6)  # Sell half of what we got (6 decimals typical)
-    if sell_amount < 1:
-        sell_amount = int(token_bal * 1e6)
+    sell_amount = token_bal * 0.5  # Sell half of what we got
+    if sell_amount < 1e-9:
+        sell_amount = token_bal
 
     log.info("test_sell_attempt", symbol=symbol, sell_amount=sell_amount)
     sell_resp = gw_client.jupiter_execute_swap(
-        address=wallet,
-        base=token_addr,
-        quote=wsol_addr,
-        amount=str(sell_amount),
-        slippage_bps=200,
+        wallet_address=wallet,
+        base_token=token_addr,
+        quote_token=wsol_addr,
+        amount=sell_amount,
+        side="SELL",
+        slippage_pct=2.0,
     )
 
     if sell_resp.get("error"):
@@ -476,13 +662,13 @@ def _execute_solana_trade(
 
     # Step 4: Full buy
     time.sleep(3)
-    full_lamports = int(buy_amount * 1e9)
     full_resp = gw_client.jupiter_execute_swap(
-        address=wallet,
-        base=wsol_addr,
-        quote=token_addr,
-        amount=str(full_lamports),
-        slippage_bps=100,
+        wallet_address=wallet,
+        base_token=token_addr,
+        quote_token=wsol_addr,
+        amount=buy_amount,
+        side="BUY",
+        slippage_pct=1.0,
     )
 
     if full_resp.get("error"):
@@ -510,10 +696,37 @@ def _execute_evm_trade(
 
     account = get_account(chain)
     weth_bal = get_token_balance(chain, weth)
-    if weth_bal <= 0.0001:
+    try:
+        native_bal = get_native_balance(chain)
+    except Exception as e:
         result["status"] = "error"
-        result["error"] = f"Insufficient WETH: {weth_bal:.6f}"
+        result["error"] = f"{chain} balance check failed: {e}"
+        log.error("evm_balance_check_failed", chain=chain, error=str(e))
         return result
+    if weth_bal <= 0.0001:
+        # Try to wrap native ETH to WETH if enough balance
+        if chain == "base" and native_bal > 0.001:
+            from trading_bot import gw, wrap_eth
+            w = gw()
+            if w and wrap_eth(w, min(native_bal * 0.95, 0.01), chain="base"):
+                weth_bal = get_token_balance(chain, weth)
+            else:
+                result["status"] = "error"
+                result["error"] = f"Insufficient WETH and wrap failed: WETH={weth_bal:.6f}, ETH={native_bal:.6f}"
+                return result
+        elif chain == "ethereum" and native_bal > 0.001:
+            from trading_bot import gw_eth, wrap_eth
+            w = gw_eth()
+            if w and wrap_eth(w, min(native_bal * 0.95, 0.01), chain="ethereum"):
+                weth_bal = get_token_balance(chain, weth)
+            else:
+                result["status"] = "error"
+                result["error"] = f"Insufficient WETH and wrap failed: WETH={weth_bal:.6f}, ETH={native_bal:.6f}"
+                return result
+        else:
+            result["status"] = "error"
+            result["error"] = f"Insufficient WETH: {weth_bal:.6f}"
+            return result
 
     buy_amount = weth_bal * (position_pct / 100.0)
     test_amount = min(buy_amount * 0.1, 0.001)

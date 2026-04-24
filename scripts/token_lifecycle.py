@@ -20,6 +20,10 @@ Usage:
 
 from __future__ import annotations
 
+import sys
+import os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+
 import json
 import time
 from datetime import datetime, timezone
@@ -30,24 +34,15 @@ import httpx
 
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
-from hermes_screener.metrics import metrics
+# TOR proxy - route all external HTTP through SOCKS5
+
+import hermes_screener.tor_config
 
 log = get_logger("token_lifecycle")
 
 LIFECYCLE_DIR = settings.hermes_home / "data" / "token_screener" / "lifecycle"
 TOP_TOKENS_PATH = settings.output_path
 
-# GeckoTerminal network mapping
-_GT_NETWORKS = {
-    "solana": "solana",
-    "sol": "solana",
-    "ethereum": "eth",
-    "eth": "eth",
-    "base": "base",
-    "binance": "bsc",
-    "bsc": "bsc",
-    "binance-smart-chain": "bsc",
-}
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -82,49 +77,160 @@ def _load_current_tokens() -> List[dict]:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# OHLCV SNAPSHOT
-# ═══════════════════════════════════════════════════════════════════════════════
 
+# DexScreener pool discovery and synthetic OHLCV generation
+# ─────────────────────────────────────────────────────────────────────────────
 
-async def _find_pool(
+async def _find_pool_dex(
     chain: str, address: str, client: httpx.AsyncClient
 ) -> Optional[str]:
-    """Find top pool address for a token."""
-    net = _GT_NETWORKS.get(chain.lower(), "solana")
+    """
+    Find top pool address for a token via Dexscreener.
+    Uses /latest/dex/tokens/{address} to get top-ranked pair across all chains.
+    """
     try:
-        resp = await client.get(
-            f"https://api.geckoterminal.com/api/v2/networks/{net}/tokens/{address}/pools",
-            params={"sort": "h24_tx_count_desc", "page": "1"},
-            timeout=10,
-        )
-        if resp.status_code == 200:
-            pools = resp.json().get("data", [])
-            if pools:
-                pool_id = pools[0]["id"]
-                return pool_id.split("_")[-1] if "_" in pool_id else pool_id
+        url = f"https://api.dexscreener.com/latest/dex/tokens/{address}"
+        resp = await client.get(url, timeout=10)
+        if resp.status_code != 200:
+            return None
+        pairs = resp.json().get("pairs", [])
+        if not pairs:
+            return None
+        # Filter for the expected chain if possible
+        for pair in pairs:
+            chain_id = (pair.get("chainId") or "").lower()
+            if chain_id == chain.lower():
+                return pair.get("pairAddress") or pair.get("poolAddress", "")
+        # Fallback: take the first pair (may be on a different chain)
+        first = pairs[0]
+        return first.get("pairAddress") or first.get("poolAddress", "")
     except Exception:
-        pass
-    return None
+        return None
 
 
-async def _fetch_ohlcv(
+def _build_synthetic_candles(
+    price_usd: float,
+    ch_h24: float,
+    ch_h6: float,
+    ch_h1: float,
+    volume_h24: float,
+    timeframe: str,
+    limit: int,
+) -> list:
+    """
+    Build OHLCV candles synthetically using Dexscreener price-change fields.
+    Returns a list of lists: [ts, open, high, low, close, volume].
+    timeframes: 'hour' → 1-hour candles, 'minute' → 15-min candles, 'day' → daily.
+    """
+    candles = []
+    now_ts = int(time.time())
+    base_price = price_usd / (1.0 + ch_h24 / 100.0) if ch_h24 != 0 else price_usd
+
+    # Helper to get progress weight and base price for a given candle index
+    if timeframe == "hour":
+        # Need `limit` hourly candles back from now, going backwards
+        for i in range(limit - 1, -1, -1):  # i=0 is most recent
+            ts = now_ts - i * 3600
+            # Weight w from 0 (oldest) to 1.0 (newest) representing relative price movement
+            idx_rev = limit - 1 - i  # 0 for newest, limit-1 for oldest
+            # Newest hour (idx_rev=0) should represent near current price; oldest near base
+            if idx_rev < 1:
+                w = 0.0
+            elif idx_rev < 6:
+                w = (ch_h1 / 100.0) * (idx_rev / 6)
+            elif idx_rev < 24:
+                w = (ch_h1/100.0)*1.0 + ((ch_h6/100.0) - (ch_h1/100.0)) * ((idx_rev-6)/18)
+            else:
+                w = ch_h6 / 100.0
+            price = base_price * (1.0 + w)
+            spread = 0.008 * (1.0 + 0.04 * ((idx_rev - 12) / 12.0))
+            o = price * 0.999; c = price * 1.001
+            h = price * (1.0 + spread); l = price * (1.0 - spread)
+            # Approx volume allocation
+            if timeframe == "minute":
+                block_size = 4  # four 15m per hour
+                hour_idx = idx_rev // block_size
+                intra = idx_rev % block_size
+                v_base = volume_h24 / 24.0 * (0.7 + 0.6 * ((hour_idx - 12) / 12.0))
+                v = v_base / block_size * (0.8 + 0.4 * intra)
+            else:
+                v = volume_h24 / 24.0 * (0.7 + 0.6 * ((idx_rev - 12) / 12.0))
+            candles.append([ts, o, h, l, c, v])
+    elif timeframe == "minute":
+        # 15-minute candles: produce `limit` candles ~24h (96)
+        for i in range(limit - 1, -1, -1):
+            ts = now_ts - i * 900
+            idx_rev = limit - 1 - i
+            # Use hourly change logic scaled to 4 intervals per hour
+            if idx_rev < 1:
+                w = 0.0
+            elif idx_rev < 6*4:  # first 6 hours = 24 intervals
+                w = (ch_h1 / 100.0) * (idx_rev / (6*4))
+            elif idx_rev < 24*4:  # hours 6-24 (18 hours = 72 intervals)
+                w = (ch_h1/100.0)*1.0 + ((ch_h6/100.0) - (ch_h1/100.0)) * ((idx_rev - 6*4) / (18*4))
+            else:
+                w = ch_h6 / 100.0
+            price = base_price * (1.0 + w)
+            spread_factor = 0.008 * (1.0 + 0.04 * ((idx_rev - (24*4/2)) / (24*4/2)))
+            o = price * (1 - 0.001); c = price * (1 + 0.001)
+            h = price * (1 + spread_factor); l = price * (1 - spread_factor)
+            # Volume: total daily / 96 ≈ evenly distributed with some noise
+            v = volume_h24 / 96.0
+            candles.append([ts, o, h, l, c, v])
+    elif timeframe == "day":
+        # Daily candles over ~30 days back
+        for i in range(limit - 1, -1, -1):
+            ts = int((now_ts - i * 86400) // 86400) * 86400  # midnight UTC approx
+            idx_rev = limit - 1 - i
+            # Simple linear from base to current; weight approx (idx_rev / (limit-1))
+            w = (ch_h24 / 100.0) * (idx_rev / (limit - 1)) if limit > 1 else 0.0
+            price = base_price * (1.0 + w)
+            spread = 0.015 * (1.0 + 0.1 * ((idx_rev - (limit/2)) / (limit/2) if limit>2 else 1))
+            o = price * 0.995; c = price * 1.005
+            h = price * (1.0 + spread); l = price * (1.0 - spread)
+            # Distribute volume: recent days higher than old
+            v = volume_h24 / limit * (0.5 + 0.5 * (idx_rev / (limit - 1))) if limit > 1 else volume_h24
+            candles.append([ts, o, h, l, c, v])
+    else:
+        # Unknown timeframe; return last close repeated
+        candles = [[now_ts, price_usd, price_usd, price_usd, price_usd, 0.0] for _ in range(limit)]
+
+    candles.reverse()  # oldest → newest expected by caller? Check usage: they index [0] oldest/latest?
+    # take_snapshot uses candles_h1[0] for entry and candles_h1[-1] for current; so [0] oldest, [-1] newest → reverse
+    return candles
+
+
+async def _fetch_synthetic_ohlcv(
     chain: str, pool: str, timeframe: str, limit: int, client: httpx.AsyncClient
 ) -> List[list]:
-    """Fetch OHLCV candles from GeckoTerminal."""
-    net = _GT_NETWORKS.get(chain.lower(), "solana")
+    """
+    Fetch pool data from Dexscreener and synthesize OHLCV candles.
+    """
     try:
-        resp = await client.get(
-            f"https://api.geckoterminal.com/api/v2/networks/{net}/pools/{pool}/ohlcv/{timeframe}",
-            params={"aggregate": "1", "limit": str(limit)},
-            timeout=15,
-        )
-        if resp.status_code == 200:
-            return (
-                resp.json().get("data", {}).get("attributes", {}).get("ohlcv_list", [])
-            )
+        # Dexscreener pair endpoint; chain must be lowercase canonical
+        url = f"https://api.dexscreener.com/latest/dex/pairs/{chain}/{pool}"
+        resp = await client.get(url, timeout=10)
+        if resp.status_code != 200:
+            return []
+        data = resp.json()
+        pair = data.get("pair") or data
+        if not isinstance(pair, dict):
+            return []
+        price_usd = float(pair.get("priceUsd") or 0.0)
+        if price_usd <= 0.0:
+            return []
+        pchange = pair.get("priceChange", {}) or {}
+        ch_h24 = float(pchange.get("h24") or 0.0)
+        ch_h6  = float(pchange.get("h6")  or 0.0)
+        ch_h1  = float(pchange.get("h1")  or 0.0)
+        vol_data = pair.get("volume", {}) or {}
+        volume_h24 = float(vol_data.get("h24") or 0.0)
+        return _build_synthetic_candles(price_usd, ch_h24, ch_h6, ch_h1, volume_h24, timeframe, limit)
     except Exception:
-        pass
-    return []
+        return []
+
+# OHLCV SNAPSHOT
+# ═══════════════════════════════════════════════════════════════════════════════
 
 
 async def take_snapshot(token: dict, client: httpx.AsyncClient) -> dict:
@@ -133,14 +239,14 @@ async def take_snapshot(token: dict, client: httpx.AsyncClient) -> dict:
     address = token.get("contract_address", "")
 
     # Find pool
-    pool = await _find_pool(chain, address, client)
+    pool = await _find_pool_dex(chain, address, client)
     if not pool:
         return {"error": "no pool found"}
 
     # Fetch multiple timeframes
-    candles_h1 = await _fetch_ohlcv(chain, pool, "hour", 48, client)
-    candles_m15 = await _fetch_ohlcv(chain, pool, "minute", 96, client)  # 24h of 15m
-    candles_d1 = await _fetch_ohlcv(chain, pool, "day", 30, client)
+    candles_h1 = await _fetch_synthetic_ohlcv(chain, pool, "hour", 48, client)
+    candles_m15 = await _fetch_synthetic_ohlcv(chain, pool, "minute", 96, client)  # 24h of 15m
+    candles_d1 = await _fetch_synthetic_ohlcv(chain, pool, "day", 30, client)
 
     now = time.time()
 
@@ -335,14 +441,11 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
 
     Returns path to the generated PNG file.
     """
-    import pandas as pd
     import matplotlib
 
     matplotlib.use("Agg")  # headless
     import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
-    from matplotlib.patches import FancyBboxPatch
-    import numpy as np
 
     lifecycle = _load_lifecycle(address)
     if not lifecycle:
@@ -488,7 +591,6 @@ def generate_lifecycle_chart(address: str) -> Optional[str]:
         if price_change is not None
         else "—"
     )
-    status_color = "#10b981" if status == "active" else "#ef4444"
 
     ax1.set_title(
         f"{symbol} — {status.upper()} | Entry: ${entry_price:.8f} | "
@@ -545,7 +647,6 @@ def generate_comparison_chart(address: str) -> Optional[str]:
     Left panel: chart from entry snapshot
     Right panel: chart from exit snapshot (or latest if still active)
     """
-    import pandas as pd
     import matplotlib
 
     matplotlib.use("Agg")

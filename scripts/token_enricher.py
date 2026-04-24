@@ -4,12 +4,10 @@ Token Enricher - Unified multi-source enrichment pipeline with resilient try/byp
 
 Consolidates all data sources into one self-contained script:
   Layer 0: Dexscreener (core market data)         [REQUIRED - pipeline stops if this fails]
-  Layer 2: GoPlus (EVM security)                   [optional]
-  Layer 3: RugCheck (Solana security)              [optional]
+    Layer 3: RugCheck (Solana security)              [optional]
   Layer 4: Etherscan (contract verification)       [optional]
   Layer 5: De.Fi (security analysis)               [optional]
   Layer 6: Derived (computed signals)              [optional]
-  Layer 7: CoinGecko (market data)                 [optional]
   Layer 8: GMGN (smart money + token security)     [optional]
   Layer 9: Social (Telegram DB)                    [optional]
   Layer 12: Mobula (organic ratio)                 [optional]
@@ -68,7 +66,6 @@ STAGNANT_VOLUME_RATIO = settings.stagnant_volume_ratio
 NO_ACTIVITY_HOURS = settings.no_activity_hours
 
 # API keys (empty string = layer gracefully skipped)
-COINGECKO_API_KEY = settings.coingecko_api_key
 ETHERSCAN_API_KEY = settings.etherscan_api_key
 DEFI_API_KEY = settings.defi_api_key
 RUGCHECK_API_KEY = settings.rugcheck_api_key
@@ -95,8 +92,6 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
     # ── DISQUALIFIERS (return 0 immediately) ──
     if token.get("gmgn_honeypot"):
         return 0, [], ["HONEYPOT"]
-    if token.get("goplus_is_honeypot"):
-        return 0, [], ["HONEYPOT (GoPlus)"]
     if token.get("rugcheck_rugged"):
         return 0, [], ["RUGGED"]
     if token.get("defi_scammed"):
@@ -303,16 +298,7 @@ def score_token(token: dict) -> Tuple[float, List[str], List[str]]:
     if token.get("derived_has_freeze_authority"):
         score *= 0.5
 
-    # CoinGecko listings (unique signals)
-    if token.get("cg_is_listed"):
-        score *= 1.08
-        positives.append("CoinGecko listed")
-    if token.get("cg_listed_on_binance"):
-        score *= 1.10
-        positives.append("BINANCE")
-    elif token.get("cg_listed_on_coinbase"):
-        score *= 1.08
-        positives.append("COINBASE")
+
 
     # Volume penalties
     buys_h1 = (dex.get("txns_h1", {}) or {}).get("buys", 0) or 0

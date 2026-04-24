@@ -95,16 +95,16 @@ class GatewayClient:
             logging.error(f"[Gateway] {endpoint} failed: {e}")
             return {"error": str(e)}
 
-    def ethereum_balances(self, address: str):
-        return self._post("/chains/ethereum/balances", {"address": address})
+    def ethereum_balances(self, address: str, network: str = "base"):
+        return self._post("/chains/ethereum/balances", {"address": address, "network": network})
 
     def solana_balances(self, address: str):
         return self._post("/chains/solana/balances", {"address": address})
 
-    def ethereum_approve(self, address: str, spender: str, token: str, amount: str):
+    def ethereum_approve(self, address: str, spender: str, token: str, amount: str, network: str = "base"):
         return self._post(
             "/chains/ethereum/approve",
-            {"address": address, "spender": spender, "token": token, "amount": amount},
+            {"address": address, "spender": spender, "token": token, "amount": amount, "network": network},
         )
 
     def uniswap_execute_swap(
@@ -135,14 +135,16 @@ class GatewayClient:
         return self._post("/connectors/uniswap/router/execute-swap", payload)
 
     def jupiter_execute_swap(
-        self, address: str, base: str, quote: str, amount: str, slippage_bps: int = 100
+        self, wallet_address: str, base_token: str, quote_token: str, amount: float, side: str = "BUY", slippage_pct: float = 5.0, network: str = "mainnet-beta"
     ):
         payload = {
-            "address": address,
-            "base": base,
-            "quote": quote,
+            "walletAddress": wallet_address,
+            "network": network,
+            "baseToken": base_token,
+            "quoteToken": quote_token,
             "amount": amount,
-            "slippageBps": slippage_bps,
+            "side": side,
+            "slippagePct": slippage_pct,
         }
         return self._post("/connectors/jupiter/router/execute-swap", payload)
 
@@ -185,7 +187,6 @@ def l(m: str):
 def ep() -> float:
     try:
         r = requests.get(
-            "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
             timeout=8,
         )
         return float(r.json()["ethereum"]["usd"])
@@ -338,9 +339,17 @@ def get_native_balance(chain: str) -> float:
         # Try Gateway first
         resp = gw_client.solana_balances(address=addr)
         if "error" not in resp:
-            for b in resp.get("balances", []):
+            bal = resp.get("balances", {})
+            # Gateway v2 returns {"SOL": amount}, v1 returns [{"symbol":"SOL","balance":amount}]
+            if isinstance(bal, dict):
+                sol_amt = bal.get("SOL", 0)
+                # Gateway returns SOL units (not lamports); only divide if it looks like lamports
+                val = float(sol_amt)
+                return val / 1e9 if val > 100 else val
+            for b in bal:
                 if b.get("symbol") == "SOL":
-                    return float(b["balance"]) / 1e9
+                    val = float(b.get("balance", 0))
+                    return val / 1e9 if val > 100 else val
         # Fallback: direct Solana RPC query
         try:
             rpc_url = SOLANA_RPC_URL
@@ -512,6 +521,53 @@ def ensure_gas_reserve_base(w, min_native_required=0.00005) -> bool:
         return False
     except Exception as e:
         l(f"ensure_gas_reserve_base error: {e}")
+        return False
+
+
+
+def wrap_eth(w: Web3, amount_eth: float, chain: str = "base") -> bool:
+    """Wrap native ETH to WETH via direct Web3 call."""
+    try:
+        acct = get_account(chain)
+        weth_addr = WETH_ADDR.get(chain)
+        if not weth_addr:
+            l(f"No WETH address for chain {chain}")
+            return False
+        weth = w.eth.contract(
+            address=weth_addr,
+            abi=[
+                {
+                    "inputs": [],
+                    "name": "deposit",
+                    "outputs": [],
+                    "stateMutability": "payable",
+                    "type": "function",
+                }
+            ],
+        )
+        amt_wei = int(amount_eth * 1e18)
+        tx = weth.functions.deposit().build_transaction(
+            {
+                "from": acct.address,
+                "nonce": w.eth.get_transaction_count(acct.address, "pending"),
+                "gas": 80000,
+                "maxFeePerGas": get_gas_price(w),
+                "maxPriorityFeePerGas": get_gas_price(w),
+                "value": amt_wei,
+            }
+        )
+        signed = acct.sign_transaction(tx)
+        tx_hash = w.eth.send_raw_transaction(get_signed_raw_tx(signed))
+        l(f"Wrap ETH->WETH tx: {tx_hash.hex()}")
+        receipt = w.eth.wait_for_transaction_receipt(tx_hash, timeout=180)
+        if receipt and receipt.status == 1:
+            l(f"Wrapped {amount_eth:.6f} ETH -> WETH successfully")
+            return True
+        else:
+            l("Wrap ETH->WETH failed (receipt status != 1)")
+            return False
+    except Exception as e:
+        l(f"wrap_eth error: {e}")
         return False
 
 
@@ -827,8 +883,16 @@ def execute_buy(
         weth = WETH_ADDR["base"]
         weth_bal = get_token_balance("base", weth)
         if weth_bal < amount_native:
-            l(f"Insufficient WETH: have {weth_bal:.6f}, need {amount_native:.6f}")
-            return False
+            native_bal = get_native_balance("base")
+            gas_reserve = GAS_RESERVE.get("base", 0.00005)
+            if native_bal >= amount_native + gas_reserve:
+                l(f"WETH low ({weth_bal:.6f}); wrapping {amount_native:.6f} ETH -> WETH")
+                if not wrap_eth(w, amount_native, chain="base"):
+                    l("ETH->WETH wrap failed")
+                    return False
+            else:
+                l(f"Insufficient WETH and ETH: have WETH={weth_bal:.6f}, ETH={native_bal:.6f}, need {amount_native:.6f}")
+                return False
         if not ensure_gas_reserve_base(
             w, min_native_required=GAS_RESERVE.get("base", 0.00005)
         ):
@@ -847,10 +911,16 @@ def execute_buy(
         weth = WETH_ADDR["ethereum"]
         weth_bal = get_token_balance("ethereum", weth)
         if weth_bal < amount_native:
-            l(
-                f"Insufficient WETH on Ethereum: have {weth_bal:.6f}, need {amount_native:.6f}"
-            )
-            return False
+            native_bal = get_native_balance("ethereum")
+            gas_reserve = GAS_RESERVE.get("ethereum", 0.001)
+            if native_bal >= amount_native + gas_reserve:
+                l(f"WETH low ({weth_bal:.6f}); wrapping {amount_native:.6f} ETH -> WETH on Ethereum")
+                if not wrap_eth(w, amount_native, chain="ethereum"):
+                    l("ETH->WETH wrap failed on Ethereum")
+                    return False
+            else:
+                l(f"Insufficient WETH and ETH: have WETH={weth_bal:.6f}, ETH={native_bal:.6f}, need {amount_native:.6f}")
+                return False
         amt_wei = int(amount_native * 1e18)
         if not ensure_allowance_ethereum(w, weth, ROUTER_ADDR["ethereum"], amt_wei):
             l("Ethereum WETH approval failed")
@@ -876,10 +946,11 @@ def execute_buy(
         if not addr:
             l("Solana wallet address not configured")
             return False
-        wsol_bal = get_token_balance("solana", SOLANA_WSOL)
-        if wsol_bal < amount_native:
-            l(f"Insufficient WSOL: have {wsol_bal:.6f}, need {amount_native:.6f}")
+        native_sol = get_native_balance("solana")
+        if native_sol < amount_native:
+            l(f"Insufficient SOL: have {native_sol:.6f}, need {amount_native:.6f}")
             return False
+        # Jupiter auto-wraps SOL->WSOL internally; use native SOL balance
         amount_lamports = int(amount_native * 1e9)
         resp = gw_client.jupiter_execute_swap(
             address=addr,

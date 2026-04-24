@@ -57,7 +57,7 @@ if [ "$MEM_USED_PCT" -ge 95 ]; then
     echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
     log "Emergency: dropped filesystem caches"
     
-elif [ "$MEM_USED_PCT" -ge 85 ]; then
+elif [ "$MEM_USED_PCT" -ge 80 ]; then
     log "WARNING: Memory ${MEM_USED_PCT}% used - high memory pressure"
     RESULTS+=("WARNING: Memory ${MEM_USED_PCT}% used")
     FAILURES=$((FAILURES + 1))

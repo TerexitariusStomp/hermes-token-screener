@@ -38,6 +38,10 @@ import requests
 from hermes_screener.config import settings
 from hermes_screener.logging import get_logger
 from hermes_screener.metrics import metrics
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 log = get_logger("copytrade_monitor")
 

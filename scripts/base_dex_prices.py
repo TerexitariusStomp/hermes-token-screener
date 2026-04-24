@@ -11,6 +11,10 @@ import time
 import os
 import sqlite3
 import urllib.parse
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 RPCS = ["https://base.llamarpc.com", "https://base.drpc.org"]
 rpc_idx = 0

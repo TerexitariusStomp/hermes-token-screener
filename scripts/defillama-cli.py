@@ -35,6 +35,10 @@ import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
 from collections import defaultdict
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 try:
     import requests

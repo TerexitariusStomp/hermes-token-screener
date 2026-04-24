@@ -21,6 +21,10 @@ from solders.message import MessageV0
 from solders.instruction import Instruction, AccountMeta
 from solana.rpc.api import Client
 from solana.rpc.types import TxOpts
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +148,7 @@ class SolanaProgramAdapter:
         """
         from solders.pubkey import Pubkey as PK
 
-        TOKEN_2022_PROGRAM = PK.from_string(
+        TOKEN_2022_PROGRAM = Pubkey.from_string(
             "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         )
 

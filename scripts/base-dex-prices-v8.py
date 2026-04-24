@@ -5,6 +5,10 @@ Sources: 3 V2 AMMs + 3 V3 AMMs + 1 AMO DEX + Chainlink oracle + Dexscreener API.
 
 import json, urllib.request, ssl, time, os
 from datetime import datetime, timezone
+# TOR proxy - route all external HTTP through SOCKS5
+import sys, os
+sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
+import hermes_screener.tor_config
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(SCRIPT_DIR, "base-dex-config.json")

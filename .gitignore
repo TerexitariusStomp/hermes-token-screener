@@ -1,0 +1,30 @@
+# Environment & secrets
+.env
+.env.*
+*.env
+auth.json
+auth.lock
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Data & caches
+data/
+cache/
+logs/
+*.db
+*.db-shm
+*.db-wal
+*.log
+
+# Models & large binaries
+models/*.gguf
+models/*.bin
+models/*.safetensors
+
+# OS
+.DS_Store

@@ -19,8 +19,7 @@ import time
 import json
 import sqlite3
 import sys
-from pathlib import Path
-from typing import List, Tuple, Set
+from typing import List, Tuple
 
 try:
     from telethon import TelegramClient
@@ -30,8 +29,8 @@ except ImportError:
     sys.exit(1)
 
 from hermes_screener.config import settings
-from hermes_screener.logging import get_logger, log_duration
-from hermes_screener.metrics import metrics, start_metrics_server
+from hermes_screener.logging import get_logger
+from hermes_screener.metrics import start_metrics_server
 
 # ── Config (from centralized settings + scraper-specific defaults) ───────────
 SESSION_PATH = settings.session_path
