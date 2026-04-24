@@ -47,17 +47,55 @@ def get_wallets_db():
 
 
 def get_tracked_wallets(conn) -> set[str]:
-    """Get set of wallet addresses we're tracking (score >= MIN_WALLET_SCORE)."""
+    """Get set of wallet addresses we're tracking.
+
+    Uses a component-weighted score prioritizing PnL + timing + winrate
+    over aggregate wallet_score for smarter filtering.
+    """
     rows = conn.execute(
-        "SELECT address FROM tracked_wallets WHERE wallet_score >= ?",
+        """
+        SELECT address,
+            COALESCE(pnl_score, 0) as pnl,
+            COALESCE(timing_score, 0) as timing,
+            COALESCE(winrate_score, 0) as winrate,
+            COALESCE(insider_score, 0) as insider,
+            COALESCE(trades_score, 0) as trades,
+            COALESCE(roi_score, 0) as roi,
+            COALESCE(tag_score, 0) as tag,
+            COALESCE(copy_penalty, 0) as copy_pen,
+            COALESCE(rug_penalty, 0) as rug_pen,
+            wallet_score
+        FROM tracked_wallets
+        WHERE wallet_score >= ?
+        """,
         (MIN_WALLET_SCORE,),
     ).fetchall()
-    return {r[0] for r in rows}
+
+    tracked = set()
+    for row in rows:
+        addr, pnl, timing, winrate, insider, trades, roi, tag, copy_pen, rug_pen, agg = row
+        # Component-weighted score: PnL + timing + winrate matter most
+        comp_score = (
+            pnl * 1.0
+            + timing * 1.0
+            + winrate * 0.8
+            + insider * 0.7
+            + trades * 0.5
+            + roi * 0.4
+            + tag * 0.3
+            + copy_pen * 1.0
+            + rug_pen * 2.0
+        )
+        # Require either strong aggregate or strong fundamentals
+        if agg >= MIN_WALLET_SCORE or comp_score >= 35:
+            tracked.add(addr)
+    return tracked
 
 
 def ensure_purchases_table(conn):
     """Create smart_money_purchases table if it doesn't exist."""
-    conn.executescript("""
+    conn.executescript(
+        """
         CREATE TABLE IF NOT EXISTS smart_money_purchases (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             tx_hash TEXT NOT NULL,
@@ -101,7 +139,8 @@ def ensure_purchases_table(conn):
             score REAL DEFAULT 0,
             PRIMARY KEY (chain, token_address)
         );
-    """)
+    """
+    )
     conn.commit()
 
 

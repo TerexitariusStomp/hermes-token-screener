@@ -72,6 +72,22 @@ def init_wallet_db() -> sqlite3.Connection:
             -- Scoring
             wallet_score REAL DEFAULT 0,
 
+            -- Component scores (individual attribute scores for prioritization)
+            pnl_score REAL DEFAULT 0,
+            trades_score REAL DEFAULT 0,
+            winrate_score REAL DEFAULT 0,
+            roi_score REAL DEFAULT 0,
+            timing_score REAL DEFAULT 0,
+            age_score REAL DEFAULT 0,
+            tag_score REAL DEFAULT 0,
+            insider_score REAL DEFAULT 0,
+            defi_score REAL DEFAULT 0,
+            social_score REAL DEFAULT 0,
+            round_trip_penalty REAL DEFAULT 0,
+            copy_penalty REAL DEFAULT 0,
+            rug_penalty REAL DEFAULT 0,
+            low_win_penalty REAL DEFAULT 0,
+
             -- Per-token metrics (from GMGN token holders)
             realized_pnl REAL,
             unrealized_pnl REAL,
@@ -152,6 +168,22 @@ def init_wallet_db() -> sqlite3.Connection:
         CREATE INDEX IF NOT EXISTS idx_wallets_winrate ON tracked_wallets(win_rate DESC);
         CREATE INDEX IF NOT EXISTS idx_entries_wallet ON wallet_token_entries(wallet_address);
         CREATE INDEX IF NOT EXISTS idx_entries_token ON wallet_token_entries(token_address);
+
+        -- Migration: add component score columns if they don't exist
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS pnl_score REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS trades_score REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS winrate_score REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS roi_score REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS timing_score REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS age_score REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS tag_score REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS insider_score REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS defi_score REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS social_score REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS round_trip_penalty REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS copy_penalty REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS rug_penalty REAL DEFAULT 0;
+        ALTER TABLE tracked_wallets ADD COLUMN IF NOT EXISTS low_win_penalty REAL DEFAULT 0;
     """
     )
     conn.commit()
@@ -640,7 +672,7 @@ def enrich_wallets_from_tokens(
         entry_times = [a["start_holding_at"] for a in appearances if a.get("start_holding_at")]
         age_days = (now_ts - min(entry_times)) / 86400 if entry_times else 0
 
-        wallet_score = score_wallet_v3(
+        wallet_result = score_wallet_v3(
             realized_pnl=total_realized or total_profit,
             total_profit=total_profit,
             avg_roi=avg_roi,
@@ -660,26 +692,45 @@ def enrich_wallets_from_tokens(
             round_trip_count=0,
             wallet_age_days=age_days,
             twitter_username=twitter,
-        )["wallet_score"]
+        )
+        wallet_score = wallet_result["wallet_score"]
 
         if dry_run:
             continue
 
-        # Upsert wallet
+        # Upsert wallet with component scores
         cursor.execute(
             """
             INSERT INTO tracked_wallets
                 (address, chain, discovered_at, last_updated,
-                 wallet_score, realized_pnl, unrealized_pnl, total_profit,
+                 wallet_score, pnl_score, trades_score, winrate_score, roi_score,
+                 timing_score, age_score, tag_score, insider_score, defi_score,
+                 social_score, round_trip_penalty, copy_penalty, rug_penalty,
+                 low_win_penalty,
+                 realized_pnl, unrealized_pnl, total_profit,
                  avg_roi, total_trades, buy_count, sell_count,
                  entry_timing_score, win_rate,
                  tokens_profitable, tokens_total,
                  smart_money_tag, wallet_tags, twitter_username,
                  first_seen_at, last_active_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(chain, address) DO UPDATE SET
                 last_updated = excluded.last_updated,
                 wallet_score = excluded.wallet_score,
+                pnl_score = excluded.pnl_score,
+                trades_score = excluded.trades_score,
+                winrate_score = excluded.winrate_score,
+                roi_score = excluded.roi_score,
+                timing_score = excluded.timing_score,
+                age_score = excluded.age_score,
+                tag_score = excluded.tag_score,
+                insider_score = excluded.insider_score,
+                defi_score = excluded.defi_score,
+                social_score = excluded.social_score,
+                round_trip_penalty = excluded.round_trip_penalty,
+                copy_penalty = excluded.copy_penalty,
+                rug_penalty = excluded.rug_penalty,
+                low_win_penalty = excluded.low_win_penalty,
                 realized_pnl = excluded.realized_pnl,
                 unrealized_pnl = excluded.unrealized_pnl,
                 total_profit = excluded.total_profit,
@@ -702,6 +753,20 @@ def enrich_wallets_from_tokens(
                 now,
                 now,
                 wallet_score,
+                wallet_result.get("pnl_score", 0),
+                wallet_result.get("trades_score", 0),
+                wallet_result.get("winrate_score", 0),
+                wallet_result.get("roi_score", 0),
+                wallet_result.get("timing_score", 0),
+                wallet_result.get("age_score", 0),
+                wallet_result.get("tag_score", 0),
+                wallet_result.get("insider_score", 0),
+                wallet_result.get("defi_score", 0),
+                wallet_result.get("social_score", 0),
+                wallet_result.get("round_trip_penalty", 0),
+                wallet_result.get("copy_penalty", 0),
+                wallet_result.get("rug_penalty", 0),
+                wallet_result.get("low_win_penalty", 0),
                 total_realized,
                 total_unrealized,
                 total_profit,
@@ -1279,7 +1344,7 @@ def main():
             age_days = 0
         rt = round_trips.get(addr, 0)
 
-        new_score = score_wallet_v3(
+        new_result = score_wallet_v3(
             realized_pnl=rpnl or 0,
             total_profit=tprof or 0,
             avg_roi=roi or 0,
@@ -1299,10 +1364,46 @@ def main():
             round_trip_count=rt,
             wallet_age_days=age_days,
             twitter_username=tw or "",
-        )["wallet_score"]
+        )
+        new_score = new_result["wallet_score"]
         conn.execute(
-            "UPDATE tracked_wallets SET wallet_score = ? WHERE address = ?",
-            (new_score, addr),
+            """
+            UPDATE tracked_wallets SET
+                wallet_score = ?,
+                pnl_score = ?,
+                trades_score = ?,
+                winrate_score = ?,
+                roi_score = ?,
+                timing_score = ?,
+                age_score = ?,
+                tag_score = ?,
+                insider_score = ?,
+                defi_score = ?,
+                social_score = ?,
+                round_trip_penalty = ?,
+                copy_penalty = ?,
+                rug_penalty = ?,
+                low_win_penalty = ?
+            WHERE address = ?
+            """,
+            (
+                new_score,
+                new_result.get("pnl_score", 0),
+                new_result.get("trades_score", 0),
+                new_result.get("winrate_score", 0),
+                new_result.get("roi_score", 0),
+                new_result.get("timing_score", 0),
+                new_result.get("age_score", 0),
+                new_result.get("tag_score", 0),
+                new_result.get("insider_score", 0),
+                new_result.get("defi_score", 0),
+                new_result.get("social_score", 0),
+                new_result.get("round_trip_penalty", 0),
+                new_result.get("copy_penalty", 0),
+                new_result.get("rug_penalty", 0),
+                new_result.get("low_win_penalty", 0),
+                addr,
+            ),
         )
         rescored += 1
     conn.commit()

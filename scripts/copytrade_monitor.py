@@ -29,8 +29,10 @@ import time
 from typing import Any
 
 import requests
+
 # TOR proxy - route all external HTTP through SOCKS5
 import sys, os
+
 sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
 import hermes_screener.tor_config
 
@@ -56,7 +58,8 @@ def init_discoveries_db() -> sqlite3.Connection:
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA busy_timeout=30000")
 
-    conn.executescript("""
+    conn.executescript(
+        """
         CREATE TABLE IF NOT EXISTS discovered_tokens (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             contract_address TEXT NOT NULL,
@@ -109,7 +112,8 @@ def init_discoveries_db() -> sqlite3.Connection:
         CREATE INDEX IF NOT EXISTS idx_discovered_status ON discovered_tokens(status);
         CREATE INDEX IF NOT EXISTS idx_discovered_wallet ON discovered_tokens(discovered_by_wallet);
         CREATE INDEX IF NOT EXISTS idx_positions_wallet ON wallet_positions(wallet_address);
-    """)
+    """
+    )
 
     return conn
 
@@ -129,10 +133,32 @@ def scan_wallet_positions(min_wallet_score: float = 30) -> dict[str, list[dict]]
     conn = sqlite3.connect(f"file:{WALLETS_DB}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
 
-    # Get top wallets
+    # Get top wallets — component-weighted ranking for entry-quality signals
     wallets = conn.execute(
-        "SELECT address, chain, wallet_score, wallet_tags FROM tracked_wallets "
-        "WHERE wallet_score >= ? ORDER BY wallet_score DESC LIMIT 50",
+        """
+        SELECT address, chain, wallet_score, wallet_tags,
+            COALESCE(pnl_score, 0) as pnl,
+            COALESCE(timing_score, 0) as timing,
+            COALESCE(winrate_score, 0) as winrate,
+            COALESCE(insider_score, 0) as insider,
+            COALESCE(trades_score, 0) as trades,
+            COALESCE(roi_score, 0) as roi,
+            COALESCE(copy_penalty, 0) as copy_pen,
+            COALESCE(rug_penalty, 0) as rug_pen
+        FROM tracked_wallets
+        WHERE wallet_score >= ?
+        ORDER BY (
+            COALESCE(pnl_score, 0) * 1.0 +
+            COALESCE(timing_score, 0) * 1.0 +
+            COALESCE(winrate_score, 0) * 0.8 +
+            COALESCE(insider_score, 0) * 0.7 +
+            COALESCE(trades_score, 0) * 0.5 +
+            COALESCE(roi_score, 0) * 0.4 +
+            COALESCE(copy_penalty, 0) * 1.0 +
+            COALESCE(rug_penalty, 0) * 2.0
+        ) DESC
+        LIMIT 50
+        """,
         (min_wallet_score,),
     ).fetchall()
     conn.close()
@@ -646,8 +672,30 @@ def run_copytrade_monitor(
     wallets = [
         dict(r)
         for r in conn.execute(
-            "SELECT address, chain, wallet_score, wallet_tags FROM tracked_wallets "
-            "WHERE wallet_score >= ? ORDER BY wallet_score DESC LIMIT 50",
+            """
+            SELECT address, chain, wallet_score, wallet_tags,
+                COALESCE(pnl_score, 0) as pnl,
+                COALESCE(timing_score, 0) as timing,
+                COALESCE(winrate_score, 0) as winrate,
+                COALESCE(insider_score, 0) as insider,
+                COALESCE(trades_score, 0) as trades,
+                COALESCE(roi_score, 0) as roi,
+                COALESCE(copy_penalty, 0) as copy_pen,
+                COALESCE(rug_penalty, 0) as rug_pen
+            FROM tracked_wallets
+            WHERE wallet_score >= ?
+            ORDER BY (
+                COALESCE(pnl_score, 0) * 1.0 +
+                COALESCE(timing_score, 0) * 1.0 +
+                COALESCE(winrate_score, 0) * 0.8 +
+                COALESCE(insider_score, 0) * 0.7 +
+                COALESCE(trades_score, 0) * 0.5 +
+                COALESCE(roi_score, 0) * 0.4 +
+                COALESCE(copy_penalty, 0) * 1.0 +
+                COALESCE(rug_penalty, 0) * 2.0
+            ) DESC
+            LIMIT 50
+            """,
             (min_wallet_score,),
         ).fetchall()
     ]

@@ -88,6 +88,7 @@ def load_wallet_token_map() -> dict[str, list[dict]]:
 # PHASE 2: RE-SCORE TOKENS (based on smart money presence)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def rescore_tokens(
     tokens: list[dict],
     wallets: list[dict],
@@ -110,8 +111,28 @@ def rescore_tokens(
 
     # Compute stats for normalization
     max_smart_wallets = max((len(ws) for ws in token_wallets.values()), default=1)
+
+    # Component-weighted wallet scoring: prioritize PnL + timing + winrate over social/age
+    def _component_score(w: dict) -> float:
+        return (
+            w.get("pnl_score", 0) * 1.0
+            + w.get("timing_score", 0) * 1.0
+            + w.get("winrate_score", 0) * 0.8
+            + w.get("trades_score", 0) * 0.5
+            + w.get("insider_score", 0) * 0.7
+            + w.get("tag_score", 0) * 0.3
+            + w.get("roi_score", 0) * 0.4
+            + w.get("defi_score", 0) * 0.2
+            + w.get("age_score", 0) * 0.1
+            + w.get("social_score", 0) * 0.1
+            + w.get("round_trip_penalty", 0) * 1.0
+            + w.get("copy_penalty", 0) * 1.0
+            + w.get("rug_penalty", 0) * 2.0
+            + w.get("low_win_penalty", 0) * 1.0
+        )
+
     max_score_sum = max(
-        (sum(w.get("wallet_score", 0) for w in ws) for ws in token_wallets.values()),
+        (sum(_component_score(w) for w in ws) for ws in token_wallets.values()),
         default=1,
     )
 
@@ -121,7 +142,7 @@ def rescore_tokens(
         tw = token_wallets.get(t_addr, [])
 
         smart_count = len(tw)
-        smart_score_sum = sum(w.get("wallet_score", 0) for w in tw)
+        smart_score_sum = sum(_component_score(w) for w in tw)
         smart_avg_roi = sum(w.get("avg_roi", 0) or 0 for w in tw) / max(smart_count, 1)
         smart_total_profit = sum(w.get("total_profit", 0) or 0 for w in tw)
         insider_count = sum(1 for w in tw if w.get("insider_flag"))
