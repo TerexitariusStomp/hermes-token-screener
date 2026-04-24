@@ -55,6 +55,21 @@ running = True
 dry_run = "--dry-run" in sys.argv
 
 
+def _cap_log_file(path: str, max_bytes: int = 1_073_741_824, keep_bytes: int = 104_857_600):
+    """If log exceeds max_bytes, truncate to keep_bytes from the end."""
+    try:
+        p = Path(path)
+        if p.exists() and p.stat().st_size > max_bytes:
+            with open(p, "rb") as f:
+                f.seek(-keep_bytes, 2)
+                tail = f.read()
+            with open(p, "wb") as f:
+                f.write(tail)
+            logger.info(f"[LogCap] Truncated {path} to last {keep_bytes} bytes")
+    except Exception:
+        pass
+
+
 def signal_handler(signum, frame):
     global running
     logger.info(f"Received signal {signum}, shutting down...")
@@ -106,6 +121,8 @@ def run_script(
         stderr_dest = subprocess.PIPE
 
         if log_file:
+            # Cap log size before appending
+            _cap_log_file(log_file)
             # Redirect to log file (like cron) — force unbuffered so logs appear immediately
             with open(log_file, "a") as log:
                 env = os.environ.copy()

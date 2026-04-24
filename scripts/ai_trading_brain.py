@@ -26,9 +26,10 @@ sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
 import hermes_screener.tor_config
 
 import json
+import sqlite3
 import subprocess
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 import requests
 
@@ -60,6 +61,13 @@ TRADE_LOG_PATH = (
 POSITIONS_PATH = (
     settings.hermes_home / "data" / "token_screener" / "active_positions.json"
 )
+WALLET_DB_PATH = settings.hermes_home / "data" / "wallet_tracker.db"
+WALLETS_JSON_PATH = (
+    settings.hermes_home / "data" / "token_screener" / "wallets_phase4_final.json"
+)
+TRENDING_KEYWORDS_PATH = (
+    settings.hermes_home / "data" / "token_screener" / "trending_keywords.json"
+)
 
 # Bonsai-8B endpoint
 BONSAI_URL = "http://localhost:8083/v1/chat/completions"
@@ -78,7 +86,7 @@ MIN_POSITIONS = 1  # always maintain at least this many open positions
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def call_bonsai(system: str, prompt: str, max_tokens: int = 150) -> Optional[str]:
+def call_bonsai(system: str, prompt: str, max_tokens: int = 80) -> Optional[str]:
     """Call Bonsai-8B for trading analysis."""
     try:
         resp = requests.post(
@@ -89,10 +97,10 @@ def call_bonsai(system: str, prompt: str, max_tokens: int = 150) -> Optional[str
                     {"role": "system", "content": system},
                     {"role": "user", "content": prompt},
                 ],
-                "max_tokens": 100,
+                "max_tokens": 60,
                 "temperature": 0.2,
             },
-            timeout=120,
+            timeout=300,
         )
         if resp.status_code == 200:
             return (
@@ -115,49 +123,42 @@ def analyze_token_with_ai(token: dict) -> Optional[dict]:
     except Exception:
         kw_list = []
 
-    system = """You are a crypto trading AI with FULL DECISION AUTHORITY.
-You decide EVERYTHING: what to buy, position size, FDV limits, volume minimums, stop loss, take profit.
-No hardcoded rules. You use your judgment based on all available data.
+    # Extract wallet metrics for prompt
+    wm = token.get("wallet_metrics", {})
+    wallet_block = ""
+    if wm:
+        tags = wm.get("wallet_tags", "")
+        tags_short = ", ".join(tags.split(",")[:3]).strip() if tags else "none"
+        wallet_block = (
+            f"Wallet Activity: {wm.get('unique_buyers', 0)} buyers, "
+            f"${wm.get('total_buy_usd', 0):,.0f} vol, "
+            f"avg score {wm.get('avg_wallet_score', 0):.1f}, "
+            f"tags: {tags_short}\n"
+        )
+    else:
+        wallet_block = "Wallet Activity: none\n"
 
-Your constraints:
-- Max 5% of portfolio per trade (only safety cap)
-- You must maintain at least 1 open position at all times
-- Honeypots are excluded before you see them (only safety filter)
+    is_synthetic = token.get("is_synthetic", False)
+    synthetic_note = ""
+    if is_synthetic:
+        synthetic_note = "SYNTHETIC: discovered via wallet activity, not in screener.\n"
 
-Consider ALL signals and decide freely:
-- Score, smart wallet count, insider presence
-- FDV and volume (you decide minimums based on market conditions)
-- Price momentum and trend
-- Social signals and website quality
-- Tax rates, liquidity depth
-- Market conditions and risk appetite
+    system = """You are a crypto trading AI. Decide: buy/hold/sell, position size (0-5%), stop loss (5-30%), take profit (50-500%).
+Constraints: max 5% per trade, maintain >=1 position.
+Consider: score, smart wallets, insiders, FDV, volume, momentum, social, liquidity, wallet activity.
+Respond ONLY with JSON:
+{"decision":"buy|hold|sell","confidence":0-100,"position_pct":0-5,"stop_loss_pct":5-30,"take_profit_pct":50-500,"reason":"one sentence"}"""
 
-Be decisive. When uncertain, choose the best available option rather than holding nothing.
+    dex = token.get("dex", {})
+    prompt = f"""Token: {dex.get('symbol', '?')} ({token.get('chain', '?')})
+Score: {token.get('score', 0)} | Smart: {token.get('smart_wallet_count', token.get('gmgn_smart_wallets', 0))} | Insiders: {token.get('insider_count', 0)}
+FDV: ${dex.get('fdv', 0):,.0f} | Vol24h: ${dex.get('volume_h24', 0):,.0f} | Vol1h: ${dex.get('volume_h1', 0):,.0f}
+Price: 1h={dex.get('price_change_h1', '?')}% 6h={dex.get('price_change_h6', '?')}% | Social: {token.get('social_score', 0)} | Age: {dex.get('age_hours') or 0:.1f}h
+Pos: {', '.join(token.get('positives', [])[:3])} | Neg: {', '.join(token.get('negatives', [])[:3])}
+Trending: {', '.join(kw_list[:3]) if kw_list else 'none'}
 
-Respond with ONLY a JSON object:
-{"decision": "buy|hold|sell", "confidence": 0-100, "position_pct": 0-5, "stop_loss_pct": 5-30, "take_profit_pct": 50-500, "reason": "one sentence"}"""
-
-    prompt = f"""Analyze this token for trading:
-
-Symbol: {token.get('dex', {}).get('symbol', '?')}
-Chain: {token.get('chain', '?')}
-Score: {token.get('score', 0)}
-Smart Wallets: {token.get('smart_wallet_count', token.get('gmgn_smart_wallets', 0))}
-Insiders: {token.get('insider_count', 0)}
-FDV: ${token.get('dex', {}).get('fdv', 0):,.0f}
-Volume 24h: ${token.get('dex', {}).get('volume_h24', 0):,.0f}
-Volume 1h: ${token.get('dex', {}).get('volume_h1', 0):,.0f}
-Price 1h: {token.get('dex', {}).get('price_change_h1', '?')}%
-Price 6h: {token.get('dex', {}).get('price_change_h6', '?')}%
-Social Score: {token.get('social_score', 0)}
-Age: {(token.get('dex') or {}).get('age_hours') or 0:.1f}h
-Positives: {', '.join(token.get('positives', []))}
-Negatives: {', '.join(token.get('negatives', []))}
-Address: {token.get('contract_address', '')}
-Trending narratives: {', '.join(kw_list) if kw_list else 'none'}
-Description: {token.get('dex', {}).get('description', 'N/A')[:200]}
-
-Current market context: BTC trending, Solana active, memecoin season."""
+{wallet_block}
+{synthetic_note}"""
 
     response = call_bonsai(system, prompt)
     if not response:
@@ -245,21 +246,223 @@ def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
     """Rank tokens for AI review. No filtering — AI decides what's tradeable."""
     ranked = []
     for t in tokens:
-        dex = t.get("dex", {})
-        dex.get("fdv", 0) or 0
-        dex.get("volume_h24", 0) or 0
-        t.get("smart_wallet_count", t.get("gmgn_smart_wallets", 0)) or 0
-
         # Skip obvious honeypots only (safety)
         if False:
             continue
 
+        # Compute composite score: screener score + wallet activity boost
+        base_score = t.get("score", 0) or 0
+        wm = t.get("wallet_metrics", {})
+        if wm:
+            wallet_boost = min(
+                25,
+                (wm.get("unique_buyers", 0) * 2)
+                + min(10, wm.get("total_buy_usd", 0) / 1000)
+                + (wm.get("avg_wallet_score", 0) / 5),
+            )
+            t["_composite_score"] = base_score + wallet_boost
+        else:
+            t["_composite_score"] = base_score
+
         ranked.append(t)
 
-    # Sort by score descending — AI sees best first
-    ranked.sort(key=lambda t: t.get("score", 0) or 0, reverse=True)
+    # Sort by composite score descending — AI sees best first
+    ranked.sort(key=lambda t: t.get("_composite_score", 0), reverse=True)
     log.info("tokens_ranked", total=len(tokens), ranked=len(ranked))
     return ranked[:20]  # top 20 for AI review
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# WALLET & ACTIVE TOKEN DATA LOADING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+def load_wallet_quality_map() -> Dict[str, dict]:
+    """Load wallet quality data from wallets_phase4_final.json."""
+    if not WALLETS_JSON_PATH.exists():
+        log.warning("wallets_json_not_found", path=str(WALLETS_JSON_PATH))
+        return {}
+    try:
+        data = json.loads(WALLETS_JSON_PATH.read_text())
+        wallets = data.get("wallets", [])
+        wallet_map = {}
+        for w in wallets:
+            addr = w.get("address", "").lower()
+            if addr:
+                wallet_map[addr] = w
+        log.info("wallet_quality_map_loaded", count=len(wallet_map))
+        return wallet_map
+    except Exception as e:
+        log.error("wallet_quality_map_load_failed", error=str(e))
+        return {}
+
+
+def query_active_tokens(hours: int = 24) -> List[dict]:
+    """
+    Query smart_money_purchases for recent buy activity.
+    Returns list of token dicts with wallet-derived metrics.
+    """
+    if not WALLET_DB_PATH.exists():
+        log.warning("wallet_db_not_found", path=str(WALLET_DB_PATH))
+        return []
+
+    cutoff = int(time.time() - hours * 3600)
+    try:
+        conn = sqlite3.connect(f"file:{WALLET_DB_PATH}?mode=ro", uri=True)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        rows = cur.execute(
+            "SELECT token_address, token_symbol, chain, wallet_address, "
+            "amount_usd, wallet_score, wallet_tags, timestamp "
+            "FROM smart_money_purchases "
+            "WHERE side = 'buy' AND timestamp >= ?",
+            (cutoff,),
+        ).fetchall()
+        conn.close()
+    except Exception as e:
+        log.error("active_tokens_query_failed", error=str(e))
+        return []
+
+    # Aggregate by token
+    token_map: Dict[str, dict] = {}
+    # Skip wrapped/native/stable tokens that aren't trade targets
+    SKIP_SYMBOLS = {"wsol", "sol", "weth", "eth", "usdc", "usdt", "wbtc", "btc", "dai"}
+    for row in rows:
+        sym = (row["token_symbol"] or "?").lower()
+        if sym in SKIP_SYMBOLS:
+            continue
+        key = (row["token_address"] or "").lower()
+        if not key:
+            continue
+        if key not in token_map:
+            token_map[key] = {
+                "token_address": row["token_address"],
+                "symbol": row["token_symbol"] or "?",
+                "chain": row["chain"] or "",
+                "total_buy_usd": 0.0,
+                "unique_buyers": set(),
+                "buy_count": 0,
+                "last_buy_at": 0,
+                "wallet_scores": [],
+                "wallet_tags": set(),
+            }
+        tm = token_map[key]
+        tm["total_buy_usd"] += row["amount_usd"] or 0
+        tm["unique_buyers"].add(row["wallet_address"])
+        tm["buy_count"] += 1
+        tm["last_buy_at"] = max(tm["last_buy_at"], row["timestamp"] or 0)
+        if row["wallet_score"]:
+            tm["wallet_scores"].append(row["wallet_score"])
+        if row["wallet_tags"]:
+            for tag in str(row["wallet_tags"]).split(","):
+                tm["wallet_tags"].add(tag.strip())
+
+    results = []
+    for key, tm in token_map.items():
+        avg_score = sum(tm["wallet_scores"]) / len(tm["wallet_scores"]) if tm["wallet_scores"] else 0
+        results.append({
+            "token_address": tm["token_address"],
+            "symbol": tm["symbol"],
+            "chain": tm["chain"],
+            "total_buy_usd": round(tm["total_buy_usd"], 2),
+            "unique_buyers": len(tm["unique_buyers"]),
+            "buy_count": tm["buy_count"],
+            "avg_wallet_score": round(avg_score, 1),
+            "last_buy_at": tm["last_buy_at"],
+            "wallet_tags": ",".join(sorted(tm["wallet_tags"])) if tm["wallet_tags"] else "",
+        })
+
+    # Sort by unique buyers then total buy USD
+    results.sort(key=lambda x: (x["unique_buyers"], x["total_buy_usd"]), reverse=True)
+    log.info("active_tokens_queried", count=len(results), hours=hours)
+    return results
+
+
+def enrich_and_merge_tokens(
+    top_tokens: List[dict],
+    active_tokens: List[dict],
+    wallet_map: Dict[str, dict],
+) -> List[dict]:
+    """
+    Enrich top100 tokens with wallet metrics and inject synthetic tokens
+    for active purchases not present in the screener.
+    """
+    # Build lookup by normalized address
+    top_by_addr: Dict[str, dict] = {}
+    for t in top_tokens:
+        addr = (t.get("contract_address") or "").lower()
+        if addr:
+            top_by_addr[addr] = t
+
+    # Enrich existing top tokens with wallet metrics
+    for at in active_tokens:
+        addr = (at.get("token_address") or "").lower()
+        if addr in top_by_addr:
+            t = top_by_addr[addr]
+            t["wallet_metrics"] = {
+                "unique_buyers": at["unique_buyers"],
+                "total_buy_usd": at["total_buy_usd"],
+                "avg_wallet_score": at["avg_wallet_score"],
+                "buy_count": at["buy_count"],
+                "wallet_tags": at["wallet_tags"],
+                "last_buy_at": at["last_buy_at"],
+            }
+
+    # Build synthetic tokens for active tokens not in top100
+    synthetic: List[dict] = []
+    for at in active_tokens:
+        addr = (at.get("token_address") or "").lower()
+        if addr in top_by_addr:
+            continue
+        # Compute synthetic score from wallet activity
+        synthetic_score = min(
+            70,
+            at["unique_buyers"] * 8
+            + at["buy_count"] * 1.5
+            + min(15, at["total_buy_usd"] / 500)
+            + at["avg_wallet_score"] / 3,
+        )
+        sym = at["symbol"]
+        chain = at["chain"]
+        st = {
+            "contract_address": at["token_address"],
+            "chain": chain,
+            "score": round(synthetic_score, 1),
+            "dex": {
+                "symbol": sym,
+                "fdv": 0,
+                "volume_h24": 0,
+                "volume_h1": 0,
+                "price_change_h1": 0,
+                "price_change_h6": 0,
+                "age_hours": 0,
+                "description": "",
+            },
+            "smart_wallet_count": at["unique_buyers"],
+            "insider_count": 0,
+            "social_score": 0,
+            "positives": [f"{at['unique_buyers']} smart wallets buying"],
+            "negatives": ["Not in screener top100 — discovered via wallet activity"],
+            "wallet_metrics": {
+                "unique_buyers": at["unique_buyers"],
+                "total_buy_usd": at["total_buy_usd"],
+                "avg_wallet_score": at["avg_wallet_score"],
+                "buy_count": at["buy_count"],
+                "wallet_tags": at["wallet_tags"],
+                "last_buy_at": at["last_buy_at"],
+            },
+            "is_synthetic": True,
+        }
+        synthetic.append(st)
+
+    log.info(
+        "tokens_enriched_and_merged",
+        top_count=len(top_tokens),
+        active_count=len(active_tokens),
+        synthetic_count=len(synthetic),
+        enriched_count=len([t for t in top_tokens if "wallet_metrics" in t]),
+    )
+    return top_tokens + synthetic
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -326,7 +529,8 @@ def execute_trade(token: dict, decision: dict, dry_run: bool = False) -> dict:
     """
     chain = token.get("chain", "").lower()
     addr = token.get("contract_address", "")
-    symbol = token.get("symbol", "?")
+    # Symbol may be at top level or nested in dex dict
+    symbol = token.get("symbol") or token.get("dex", {}).get("symbol", "?")
     action = decision.get("decision", "hold")
     position_pct = decision.get("position_pct", 1.0)
 
@@ -786,15 +990,21 @@ def run_trading_brain(
     with open(TOP_TOKENS_PATH) as f:
         data = json.load(f)
         # Support both 'tokens' (old format) and 'top_tokens' (new format)
-        tokens = data.get("tokens") or data.get("top_tokens", [])
+        top_tokens = data.get("tokens") or data.get("top_tokens", [])
 
-    log.info("tokens_loaded", count=len(tokens))
+    log.info("tokens_loaded", count=len(top_tokens))
+
+    # ── Load wallet quality map and active tokens ──────────────────────────
+    wallet_map = load_wallet_quality_map()
+    active_tokens = query_active_tokens(hours=24)
+    all_tokens = enrich_and_merge_tokens(top_tokens, active_tokens, wallet_map)
+    log.info("pipeline_tokens", count=len(all_tokens), synthetic=len([t for t in all_tokens if t.get("is_synthetic")]))
 
     # Filter tradeable
-    tradeable = rank_tokens_for_ai(tokens)
+    tradeable = rank_tokens_for_ai(all_tokens)
     if not tradeable:
         log.info("no_tradeable_tokens")
-        return {"status": "no_tradeable", "tokens_analyzed": len(tokens)}
+        return {"status": "no_tradeable", "tokens_analyzed": len(all_tokens)}
 
     # Check existing positions
     positions = load_positions()
@@ -824,7 +1034,10 @@ def run_trading_brain(
             "analyzing",
             symbol=symbol,
             score=token.get("score"),
+            composite=token.get("_composite_score"),
             smart=token.get("smart_wallet_count", token.get("gmgn_smart_wallets", 0)),
+            wallets=token.get("wallet_metrics", {}).get("unique_buyers", 0),
+            synthetic=token.get("is_synthetic", False),
         )
 
         decision = analyze_token_with_ai(token)
@@ -835,6 +1048,7 @@ def run_trading_brain(
             decision["chain"] = token.get("chain", "")
             decision["score"] = token.get("score", 0)
             decision["fdv"] = token.get("dex", {}).get("fdv", 0)
+            decision["is_synthetic"] = token.get("is_synthetic", False)
 
             log_decision(decision)
             decisions.append(decision)
@@ -855,8 +1069,8 @@ def run_trading_brain(
             target=MIN_POSITIONS,
             needed=needed,
         )
-        # Force buy the best available token (highest score)
-        forced_buys = sorted(tradeable, key=lambda t: t.get("score", 0), reverse=True)[
+        # Force buy the best available token (highest composite score)
+        forced_buys = sorted(tradeable, key=lambda t: t.get("_composite_score", 0), reverse=True)[
             :needed
         ]
         for token in forced_buys:
@@ -882,6 +1096,7 @@ def run_trading_brain(
             forced_decision["chain"] = token.get("chain", "")
             forced_decision["score"] = token.get("score", 0)
             forced_decision["fdv"] = fdex.get("fdv", 0)
+            forced_decision["is_synthetic"] = token.get("is_synthetic", False)
             log_decision(forced_decision)
             decisions.append(forced_decision)
             buy_signals += 1
@@ -924,6 +1139,7 @@ def run_trading_brain(
                             "entry_time": time.time(),
                             "ai_confidence": decision.get("confidence"),
                             "ai_reason": decision.get("reason"),
+                            "is_synthetic": decision.get("is_synthetic", False),
                         }
                     )
 
@@ -945,6 +1161,7 @@ def run_trading_brain(
                 "decision": d.get("decision"),
                 "confidence": d.get("confidence"),
                 "reason": d.get("reason", "")[:80],
+                "is_synthetic": d.get("is_synthetic", False),
             }
             for d in decisions[:5]
         ],
