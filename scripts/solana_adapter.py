@@ -168,6 +168,47 @@ class SolanaProgramAdapter:
         ata, _ = Pubkey.find_program_address(seeds, ASSOCIATED_TOKEN_PROGRAM)
         return ata
 
+    def close_wsol_ata(self) -> Optional[str]:
+        """Close WSOL ATA, returning lamports to wallet as native SOL."""
+        if not self.keypair:
+            logger.error("No keypair for WSOL unwrap")
+            return None
+        try:
+            wallet = self.keypair.pubkey()
+            wsol_mint = Pubkey.from_string("So11111111111111111111111111111111111111112")
+
+            ata = self._get_ata(wallet, wsol_mint)
+
+            # Check if ATA exists and has balance
+            resp = self.client.get_token_account_balance(ata)
+            if not resp or not resp.value or int(resp.value.amount) <= 0:
+                logger.debug("No WSOL to unwrap")
+                return None
+
+            # CloseAccount instruction = 9
+            data = bytes([9])
+            keys = [
+                AccountMeta(pubkey=ata, is_signer=False, is_writable=True),
+                AccountMeta(pubkey=wallet, is_signer=False, is_writable=True),
+                AccountMeta(pubkey=wallet, is_signer=True, is_writable=False),
+            ]
+            ix = Instruction(program_id=TOKEN_PROGRAM, accounts=keys, data=data)
+
+            blockhash = self.client.get_latest_blockhash().value.blockhash
+            msg = MessageV0.try_compile(
+                payer=wallet,
+                instructions=[ix],
+                address_lookup_table_accounts=[],
+                recent_blockhash=blockhash,
+            )
+            tx = VersionedTransaction(msg, [self.keypair])
+            sig = self.client.send_transaction(tx, opts=TxOpts(skip_preflight=False, preflight_commitment="confirmed"))
+            logger.info(f"WSOL unwrap tx: {sig.value}")
+            return str(sig.value)
+        except Exception as e:
+            logger.error(f"WSOL unwrap failed: {e}")
+            return None
+
     # ==================== JUPITER QUOTE ====================
 
     def jupiter_quote(

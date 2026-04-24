@@ -869,6 +869,16 @@ def fetch_token_metadata(token_addr: str, chain: str = "base"):
     return {}
 
 
+def unwrap_wsol():
+    """Close WSOL ATA, converting any WSOL dust back to native SOL."""
+    try:
+        from solana_adapter import SolanaProgramAdapter
+        adapter = SolanaProgramAdapter()
+        adapter.close_wsol_ata()
+    except Exception:
+        pass
+
+
 # ==================== EXECUTION DISPATCH ====================
 def execute_buy(
     chain: str, token_addr: str, amount_native: float, metadata: dict
@@ -963,6 +973,7 @@ def execute_buy(
             l(f"Jupiter swap error: {resp['error']}")
             return False
         l("Solana buy via Jupiter successful")
+        unwrap_wsol()
         return True
     return False
 
@@ -1022,6 +1033,7 @@ def execute_sell(
             l(f"Jupiter sell error: {resp['error']}")
             return False
         l("Solana sell via Jupiter successful")
+        unwrap_wsol()
         return True
     return False
 
