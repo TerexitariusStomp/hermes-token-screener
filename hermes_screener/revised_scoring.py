@@ -8,6 +8,8 @@ This module implements a more conservative scoring approach that:
 3. Adds stricter criteria for fresh tokens
 4. Makes price momentum scoring more conservative
 5. Adds penalties for tokens with no social presence
+6. Adds Market Existence Gate — ghost tokens with no liquidity/volume/txns score 0
+7. Makes social signals liquidity-conditional — hype without pools is discounted
 
 Key Changes:
 - FDV/volume ratio: max 15 points (was 25)
@@ -16,6 +18,15 @@ Key Changes:
 - Fresh tokens (<2h): no automatic bonus, must earn points
 - Price momentum: max 5 points for positive changes (was 10+)
 - Added penalty for zero social signals
+- Ghost token gate: 0 score if no active DEX pairs, liquidity, or volume
+- Social-liquidity conditionality: social signals scaled by liquidity depth
+  * $100K+ liq = 100% social weight
+  * $50K-$100K = 85%
+  * $20K-$50K = 70%
+  * $10K-$20K = 50%
+  * $5K-$10K = 30%
+  * $1K-$5K = 15%
+  * <$1K = 5%
 """
 
 from __future__ import annotations
@@ -32,6 +43,7 @@ log = logging.getLogger("revised_scoring")
 _PRIORITY_PATH = os.path.expanduser("~/.hermes/data/token_screener/priority_tokens.json")
 _PRIORITY_TOKENS: set[tuple[str, str]] = set()  # {(chain, addr), …}
 
+
 def _load_priority_tokens() -> None:
     global _PRIORITY_TOKENS
     try:
@@ -47,7 +59,9 @@ def _load_priority_tokens() -> None:
     except Exception as e:
         log.warning("priority_tokens_load_failed", extra={"error": str(e)})
 
+
 _load_priority_tokens()
+
 
 def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     """
@@ -89,6 +103,31 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     if symbol in BLOCKED_SYMBOLS:
         return 0, [], [f"BLOCKED: {symbol.upper()} is not a tradeable token"]
 
+    # ── MARKET EXISTENCE GATE ──
+    # A token must have verifiable on-chain liquidity or volume to be tradeable.
+    # Tokens with no DexScreener pairs (delisted, pre-launch, fake) are "ghost tokens"
+    # and cannot be evaluated regardless of social signals.
+    liq_usd = dex.get("liquidity_usd") or 0
+    vol_h24 = dex.get("volume_h24", 0) or 0
+    txns_h1 = (dex.get("txns_h1", {}) or {}).get("buys", 0) or 0
+    txns_h1_sells = (dex.get("txns_h1", {}) or {}).get("sells", 0) or 0
+    fdv = dex.get("fdv") or dex.get("market_cap") or 0
+
+    has_liquidity = liq_usd > 0
+    has_volume = vol_h24 > 0
+    has_txns = (txns_h1 + txns_h1_sells) > 0
+    has_fdv = fdv > 0
+
+    if not has_liquidity and not has_volume and not has_txns:
+        # Completely unlisted / delisted / ghost token
+        return 0.0, [], ["GHOST TOKEN: no active DEX pairs, liquidity, or volume"]
+
+    if not has_liquidity and not has_fdv:
+        # Token has some volume but no liquidity and no market cap — likely
+        # wash-traded or manipulated. Cap the base score before social bonuses.
+        score -= 25
+        negatives.append("no liquidity or market cap")
+
     # ── DISQUALIFIERS (return 0 immediately) ──
     if token.get("gmgn_honeypot"):
         return 0, [], ["HONEYPOT"]
@@ -106,13 +145,32 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     pc_h1 = dex.get("price_change_h1")
     pc_h6 = dex.get("price_change_h6")
     pc_h24 = dex.get("price_change_h24")
-    fdv = dex.get("fdv") or dex.get("market_cap") or 0
-    vol_h24 = dex.get("volume_h24", 0) or 0
     vol_h1 = dex.get("volume_h1", 0) or 0
     age_hours = dex.get("age_hours")
     channel_count = token.get("channel_count", 0)
     mentions = token.get("mentions", 0)
     smart = token.get("gmgn_smart_wallets", 0)
+
+    # ── SOCIAL-LIQUIDITY CONDITIONALITY ──
+    # Social signals without liquidity backing are often manufactured
+    # (bot mentions, fake channels, shill armies). Scale social points
+    # by the depth of the on-chain market they purport to represent.
+    liq = dex.get("liquidity_usd") or 0
+    if liq >= 100_000:
+        social_multiplier = 1.0
+    elif liq >= 50_000:
+        social_multiplier = 0.85
+    elif liq >= 20_000:
+        social_multiplier = 0.7
+    elif liq >= 10_000:
+        social_multiplier = 0.5
+    elif liq >= 5_000:
+        social_multiplier = 0.3
+    elif liq >= 1_000:
+        social_multiplier = 0.15
+    else:
+        social_multiplier = 0.05
+    social_points = 0.0
 
     # ── 1. FDV/VOLUME RATIO (0-15 points) - REDUCED FROM 25 ──
     # Conservative scoring for turnover
@@ -153,57 +211,63 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     # ── 2. CHANNELS + MENTIONS (0-15 points) - REDUCED FROM 20 ──
     # More conservative social scoring
     if channel_count >= 10:
-        score += 8  # REDUCED from 12
+        social_points += 8  # REDUCED from 12
     elif channel_count >= 5:
-        score += 6  # REDUCED from 9
+        social_points += 6  # REDUCED from 9
     elif channel_count >= 3:
-        score += 4  # REDUCED from 6
+        social_points += 4  # REDUCED from 6
     elif channel_count >= 2:
-        score += 2  # REDUCED from 3
+        social_points += 2  # REDUCED from 3
 
     if mentions >= 10:
-        score += 7  # REDUCED from 8
+        social_points += 7  # REDUCED from 8
     elif mentions >= 5:
-        score += 5  # REDUCED from 6
+        social_points += 5  # REDUCED from 6
     elif mentions >= 3:
-        score += 3  # REDUCED from 4
+        social_points += 3  # REDUCED from 4
     elif mentions >= 1:
-        score += 1  # REDUCED from 2
+        social_points += 1  # REDUCED from 2
 
     # ── 3. SMART WALLETS (0-12 points) - REDUCED FROM 15 ──
     if smart >= 50:
-        score += 12  # REDUCED from 15
+        social_points += 12  # REDUCED from 15
     elif smart >= 30:
-        score += 9  # REDUCED from 12
+        social_points += 9  # REDUCED from 12
     elif smart >= 20:
-        score += 7  # REDUCED from 10
+        social_points += 7  # REDUCED from 10
     elif smart >= 10:
-        score += 5  # REDUCED from 7
+        social_points += 5  # REDUCED from 7
     elif smart >= 5:
-        score += 3  # REDUCED from 4
+        social_points += 3  # REDUCED from 4
     elif smart >= 1:
-        score += 1  # REDUCED from 2
+        social_points += 1  # REDUCED from 2
 
     # ── 4. DEV HOLDING (0-8 points) - REDUCED FROM 10 ──
     if token.get("gmgn_dev_hold"):
-        score += 8  # REDUCED from 10
+        social_points += 8  # REDUCED from 10
     dev_rate = token.get("gmgn_dev_team_hold_rate")
     if dev_rate is not None and dev_rate > 0.05:
-        score += 2  # REDUCED from 3
+        social_points += 2  # REDUCED from 3
 
     # ── 5. SOCIAL SIGNALS (0-8 points) - REDUCED FROM 10 ──
     tw_sent = token.get("tw_sentiment_score", 0) or 0
     social = token.get("social_score", 0) or 0
     if tw_sent > 70:
-        score += 4  # REDUCED from 5
+        social_points += 4  # REDUCED from 5
     elif tw_sent > 50:
-        score += 2  # REDUCED from 3
+        social_points += 2  # REDUCED from 3
     if social > 20:
-        score += 4  # REDUCED from 5
+        social_points += 4  # REDUCED from 5
     elif social > 10:
-        score += 2  # REDUCED from 3
+        social_points += 2  # REDUCED from 3
     elif social > 5:
-        score += 1
+        social_points += 1
+
+    # Apply liquidity-conditional discount to all social signals
+    if social_points > 0:
+        if social_multiplier < 1.0:
+            negatives.append(f"social signals discounted {social_multiplier:.0%} (liq ${liq:,.0f})")
+        score += round(social_points * social_multiplier, 2)
 
     # ── 6. PRICE MOMENTUM (0-5 points) - REDUCED FROM 10 ──
     # Much more conservative momentum scoring
@@ -427,6 +491,7 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
 
     return round(score, 2), positives, negatives
 
+
 def test_revised_scoring():
     """Test the revised scoring with sample tokens."""
     # Sample tokens from the user's list
@@ -471,6 +536,7 @@ def test_revised_scoring():
         print(f"  New score: {score}")
         print(f"  Positives: {positives}")
         print(f"  Negatives: {negatives}")
+
 
 if __name__ == "__main__":
     test_revised_scoring()
