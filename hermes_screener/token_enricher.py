@@ -162,11 +162,29 @@ async def enrich_batch(chain: str | None = None, limit: int = 30) -> dict:
     else:
         # Local path - needs internet
         log.warning("No HERMES_WORKER_URL set - running enrichment locally")
-        # Import async_enrichment only when needed locally
         from hermes_screener.async_enrichment import run_async_enrichment
-        enriched_count = await run_async_enrichment(chain=chain, limit=limit)
+
+        enriched_tokens, _layer_results = await run_async_enrichment(
+            candidates=tokens, max_enrich=limit
+        )
+
+        for token in enriched_tokens:
+            save_enrichment(
+                token.get("chain", chain or ""),
+                token.get("address", ""),
+                token,
+            )
+            if token.get("score") is not None:
+                update_token_score(
+                    token.get("chain", chain or ""),
+                    token.get("address", ""),
+                    token["score"],
+                    token.get("positives", []),
+                    token.get("negatives", []),
+                )
+
         return {
-            "enriched": enriched_count,
+            "enriched": len(enriched_tokens),
             "total_tokens": len(tokens),
             "mode": "local",
         }

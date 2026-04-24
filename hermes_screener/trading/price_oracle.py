@@ -13,7 +13,7 @@ import os
 import time
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Optional
 
 import httpx
 
@@ -39,10 +39,10 @@ CHAIN_MAP = {
 class TokenPrice:
     address: str
     chain: str
-    price_usd: Optional[float] = None
-    fdv: Optional[float] = None
-    volume_h24: Optional[float] = None
-    price_change_h24: Optional[float] = None
+    price_usd: float | None = None
+    fdv: float | None = None
+    volume_h24: float | None = None
+    price_change_h24: float | None = None
     updated_at: float = 0.0
 
     def as_dict(self) -> dict:
@@ -55,7 +55,7 @@ def _cache_file(address: str, chain: str) -> Path:
     h = hashlib.md5(f"{chain}:{address}".encode()).hexdigest()[:12]
     return CACHE_DIR / f"price_{h}.json"
 
-def _read_cache(address: str, chain: str) -> Optional[TokenPrice]:
+def _read_cache(address: str, chain: str) -> TokenPrice | None:
     f = _cache_file(address, chain)
     try:
         if f.exists():
@@ -77,7 +77,7 @@ async def fetch_price(
     address: str,
     chain: str = "ethereum",
     *,
-    client: Optional[httpx.AsyncClient] = None,
+    client: httpx.AsyncClient | None = None,
 ) -> Optional[TokenPrice]:
     """
     Fetch price for a single token via Dexscreener /token-price/v1/{chain}.
@@ -126,16 +126,16 @@ async def fetch_price(
             await client.aclose()
 
 async def fetch_bulk(
-    addresses: List[str],
+    addresses: list[str],
     chain: str = "ethereum",
     *,
-    client: Optional[httpx.AsyncClient] = None,
+    client: httpx.AsyncClient | None = None,
     batch_size: int = 30,
-) -> Dict[str, TokenPrice]:
+) -> dict[str, TokenPrice]:
     """
     Bulk fetch up to batch_size addresses per request.
     """
-    results: Dict[str, TokenPrice] = {}
+    results: dict[str, TokenPrice] = {}
     own_client = client is None
     if own_client:
         client = httpx.AsyncClient(timeout=REQUEST_TIMEOUT)
@@ -173,14 +173,14 @@ async def fetch_bulk(
     return results
 
 # ─── Sync wrappers ────────────────────────────────────────────────────────────
-def get_price_sync(address: str, chain: str = "ethereum") -> Optional[TokenPrice]:
+def get_price_sync(address: str, chain: str = "ethereum") -> TokenPrice | None:
     try:
         return asyncio.run(fetch_price(address, chain))
     except RuntimeError:
         loop = asyncio.get_event_loop()
         return loop.run_until_complete(fetch_price(address, chain))
 
-def get_bulk_sync(addresses: List[str], chain: str = "ethereum") -> Dict[str, TokenPrice]:
+def get_bulk_sync(addresses: list[str], chain: str = "ethereum") -> dict[str, TokenPrice]:
     try:
         return asyncio.run(fetch_bulk(addresses, chain))
     except RuntimeError:
@@ -190,6 +190,31 @@ def get_bulk_sync(addresses: List[str], chain: str = "ethereum") -> Dict[str, To
 __all__ = ["TokenPrice", "fetch_price", "fetch_bulk", "get_price_sync", "get_bulk_sync"]
 
 # Backward compatibility: scanner expects `PriceOracle` class
-class PriceOracle(DexscreenerAPI):
-    """Compatibility wrapper — scanner expects PriceOracle, implementation lives in DexscreenerAPI."""
-    pass  # inherits all methods
+# Previously inherited from a non-existent DexscreenerAPI. Now a standalone wrapper.
+from .portfolio_registry import TokenSpec
+
+
+class PriceOracle:
+    """Compatibility wrapper — provides get_prices() used by LiquidityDaemon.
+
+    Historically this accepted a cache file path; modern implementation uses
+    the module-level CACHE_DIR. The argument is retained for compatibility.
+    """
+
+    def __init__(self, cache_path):
+        self.cache_path = cache_path
+
+    def get_prices(self, tokens: list[TokenSpec]) -> dict[str, float]:
+        """Return a mapping from token symbol → USD price for the given tokens."""
+        by_chain: dict[str, list[tuple[str, str]]] = {}
+        for t in tokens:
+            by_chain.setdefault(t.chain, []).append((t.address, t.symbol.upper()))
+        prices: dict[str, float] = {}
+        for chain, addr_sym_list in by_chain.items():
+            addrs = [addr for addr, _ in addr_sym_list]
+            results = get_bulk_sync(addrs, chain)
+            for addr, symbol in addr_sym_list:
+                tp = results.get(addr)
+                if tp and tp.price_usd is not None:
+                    prices[symbol] = tp.price_usd
+        return prices

@@ -10,7 +10,6 @@ No image generation or vision models required — purely text-based analysis.
 import os
 import json
 import time
-from typing import Literal
 
 import requests
 
@@ -91,12 +90,12 @@ def _build_ohlcv_text(ohlcv: list[list]) -> str:
         return "No OHLCV data available."
 
     lines = ["OHLCV (oldest → newest):"]
-    for ts, o, h, l, c, v in ohlcv:
-        lines.append(f"  O:{float(o):.6f} H:{float(h):.6f} L:{float(l):.6f} C:{float(c):.6f} V:{float(v):.0f}")
+    for _ts, o, h, low, c, v in ohlcv:
+        lines.append(f"  O:{float(o):.6f} H:{float(h):.6f} L:{float(low):.6f} C:{float(c):.6f} V:{float(v):.0f}")
 
     closes = [float(c) for _, _, _, _, c, _ in ohlcv]
     highs = [float(h) for _, _, h, _, _, _ in ohlcv]
-    lows = [float(l) for _, _, _, l, _, _ in ohlcv]
+    lows = [float(low) for _, _, _, l, _, _ in ohlcv]
     volumes = [float(v) for _, _, _, _, _, v in ohlcv]
 
     oldest = closes[0]

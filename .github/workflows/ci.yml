@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dev dependencies
-        run: python -m pip install -e ".[dev]"
+        run: python -m pip install -e ".[dev,trading]"
       - run: ruff check hermes_screener/ tests/ scripts/
       - run: black --check --target-version py312 hermes_screener/ tests/ scripts/
 
@@ -30,7 +30,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install package + dev extras
-        run: python -m pip install -e ".[dev]"
+        run: python -m pip install -e ".[dev,trading]"
       - name: Run tests
         run: python -m pytest tests/ -v --tb=short
 
@@ -42,7 +42,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install package + dev extras
-        run: python -m pip install -e ".[dev]"
+        run: python -m pip install -e ".[dev,trading]"
       - name: Run tests with coverage gate
         run: python -m pytest tests/ --cov=hermes_screener --cov-report=term-missing --cov-report=xml --cov-fail-under=10
       - name: Upload coverage artifact
@@ -59,7 +59,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install package + dev extras
-        run: python -m pip install -e ".[dev]"
+        run: python -m pip install -e ".[dev,trading]"
       - run: mypy hermes_screener/ --ignore-missing-imports
 
   security:
@@ -70,7 +70,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install package + dev extras
-        run: python -m pip install -e ".[dev]"
+        run: python -m pip install -e ".[dev,trading]"
       - name: Static security scan (bandit, non-blocking report)
         run: |
           bandit -q -r hermes_screener scripts -x tests -f txt -o bandit-report.txt || true
