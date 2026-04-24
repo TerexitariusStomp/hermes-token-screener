@@ -1524,42 +1524,12 @@ async def trading_log():
         except Exception as e:
             parts.append(f'<div class="sub">Error reading trade_decisions.json: {html.escape(str(e))}</div>')
 
-    # ── Trade Monitor Log ──
-    tm_path = settings.output_path.parent / "trade_monitor_log.json"
-    if tm_path.exists():
-        try:
-            with open(tm_path) as f:
-                monitor = json.load(f)
-            if monitor:
-                rows = ""
-                for m in reversed(monitor[-50:]):
-                    sym = html.escape(str(m.get("symbol", "?")))
-                    action = m.get("action", "?")
-                    ac_cls = "tag-g" if action == "hold" else "tag-r" if action == "sell" else "tag-y"
-                    rows += f"""<tr>
-  <td><strong>{sym}</strong></td>
-  <td><span class="tag {ac_cls}">{action}</span></td>
-  <td>{m.get('confidence', 0)}</td>
-  <td class="{'pos' if (m.get('pnl_pct') or 0) > 0 else 'neg'}">{m.get('pnl_pct', 0):.1f}%</td>
-  <td>{html.escape(str(m.get('reason', ''))[:120])}</td>
-  <td class="mono">{_time_ago(m.get('timestamp', 0))}</td>
-</tr>"""
-                parts.append(
-                    f"""<h2 style="font-size:1rem;margin:1.2rem 0 .5rem">Monitor Log ({len(monitor)} total)</h2>
-<div class="tbl"><table>
-<thead><tr><th>Symbol</th><th>Action</th><th>Conf</th><th>PnL%</th><th>Reason</th><th>Time</th></tr></thead>
-<tbody>{rows}</tbody>
-</table></div>"""
-                )
-        except Exception as e:
-            parts.append(f'<div class="sub">Error reading trade_monitor_log.json: {html.escape(str(e))}</div>')
-
     # ── Raw log fallback ──
     log_path = settings.hermes_home / "logs" / "ai_trading_brain.log"
     if log_path.exists():
         try:
             lines = log_path.read_text().splitlines()
-            recent = lines[-200:]
+            recent = lines[-200:][::-1]
             body_lines = "\n".join(
                 f'<div class="mono" style="white-space:pre-wrap;font-size:.75rem;padding:.15rem 0;border-bottom:1px solid var(--b)">{html.escape(line)}</div>'
                 for line in recent
