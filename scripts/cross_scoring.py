@@ -501,14 +501,31 @@ def run_cross_scoring(
 
 
 def _write_output(tokens: list[dict]) -> None:
-    """Write re-scored tokens to phase3 + latest output."""
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    """Write re-scored tokens to phase3 output. Preserves symbols from enricher."""
+    PHASE3_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
 
     # Clean internal fields before writing
     clean_tokens = []
     for t in tokens:
         clean = {k: v for k, v in t.items() if not k.startswith("_")}
         clean_tokens.append(clean)
+
+    # Preserve symbols from existing enricher output
+    existing_symbols = {}
+    if OUTPUT_PATH.exists():
+        try:
+            old = json.loads(OUTPUT_PATH.read_text())
+            for t in old.get("tokens", []):
+                addr = (t.get("contract_address") or "").lower()
+                if addr:
+                    existing_symbols[addr] = t.get("symbol", "?")
+        except Exception:
+            pass
+
+    for t in clean_tokens:
+        addr = (t.get("contract_address") or "").lower()
+        if addr in existing_symbols and t.get("symbol") in (None, "?", ""):
+            t["symbol"] = existing_symbols[addr]
 
     output = {
         "generated_at": time.time(),
@@ -520,18 +537,13 @@ def _write_output(tokens: list[dict]) -> None:
         "tokens": clean_tokens,
     }
 
-    # Save as Phase 3 (smart money reranked)
+    # Save as Phase 3 (smart money reranked) — do NOT overwrite top100.json
     with open(PHASE3_OUTPUT, "w") as f:
         json.dump({**output, "phase": "phase3_smartmoney"}, f, indent=2, default=str)
-
-    # Also save as latest
-    with open(OUTPUT_PATH, "w") as f:
-        json.dump(output, f, indent=2, default=str)
 
     log.info(
         "output_written",
         phase3=str(PHASE3_OUTPUT),
-        latest=str(OUTPUT_PATH),
         tokens=len(clean_tokens),
     )
 
