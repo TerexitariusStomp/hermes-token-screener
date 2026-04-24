@@ -11,6 +11,7 @@ import json
 import sqlite3
 import sys
 import time
+import html
 from typing import Any
 
 import httpx
@@ -114,6 +115,11 @@ def _load_top100() -> dict[str, Any]:
     # Normalize: support both "tokens" and "top_tokens" keys
     if "tokens" not in data and "top_tokens" in data:
         data["tokens"] = data["top_tokens"]
+    # Normalize total_tokens → total_candidates for dashboard compatibility
+    if "total_candidates" not in data and "total_tokens" in data:
+        data["total_candidates"] = data["total_tokens"]
+    if "total_candidates" not in data and "top_n" in data:
+        data["total_candidates"] = data["top_n"]
     # Normalize all tokens: flatten dex.* to flat fields
     if "tokens" in data:
         data["tokens"] = [_normalize_token(t) for t in data["tokens"]]
@@ -193,8 +199,29 @@ def _wallet_link(addr):
     return f"https://app.zerion.io/{addr}/overview"
 
 
+def _dexscreener_url(chain, addr):
+    c = (chain or "").lower()
+    if c in ("solana", "sol"):
+        return f"https://dexscreener.com/solana/{addr}"
+    if c == "base":
+        return f"https://dexscreener.com/base/{addr}"
+    if c in ("bsc", "binance-smart-chain"):
+        return f"https://dexscreener.com/bsc/{addr}"
+    return f"https://dexscreener.com/ethereum/{addr}"
+
+
 def _chain_cls(chain):
     return f"chain-{chain}" if chain in ("solana", "sol", "base", "ethereum", "bsc") else ""
+
+
+def _is_wsol(token_or_addr: dict | str = "", symbol: str = "") -> bool:
+    if isinstance(token_or_addr, dict):
+        sym = (token_or_addr.get("symbol") or token_or_addr.get("token_symbol") or "").upper()
+        addr = (token_or_addr.get("contract_address") or token_or_addr.get("token_address") or "").lower()
+    else:
+        sym = (symbol or "").upper()
+        addr = (token_or_addr or "").lower()
+    return sym == "WSOL" or addr == "so11111111111111111111111111111111111111112"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -269,6 +296,7 @@ def _nav(active):
   <a href="/active/wallets" class="{'active' if active=='active-wallets' else ''}">Active Wallets</a>
   <a href="/api/top100" target="_blank">API</a>
   <a href="/health" target="_blank">Health</a>
+  <a href="/trading_log">Trading Log</a>
 </div></nav>"""
 
 
@@ -389,74 +417,186 @@ async def index():
 
 def _cross_reference_tokens_by_wallets() -> list[dict]:
     """
-    Rank top100 tokens by how many new wallets bought them.
+    Rank top100 tokens by blended score: original token score + wallet boost.
 
-    For each top100 token, finds ALL wallets that bought it (from
-    smart_money_purchases and smart_money_tokens). Tokens with more
-    smart money buyers rank higher.
+    Each token starts with its base score from the top100 screener methodology.
+    A wallet-activity boost (up to +30) is added based on:
+      - Buyer breadth (super-linear unique active wallets)
+      - Buy frequency (avg buys per wallet, conviction)
+      - Recency (time-decayed, fresh buys score higher)
+      - Wallet quality (avg percentile of buying wallets)
+      - Volume (log-scaled, diminishing returns)
+      - Conviction (avg USD per active wallet)
+
+    This surfaces tokens that are BOTH high-quality by screener metrics AND
+    actively bought by smart-money wallets. No blanket bonuses.
     """
     data = _load_top100()
-    tokens = data.get("tokens", [])
+    tokens = [t for t in data.get("tokens", []) if not _is_wsol(t)]
     if not tokens:
         return []
 
+    token_addrs = [(t.get("contract_address") or "").lower() for t in tokens if t.get("contract_address")]
+    token_lookup = {addr: t for addr, t in zip(token_addrs, tokens)}
+
     conn = _get_wallet_db()
-    use_db = conn is not None
-
-    for t in tokens:
-        t_addr = t.get("contract_address", "")
-        if not t_addr or not use_db:
+    if not conn:
+        for t in tokens:
             t["wallet_count"] = 0
+            t["active_wallet_count"] = 0
             t["holding_wallets"] = []
-            continue
+            t["activity_score"] = 0.0
+            t["blended_score"] = round(t.get("score", 0) or 0, 1)
+        return tokens
 
-        try:
-            seen = set()
-            buy_wallets = []
+    try:
+        # Wallet quality baseline
+        top_wallets = _cross_reference_wallets_by_tokens()
+        rank_map = {w["address"]: i for i, w in enumerate(top_wallets)}
+        total_wallets = len(rank_map)
 
-            # Source 1: smart_money_purchases (recent buys)
+        # ── Bulk load all buy activity for top100 tokens ──
+        token_wallet_data: dict[str, dict[str, dict]] = {}
+        batch_size = 50
+        for i in range(0, len(token_addrs), batch_size):
+            batch = token_addrs[i : i + batch_size]
+            placeholders = ",".join("?" for _ in batch)
             rows = conn.execute(
-                "SELECT DISTINCT smp.wallet_address "
-                "FROM smart_money_purchases smp "
-                "WHERE LOWER(smp.token_address) = LOWER(?) AND smp.side = 'buy'",
-                (t_addr,),
+                f"SELECT token_address, wallet_address, amount_usd, timestamp "
+                f"FROM smart_money_purchases "
+                f"WHERE LOWER(token_address) IN ({placeholders}) AND side = 'buy'",
+                batch,
             ).fetchall()
-            for (addr,) in rows:
-                if addr and addr not in seen:
-                    seen.add(addr)
-                    buy_wallets.append(addr)
+            for taddr, waddr, amt, ts in rows:
+                taddr = taddr.lower()
+                if taddr not in token_wallet_data:
+                    token_wallet_data[taddr] = {}
+                if waddr not in token_wallet_data[taddr]:
+                    token_wallet_data[taddr][waddr] = {"count": 0, "usd": 0.0, "last_ts": 0}
+                d = token_wallet_data[taddr][waddr]
+                d["count"] += 1
+                d["usd"] += amt or 0
+                if ts and ts > d["last_ts"]:
+                    d["last_ts"] = ts
 
-            # Source 2: smart_money_tokens (discovery wallets)
-            import json as _json
+        # ── Bulk load discovery wallets ──
+        import json as _json
 
-            smt_row = conn.execute(
-                "SELECT discovery_wallets FROM smart_money_tokens "
-                "WHERE LOWER(token_address) = LOWER(?)",
-                (t_addr,),
-            ).fetchone()
-            if smt_row and smt_row[0]:
-                try:
-                    dw = _json.loads(smt_row[0]) if smt_row[0].startswith("[") else smt_row[0].split(",")
-                except Exception:
-                    dw = smt_row[0].split(",")
-                for waddr in dw:
-                    waddr = waddr.strip()
-                    if waddr and waddr not in seen:
-                        seen.add(waddr)
-                        buy_wallets.append(waddr)
+        smt_rows = conn.execute(
+            "SELECT token_address, discovery_wallets FROM smart_money_tokens"
+        ).fetchall()
+        for taddr, disc_wallets in smt_rows:
+            taddr = (taddr or "").lower()
+            if taddr not in token_lookup:
+                continue
+            if not disc_wallets:
+                continue
+            try:
+                wallets = _json.loads(disc_wallets) if disc_wallets.startswith("[") else disc_wallets.split(",")
+            except Exception:
+                wallets = disc_wallets.split(",")
+            if taddr not in token_wallet_data:
+                token_wallet_data[taddr] = {}
+            for waddr in wallets:
+                waddr = waddr.strip()
+                if not waddr:
+                    continue
+                if waddr not in token_wallet_data[taddr]:
+                    token_wallet_data[taddr][waddr] = {"count": 0, "usd": 0.0, "last_ts": 0}
 
-            t["wallet_count"] = len(buy_wallets)
-            t["holding_wallets"] = buy_wallets[:10]
-        except Exception:
-            t["wallet_count"] = 0
-            t["holding_wallets"] = []
+        now = time.time()
+        for t in tokens:
+            taddr = (t.get("contract_address") or "").lower()
+            wallets = token_wallet_data.get(taddr, {})
 
-    if conn:
-        conn.close()
+            if not wallets:
+                t["wallet_count"] = 0
+                t["active_wallet_count"] = 0
+                t["holding_wallets"] = []
+                t["activity_score"] = 0.0
+                t["blended_score"] = round(t.get("score", 0) or 0, 1)
+                t["total_buy_usd"] = 0.0
+                t["buy_count"] = 0
+                t["last_buy_at"] = 0
+                continue
 
-    # Sort by wallet_count DESC, then score DESC
-    tokens.sort(key=lambda t: (t.get("wallet_count", 0), t.get("score", 0)), reverse=True)
-    return tokens
+            ub = len(wallets)
+            active_wallets = {w: d for w, d in wallets.items() if d["count"] > 0}
+            active_count = len(active_wallets)
+            discovery_count = ub - active_count
+
+            # Aggregate buy stats from active wallets only
+            recency_sum = 0.0
+            total_usd = 0.0
+            total_buys = 0
+            last_buy = 0
+            for waddr, d in active_wallets.items():
+                total_usd += d["usd"]
+                total_buys += d["count"]
+                if d["last_ts"] > last_buy:
+                    last_buy = d["last_ts"]
+                hours_ago = (now - d["last_ts"]) / 3600.0 if d["last_ts"] else 999.0
+                recency_sum += max(0.0, 1.0 - hours_ago / 48.0)
+
+            # Token-level recency (time since last buy anywhere) with 48h decay
+            token_hours_ago = (now - last_buy) / 3600.0 if last_buy else 999.0
+            token_recency = max(0.0, 1.0 - token_hours_ago / 48.0)
+            per_wallet_recency = recency_sum / active_count if active_count else 0.0
+            recency = max(token_recency, per_wallet_recency * 0.5)
+
+            # Wallet quality: only wallets with actual buys count
+            wq_sum = 0.0
+            for waddr in active_wallets:
+                rank = rank_map.get(waddr)
+                if rank is not None:
+                    wq_sum += max(0.0, (total_wallets - rank) / total_wallets)
+            wallet_quality = wq_sum / active_count if active_count else 0.5
+
+            # Frequency: avg buys per active wallet, capped at 5
+            freq = min(total_buys / active_count, 5.0) if active_count else 0.0
+
+            # Volume: softer log curve, higher cap so real volume matters
+            vol_score = min(50.0, (total_usd ** 0.35) * 3.0) if total_usd > 0 else 0.0
+
+            # Conviction: avg USD per active wallet (high-value buyers signal quality)
+            avg_usd = total_usd / active_count if active_count else 0.0
+            conviction_score = min(30.0, (avg_usd ** 0.3) * 4.0) if avg_usd > 0 else 0.0
+
+            # Buyer breadth: reward ONLY wallets with actual buys, super-linear
+            buyer_score = (active_count ** 1.4) * 10.0
+
+            # Discovery bonus: small sub-linear reward for wallets in smart_money_tokens
+            discovery_bonus = min(10.0, (discovery_count ** 1.1)) if discovery_count > 0 else 0.0
+
+            base = buyer_score + (freq * 8.0) + vol_score + conviction_score + discovery_bonus
+            # Multipliers: 0.4-1.0 range, softer than before so stale tokens aren't crushed
+            activity_score = base * (0.4 + 0.6 * recency) * (0.4 + 0.6 * wallet_quality)
+
+            # Blend with original token score so top100 methodology still applies
+            token_score = t.get("score", 0) or 0
+            wallet_boost = min(activity_score / 4.0, 30.0)
+            blended_score = token_score + wallet_boost
+
+            t["wallet_count"] = ub
+            t["active_wallet_count"] = active_count
+            t["holding_wallets"] = list(wallets.keys())[:10]
+            t["activity_score"] = round(activity_score, 1)
+            t["blended_score"] = round(blended_score, 1)
+            t["total_buy_usd"] = round(total_usd, 2)
+            t["buy_count"] = total_buys
+            t["last_buy_at"] = last_buy
+            t["recency"] = round(recency, 2)
+            t["wallet_quality"] = round(wallet_quality, 2)
+            t["frequency"] = round(freq, 2)
+
+        tokens.sort(key=lambda t: t.get("blended_score", 0), reverse=True)
+        return tokens
+
+    except Exception:
+        return tokens
+    finally:
+        if conn:
+            conn.close()
 
 
 def _cross_reference_wallets_by_tokens() -> list[dict]:
@@ -611,6 +751,10 @@ def _get_active_tokens(top_n_wallets: int = 50) -> list[dict]:
     if not wallet_addrs:
         return []
 
+    # Build wallet rank map for weighted scoring
+    rank_map = {w["address"]: i for i, w in enumerate(top_wallets)}
+    total_wallets = len(top_wallets)
+
     conn = _get_wallet_db()
     if not conn:
         return []
@@ -632,6 +776,8 @@ def _get_active_tokens(top_n_wallets: int = 50) -> list[dict]:
                 key = token_addr.lower() if token_addr else ""
                 if not key:
                     continue
+                if _is_wsol(key, sym or ""):
+                    continue
                 if key not in token_map:
                     token_map[key] = {
                         "token_address": token_addr,
@@ -648,28 +794,57 @@ def _get_active_tokens(top_n_wallets: int = 50) -> list[dict]:
                 if ts and ts > token_map[key]["last_buy_at"]:
                     token_map[key]["last_buy_at"] = ts
 
-        data = _load_top100()
-        token_scores = {
-            t.get("contract_address", "").lower(): t.get("score", 0) or 0
-            for t in data.get("tokens", [])
-            if t.get("contract_address")
-        }
-
+        now = time.time()
         results = []
         for key, tm in token_map.items():
-            score = token_scores.get(key, 0)
+            ub = len(tm["unique_buyers"])
+            if ub == 0:
+                continue
+
+            # 1. Recency: 1.0 = bought within last hour, 0.0 = >24h ago
+            hours_ago = (now - tm["last_buy_at"]) / 3600.0 if tm["last_buy_at"] else 999.0
+            recency = max(0.0, 1.0 - hours_ago / 24.0)
+
+            # 2. Wallet quality: average percentile of buyers (top = 1.0, bottom ~0)
+            wq_sum = 0.0
+            for w in tm["unique_buyers"]:
+                rank = rank_map.get(w)
+                if rank is not None:
+                    wq_sum += max(0.0, (total_wallets - rank) / total_wallets)
+            wallet_quality = wq_sum / ub if ub else 0.5
+
+            # 3. Frequency: average buys per wallet (sustained conviction)
+            freq = min(tm["buy_count"] / ub, 5.0)
+
+            # 4. Volume: log-scaled, diminishing returns
+            vol = tm["total_buy_usd"]
+            vol_score = min(25.0, (vol ** 0.4) * 2.0) if vol > 0 else 0.0
+
+            # 5. Buyer breadth: super-linear reward for many distinct wallets
+            buyer_score = (ub ** 1.4) * 8.0
+
+            # Base score combines raw conviction signals
+            base = buyer_score + (freq * 6.0) + vol_score
+
+            # Activity score: base scaled by recency and wallet quality.
+            # Multipliers range 0.3 (stale / low-quality) to 1.0 (fresh / top-quality).
+            activity_score = base * (0.3 + 0.7 * recency) * (0.3 + 0.7 * wallet_quality)
+
             results.append({
                 "token_address": tm["token_address"],
                 "symbol": tm["symbol"],
                 "chain": tm["chain"],
                 "total_buy_usd": round(tm["total_buy_usd"], 2),
-                "unique_buyers": len(tm["unique_buyers"]),
+                "unique_buyers": ub,
                 "buy_count": tm["buy_count"],
-                "screener_score": score,
                 "last_buy_at": tm["last_buy_at"],
+                "activity_score": round(activity_score, 1),
+                "recency": round(recency, 2),
+                "wallet_quality": round(wallet_quality, 2),
+                "frequency": round(freq, 2),
             })
 
-        results.sort(key=lambda x: (x["unique_buyers"], x["total_buy_usd"]), reverse=True)
+        results.sort(key=lambda x: x["activity_score"], reverse=True)
         return results
 
     except Exception:
@@ -1049,6 +1224,94 @@ async def health():
     return {"status": "healthy", "version": "9.0.0", "checks": checks}
 
 
+@app.get("/trading_log", response_class=HTMLResponse)
+async def trading_log():
+    """Render structured trade decisions + monitor log; fallback to escaped raw log."""
+    parts = ["<h1>Trading Log</h1>"]
+
+    # ── Trade Decisions ──
+    td_path = settings.output_path.parent / "trade_decisions.json"
+    if td_path.exists():
+        try:
+            with open(td_path) as f:
+                decisions = json.load(f)
+            if decisions:
+                rows = ""
+                for d in reversed(decisions[-100:]):
+                    sym = html.escape(str(d.get("symbol", "?")))
+                    decision = d.get("decision", "?")
+                    dc_cls = "tag-g" if decision == "buy" else "tag-r" if decision == "sell" else "tag-y"
+                    rows += f"""<tr>
+  <td><strong>{sym}</strong></td>
+  <td><span class="tag {dc_cls}">{decision}</span></td>
+  <td>{d.get('confidence', 0)}</td>
+  <td>{d.get('position_pct', 0):.2f}%</td>
+  <td>{html.escape(str(d.get('reason', ''))[:120])}</td>
+  <td class="mono">{_time_ago(d.get('timestamp', 0))}</td>
+</tr>"""
+                parts.append(
+                    f"""<h2 style="font-size:1rem;margin:1.2rem 0 .5rem">Trade Decisions ({len(decisions)} total)</h2>
+<div class="tbl"><table>
+<thead><tr><th>Symbol</th><th>Decision</th><th>Conf</th><th>Pos%</th><th>Reason</th><th>Time</th></tr></thead>
+<tbody>{rows}</tbody>
+</table></div>"""
+                )
+        except Exception as e:
+            parts.append(f'<div class="sub">Error reading trade_decisions.json: {html.escape(str(e))}</div>')
+
+    # ── Trade Monitor Log ──
+    tm_path = settings.output_path.parent / "trade_monitor_log.json"
+    if tm_path.exists():
+        try:
+            with open(tm_path) as f:
+                monitor = json.load(f)
+            if monitor:
+                rows = ""
+                for m in reversed(monitor[-50:]):
+                    sym = html.escape(str(m.get("symbol", "?")))
+                    action = m.get("action", "?")
+                    ac_cls = "tag-g" if action == "hold" else "tag-r" if action == "sell" else "tag-y"
+                    rows += f"""<tr>
+  <td><strong>{sym}</strong></td>
+  <td><span class="tag {ac_cls}">{action}</span></td>
+  <td>{m.get('confidence', 0)}</td>
+  <td class="{'pos' if (m.get('pnl_pct') or 0) > 0 else 'neg'}">{m.get('pnl_pct', 0):.1f}%</td>
+  <td>{html.escape(str(m.get('reason', ''))[:120])}</td>
+  <td class="mono">{_time_ago(m.get('timestamp', 0))}</td>
+</tr>"""
+                parts.append(
+                    f"""<h2 style="font-size:1rem;margin:1.2rem 0 .5rem">Monitor Log ({len(monitor)} total)</h2>
+<div class="tbl"><table>
+<thead><tr><th>Symbol</th><th>Action</th><th>Conf</th><th>PnL%</th><th>Reason</th><th>Time</th></tr></thead>
+<tbody>{rows}</tbody>
+</table></div>"""
+                )
+        except Exception as e:
+            parts.append(f'<div class="sub">Error reading trade_monitor_log.json: {html.escape(str(e))}</div>')
+
+    # ── Raw log fallback ──
+    log_path = settings.hermes_home / "logs" / "ai_trading_brain.log"
+    if log_path.exists():
+        try:
+            lines = log_path.read_text().splitlines()
+            recent = lines[-200:]
+            body_lines = "\n".join(
+                f'<div class="mono" style="white-space:pre-wrap;font-size:.75rem;padding:.15rem 0;border-bottom:1px solid var(--b)">{html.escape(line)}</div>'
+                for line in recent
+            )
+            parts.append(
+                f"""<h2 style="font-size:1rem;margin:1.2rem 0 .5rem">Raw Brain Log ({len(lines)} lines)</h2>
+<div style="background:var(--s);border:1px solid var(--b);border-radius:8px;padding:1rem;max-height:40vh;overflow-y:auto">{body_lines}</div>"""
+            )
+        except Exception as e:
+            parts.append(f'<div class="sub">Error reading raw log: {html.escape(str(e))}</div>')
+
+    if len(parts) == 1:
+        parts.append("<div class='sub'>No trade data found.</div>")
+
+    return _page("Trading Log", "tokens", "\n".join(parts))
+
+
 @app.get("/api/top100")
 async def api_top100():
     return _load_top100()
@@ -1215,18 +1478,18 @@ async def active_tokens():
 
     rows = ""
     for i, t in enumerate(active[:100], 1):
-        sc = t.get("screener_score", 0) or 0
-        sc_cls = _score_cls(sc)
+        act = t.get("activity_score", 0) or 0
+        act_cls = _score_cls(act)
         buyers = t.get("unique_buyers", 0)
         buyer_cls = "sc-h" if buyers >= 5 else "sc-m" if buyers >= 2 else "sc-l"
         addr = t.get("token_address", "")
 
         rows += f"""<tr>
   <td>{i}</td>
-  <td><strong>{t.get('symbol','???')}</strong></td>
+  <td><a href="{_dexscreener_url(t.get('chain',''), addr)}" target="_blank"><strong>{t.get('symbol','???')}</strong></a></td>
   <td><span class="badge {_chain_cls(t.get('chain',''))}">{t.get('chain','')}</span></td>
   <td class="mono"><a href="{_explorer(t.get('chain',''), addr)}" target="_blank">{_trunc(addr)}</a></td>
-  <td class="sc {sc_cls}">{sc:.1f}</td>
+  <td class="sc {act_cls}">{act:.1f}</td>
   <td class="sc {buyer_cls}">{buyers}</td>
   <td>{t.get('buy_count', 0)}</td>
   <td>{_fmt_usd(t.get('total_buy_usd'))}</td>
@@ -1240,7 +1503,7 @@ async def active_tokens():
 <h1>Active Tokens</h1>
 <div class="sub">Tokens being bought by top smart money wallets &middot; {len(active)} tokens</div>
 <div class="tbl"><table>
-<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>Buyers</th><th>Buys</th><th>Volume</th><th>Last Buy</th></tr></thead>
+<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Activity</th><th>Buyers</th><th>Buys</th><th>Volume</th><th>Last Buy</th></tr></thead>
 <tbody>{rows}</tbody>
 </table></div>""",
     )
@@ -1312,8 +1575,10 @@ async def cross_tokens():
 
     rows = ""
     for i, t in enumerate(tokens[:100], 1):
-        score = t.get("score", 0) or 0
-        sc_cls = _score_cls(score)
+        blended = t.get("blended_score", 0) or 0
+        blended_cls = _score_cls(blended)
+        act = t.get("activity_score", 0) or 0
+        act_cls = _score_cls(act)
         wc = t.get("wallet_count", 0)
         wc_cls = "sc-h" if wc >= 10 else "sc-m" if wc >= 5 else "sc-l"
         p1h = _pct_cls(t.get("price_change_h1"))
@@ -1331,7 +1596,8 @@ async def cross_tokens():
   <td><a href="{t.get('dex_url', '/token/' + addr)}" target="_blank"><strong>{t.get('symbol','???')}</strong></a></td>
   <td><span class="badge {_chain_cls(t.get('chain',''))}">{t.get('chain','')}</span></td>
   <td class="mono"><a href="{_explorer(t.get('chain',''), addr)}" target="_blank">{_trunc(addr)}</a></td>
-  <td class="sc {sc_cls}">{score:.1f}</td>
+  <td class="sc {blended_cls}">{blended:.1f}</td>
+  <td class="sc {act_cls}">{act:.1f}</td>
   <td class="sc {wc_cls}">{wc}</td>
   <td>{t.get('channel_count',0)}</td>
   <td>{_fmt_usd(t.get('fdv'))}</td>
@@ -1349,10 +1615,10 @@ async def cross_tokens():
         "Tokens × Wallets",
         "cross-tokens",
         f"""
-<h1>Tokens Ranked by Wallet Count</h1>
-<div class="sub">Top tokens sorted by how many smart money wallets hold them &middot; {len(tokens)} tokens analyzed</div>
+<h1>Tokens Ranked by Smart-Money Activity</h1>
+<div class="sub">Top tokens sorted by blended score (token quality + wallet activity) &middot; {len(tokens)} tokens analyzed</div>
 <div class="tbl"><table>
-<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>🧬</th><th>Ch</th><th>FDV</th><th>Vol24h</th><th>Vol1h</th><th>1h</th><th>6h</th><th>Age</th><th>🧠</th><th>Signals</th><th>Holders</th></tr></thead>
+<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>Activity</th><th>🧬</th><th>Ch</th><th>FDV</th><th>Vol24h</th><th>Vol1h</th><th>1h</th><th>6h</th><th>Age</th><th>🧠</th><th>Signals</th><th>Holders</th></tr></thead>
 <tbody>{rows}</tbody>
 </table></div>""",
     )

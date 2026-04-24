@@ -640,6 +640,57 @@ def run_lifecycle() -> dict[str, Any]:
     return asyncio.run(process_lifecycle(tokens))
 
 
+def _build_synthetic_candles(
+    price_now: float,
+    ch_h24: float,
+    ch_h6: float,
+    ch_h1: float,
+    vol_h24: float,
+    timeframe: str,
+    limit: int,
+):
+    """Generate synthetic OHLCV candles from aggregated Dexscreener data."""
+    import random
+    random.seed(42)
+    candles = []
+    # Determine interval minutes from timeframe
+    tf_minutes = {"minute": 1, "hour": 60, "day": 1440}.get(timeframe, 60)
+    total_minutes = tf_minutes * limit
+    # Build price trajectory backwards using change percentages
+    # h24 -> h6 -> h1 gives us progressively closer anchors
+    price = price_now
+    for i in range(limit):
+        idx = limit - i  # 1..limit
+        # Approximate hourly drift based on available windows
+        if total_minutes <= 60:
+            drift = ch_h1 / 100.0
+        elif total_minutes <= 360:
+            drift = ch_h6 / 100.0
+        else:
+            drift = ch_h24 / 100.0
+        # Per-candle volatility simulation
+        vol = abs(drift) * 0.15 + 0.005
+        open_p = price / (1 + drift * (idx / limit))
+        close_p = price
+        high_p = max(open_p, close_p) * (1 + vol * random.random())
+        low_p = min(open_p, close_p) * (1 - vol * random.random())
+        volume = (vol_h24 / limit) * (0.5 + random.random())
+        ts = int(time.time() - (i * tf_minutes * 60))
+        candles.insert(
+            0,
+            {
+                "timestamp": ts,
+                "open": round(open_p, 12),
+                "high": round(high_p, 12),
+                "low": round(low_p, 12),
+                "close": round(close_p, 12),
+                "volume": round(volume, 4),
+            },
+        )
+        price = open_p
+    return candles
+
+
 def main():
     import argparse
 

@@ -813,7 +813,7 @@ class DexAggregatorTrader:
                 if t.get("chain") != "base":
                     continue
                 addr = t.get("contract_address", "")
-                sym = t.get("symbol", "UNKNOWN")
+                sym = t.get("symbol") or t.get("dex", {}).get("symbol", "UNKNOWN")
                 score = t.get("score", 0)
                 if addr and score >= 20:  # Only tokens with decent screener score
                     tokens[sym] = addr
@@ -923,6 +923,190 @@ class DexAggregatorTrader:
                 return False
         except Exception as e:
             logger.error(f"WETH unwrap error: {e}")
+            return False
+
+    def _wrap_eth_to_weth(self, amount_eth: float) -> bool:
+        """Wrap ETH to WETH on Base. Sends ETH to WETH contract deposit()."""
+        if not self.w3 or not self.evm_account:
+            logger.warning("[Wrap] No Web3 or EVM account configured")
+            return False
+        try:
+            weth_addr = Web3.to_checksum_address("0x4200000000000000000000000000000000000006")
+            amount_wei = int(amount_eth * 1e18)
+            # Check native ETH balance
+            eth_bal = self.w3.eth.get_balance(self.evm_account.address)
+            if eth_bal < amount_wei:
+                logger.warning(f"[Wrap] Insufficient ETH: {eth_bal} < {amount_wei}")
+                return False
+            # deposit() selector: 0xd0e30db0
+            tx = {
+                "from": self.evm_account.address,
+                "to": weth_addr,
+                "data": "0xd0e30db0",
+                "value": amount_wei,
+                "gas": 50000,
+                "maxFeePerGas": self.w3.eth.gas_price,
+                "maxPriorityFeePerGas": self.w3.eth.max_priority_fee,
+                "nonce": self.w3.eth.get_transaction_count(self.evm_account.address, "pending"),
+                "chainId": 8453,
+            }
+            # Simulate first
+            try:
+                self.w3.eth.call(tx, "latest")
+            except Exception as sim_err:
+                logger.warning(f"[Wrap] Simulation failed: {sim_err}")
+                return False
+            signed = self.evm_account.sign_transaction(tx)
+            tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
+            logger.info(f"[Wrap] WETH deposit tx sent: {tx_hash.hex()}")
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=60)
+            if receipt.status == 1:
+                logger.info(f"[Wrap] WETH deposit confirmed: {tx_hash.hex()}")
+                return True
+            else:
+                logger.error(f"[Wrap] WETH deposit reverted: {tx_hash.hex()}")
+                return False
+        except Exception as e:
+            logger.error(f"[Wrap] ETH->WETH error: {e}")
+            return False
+
+    def _wrap_sol_to_wsol(self, amount_sol: float) -> bool:
+        """Wrap native SOL to WSOL via Jupiter swap-instructions (creates ATA + wraps)."""
+        if not self.solana_adapter or not self.solana_keypair:
+            logger.warning("[Wrap] No Solana adapter or keypair configured")
+            return False
+        try:
+            import requests
+            import base64
+            from solders.instruction import Instruction, AccountMeta
+            from solders.message import MessageV0
+            from solders.transaction import VersionedTransaction
+            from solders.pubkey import Pubkey
+            from solana.rpc.types import TxOpts
+
+            wallet = self.solana_keypair.pubkey()
+            wsol_mint = Pubkey.from_string("So11111111111111111111111111111111111111112")
+            amount_lamports = int(amount_sol * 1e9)
+
+            # Check native SOL balance
+            sol_bal = self.solana_adapter.get_balance(str(wallet))
+            if sol_bal < amount_sol:
+                logger.warning(f"[Wrap] Insufficient SOL: {sol_bal} < {amount_sol}")
+                return False
+
+            # Build a self-swap quote (SOL -> WSOL) to get wrap instructions from Jupiter
+            quote = self.solana_adapter.jupiter_quote(
+                str(wsol_mint), str(wsol_mint), amount_lamports, slippage_bps=10
+            )
+            if not quote:
+                # Fallback: manually create ATA and transfer
+                logger.info("[Wrap] Jupiter quote failed, using manual wrap")
+                return self._wrap_sol_manual(amount_lamports)
+
+            tx = self.solana_adapter.jupiter_build_tx(quote, wrap_unwrap=True)
+            if not tx:
+                logger.warning("[Wrap] Jupiter build tx failed")
+                return self._wrap_sol_manual(amount_lamports)
+
+            # Simulate
+            sim_ok, sim_err = self.solana_adapter.simulate_tx(tx)
+            if not sim_ok:
+                logger.warning(f"[Wrap] Simulation failed: {sim_err}")
+                return self._wrap_sol_manual(amount_lamports)
+
+            sig = self.solana_adapter.send_tx(tx)
+            if sig:
+                logger.info(f"[Wrap] SOL->WSOL wrap tx sent: {sig}")
+                confirmed = self.solana_adapter.confirm_tx(sig)
+                if confirmed:
+                    logger.info(f"[Wrap] SOL->WSOL wrap confirmed: {sig}")
+                    return True
+                else:
+                    logger.warning(f"[Wrap] SOL->WSOL wrap not confirmed: {sig}")
+                    return False
+            return False
+        except Exception as e:
+            logger.error(f"[Wrap] SOL->WSOL error: {e}")
+            return False
+
+    def _wrap_sol_manual(self, amount_lamports: int) -> bool:
+        """Manual SOL->WSOL wrap: create ATA + transfer + syncNative."""
+        if not self.solana_adapter or not self.solana_keypair:
+            return False
+        try:
+            from solders.instruction import Instruction, AccountMeta
+            from solders.message import MessageV0
+            from solders.transaction import VersionedTransaction
+            from solders.pubkey import Pubkey
+            from solana.rpc.types import TxOpts
+
+            wallet = self.solana_keypair.pubkey()
+            wsol_mint = Pubkey.from_string("So11111111111111111111111111111111111111112")
+            token_program = Pubkey.from_string("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
+            associated_token_program = Pubkey.from_string("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL")
+            system_program = Pubkey.from_string("11111111111111111111111111111111")
+            rent_sysvar = Pubkey.from_string("SysvarRent111111111111111111111111111111111")
+
+            # Derive WSOL ATA
+            seeds = [bytes(wallet), bytes(token_program), bytes(wsol_mint)]
+            ata, _ = Pubkey.find_program_address(seeds, associated_token_program)
+
+            # Check if ATA exists
+            ata_info = self.solana_adapter.client.get_account_info(ata)
+            instructions = []
+
+            if ata_info.value is None:
+                # Create ATA instruction
+                create_ix = Instruction(
+                    program_id=associated_token_program,
+                    accounts=[
+                        AccountMeta(wallet, is_signer=True, is_writable=True),
+                        AccountMeta(ata, is_signer=False, is_writable=True),
+                        AccountMeta(wallet, is_signer=False, is_writable=False),
+                        AccountMeta(wsol_mint, is_signer=False, is_writable=False),
+                        AccountMeta(system_program, is_signer=False, is_writable=False),
+                        AccountMeta(token_program, is_signer=False, is_writable=False),
+                        AccountMeta(rent_sysvar, is_signer=False, is_writable=False),
+                    ],
+                    data=bytes([0]),  # CreateIdempotent discriminator
+                )
+                instructions.append(create_ix)
+
+            # Transfer SOL to ATA (system transfer)
+            transfer_ix = Instruction(
+                program_id=system_program,
+                accounts=[
+                    AccountMeta(wallet, is_signer=True, is_writable=True),
+                    AccountMeta(ata, is_signer=False, is_writable=True),
+                ],
+                data=bytes([2, 0, 0, 0]) + amount_lamports.to_bytes(8, "little"),
+            )
+            instructions.append(transfer_ix)
+
+            # syncNative instruction to mark as wrapped SOL
+            sync_ix = Instruction(
+                program_id=token_program,
+                accounts=[AccountMeta(ata, is_signer=False, is_writable=True)],
+                data=bytes([17]),  # syncNative discriminator
+            )
+            instructions.append(sync_ix)
+
+            blockhash = self.solana_adapter.client.get_latest_blockhash().value.blockhash
+            msg = MessageV0.try_compile(
+                payer=wallet,
+                instructions=instructions,
+                address_lookup_table_accounts=[],
+                recent_blockhash=blockhash,
+            )
+            tx = VersionedTransaction(msg, [self.solana_keypair])
+
+            sig = self.solana_adapter.send_tx(tx)
+            if sig:
+                logger.info(f"[Wrap] Manual SOL->WSOL tx sent: {sig}")
+                return self.solana_adapter.confirm_tx(sig)
+            return False
+        except Exception as e:
+            logger.error(f"[Wrap] Manual SOL->WSOL error: {e}")
             return False
 
     def _sell_via_kyberswap(self, token_name: str, token_address: str, sell_amount: Decimal) -> bool:
@@ -1882,6 +2066,23 @@ class DexAggregatorTrader:
         """Execute a trade on Base. Tries direct contract first, falls back to KyberSwap API."""
         amount_wei = int(eth_amount * 1e18)
 
+        # ---- AUTO-WRAP: If WETH balance is 0 but we have ETH, wrap some ----
+        try:
+            weth_bal = self.get_token_balance("0x4200000000000000000000000000000000000006", "base")
+            if weth_bal <= 0:
+                eth_bal = self.get_balance("base")
+                wrap_amount = min(eth_amount * 1.2, float(eth_bal) * 0.8)
+                if wrap_amount > 0.00001:
+                    logger.info(f"[AutoWrap] WETH=0, wrapping {wrap_amount:.6f} ETH -> WETH")
+                    wrapped = self._wrap_eth_to_weth(wrap_amount)
+                    if wrapped:
+                        logger.info("[AutoWrap] ETH wrapped successfully")
+                        time.sleep(2)
+                    else:
+                        logger.warning("[AutoWrap] ETH wrap failed, proceeding anyway")
+        except Exception as wrap_err:
+            logger.debug(f"[AutoWrap] Pre-flight wrap check error: {wrap_err}")
+
         # Collect API routes for aggregator protocols
         api_routes = {}
         try:
@@ -2035,12 +2236,34 @@ class DexAggregatorTrader:
     def execute_solana_trade(self, token_symbol: str, token_mint: str, sol_amount: float) -> bool:
         """Execute a trade on Solana. Tries program adapter first, falls back to Jupiter CLI."""
 
+        SOL_MINT = "So11111111111111111111111111111111111111112"
+        amount_base = int(sol_amount * 1e9)
+
+        # ---- AUTO-WRAP: If WSOL balance is 0 but we have SOL, wrap some ----
+        try:
+            sol_bal = self.get_balance("solana")
+            if self.solana_adapter:
+                wallet = str(self.solana_keypair.pubkey())
+                wsol_bal = self.solana_adapter.get_token_balance(SOL_MINT, wallet)
+            else:
+                wsol_bal = 0
+            if wsol_bal <= 0 and sol_bal > 0.001:
+                wrap_amount = min(sol_amount * 1.2, sol_bal * 0.8)
+                if wrap_amount > 0.0001:
+                    logger.info(f"[AutoWrap] WSOL=0, wrapping {wrap_amount:.4f} SOL -> WSOL")
+                    wrapped = self._wrap_sol_to_wsol(wrap_amount)
+                    if wrapped:
+                        logger.info("[AutoWrap] SOL wrapped successfully")
+                        time.sleep(2)
+                    else:
+                        logger.warning("[AutoWrap] SOL wrap failed, proceeding anyway")
+        except Exception as wrap_err:
+            logger.debug(f"[AutoWrap] Pre-flight wrap check error: {wrap_err}")
+
         # === PRIMARY: Direct program execution via Solana adapter ===
         if self.solana_adapter:
             try:
                 logger.info(f"[Solana] Direct program swap: {sol_amount} SOL -> {token_symbol}")
-                SOL_MINT = "So11111111111111111111111111111111111111112"
-                amount_base = int(sol_amount * 1e9)
 
                 sig = self.solana_adapter.swap(
                     input_mint=SOL_MINT,
@@ -2337,8 +2560,8 @@ class DexAggregatorTrader:
 
                 # ==================== FREE UP ETH FROM TOKEN HOLDINGS ====================
                 # If ETH is too low to trade but we have token holdings, sell some to get ETH
-                # Trigger sell if ETH < 0.0005 (~$1) — need gas buffer for multiple trades
-                if base_bal < Decimal("0.0005") and holdings:
+                # Trigger sell if ETH < $0.05 (~0.00002 ETH) — need gas buffer for multiple trades
+                if base_bal < Decimal("0.00002") and holdings:
                     for tok_name, tok_info in holdings.items():
                         if tok_name == "WETH":
                             # Unwrap WETH to ETH
@@ -2413,12 +2636,12 @@ class DexAggregatorTrader:
 
                             traded = False
 
-                            if chain == "base" and base_bal > Decimal("0.00001"):
+                            if chain == "base" and base_bal > Decimal("0.00002"):
                                 # Trade 50% of ETH balance
                                 trade_amount = float(base_bal) * 0.5
 
-                                # Check if trade is > 5 cents
-                                if trade_amount > 0.00002:  # ~$0.05
+                                # Check if trade is meaningful (> ~$0.01 to avoid micro trades)
+                                if trade_amount > 0.000005:
                                     logger.info(f"Trading {trade_amount:.6f} ETH for {token} on Base")
                                     success = self.execute_base_trade(token, token_addr, trade_amount)
                                     if success:
@@ -2435,12 +2658,12 @@ class DexAggregatorTrader:
                                 else:
                                     logger.warning(f"Trade too small: {trade_amount:.6f} ETH")
 
-                            elif chain == "solana" and sol_bal > Decimal("0.005"):
+                            elif chain == "solana" and sol_bal > Decimal("0.001"):
                                 # Trade 50% of SOL balance
                                 trade_amount = float(sol_bal) * 0.5
 
-                                # Check if trade is > 5 cents
-                                if trade_amount > 0.0006:  # ~$0.05
+                                # Check if trade is meaningful (> ~$0.03 to avoid micro trades)
+                                if trade_amount > 0.0002:
                                     logger.info(f"Trading {trade_amount:.6f} SOL for {token} on Solana")
                                     sol_mint = token_addr or token
                                     success = self.execute_solana_trade(token, sol_mint, trade_amount)
@@ -2459,13 +2682,13 @@ class DexAggregatorTrader:
                                     logger.warning(f"Trade too small: {trade_amount:.6f} SOL")
 
                             if not traded:
-                                if chain == "base" and base_bal <= Decimal("0.00001"):
+                                if chain == "base" and base_bal <= Decimal("0.00002"):
                                     logger.warning(
-                                        f"Insufficient Base balance ({base_bal:.8f} ETH) for {token} - need >0.00001 ETH"
+                                        f"Insufficient Base balance ({base_bal:.8f} ETH) for {token} - need >0.00002 ETH (~$0.05)"
                                     )
-                                elif chain == "solana" and sol_bal <= Decimal("0.003"):
+                                elif chain == "solana" and sol_bal <= Decimal("0.001"):
                                     logger.warning(
-                                        f"Insufficient Solana balance ({sol_bal:.6f} SOL) for {token} - need >0.003 SOL"
+                                        f"Insufficient Solana balance ({sol_bal:.6f} SOL) for {token} - need >0.001 SOL (~$0.15)"
                                     )
 
                         elif action == "BUY" and conf < 0.7:
@@ -2478,16 +2701,16 @@ class DexAggregatorTrader:
                     traceback.print_exc()
 
                 # Log funding status if no trades were possible
-                if base_bal < Decimal("0.000005") and sol_bal < Decimal("0.003"):
+                if base_bal < Decimal("0.00002") and sol_bal < Decimal("0.001"):
                     logger.warning(
                         f"LOW FUNDS - cannot trade on either chain. Base: {base_bal:.8f} ETH, Solana: {sol_bal:.6f} SOL"
                     )
-                elif base_bal < Decimal("0.000005") and not holdings:
+                elif base_bal < Decimal("0.00002") and not holdings:
                     logger.info(f"Base balance low ({base_bal:.8f} ETH) and no token holdings to sell")
 
                 # ==================== BRIDGING OPPORTUNITIES ====================
                 # Check if we should bridge between chains
-                if base_bal > Decimal("0.0001") and sol_bal < Decimal("0.003"):
+                if base_bal > Decimal("0.0001") and sol_bal < Decimal("0.001"):
                     # More ETH than SOL - consider bridging
                     logger.info("Checking bridging opportunities: Base -> Solana")
                     bridge_amount = str(int(float(base_bal) * 0.3 * 1e18))  # 30% of ETH
@@ -2502,7 +2725,7 @@ class DexAggregatorTrader:
                             f"Bridge quote available: {bridge_quote.get('estimate', {}).get('toAmount', 'N/A')}"
                         )
 
-                elif sol_bal > Decimal("0.003") and base_bal < Decimal("0.00005"):
+                elif sol_bal > Decimal("0.001") and base_bal < Decimal("0.00002"):
                     # More SOL than ETH - consider bridging
                     logger.info("Checking bridging opportunities: Solana -> Base")
                     bridge_amount = str(int(float(sol_bal) * 0.3 * 1e9))  # 30% of SOL
