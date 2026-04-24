@@ -117,12 +117,17 @@ def revised_score_token(token: dict) -> tuple[float, list[str], list[str]]:
     has_volume = vol_h24 > 0
     has_txns = (txns_h1 + txns_h1_sells) > 0
     has_fdv = fdv > 0
+    age_hours = dex.get("age_hours")
 
-    if not has_liquidity and not has_volume and not has_txns:
+    # Early-token protection: brand-new launches (<1h) may not have registered
+    # trades on DexScreener yet. Skip txns requirement for them.
+    is_very_early = age_hours is not None and age_hours < 1
+
+    if not has_liquidity and not has_volume and not (has_txns or is_very_early):
         # Completely unlisted / delisted / ghost token
         return 0.0, [], ["GHOST TOKEN: no active DEX pairs, liquidity, or volume"]
 
-    if not has_liquidity and not has_fdv:
+    if not has_liquidity and not has_fdv and not is_very_early:
         # Token has some volume but no liquidity and no market cap — likely
         # wash-traded or manipulated. Cap the base score before social bonuses.
         score -= 25

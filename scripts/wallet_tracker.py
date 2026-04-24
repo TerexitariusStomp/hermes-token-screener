@@ -60,17 +60,14 @@ start_metrics_server()
 
 def init_wallet_db() -> sqlite3.Connection:
     conn = sqlite3.connect(str(WALLETS_DB), timeout=30)
-    conn.executescript("""
+    conn.executescript(
+        """
         CREATE TABLE IF NOT EXISTS tracked_wallets (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             address TEXT NOT NULL,
             chain TEXT NOT NULL,
             discovered_at REAL NOT NULL,
             last_updated REAL,
-
-            -- Source info
-            source_tokens TEXT DEFAULT '',
-            source_token_count INTEGER DEFAULT 0,
 
             -- Scoring
             wallet_score REAL DEFAULT 0,
@@ -155,7 +152,8 @@ def init_wallet_db() -> sqlite3.Connection:
         CREATE INDEX IF NOT EXISTS idx_wallets_winrate ON tracked_wallets(win_rate DESC);
         CREATE INDEX IF NOT EXISTS idx_entries_wallet ON wallet_token_entries(wallet_address);
         CREATE INDEX IF NOT EXISTS idx_entries_token ON wallet_token_entries(token_address);
-    """)
+    """
+    )
     conn.commit()
     return conn
 
@@ -208,9 +206,10 @@ def score_wallet_v3(
     wallet_age_days: float = 0,  # how long wallet has existed (longer = better)
     # Social presence
     twitter_username: str = "",  # linked Twitter = more credible
-) -> float:
+) -> dict:
 
     score = 0.0
+    components: dict[str, float] = {}
 
     # ═════════════════════════════════════════════════════════════════════
     # PRIMARY SIGNALS (heavily weighted — these matter most)
@@ -218,57 +217,62 @@ def score_wallet_v3(
 
     # ─────────────────────────────────────────────────────────────────────
     # 1. REALIZED PNL (0-35) — the #1 signal. Only money TAKEN counts.
-    #    A wallet with $100K profit is more valuable than one with 1000% ROI
-    #    on $50. Real money proves real skill.
     # ─────────────────────────────────────────────────────────────────────
+    pnl_score = 0.0
     if realized_pnl > 1000000:
-        score += 35  # >$1M whale
+        pnl_score = 35
     elif realized_pnl > 500000:
-        score += 30
+        pnl_score = 30
     elif realized_pnl > 100000:
-        score += 25  # serious player
+        pnl_score = 25
     elif realized_pnl > 50000:
-        score += 20
+        pnl_score = 20
     elif realized_pnl > 10000:
-        score += 14
+        pnl_score = 14
     elif realized_pnl > 5000:
-        score += 10
+        pnl_score = 10
     elif realized_pnl > 1000:
-        score += 6
+        pnl_score = 6
     elif realized_pnl > 0:
-        score += 2
+        pnl_score = 2
+    score += pnl_score
+    components["pnl_score"] = pnl_score
 
     # ─────────────────────────────────────────────────────────────────────
     # 2. TRADE COUNT (0-20) — active wallets = established traders.
-    #    A wallet with 2 trades could be a one-shot fluke.
-    #    A wallet with 200 trades has a proven track record.
     # ─────────────────────────────────────────────────────────────────────
+    trades_score = 0.0
     if total_trades and total_trades > 500:
-        score += 20
+        trades_score = 20
     elif total_trades and total_trades > 200:
-        score += 17
+        trades_score = 17
     elif total_trades and total_trades > 100:
-        score += 14
+        trades_score = 14
     elif total_trades and total_trades > 50:
-        score += 11
+        trades_score = 11
     elif total_trades and total_trades > 20:
-        score += 7
+        trades_score = 7
     elif total_trades and total_trades > 10:
-        score += 4
+        trades_score = 4
     elif total_trades and total_trades > 5:
-        score += 2
+        trades_score = 2
+    score += trades_score
+    components["trades_score"] = trades_score
 
     # ─────────────────────────────────────────────────────────────────────
     # 3. WIN RATE (0-10) — consistency
     # ─────────────────────────────────────────────────────────────────────
+    winrate_score = 0.0
     if win_rate and win_rate > 0.80:
-        score += 10
+        winrate_score = 10
     elif win_rate and win_rate > 0.65:
-        score += 8
+        winrate_score = 8
     elif win_rate and win_rate > 0.50:
-        score += 5
+        winrate_score = 5
     elif win_rate and win_rate > 0.35:
-        score += 3
+        winrate_score = 3
+    score += winrate_score
+    components["winrate_score"] = winrate_score
 
     # ═════════════════════════════════════════════════════════════════════
     # SECONDARY SIGNALS (moderate weight)
@@ -277,115 +281,138 @@ def score_wallet_v3(
     # ─────────────────────────────────────────────────────────────────────
     # 4. AVERAGE ROI (0-10) — how well they trade per token
     # ─────────────────────────────────────────────────────────────────────
+    roi_score = 0.0
     roi_pct = (avg_roi - 1) * 100 if avg_roi and avg_roi > 1 else 0
     if roi_pct > 1000:
-        score += 10
+        roi_score = 10
     elif roi_pct > 500:
-        score += 8
+        roi_score = 8
     elif roi_pct > 200:
-        score += 6
+        roi_score = 6
     elif roi_pct > 100:
-        score += 4
+        roi_score = 4
     elif roi_pct > 50:
-        score += 2
+        roi_score = 2
+    score += roi_score
+    components["roi_score"] = roi_score
 
     # ─────────────────────────────────────────────────────────────────────
     # 5. ENTRY TIMING (0-8) — earlier = better
     # ─────────────────────────────────────────────────────────────────────
+    timing_score = 0.0
     if entry_timing_score is not None:
         if entry_timing_score < 0.05:
-            score += 8
+            timing_score = 8
         elif entry_timing_score < 0.1:
-            score += 6
+            timing_score = 6
         elif entry_timing_score < 0.2:
-            score += 4
+            timing_score = 4
         elif entry_timing_score < 0.4:
-            score += 2
+            timing_score = 2
+    score += timing_score
+    components["timing_score"] = timing_score
 
     # ─────────────────────────────────────────────────────────────────────
     # 6. WALLET AGE (0-5) — longer = established
     # ─────────────────────────────────────────────────────────────────────
+    age_score = 0.0
     if wallet_age_days:
         if wallet_age_days > 365:
-            score += 5
+            age_score = 5
         elif wallet_age_days > 180:
-            score += 4
+            age_score = 4
         elif wallet_age_days > 90:
-            score += 3
+            age_score = 3
         elif wallet_age_days > 30:
-            score += 2
+            age_score = 2
         elif wallet_age_days > 7:
-            score += 1
+            age_score = 1
+    score += age_score
+    components["age_score"] = age_score
 
     # ─────────────────────────────────────────────────────────────────────
     # 7. SMART MONEY TAG (0-5)
     # ─────────────────────────────────────────────────────────────────────
+    tag_score = 0.0
     tag_lower = (smart_money_tag or "").lower()
     all_tags = set((wallet_tags or "").lower().split(","))
-
     if "top1" in tag_lower or "top1" in all_tags:
-        score += 5
+        tag_score = 5
     elif "top2" in tag_lower or "top3" in tag_lower:
-        score += 4
+        tag_score = 4
     elif "top5" in tag_lower or "smart" in tag_lower:
-        score += 3
+        tag_score = 3
     elif "kol" in all_tags:
-        score += 4
+        tag_score = 4
     elif any(t.startswith("top") for t in all_tags):
-        score += 2
+        tag_score = 2
+    score += tag_score
+    components["tag_score"] = tag_score
 
     # ─────────────────────────────────────────────────────────────────────
     # 8. INSIDER BONUS (0-5) — following insiders = alpha
     # ─────────────────────────────────────────────────────────────────────
-    if insider_flag:
-        score += 5
+    insider_score = 5.0 if insider_flag else 0.0
+    score += insider_score
+    components["insider_score"] = insider_score
 
     # ─────────────────────────────────────────────────────────────────────
     # 9. DEFI + PORTFOLIO (0-5)
     # ─────────────────────────────────────────────────────────────────────
+    defi_score = 0.0
     if defi_value and defi_value > 100000:
-        score += 3
+        defi_score = 3
     elif defi_value and defi_value > 10000:
-        score += 2
+        defi_score = 2
     elif defi_value and defi_value > 0:
-        score += 1
+        defi_score = 1
     if zerion_value and zerion_value > 100000:
-        score += 2
+        defi_score += 2
     elif zerion_value and zerion_value > 0:
-        score += 1
+        defi_score += 1
+    score += defi_score
+    components["defi_score"] = defi_score
 
     # ─────────────────────────────────────────────────────────────────────
     # 10. SOCIAL PRESENCE (0-2)
     # ─────────────────────────────────────────────────────────────────────
-    if twitter_username:
-        score += 2
+    social_score = 2.0 if twitter_username else 0.0
+    score += social_score
+    components["social_score"] = social_score
 
     # ═════════════════════════════════════════════════════════════════════
     # PENALTIES (subtracted from score)
     # ═════════════════════════════════════════════════════════════════════
 
     # ── ROUND TRIPS (-15 per, max -45) ──
-    # Bought, had paper profit, but didn't sell. That's a missed exit.
-    # More round trips = worse trader (greedy or not paying attention)
+    round_trip_penalty = 0.0
     if round_trip_count:
-        score -= min(45, round_trip_count * 15)
+        round_trip_penalty = min(45, round_trip_count * 15)
+    score -= round_trip_penalty
+    components["round_trip_penalty"] = -round_trip_penalty
 
     # ── COPY TRADE (-20) ──
-    # Always buys after someone else = no alpha, just following
-    if copy_trade_flag:
-        score -= 20
+    copy_penalty = 20.0 if copy_trade_flag else 0.0
+    score -= copy_penalty
+    components["copy_penalty"] = -copy_penalty
 
     # ── RUG HISTORY (-100 per rug, uncapped) ──
-    # If they rugged anyone, they're toxic. Period.
+    rug_penalty = 0.0
     if rug_history_count:
-        score -= rug_history_count * 100
+        rug_penalty = rug_history_count * 100
+    score -= rug_penalty
+    components["rug_penalty"] = -rug_penalty
 
     # ── LOW WIN RATE PENALTY ──
-    # If they've traded 10+ tokens and win rate < 30%, they're bad
+    low_win_penalty = 0.0
     if tokens_total and tokens_total >= 10 and win_rate and win_rate < 0.30:
-        score -= 10
+        low_win_penalty = 10
+    score -= low_win_penalty
+    components["low_win_penalty"] = -low_win_penalty
 
-    return max(0, min(100, round(score, 1)))
+    final_score = max(0, min(100, round(score, 1)))
+    components["wallet_score"] = final_score
+    return components
 
 
 def compute_round_trips(conn: sqlite3.Connection) -> dict[str, int]:
@@ -395,14 +422,16 @@ def compute_round_trips(conn: sqlite3.Connection) -> dict[str, int]:
     They made money on paper but didn't realize it.
     """
     c = conn.cursor()
-    c.execute("""
+    c.execute(
+        """
         SELECT wallet_address, COUNT(*) as rt_count
         FROM wallet_token_entries
         WHERE profit > 0
           AND (sell_tx_count IS NULL OR sell_tx_count = 0)
           AND unrealized_profit > 0
         GROUP BY wallet_address
-    """)
+    """
+    )
     return {row[0]: row[1] for row in c.fetchall()}
 
 
@@ -605,8 +634,6 @@ def enrich_wallets_from_tokens(
         twitter = next((a["twitter"] for a in appearances if a["twitter"]), "")
 
         # Source tokens
-        source_tokens = ",".join(set(a["token_symbol"] for a in appearances))
-
         # Score
         # Compute wallet age in days
         now_ts = time.time()
@@ -633,7 +660,7 @@ def enrich_wallets_from_tokens(
             round_trip_count=0,
             wallet_age_days=age_days,
             twitter_username=twitter,
-        )
+        )["wallet_score"]
 
         if dry_run:
             continue
@@ -643,18 +670,15 @@ def enrich_wallets_from_tokens(
             """
             INSERT INTO tracked_wallets
                 (address, chain, discovered_at, last_updated,
-                 source_tokens, source_token_count,
                  wallet_score, realized_pnl, unrealized_pnl, total_profit,
                  avg_roi, total_trades, buy_count, sell_count,
                  entry_timing_score, win_rate,
                  tokens_profitable, tokens_total,
                  smart_money_tag, wallet_tags, twitter_username,
                  first_seen_at, last_active_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(chain, address) DO UPDATE SET
                 last_updated = excluded.last_updated,
-                source_tokens = excluded.source_tokens,
-                source_token_count = excluded.source_token_count,
                 wallet_score = excluded.wallet_score,
                 realized_pnl = excluded.realized_pnl,
                 unrealized_pnl = excluded.unrealized_pnl,
@@ -677,8 +701,6 @@ def enrich_wallets_from_tokens(
                 chain,
                 now,
                 now,
-                source_tokens,
-                len(appearances),
                 wallet_score,
                 total_realized,
                 total_unrealized,
@@ -760,16 +782,18 @@ def report(conn: sqlite3.Connection, limit: int = 20):
     """Print top wallets with full metrics."""
     cursor = conn.cursor()
 
-    cursor.execute(f"""
+    cursor.execute(
+        f"""
         SELECT address, chain, wallet_score, realized_pnl, avg_roi,
                win_rate, total_trades, tokens_profitable, tokens_total,
-               smart_money_tag, source_tokens, twitter_username,
+               smart_money_tag, twitter_username,
                trading_pattern, insider_flag, copy_trade_flag, rug_history_count
         FROM tracked_wallets
         WHERE wallet_score > 0
         ORDER BY wallet_score DESC
         LIMIT {limit}
-    """)
+    """
+    )
 
     print(f"\n{'='*80}")
     print(f"TOP {limit} WALLETS BY SCORE")
@@ -935,12 +959,14 @@ def detect_copy_traders(conn: sqlite3.Connection) -> int:
     c = conn.cursor()
 
     # Get all token entries grouped by token
-    c.execute("""
+    c.execute(
+        """
         SELECT token_address, wallet_address, start_holding_at, profit_change
         FROM wallet_token_entries
         WHERE start_holding_at IS NOT NULL
         ORDER BY token_address, start_holding_at
-    """)
+    """
+    )
 
     # Group by token
     token_entries = {}
@@ -1011,7 +1037,8 @@ def detect_insiders(conn: sqlite3.Connection) -> int:
     flagged = 0
 
     # 1. Very early entries with extreme ROI (possible insider)
-    c.execute("""
+    c.execute(
+        """
         SELECT wte.wallet_address, COUNT(*) as early_count
         FROM wallet_token_entries wte
         WHERE wte.profit_change > 10  -- >1000% ROI
@@ -1019,7 +1046,8 @@ def detect_insiders(conn: sqlite3.Connection) -> int:
           AND wte.is_profitable = 1
         GROUP BY wte.wallet_address
         HAVING early_count >= 2
-    """)
+    """
+    )
     for wallet, _count in c.fetchall():
         c.execute(
             """
@@ -1032,12 +1060,14 @@ def detect_insiders(conn: sqlite3.Connection) -> int:
         flagged += c.rowcount
 
     # 2. Wallets with suspiciously high avg ROI
-    c.execute("""
+    c.execute(
+        """
         SELECT address FROM tracked_wallets
         WHERE avg_roi > 20  -- >2000% average ROI
           AND total_trades < 10
           AND insider_flag = 0
-    """)
+    """
+    )
     for (wallet,) in c.fetchall():
         c.execute("UPDATE tracked_wallets SET insider_flag = 1 WHERE address = ?", (wallet,))
         flagged += c.rowcount
@@ -1079,13 +1109,15 @@ def detect_rug_history(conn: sqlite3.Connection) -> int:
         pass
 
     # Also flag entries with massive losses as potential rugs
-    c.execute("""
+    c.execute(
+        """
         SELECT wallet_address, COUNT(*) as rug_count
         FROM wallet_token_entries
         WHERE (profit_change < -0.9 OR profit < -1000)
           AND is_profitable = 0
         GROUP BY wallet_address
-    """)
+    """
+    )
 
     for wallet, count in c.fetchall():
         # Add any known rugged tokens
@@ -1267,7 +1299,7 @@ def main():
             round_trip_count=rt,
             wallet_age_days=age_days,
             twitter_username=tw or "",
-        )
+        )["wallet_score"]
         conn.execute(
             "UPDATE tracked_wallets SET wallet_score = ? WHERE address = ?",
             (new_score, addr),

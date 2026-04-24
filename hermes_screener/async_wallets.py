@@ -232,14 +232,33 @@ async def enrich_wallets_async(
                 elapsed=round(elapsed, 1),
             )
 
+            # Token FDV for calculating holder value
+            token_fdv = token_info.get("dex", {}).get("fdv", 0) or 0
+
             for h in holders:
                 w = h.get("address", "")
                 if not w:
                     continue
+
+                # ── $10K MINIMUM VALUE FILTER ──
+                # Only track wallets holding >$10K worth of this token.
+                # GMGN returns amount_percentage; approximate value from FDV.
+                amount_pct = h.get("amount_percentage", 0) or 0
+                value_held = 0.0
+                if token_fdv and amount_pct:
+                    value_held = (amount_pct / 100.0) * token_fdv
+                # Fallback: use unrealized_profit as proxy if amount_percentage missing
+                if value_held <= 0:
+                    unrealized = h.get("unrealized_profit", 0) or 0
+                    realized = h.get("realized_profit", 0) or 0
+                    value_held = unrealized + realized
+                if value_held < 10_000:
+                    continue
+
                 holders_found += 1
                 profit = h.get("profit", 0) or 0
                 entry = {
-                    "chain": chain,
+                    "chain": CHAIN_MAP.get(chain.lower(), chain.lower()),
                     "token_address": addr,
                     "token_symbol": sym,
                     "profit": profit,
@@ -276,7 +295,6 @@ async def enrich_wallets_async(
     if not dry_run and wallet_appearances:
         cursor = conn.cursor()
         for w_addr, entries in wallet_appearances.items():
-            source_tokens = list(set(e["token_address"] for e in entries))
             total_profit = sum(e["profit"] for e in entries)  # type: ignore[misc]
             total_realized = sum(e["realized_profit"] for e in entries)  # type: ignore[misc]
             total_unrealized = sum(e["unrealized_profit"] for e in entries)  # type: ignore[misc]
@@ -290,12 +308,12 @@ async def enrich_wallets_async(
             cursor.execute(
                 """
                 INSERT INTO tracked_wallets (address, chain, discovered_at, last_updated,
-                    source_tokens, source_token_count, wallet_score, realized_pnl, unrealized_pnl,
+                    wallet_score, realized_pnl, unrealized_pnl,
                     total_profit, avg_roi, total_trades, buy_count, sell_count,
                     win_rate, tokens_profitable, tokens_total, first_seen_at, last_active_at)
-                VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(address) DO UPDATE SET
-                    last_updated=?, source_tokens=?, source_token_count=?,
+                    last_updated=?,
                     realized_pnl=?, unrealized_pnl=?, total_profit=?, avg_roi=?,
                     total_trades=?, buy_count=?, sell_count=?,
                     win_rate=?, tokens_profitable=?, tokens_total=?, last_active_at=?
@@ -305,8 +323,6 @@ async def enrich_wallets_async(
                     entries[0]["chain"],
                     now,
                     now,
-                    json.dumps(source_tokens),
-                    len(source_tokens),
                     total_realized,
                     total_unrealized,
                     total_profit,
@@ -321,8 +337,6 @@ async def enrich_wallets_async(
                     now,
                     # ON CONFLICT updates
                     now,
-                    json.dumps(source_tokens),
-                    len(source_tokens),
                     total_realized,
                     total_unrealized,
                     total_profit,

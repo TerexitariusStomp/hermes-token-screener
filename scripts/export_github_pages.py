@@ -98,9 +98,7 @@ def export_tokens():
                 raw = json.load(f)
             # Check if it has the enriched format (contract_address field)
             tokens = raw.get("tokens") or raw.get("top_tokens") or []
-            if tokens and (
-                tokens[0].get("contract_address") or tokens[0].get("address")
-            ):
+            if tokens and (tokens[0].get("contract_address") or tokens[0].get("address")):
                 data = raw
                 print(f"Using enriched data from {src.name}")
                 break
@@ -120,9 +118,7 @@ def export_tokens():
     # Normalize chains and clean up data
     clean_tokens = []
     for token in tokens:
-        token["chain"] = normalize_chain(
-            token.get("chain", ""), token.get("dex_url", "")
-        )
+        token["chain"] = normalize_chain(token.get("chain", ""), token.get("dex_url", ""))
         # Normalize address field names
         if "contract_address" not in token and "address" in token:
             token["contract_address"] = token["address"]
@@ -131,9 +127,7 @@ def export_tokens():
         chain_norm = token.get("chain", "unknown")
         addr = token.get("contract_address", "")
         if dex:
-            token["fdv"] = (
-                token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
-            )
+            token["fdv"] = token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
             token["symbol"] = token.get("symbol") or dex.get("symbol") or ""
             token["name"] = token.get("name") or dex.get("name") or ""
             token["volume_h24"] = dex.get("volume_h24", 0) or 0
@@ -179,9 +173,7 @@ def export_tokens():
         )
 
         # Volume multiplier: $100K=1x, $1M=2x, $10M=3x (linear in log)
-        vol_mult = min(
-            vol / 500000, 3.0
-        )  # $500K=1x, cap at 3x  # normalize so $1M = 1.0
+        vol_mult = min(vol / 500000, 3.0)  # $500K=1x, cap at 3x  # normalize so $1M = 1.0
 
         # Penalty for no price data
         stale_mult = 0.3 if pc_h1 is None else 1.0
@@ -226,9 +218,7 @@ def export_wallets():
                         addr = t.get("contract_address", "")
                         if addr:
                             fdv = t.get("fdv") or t.get("market_cap") or 0
-                            t_chain = normalize_chain(
-                                t.get("chain", ""), t.get("dex_url", "")
-                            )
+                            t_chain = normalize_chain(t.get("chain", ""), t.get("dex_url", ""))
                             token_fdv[addr] = {"fdv": fdv, "chain": t_chain}
                     break
 
@@ -236,8 +226,7 @@ def export_wallets():
         conn.row_factory = sqlite3.Row
         try:
             rows = conn.execute(
-                "SELECT * FROM tracked_wallets WHERE wallet_score > 0 "
-                "ORDER BY wallet_score DESC LIMIT 200"
+                "SELECT * FROM tracked_wallets WHERE wallet_score > 0 " "ORDER BY wallet_score DESC LIMIT 200"
             ).fetchall()
             wallets = [dict(r) for r in rows]
 
@@ -332,9 +321,7 @@ def export_cross_tokens():
         addr = token.get("contract_address", "")
         if dex:
             token["symbol"] = token.get("symbol") or dex.get("symbol") or ""
-            token["fdv"] = (
-                token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
-            )
+            token["fdv"] = token.get("fdv") or dex.get("fdv") or dex.get("market_cap") or 0
             token["volume_h24"] = dex.get("volume_h24", 0) or 0
             token["volume_h1"] = dex.get("volume_h1", 0) or 0
             token["price_change_h1"] = dex.get("price_change_h1")
@@ -357,8 +344,7 @@ def export_cross_tokens():
         try:
             # Get top wallets
             top_wallets = conn.execute(
-                "SELECT address FROM tracked_wallets WHERE wallet_score > 0 "
-                "ORDER BY wallet_score DESC LIMIT 200"
+                "SELECT address FROM tracked_wallets WHERE wallet_score > 0 " "ORDER BY wallet_score DESC LIMIT 200"
             ).fetchall()
             wallet_addrs = [r[0] for r in top_wallets]
 
@@ -416,9 +402,7 @@ def export_cross_tokens():
         )
         vol_mult = min(vol / 500000, 3.0)  # $500K=1x, cap at 3x
         stale_mult = 0.3 if pc_h1 is None else 1.0
-        return (
-            score * vol_mult * stale_mult * (1 + wallets * 0.3) / (1 + bad_signals * 2)
-        )
+        return score * vol_mult * stale_mult * (1 + wallets * 0.3) / (1 + bad_signals * 2)
 
     tokens.sort(key=cross_token_sort, reverse=True)
 
@@ -474,9 +458,7 @@ def export_cross_wallets():
             token["dex_url"] = f"https://dexscreener.com/{chain.lower()}/{addr}"
         token["chain"] = chain
 
-    top_token_addrs = {
-        t.get("contract_address", "") for t in tokens if t.get("contract_address")
-    }
+    top_token_addrs = {t.get("contract_address", "") for t in tokens if t.get("contract_address")}
     # Build token FDV lookup for wallet tier classification
     token_fdv = {}
     for t in tokens:
@@ -636,11 +618,7 @@ def export_tiered_wallets():
         if not tier_token_list:
             continue
 
-        tier_token_addrs = {
-            t.get("contract_address", "")
-            for t in tier_token_list
-            if t.get("contract_address")
-        }
+        tier_token_addrs = {t.get("contract_address", "") for t in tier_token_list if t.get("contract_address")}
         tier_wallets = []
 
         if db_path.exists():
@@ -652,7 +630,7 @@ def export_tiered_wallets():
                     f"""
                     SELECT DISTINCT w.address, w.chain, w.wallet_score,
                            w.total_profit, w.win_rate, w.avg_roi, w.total_trades,
-                           w.wallet_tags, w.source_tokens
+                           w.wallet_tags
                     FROM tracked_wallets w
                     JOIN wallet_token_entries e ON w.address = e.wallet_address
                     WHERE e.token_address IN ({placeholders})
@@ -666,9 +644,7 @@ def export_tiered_wallets():
                 for w in rows:
                     held_rows = conn.execute(
                         "SELECT token_address FROM wallet_token_entries "
-                        "WHERE wallet_address = ? AND token_address IN ("
-                        + placeholders
-                        + ")",
+                        "WHERE wallet_address = ? AND token_address IN (" + placeholders + ")",
                         [w["address"]] + list(tier_token_addrs),
                     ).fetchall()
                     held_in_tier = [r[0] for r in held_rows]
@@ -769,7 +745,8 @@ def export_smart_money():
             "wbtc",
             "steth",
         }
-        sm_token_rows = conn.execute("""
+        sm_token_rows = conn.execute(
+            """
             SELECT t.token_address, t.chain, t.symbol, t.buyer_count,
                    t.total_buy_usd, t.avg_buy_usd, t.top_buyer_score,
                    t.first_seen_at, t.discovery_wallets, t.score as sm_score
@@ -777,7 +754,8 @@ def export_smart_money():
             WHERE t.buyer_count >= 2
             ORDER BY t.buyer_count DESC, t.total_buy_usd DESC
             LIMIT 200
-        """).fetchall()
+        """
+        ).fetchall()
 
         tokens = []
         for r in sm_token_rows:
@@ -787,16 +765,9 @@ def export_smart_money():
 
             # Merge enriched data with SM data
             dex_data = enriched.get("dex", {})
-            fdv = (
-                dex_data.get("fdv")
-                or enriched.get("fdv")
-                or enriched.get("market_cap")
-                or 0
-            )
+            fdv = dex_data.get("fdv") or enriched.get("fdv") or enriched.get("market_cap") or 0
             score = enriched.get("score", 0) or r["sm_score"] or 0
-            symbol = (
-                dex_data.get("symbol") or enriched.get("symbol") or r["symbol"] or ""
-            )
+            symbol = dex_data.get("symbol") or enriched.get("symbol") or r["symbol"] or ""
 
             # Filter out wrapped/stable tokens
             if symbol.lower().strip() in BLOCKED_SM_SYMBOLS:
@@ -824,8 +795,7 @@ def export_smart_money():
                     "price_change_h1": dex_data.get("price_change_h1"),
                     "price_change_h6": dex_data.get("price_change_h6"),
                     "age_hours": dex_data.get("age_hours"),
-                    "dex_url": enriched.get("dex_url", "")
-                    or f"https://dexscreener.com/{chain.lower()}/{addr}",
+                    "dex_url": enriched.get("dex_url", "") or f"https://dexscreener.com/{chain.lower()}/{addr}",
                     "positives": enriched.get("positives", []),
                     "gmgn_smart_wallets": enriched.get("gmgn_smart_wallets", 0),
                     # Computed
@@ -836,9 +806,7 @@ def export_smart_money():
 
         # Sort by composite: buyer_count * score * (1 + total_usd/1000)
         tokens.sort(
-            key=lambda t: (t["buyer_count"] or 0)
-            * max(0.1, t["score"] or 0)
-            * (1 + (t["total_buy_usd"] or 0) / 1000),
+            key=lambda t: (t["buyer_count"] or 0) * max(0.1, t["score"] or 0) * (1 + (t["total_buy_usd"] or 0) / 1000),
             reverse=True,
         )
 
@@ -857,7 +825,8 @@ def export_smart_money():
 
         # ── Export SM wallets (wallets from smart_money_purchases) ──
         # Get unique wallets that bought SM tokens
-        sm_wallet_rows = conn.execute("""
+        sm_wallet_rows = conn.execute(
+            """
             SELECT p.wallet_address, p.chain,
                    MAX(p.wallet_score) as wallet_score,
                    COUNT(DISTINCT p.token_address) as sm_token_count,
@@ -868,7 +837,8 @@ def export_smart_money():
             HAVING sm_token_count >= 1
             ORDER BY wallet_score DESC, sm_token_count DESC
             LIMIT 200
-        """).fetchall()
+        """
+        ).fetchall()
 
         # Load enriched token data for FDV lookup
         token_fdv = {}
@@ -947,14 +917,16 @@ def export_smart_money():
             print(f"Exported {len(wallets)} smart money wallets to {dst}")
 
         # ── Export recent purchases ──
-        purchase_rows = conn.execute("""
+        purchase_rows = conn.execute(
+            """
             SELECT p.wallet_address, p.chain, p.token_address, p.token_symbol,
                    p.amount_usd, p.price_usd, p.timestamp, p.wallet_score, p.wallet_tags
             FROM smart_money_purchases p
             WHERE p.side = 'buy'
             ORDER BY p.timestamp DESC
             LIMIT 1000
-        """).fetchall()
+        """
+        ).fetchall()
 
         purchases = [
             {
