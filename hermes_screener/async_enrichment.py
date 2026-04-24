@@ -113,10 +113,24 @@ class AsyncDexscreenerEnricher:
         addr = token["contract_address"]
         async with self.semaphore:
             try:
-                resp = await client.get(f"{self.BASE_URL}/tokens/{addr}")
-                metrics.api_calls.labels(provider="dexscreener", status="ok").inc()
-                if resp.status_code != 200:
+                # Conservative request with exponential backoff for rate limits
+                max_retries = 5
+                base_delay = 2.0  # Start with 2s, then 4s, 8s, 16s, 32s
+                resp = None
+                for attempt in range(max_retries):
+                    if attempt > 0:
+                        backoff = base_delay * (2 ** (attempt - 1))
+                        await asyncio.sleep(backoff)
+                    resp = await client.get(f"{self.BASE_URL}/tokens/{addr}")
+                    if resp.status_code == 200:
+                        break
+                    if resp.status_code == 429 and attempt < max_retries - 1:
+                        continue  # retry
+                    # Any other status code: give up on this token
                     return token
+                if resp is None or resp.status_code != 200:
+                    return token
+
                 data = resp.json()
                 pairs = data.get("pairs", [])
                 if not pairs:
@@ -155,8 +169,6 @@ class AsyncDexscreenerEnricher:
                     "pair_address": best.get("pairAddress"),
                 }
                 # Only correct chain from Dexscreener when original is unreliable.
-                # GMGN/GMGN-trenches sources already know their chain.
-                # Telegram scraper defaults 0x addresses to 'ethereum' which may be wrong.
                 ds_chain = best.get("chainId", "")
                 orig_chain = token.get("chain", "")
                 reliable_sources = {"gmgn_trenches", "gmgn_trending"}
@@ -178,7 +190,13 @@ class AsyncDexscreenerEnricher:
                 if websites:
                     dex_data["website_url"] = websites[0].get("url", "")
 
-                return {**token, "dex": dex_data}
+                # Return with symbol/name lifted to top-level
+                return {
+                    **token,
+                    "symbol": ds_symbol or orig_symbol,
+                    "name": ds_name or orig_name,
+                    "dex": dex_data,
+                }
             except Exception as e:
                 metrics.api_calls.labels(provider="dexscreener", status="error").inc()
                 if (idx + 1) % 50 == 0:
@@ -265,7 +283,6 @@ class AsyncHttpEnricher:
 # ═══════════════════════════════════════════════════════════════════════════════
 # INDIVIDUAL LAYER ASYNC IMPLEMENTATIONS
 # ═══════════════════════════════════════════════════════════════════════════════
-
 
 
 async def _enrich_rugcheck(token: dict, client: httpx.AsyncClient) -> None:
@@ -1116,7 +1133,6 @@ async def run_async_enrichment(
         # De.Fi
         defi_enricher = AsyncHttpEnricher("De.Fi", concurrency=2, delay=1.0)
 
-
         # Zerion
         zerion_enricher = AsyncHttpEnricher("Zerion", concurrency=2, delay=1.0)
 
@@ -1258,7 +1274,7 @@ async def run_async_enrichment(
             run_rugcheck(),
             run_etherscan(),
             run_defi(),
-                run_zerion(),
+            run_zerion(),
             run_solscan(),
             run_helius(),
             run_birdeye(),

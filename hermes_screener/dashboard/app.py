@@ -631,49 +631,64 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
         now = _time.time()
 
         # Load tracked wallet component scores
+        # NOTE: schema differs across deployments; derive normalized component fields
+        # from the columns that actually exist in wallet_tracker.db.
         tracked_map: dict[str, dict] = {}
         for row in conn.execute(
-            "SELECT address, wallet_score, pnl_score, timing_score, winrate_score, "
-            "insider_score, trades_score, roi_score, tag_score, defi_score, "
-            "age_score, social_score, copy_penalty, rug_penalty, round_trip_penalty, "
-            "low_win_penalty, wallet_tags, chain FROM tracked_wallets"
+            "SELECT address, wallet_score, total_profit, entry_timing_score, win_rate, "
+            "insider_flag, total_trades, avg_roi, smart_money_tag, zerion_defi_value, "
+            "avg_hold_hours, copy_trade_flag, rug_history_count, wallet_tags, chain "
+            "FROM tracked_wallets"
         ).fetchall():
             (
                 addr,
                 ws,
-                pnl,
-                timing,
-                winrate,
-                insider,
-                trades,
-                roi,
-                tag,
-                defi,
-                age,
-                social,
-                copy_pen,
-                rug_pen,
-                rt_pen,
-                lw_pen,
+                total_profit,
+                entry_timing,
+                win_rate,
+                insider_flag,
+                total_trades,
+                avg_roi,
+                smart_money_tag,
+                zerion_defi_value,
+                avg_hold_hours,
+                copy_trade_flag,
+                rug_history_count,
                 wtags,
                 chain,
             ) = row
+            # Map available columns -> legacy component names expected by scorer
+            pnl_score = float(total_profit or 0) / 1000.0
+            timing_score = float(entry_timing or 0)
+            winrate_score = float(win_rate or 0) / 10.0
+            insider_score = 10.0 if int(insider_flag or 0) else 0.0
+            trades_score = min(float(total_trades or 0) / 10.0, 20.0)
+            roi_score = float(avg_roi or 0) / 10.0
+            tag_score = 5.0 if (smart_money_tag or "") else 0.0
+            defi_score = min(float(zerion_defi_value or 0) / 10000.0, 10.0)
+            age_score = min(float(avg_hold_hours or 0) / 24.0, 10.0)
+            social_score = 0.0
+            copy_penalty = -5.0 if int(copy_trade_flag or 0) else 0.0
+            rug_penalty = -10.0 * float(rug_history_count or 0)
+            rt_pen = 0.0
+            lw_pen = 0.0
+
             tracked_map[addr] = {
                 "wallet_score": ws or 0,
-                "pnl_score": pnl or 0,
-                "timing_score": timing or 0,
-                "winrate_score": winrate or 0,
-                "insider_score": insider or 0,
-                "trades_score": trades or 0,
-                "roi_score": roi or 0,
-                "tag_score": tag or 0,
-                "defi_score": defi or 0,
-                "age_score": age or 0,
-                "social_score": social or 0,
-                "copy_penalty": copy_pen or 0,
-                "rug_penalty": rug_pen or 0,
-                "round_trip_penalty": rt_pen or 0,
-                "low_win_penalty": lw_pen or 0,
+                "pnl_score": pnl_score,
+                "timing_score": timing_score,
+                "winrate_score": winrate_score,
+                "insider_score": insider_score,
+                "trades_score": trades_score,
+                "roi_score": roi_score,
+                "tag_score": tag_score,
+                "defi_score": defi_score,
+                "age_score": age_score,
+                "social_score": social_score,
+                "copy_penalty": copy_penalty,
+                "rug_penalty": rug_penalty,
+                "round_trip_penalty": rt_pen,
+                "low_win_penalty": lw_pen,
                 "wallet_tags": wtags or "",
                 "chain": chain or "",
             }
@@ -1004,9 +1019,11 @@ def _get_active_wallets(active_tokens: list[dict]) -> list[dict]:
                 f"SELECT smp.wallet_address, smp.token_address, smp.token_symbol, "
                 f"smp.chain, smp.amount_usd, smp.timestamp, "
                 f"COALESCE(tw.wallet_score, 0) as ws, tw.wallet_tags, "
-                f"tw.pnl_score, tw.timing_score, tw.winrate_score, tw.insider_score, "
-                f"tw.trades_score, tw.roi_score, tw.tag_score, tw.defi_score, "
-                f"tw.copy_penalty, tw.rug_penalty, tw.round_trip_penalty, tw.low_win_penalty "
+                f"COALESCE(tw.total_profit, 0), COALESCE(tw.entry_timing_score, 0), "
+                f"COALESCE(tw.win_rate, 0), COALESCE(tw.insider_flag, 0), "
+                f"COALESCE(tw.total_trades, 0), COALESCE(tw.avg_roi, 0), "
+                f"COALESCE(tw.smart_money_tag, ''), COALESCE(tw.zerion_defi_value, 0), "
+                f"COALESCE(tw.copy_trade_flag, 0), COALESCE(tw.rug_history_count, 0), 0, 0 "
                 f"FROM smart_money_purchases smp "
                 f"LEFT JOIN tracked_wallets tw ON smp.wallet_address = tw.address "
                 f"WHERE ({lower_checks}) AND smp.side = 'buy'",
@@ -1043,16 +1060,17 @@ def _get_active_wallets(active_tokens: list[dict]) -> list[dict]:
                         "wallet_score": ws or 0,
                         "wallet_tags": wtags or "",
                         "tracked_scores": {
-                            "pnl_score": pnl or 0,
-                            "timing_score": timing or 0,
-                            "winrate_score": winrate or 0,
-                            "insider_score": insider or 0,
-                            "trades_score": trades or 0,
-                            "roi_score": roi or 0,
-                            "tag_score": tag or 0,
-                            "defi_score": defi or 0,
-                            "copy_penalty": copy_pen or 0,
-                            "rug_penalty": rug_pen or 0,
+                            # Normalize current schema fields to legacy scoring components
+                            "pnl_score": float(pnl or 0) / 1000.0,
+                            "timing_score": float(timing or 0),
+                            "winrate_score": float(winrate or 0) / 10.0,
+                            "insider_score": 10.0 if int(insider or 0) else 0.0,
+                            "trades_score": min(float(trades or 0) / 10.0, 20.0),
+                            "roi_score": float(roi or 0) / 10.0,
+                            "tag_score": 5.0 if (tag or "") else 0.0,
+                            "defi_score": min(float(defi or 0) / 10000.0, 10.0),
+                            "copy_penalty": -5.0 if int(copy_pen or 0) else 0.0,
+                            "rug_penalty": -10.0 * float(rug_pen or 0),
                             "round_trip_penalty": rt_pen or 0,
                             "low_win_penalty": lw_pen or 0,
                         },
