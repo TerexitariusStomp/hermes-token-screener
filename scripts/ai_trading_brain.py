@@ -94,6 +94,7 @@ BONSAI_MODEL = "Bonsai-8B.gguf"
 MAX_POSITION_PCT = 5.0  # max % of portfolio per trade (safety cap only)
 MIN_POSITIONS = 1  # always maintain at least this many open positions
 DECISION_COOLDOWN_SECONDS = 60 * 60  # 1 hour minimum between re-analyzing the same token
+MIN_CHAIN_BALANCE = {"solana": 0.001, "base": 0.0005, "ethereum": 0.0005}
 EXCLUDE_SYMBOLS = {"WSOL", "WETH", "WBNB", "USDC", "USDT", "DAI", "BUSD", "USDS", "TUSD", "PAX"}
 
 
@@ -1244,19 +1245,12 @@ def run_trading_brain(
     funded_chains = []
     for ch, bal in [("solana", None), ("base", None), ("ethereum", None)]:
         try:
-            if ch == "solana":
-                bal = get_native_balance("solana")
-                if bal >= 0.001:
-                    funded_chains.append(ch)
-                else:
-                    log.info("chain_no_funds", chain=ch, balance=bal)
-            elif ch in ("base", "ethereum"):
-                bal = get_native_balance(ch)
-                min_eth = 0.0001
-                if bal >= min_eth:
-                    funded_chains.append(ch)
-                else:
-                    log.info("chain_no_funds", chain=ch, balance=bal)
+            bal = get_native_balance(ch) if ch != "solana" else get_native_balance("solana")
+            min_bal = MIN_CHAIN_BALANCE.get(ch, 0.0001)
+            if bal >= min_bal:
+                funded_chains.append(ch)
+            else:
+                log.info("chain_no_funds", chain=ch, balance=bal, min_required=min_bal)
         except Exception as e:
             log.error("chain_balance_check_failed", chain=ch, error=str(e))
 
