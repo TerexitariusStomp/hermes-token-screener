@@ -279,6 +279,10 @@ def rank_tokens_for_ai(tokens: List[dict]) -> List[dict]:
         else:
             t["_composite_score"] = base_score
 
+        # Boost active-source tokens to prioritize fresh opportunities
+        if t.get("source") == "active":
+            t["_composite_score"] += 30
+
         ranked.append(t)
 
     # Sort by composite score descending — AI sees best first
@@ -552,6 +556,7 @@ def enrich_and_merge_tokens(
                 "last_buy_at": at["last_buy_at"],
             },
             "is_synthetic": True,
+            "source": "active",
         }
         synthetic.append(st)
 
@@ -1259,7 +1264,7 @@ def run_trading_brain(
                  total_tradeable=len(tradeable))
         return {"status": "no_funded_chains", "funded_chains": funded_chains}
 
-    tokens_to_analyze = tradeable_funded[:10]
+    tokens_to_analyze = tradeable_funded[:20]
     log.info("analyzing_funded_chains", chains=[normalize_chain(t.get("chain","")) for t in tokens_to_analyze])
 
     # ── Load recent decisions for cooldown ────────────────────────────────────
