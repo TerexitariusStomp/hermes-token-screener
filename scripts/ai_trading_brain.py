@@ -480,6 +480,7 @@ def enrich_and_merge_tokens(
     top_tokens: List[dict],
     active_tokens: List[dict],
     wallet_map: Dict[str, dict],
+    cross_tokens: List[dict] = [],
 ) -> List[dict]:
     """
     Enrich top100 tokens with wallet metrics and inject synthetic tokens
@@ -559,8 +560,20 @@ def enrich_and_merge_tokens(
         active_count=len(active_tokens),
         synthetic_count=len(synthetic),
         enriched_count=len([t for t in top_tokens if "wallet_metrics" in t]),
+        cross_count=len(cross_tokens),
     )
-    return top_tokens + synthetic + cross_tokens
+    # Merge with deduplication: prefer richer source data
+    # Priority: top_tokens (full screener) > synthetic (active not in top100) > cross_tokens (wallet-held not in top100)
+    all_by_addr: dict[str, dict] = {}
+    # Order-preserving insertion: later duplicates won't override if we control order
+    # Build lookup: keep first occurrence in priority order
+    for t in top_tokens + synthetic + cross_tokens:
+        addr = (t.get("contract_address") or "").lower()
+        if addr:
+            all_by_addr.setdefault(addr, t)  # first wins (top_tokens before synthetic before cross)
+    results = list(all_by_addr.values())
+    log.info("tokens_final_merge", total=len(results), top=len(top_tokens), synthetic=len(synthetic), cross=len(cross_tokens))
+    return results
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
