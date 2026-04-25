@@ -94,6 +94,7 @@ BONSAI_MODEL = "Bonsai-8B.gguf"
 MAX_POSITION_PCT = 5.0  # max % of portfolio per trade (safety cap only)
 MIN_POSITIONS = 1  # always maintain at least this many open positions
 DECISION_COOLDOWN_SECONDS = 60 * 60  # 1 hour minimum between re-analyzing the same token
+EXCLUDE_SYMBOLS = {"WSOL", "WETH", "WBNB", "USDC", "USDT", "DAI", "BUSD", "USDS", "TUSD", "PAX"}
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1203,10 +1204,17 @@ def run_trading_brain(
     active_tokens = query_active_tokens(hours=24)
     cross_tokens = query_cross_tokens(limit=200)
     all_tokens = enrich_and_merge_tokens(top_tokens, active_tokens, wallet_map, cross_tokens)
+    # Exclude wrapped/stable symbols — not real opportunities
+    filtered_tokens = [
+        t for t in all_tokens
+        if (t.get("dex", {}).get("symbol", "").upper() not in EXCLUDE_SYMBOLS)
+        and (t.get("symbol", "").upper() not in EXCLUDE_SYMBOLS)
+    ]
+    log.info("tokens_after_exclusion", total=len(all_tokens), excluded=len(all_tokens)-len(filtered_tokens), remaining=len(filtered_tokens))
     log.info("pipeline_tokens", count=len(all_tokens), synthetic=len([t for t in all_tokens if t.get("is_synthetic")]))
 
     # Filter tradeable
-    tradeable = rank_tokens_for_ai(all_tokens)
+    tradeable = rank_tokens_for_ai(filtered_tokens)
     if not tradeable:
         log.info("no_tradeable_tokens")
         return {"status": "no_tradeable", "tokens_analyzed": len(all_tokens)}
