@@ -1215,8 +1215,16 @@ def run_trading_brain(
         if (t.get("dex", {}).get("symbol", "").upper() not in EXCLUDE_SYMBOLS)
         and (t.get("symbol", "").upper() not in EXCLUDE_SYMBOLS)
     ]
-    log.info("tokens_after_exclusion", total=len(all_tokens), excluded=len(all_tokens)-len(filtered_tokens), remaining=len(filtered_tokens))
-    log.info("pipeline_tokens", count=len(all_tokens), synthetic=len([t for t in all_tokens if t.get("is_synthetic")]))
+    # Deduplicate by address — keep first occurrence (preserves priority order: top > synthetic > cross)
+    seen_addrs: set[str] = set()
+    deduped: list[dict] = []
+    for t in filtered_tokens:
+        addr = (t.get("contract_address") or "").lower()
+        if addr and addr not in seen_addrs:
+            seen_addrs.add(addr)
+            deduped.append(t)
+    log.info("tokens_after_exclusion", total=len(all_tokens), excluded=len(all_tokens)-len(deduped), remaining=len(deduped))
+    filtered_tokens = deduped
 
     # Filter tradeable
     tradeable = rank_tokens_for_ai(filtered_tokens)
@@ -1274,7 +1282,7 @@ def run_trading_brain(
             with open(TRADE_LOG_PATH) as f:
                 history = json.load(f)
             for d in history[-200:]:
-                sym = d.get("symbol", "")
+                sym = (d.get("symbol", "") or "").upper()
                 if sym:
                     recent_decisions[sym] = max(
                         recent_decisions.get(sym, 0), d.get("timestamp", 0)
@@ -1286,7 +1294,7 @@ def run_trading_brain(
         dex = token.get("dex", {})
         symbol = dex.get("symbol", "?")
         # Skip if analyzed recently
-        last_decided = recent_decisions.get(symbol, 0)
+        last_decided = recent_decisions.get(symbol.upper(), 0)
         if time.time() - last_decided < DECISION_COOLDOWN_SECONDS:
             log.info("skipped_cooldown", symbol=symbol, age_sec=int(time.time() - last_decided))
             continue
