@@ -82,7 +82,8 @@ STOPWORDS = {
     "network", "chain", "website", "link", "join", "follow", "page", "discord", "telegram",
     "twitter", "dexscreener", "pumpfun", "solana", "ethereum", "pump", "fun", "sol", "eth",
     "usd", "www", "http", "https", "com", "io", "xyz", "amp", "nbsp", "don", "new", "la",
-    "el", "en",
+    "el", "en", "via",
+
     # Common filler words (non-crypto-relevant)
     "out", "back", "off", "away", "simple", "call", "wait", "still",
     "ever", "never", "right", "here", "there", "well", "way", "make", "take",

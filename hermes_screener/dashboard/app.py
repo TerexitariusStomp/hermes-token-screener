@@ -124,6 +124,30 @@ def _normalize_token(t: dict[str, Any]) -> dict[str, Any]:
     return t
 
 
+def _dedupe_tokens(tokens: list[dict]) -> list[dict]:
+    """Deduplicate tokens by contract_address, keeping first occurrence."""
+    seen = set()
+    unique = []
+    for t in tokens:
+        addr = (t.get("contract_address") or "").lower()
+        if addr and addr not in seen:
+            seen.add(addr)
+            unique.append(t)
+    return unique
+
+
+def _dedupe_active_tokens(tokens: list[dict]) -> list[dict]:
+    """Deduplicate active tokens by token_address, keeping first occurrence."""
+    seen = set()
+    unique = []
+    for t in tokens:
+        addr = (t.get("token_address") or "").lower()
+        if addr and addr not in seen:
+            seen.add(addr)
+            unique.append(t)
+    return unique
+
+
 def _load_top100() -> dict[str, Any]:
     path = settings.output_path
     if not path.exists():
@@ -141,6 +165,8 @@ def _load_top100() -> dict[str, Any]:
     # Normalize all tokens: flatten dex.* to flat fields
     if "tokens" in data:
         data["tokens"] = [_normalize_token(t) for t in data["tokens"]]
+    # Deduplicate by contract address
+    data["tokens"] = _dedupe_tokens(data.get("tokens", []))
     return data
 
 
@@ -548,7 +574,6 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
                 t["buy_count"] = 0
                 t["last_buy_at"] = 0
                 continue
-
             ub = len(wallets)
             active_wallets = {w: d for w, d in wallets.items() if d["count"] > 0}
             active_count = len(active_wallets)
@@ -663,11 +688,12 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
             t["wallet_quality"] = round(wallet_quality, 2)
             t["frequency"] = round(freq, 2)
 
+        tokens = _dedupe_tokens(tokens)
         tokens.sort(key=lambda t: t.get("blended_score", 0), reverse=True)
         return tokens
 
     except Exception:
-        return tokens
+        return _dedupe_tokens(tokens)
     finally:
         if conn:
             conn.close()
@@ -988,7 +1014,7 @@ def _get_active_tokens(top_n_wallets: int = 50) -> list[dict]:
             )
 
         results.sort(key=lambda x: x["activity_score"], reverse=True)
-        return results
+        return _dedupe_active_tokens(results)
 
     except Exception:
         return []

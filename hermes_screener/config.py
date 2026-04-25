@@ -13,6 +13,7 @@ Usage:
 from __future__ import annotations
 
 from pathlib import Path
+from os import environ
 
 from pydantic import Field, computed_field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -29,7 +30,7 @@ class Settings(BaseSettings):
 
     # ── Paths ────────────────────────────────────────────────────────────────
     hermes_home: Path = Field(
-        default_factory=lambda: Path.home() / ".hermes",
+        default_factory=lambda: Path(environ.get("HERMES_HOME", str(Path.home() / ".hermes"))),
     )
 
     @computed_field  # type: ignore[misc]
@@ -63,7 +64,7 @@ class Settings(BaseSettings):
         return self.hermes_home / "data" / "tg_scraper_state.json"
 
     gmgn_cli: Path = Field(
-        default_factory=lambda: Path.home() / ".hermes" / "gmgn-cli" / "dist" / "index.js",
+        default_factory=lambda: Path(environ.get("HERMES_HOME", str(Path.home() / ".hermes"))) / "gmgn-cli" / "dist" / "index.js",
     )
 
     # ── Telegram ─────────────────────────────────────────────────────────────
@@ -92,7 +93,7 @@ class Settings(BaseSettings):
     telegram_chat_id: str = Field(default="")
 
     # ── Screener Tuning ──────────────────────────────────────────────────────
-    top_n: int = Field(default=1200)
+    top_n: int = Field(default=100)
     max_enrich: int = Field(default=2000)
     min_channels: int = Field(default=1)
 
