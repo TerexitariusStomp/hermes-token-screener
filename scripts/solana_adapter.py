@@ -26,7 +26,18 @@ import sys, os
 sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
 import hermes_screener.tor_config
 
-logger = logging.getLogger(__name__)
+import logging
+
+# PumpSwap direct trading module (bypasses pumpfun-cli)
+from pumpswap import (
+    build_pumpswap_buy_instructions,
+    build_pumpswap_sell_instructions,
+    get_pool_by_mint,
+    parse_pool_data,
+    get_fee_recipients,
+    calculate_pumpswap_price,
+    get_token_program_id,
+)
 
 # ==================== PROGRAM IDS ====================
 
@@ -1537,6 +1548,139 @@ class SolanaProgramAdapter:
                 continue
 
         return None
+
+    # ==================== PUMPSWAP ====================
+
+    def pumpswap_quote(
+        self, input_mint: str, output_mint: str, amount: int, slippage_bps: int = 50
+    ) -> Dict:
+        """Get PumpSwap quote and return expected output amount and pool info."""
+        try:
+            client = self.client
+            base_mint_str = output_mint if input_mint == str(WSOL_MINT) else input_mint
+            base_mint = Pubkey.from_string(base_mint_str)
+            pool_address, pool_data = get_pool_by_mint(client, base_mint)
+            pool = parse_pool_data(pool_data)
+            token_program_id = get_token_program_id(client, base_mint)
+            base_bal = client.get_token_account_balance(pool["pool_base_token_account"])
+            quote_bal = client.get_token_account_balance(pool["pool_quote_token_account"])
+            base_reserves = int(base_bal.value.amount) if base_bal.value else 0
+            quote_reserves = int(quote_bal.value.amount) if quote_bal.value else 0
+            is_buy = input_mint == str(WSOL_MINT)
+            if is_buy:
+                amount_out, _ = calculate_pumpswap_price(base_reserves, quote_reserves, amount, is_buy=True)
+            else:
+                amount_out, _ = calculate_pumpswap_price(base_reserves, quote_reserves, amount, is_buy=False)
+            min_out = int(amount_out * (1 - slippage_bps / 10000))
+            return {
+                "pool_address": str(pool_address),
+                "pool": pool,
+                "token_program_id": str(token_program_id),
+                "is_buy": is_buy,
+                "amount_out": amount_out,
+                "min_out": min_out,
+                "base_reserves": base_reserves,
+                "quote_reserves": quote_reserves,
+                "base_mint": str(base_mint),
+            }
+        except Exception as e:
+            logger.error(f"PumpSwap quote error: {e}")
+            return {}
+
+    def pumpswap_buy(self, mint: str, amount_sol: float, slippage_bps: int = 100) -> Optional[str]:
+        """Buy tokens on PumpSwap using SOL (wrap->swap). Returns tx signature or None."""
+        if not self.keypair:
+            logger.error("PumpSwap buy: no keypair")
+            return None
+        try:
+            amount_lamports = int(amount_sol * 1e9)
+            mint_pk = Pubkey.from_string(mint)
+            pool_address, pool_data = get_pool_by_mint(self.client, mint_pk)
+            pool = parse_pool_data(pool_data)
+            token_program_id = get_token_program_id(self.client, mint_pk)
+            fee_recipient, fee_recipient_ata = get_fee_recipients(self.client)
+            quote = self.pumpswap_quote(str(WSOL_MINT), mint, amount_lamports, slippage_bps)
+            if not quote:
+                logger.error("PumpSwap buy: quote failed")
+                return None
+            min_tokens_out = quote["min_out"]
+            sol_wrap_lamports = amount_lamports
+            build_ixs = build_pumpswap_buy_instructions(
+                user=self.keypair.pubkey(),
+                pool_address=pool_address,
+                pool=pool,
+                token_program_id=token_program_id,
+                fee_recipient=fee_recipient,
+                fee_recipient_ata=fee_recipient_ata,
+                amount_out=min_tokens_out,
+                max_sol_in=amount_lamports * 2,
+                sol_wrap_lamports=sol_wrap_lamports,
+            )
+            recent_blockhash = self.client.get_latest_blockhash().value.blockhash
+            msg = MessageV0.try_compile(
+                payer=self.keypair.pubkey(),
+                instructions=build_ixs,
+                address_lookup_table_accounts=[],
+                recent_blockhash=recent_blockhash,
+            )
+            tx = VersionedTransaction(msg, [self.keypair])
+            opts = TxOpts(skip_preflight=False, preflight_commitment="confirmed")
+            resp = self.client.send_transaction(tx, opts=opts)
+            sig = str(resp.value)
+            if self.confirm_tx(sig):
+                logger.info(f"PumpSwap buy confirmed: {sig}")
+                return sig
+            logger.warning(f"PumpSwap buy not confirmed: {sig}")
+            return sig
+        except Exception as e:
+            logger.error(f"PumpSwap buy error: {e}")
+            return None
+
+    def pumpswap_sell(self, mint: str, token_amount: int, slippage_bps: int = 100) -> Optional[str]:
+        """Sell tokens on PumpSwap for WSOL. Returns tx signature or None."""
+        if not self.keypair:
+            logger.error("PumpSwap sell: no keypair")
+            return None
+        try:
+            mint_pk = Pubkey.from_string(mint)
+            pool_address, pool_data = get_pool_by_mint(self.client, mint_pk)
+            pool = parse_pool_data(pool_data)
+            token_program_id = get_token_program_id(self.client, mint_pk)
+            fee_recipient, fee_recipient_ata = get_fee_recipients(self.client)
+            quote = self.pumpswap_quote(mint, str(WSOL_MINT), token_amount, slippage_bps)
+            if not quote:
+                logger.error("PumpSwap sell: quote failed")
+                return None
+            min_sol_out = quote["min_out"]
+            build_ixs = build_pumpswap_sell_instructions(
+                user=self.keypair.pubkey(),
+                pool_address=pool_address,
+                pool=pool,
+                token_program_id=token_program_id,
+                fee_recipient=fee_recipient,
+                fee_recipient_ata=fee_recipient_ata,
+                token_amount=token_amount,
+                min_sol_out=min_sol_out,
+            )
+            recent_blockhash = self.client.get_latest_blockhash().value.blockhash
+            msg = MessageV0.try_compile(
+                payer=self.keypair.pubkey(),
+                instructions=build_ixs,
+                address_lookup_table_accounts=[],
+                recent_blockhash=recent_blockhash,
+            )
+            tx = VersionedTransaction(msg, [self.keypair])
+            opts = TxOpts(skip_preflight=False, preflight_commitment="confirmed")
+            resp = self.client.send_transaction(tx, opts=opts)
+            sig = str(resp.value)
+            if self.confirm_tx(sig):
+                logger.info(f"PumpSwap sell confirmed: {sig}")
+                return sig
+            logger.warning(f"PumpSwap sell not confirmed: {sig}")
+            return sig
+        except Exception as e:
+            logger.error(f"PumpSwap sell error: {e}")
+            return None
 
     def get_dex_info(self, dex_key: str) -> Dict:
         """Get info about a Solana DEX from the registry."""

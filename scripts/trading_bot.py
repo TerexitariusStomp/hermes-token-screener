@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 from dotenv import load_dotenv
 # TOR proxy - route all external HTTP through SOCKS5
 import sys, os
+# Override TOR for trading signals — direct connections are faster and more reliable
+os.environ["HERMES_TOR_ENABLED"] = "false"
 sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-token-screener"))
 import hermes_screener.tor_config
 
@@ -22,6 +24,21 @@ logging.basicConfig(level=logging.INFO)
 
 # ==================== WALLET CONFIG ====================
 pk_base = os.environ.get("WALLET_PRIVATE_KEY_BASE", "")
+if not pk_base:
+    # Last-resort fallback: read .env directly and parse manually
+    env_path = os.path.expanduser("~/.hermes/.env")
+    with open(env_path) as f:
+        for line in f:
+            line = line.strip()
+            if line.startswith("WALLET_PRIVATE_KEY_BASE="):
+                pk_base = line.split("=", 1)[1].strip().strip('"').strip("'")
+                break
+if not pk_base or len(pk_base) < 32:
+    raise RuntimeError(
+        f"FATAL: WALLET_PRIVATE_KEY_BASE is missing/empty (loaded {len(pk_base)} chars) "
+        f"from ~/.hermes/.env. Cannot initialize trading account."
+    )
+
 pk_ethereum = os.environ.get("WALLET_PRIVATE_KEY_ETHEREUM") or pk_base
 solana_wallet_address = os.environ.get("WALLET_ADDRESS_SOLANA", "")
 
@@ -150,6 +167,86 @@ class GatewayClient:
 
 
 gw_client = GatewayClient()
+
+# Jupiter Direct API (bypasses gateway container for Solana swaps)
+JUPITER_API_KEY = os.environ.get("JUPITER_API_KEY", "")
+JUPITER_BASE_URL = "https://api.jup.ag/swap/v1"  # v1 quote endpoint (compatible with /swap-instructions)
+
+
+def jupiter_direct_swap(
+    wallet_address: str,
+    base_token: str,
+    quote_token: str,
+    amount: float,
+    side: str = "BUY",
+    slippage_bps: int = 100,
+) -> dict:
+    """Direct Jupiter API swap — quote via urllib, build+sign+send via solana_adapter."""
+    try:
+        import json as _json
+        import urllib.request
+
+        amt_lamports = int(amount * 1e9)
+        headers = {"User-Agent": "Mozilla/5.0"}
+        if JUPITER_API_KEY:
+            headers["x-api-key"] = JUPITER_API_KEY
+
+        # Step 1: GET /order — get quote
+        params = (
+            f"inputMint={base_token}&outputMint={quote_token}"
+            f"&amount={amt_lamports}&slippageBps={slippage_bps}&side={side}"
+        )
+        url = f"{JUPITER_BASE_URL}/order?{params}"
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=15) as r:
+            if r.status != 200:
+                return {"error": f"Jupiter order failed: {r.status}"}
+            quote = _json.loads(r.read())
+
+        if not quote.get("swapType"):
+            return {"error": f"Jupiter order returned no route: {quote}"}
+
+        # Step 2: Build + sign + send via solana_adapter (which uses /swap-instructions v1)
+        from solana_adapter import SolanaProgramAdapter as SolanaAdapter
+
+        adapter = SolanaAdapter(
+            rpc_url=os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com"),
+            private_key=os.environ.get("WALLET_PRIVATE_KEY_SOLANA", ""),
+        )
+        tx = adapter.jupiter_build_tx(quote, wrap_unwrap=False)
+        if not tx:
+            return {"error": "Jupiter build_tx returned None"}
+
+        sig = adapter.send_tx(tx)
+        if sig:
+            return {"success": True, "txid": sig}
+        return {"error": "send_tx returned None"}
+
+    except Exception as e:
+        return {"error": f"Jupiter direct swap exception: {e}"}
+
+
+def _parse_jupiter_instruction(swap_data: dict):
+    """Parse a Jupiter swap instruction into a transaction dict."""
+    try:
+        if isinstance(swap_data, str):
+            swap_data = json.loads(swap_data)
+        # Jupiter v6 returns {signers: [], instructions: [], lookupTables: []}
+        keys = swap_data.get("keys", [])
+        program_id = swap_data.get("programId", "")
+        data = swap_data.get("data", "")
+        instructions = swap_data.get("instructions", [])
+        if instructions:
+            # newer format
+            return {
+                "keys": keys,
+                "program_id": program_id,
+                "data": data,
+                "instructions": instructions,
+            }
+        return swap_data
+    except Exception:
+        return None
 
 
 # ==================== NOTIFY / LOG ====================
@@ -718,6 +815,85 @@ def swap_t2w(w, token_addr, amt_wei, fee):
         return False
 
 
+# ==================== OPENOCEAN NATIVE ETH SWAP (no wrap needed) ====================
+OPENOCEAN_API = "https://open-api.openocean.finance/v3"
+NATIVE_ETH = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+
+def openocean_eth_swap(w, in_token: str, amount_wei: int, gas_price_gwei: float = None) -> bool:
+    """
+    Swap native ETH directly for any token via OpenOcean on Base.
+    No WETH wrapping needed. Works for any ERC20 on Base.
+    """
+    try:
+        from web3 import Web3
+        chain_id = 8453
+
+        if gas_price_gwei is None:
+            gas_price_gwei = max(float(w.manager.request_blocking("eth_gasPrice", [])[-2:]) / 1e9, 0.01)
+
+        slippage_bps = 50  # 0.5% slippage
+        referrer = "0x0000000000000000000000000000000000000000"
+
+        payload = {
+            "inTokenAddress": NATIVE_ETH,
+            "outTokenAddress": in_token,
+            "amount": str(amount_wei),
+            "gasPrice": str(int(gas_price_gwei * 1e9)),
+            "slippage": slippage_bps,
+            "referrer": referrer,
+            "receiver": account.address,
+        }
+
+        # Get swap tx data
+        resp = requests.get(f"{OPENOCEAN_API}/{chain_id}/quote", params=payload, timeout=15)
+        data = resp.json().get("data", {})
+        if not data:
+            l(f"OpenOcean: no quote — {resp.text[:200]}")
+            return False
+
+        out_amt = int(data.get("outAmount", 0))
+        l(f"OpenOcean quote: {out_amt} target tokens")
+
+        if out_amt == 0:
+            l("OpenOcean: zero output, aborting")
+            return False
+
+        min_out = int(out_amt * 0.95)  # 5% safety margin
+
+        swap_tx = data.get("tx", {})
+        tx_params = {
+            "from": account.address,
+            "to": Web3.to_checksum_address(swap_tx.get("to", "0x0000000000000000000000000000000000000000")),
+            "data": swap_tx.get("data", "0x"),
+            "value": amount_wei,
+            "nonce": w.eth.get_transaction_count(account.address, "pending"),
+            "gas": 500000,
+            "maxFeePerGas": int(gas_price_gwei * 1.2 * 1e9),
+            "maxPriorityFeePerGas": int(gas_price_gwei * 1e9),
+            "chainId": chain_id,
+        }
+
+        # Estimate gas
+        try:
+            estimated = w.eth.estimate_gas(tx_params)
+            tx_params["gas"] = int(estimated * 1.3)
+        except:
+            pass
+
+        signed = account.sign_transaction(tx_params)
+        raw = get_signed_raw_tx(signed)
+        tx_hash = w.eth.send_raw_transaction(raw)
+        l(f"OpenOcean ETH swap tx: {tx_hash.hex()}")
+        receipt = w.eth.wait_for_transaction_receipt(tx_hash, timeout=180)
+        ok = receipt and receipt.status == 1
+        l(f"OpenOcean swap {'OK' if ok else 'FAILED'}")
+        return ok
+
+    except Exception as e:
+        l(f"OpenOcean ETH swap FAIL: {e}")
+        return False
+
+
 # ==================== TOKEN RESOLUTION & METADATA ====================
 def resolve_token(sym: str, chain: str = "base") -> str | None:
     try:
@@ -879,6 +1055,176 @@ def unwrap_wsol():
         pass
 
 
+
+
+
+# ==================== SOLANA VENUE HELPERS ====================
+def _is_pumpfun_token_solana(mint: str) -> dict | None:
+    """Return pump.fun token info dict if mint is a pump.fun token, else None."""
+    rpc = os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com")
+    try:
+        cmd = [PUMPFUN_CLI, "--json", "--rpc", rpc, "info", mint]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, env=dict(os.environ))
+        if result.returncode != 0:
+            err_file = os.path.expanduser("~/.hermes/logs/pumpfun_err.txt")
+            with open(err_file, "w") as f:
+                f.write(f"RC={result.returncode}\nSTDOUT={result.stdout[:200]}\nSTDERR={result.stderr}")
+            # Retry once with public RPC as fallback on 429 (rate limit)
+            if "429" in result.stderr or result.returncode != 0:
+                fallback_rpc = "https://api.mainnet-beta.solana.com"
+                cmd_fallback = [PUMPFUN_CLI, "--json", "--rpc", fallback_rpc, "info", mint]
+                r2 = subprocess.run(cmd_fallback, capture_output=True, text=True, timeout=30, env=dict(os.environ))
+                if r2.returncode == 0 and r2.stdout.strip():
+                    try:
+                        return json.loads(r2.stdout)
+                    except json.JSONDecodeError:
+                        pass
+            l(f"[Pump] pumpfun failed rc={result.returncode}, full error in {err_file}")
+            return None
+        info = json.loads(result.stdout)
+        if info.get("bonding_curve") or info.get("graduated") is not None:
+            return info
+        return None
+    except Exception as e:
+        logging.warning(f"[Pump] _is_pumpfun_token_solana exception: {e}")
+        return None
+
+
+def _execute_pumpfun_solana_buy(
+    token_addr: str,
+    symbol: str,
+    amount_sol: float,
+    wallet_addr: str,
+    pump_info: dict,
+) -> dict:
+    """Buy via direct PumpSwap (graduated tokens only)."""
+    if not pump_info.get("graduated"):
+        return {"success": False, "error": "Token not graduated; cannot buy via PumpSwap"}
+    try:
+        from solana_adapter import SolanaProgramAdapter as SolanaAdapter
+
+        adapter = SolanaAdapter(
+            rpc_url=os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com"),
+            private_key=os.environ.get("WALLET_PRIVATE_KEY_SOLANA", ""),
+        )
+        txid = adapter.pumpswap_buy(token_addr, amount_sol)
+        if txid:
+            return {"success": True, "output": f"Bought {symbol} for {amount_sol:.4f} SOL via PumpSwap", "txid": txid}
+        return {"success": False, "error": "pumpswap_buy returned None"}
+    except Exception as e:
+        return {"success": False, "error": f"pumpswap_buy exception: {e}"}
+
+
+def _execute_pumpfun_solana_sell(token_addr: str, symbol: str, wallet_addr: str, pump_info: dict) -> dict:
+    """Sell via direct PumpSwap (graduated tokens only)."""
+    if not pump_info.get("graduated"):
+        return {"success": False, "error": "Token not graduated; cannot sell via PumpSwap"}
+    try:
+        from solana_adapter import SolanaProgramAdapter as SolanaAdapter
+
+        adapter = SolanaAdapter(
+            rpc_url=os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com"),
+            private_key=os.environ.get("WALLET_PRIVATE_KEY_SOLANA", ""),
+        )
+        bal = adapter.get_token_balance(token_addr)
+        if bal <= 0:
+            return {"success": False, "error": "No token balance to sell"}
+        txid = adapter.pumpswap_sell(token_addr, bal)
+        if txid:
+            return {"success": True, "output": f"Sold {symbol} via PumpSwap", "txid": txid}
+        return {"success": False, "error": "pumpswap_sell returned None"}
+    except Exception as e:
+        return {"success": False, "error": f"pumpswap_sell exception: {e}"}
+
+
+def _execute_raydium_solana_buy(token_addr: str, amount_sol: float, wallet_addr: str) -> tuple[bool, str]:
+    """Execute Solana buy via Raydium CPMM HTTP API.
+
+    Returns (success: bool, message: str).
+    """
+    try:
+        from solana_adapter import SolanaProgramAdapter
+    except Exception as e:
+        return False, f"solana_adapter import failed: {e}"
+
+    try:
+        adapter = SolanaProgramAdapter()
+    except Exception as e:
+        return False, f"SolanaProgramAdapter init failed: {e}"
+
+    # Get Raydium quote
+    try:
+        quote = adapter.raydium_cpmm_quote(
+            input_mint="So11111111111111111111111111111111111111112",  # WSOL
+            output_mint=token_addr,
+            amount=int(amount_sol * 1e9),
+            slippage_bps=100,
+        )
+    except Exception as e:
+        return False, f"Raydium quote failed: {e}"
+
+    if not quote:
+        return False, "Raydium quote returned empty"
+
+    # Build and send transaction
+    try:
+        tx = adapter.raydium_build_tx(quote)
+        if not tx:
+            return False, "Raydium tx build returned None"
+        sig = adapter.send_tx(tx)
+        if not sig:
+            return False, "Raydium send_tx returned None"
+        confirmed = adapter.confirm_tx(sig)
+        if not confirmed:
+            return False, f"Raydium tx not confirmed: {sig[:16]}..."
+        return True, f"Bought via Raydium CPMM, amount={amount_sol:.4f} SOL, tx={sig[:16]}..."
+    except Exception as e:
+        return False, f"Raydium send failed: {e}"
+
+
+def _execute_raydium_solana_sell(token_addr: str, token_amount: float, wallet_addr: str, decimals: int) -> tuple[bool, str]:
+    """Execute Solana sell via Raydium CPMM HTTP API.
+
+    Returns (success: bool, message: str).
+    """
+    try:
+        from solana_adapter import SolanaProgramAdapter
+    except Exception as e:
+        return False, f"solana_adapter import failed: {e}"
+
+    try:
+        adapter = SolanaProgramAdapter()
+    except Exception as e:
+        return False, f"SolanaProgramAdapter init failed: {e}"
+
+    try:
+        quote = adapter.raydium_cpmm_quote(
+            input_mint=token_addr,
+            output_mint="So11111111111111111111111111111111111111112",  # WSOL
+            amount=int(token_amount * (10 ** decimals)),
+            slippage_bps=100,
+        )
+    except Exception as e:
+        return False, f"Raydium quote failed: {e}"
+
+    if not quote:
+        return False, "Raydium quote returned empty"
+
+    try:
+        tx = adapter.raydium_build_tx(quote)
+        if not tx:
+            return False, "Raydium tx build returned None"
+        sig = adapter.send_tx(tx)
+        if not sig:
+            return False, "Raydium send_tx returned None"
+        confirmed = adapter.confirm_tx(sig)
+        if not confirmed:
+            return False, f"Raydium tx not confirmed: {sig[:16]}..."
+        return True, f"Sold via Raydium CPMM, tx={sig[:16]}..."
+    except Exception as e:
+        return False, f"Raydium send failed: {e}"
+
+
 # ==================== EXECUTION DISPATCH ====================
 def execute_buy(
     chain: str, token_addr: str, amount_native: float, metadata: dict
@@ -960,21 +1306,65 @@ def execute_buy(
         if native_sol < amount_native:
             l(f"Insufficient SOL: have {native_sol:.6f}, need {amount_native:.6f}")
             return False
-        # Jupiter auto-wraps SOL->WSOL internally; use native SOL balance
+
+        # ── PRIORITY 1: Pump.fun ──────────────────────────────────
+        l(f"[DEBUG] Checking pump.fun for {token_addr}...")
+        pump_info = _is_pumpfun_token_solana(token_addr)
+        l(f"[DEBUG] pump_info = {pump_info}")  # will be None on failure
+        if pump_info:
+            is_graduated = pump_info.get("graduated", False)
+            venue = "pumpswap" if is_graduated else "pumpfun-bonding"
+            l(f"Pump.fun token detected ({venue}): trying Pump.fun CLI first")
+            pump_result = _execute_pumpfun_solana_buy(
+                token_addr, "UNKNOWN", amount_native, addr, pump_info
+            )
+            if pump_result.get("success"):
+                l(f"Solana buy via Pump.fun successful: {pump_result.get('output', '')}")
+                return True
+            else:
+                l(f"Pump.fun failed ({pump_result.get('error', 'unknown')}): falling through to Jupiter")
+
+        # ── PRIORITY 2: Jupiter Direct (API key) ───────────────────
         amount_lamports = int(amount_native * 1e9)
-        resp = gw_client.jupiter_execute_swap(
-            address=addr,
-            base=SOLANA_WSOL,
-            quote=token_addr,
-            amount=str(amount_lamports),
+        l(f"Trying Jupiter Direct API for {amount_native:.4f} SOL...")
+        direct_resp = jupiter_direct_swap(
+            wallet_address=addr,
+            base_token=SOLANA_WSOL,
+            quote_token=token_addr,
+            amount=float(amount_lamports),
+            side="BUY",
             slippage_bps=100,
         )
-        if resp.get("error"):
-            l(f"Jupiter swap error: {resp['error']}")
-            return False
-        l("Solana buy via Jupiter successful")
-        unwrap_wsol()
-        return True
+        if not direct_resp.get("error"):
+            l(f"Solana buy via Jupiter Direct: {direct_resp.get('txid', 'unknown')}")
+            return True
+        l(f"Jupiter Direct error: {direct_resp.get('error')}")
+
+        # ── PRIORITY 3: Jupiter via Gateway ───────────────────────
+        resp = gw_client.jupiter_execute_swap(
+            wallet_address=addr,
+            base_token=SOLANA_WSOL,
+            quote_token=token_addr,
+            amount=float(amount_lamports),
+            side="BUY",
+            slippage_pct=1.0,
+        )
+        if not resp.get("error"):
+            l("Solana buy via Jupiter Gateway successful")
+            unwrap_wsol()
+            return True
+        l(f"Jupiter Gateway error: {resp.get('error')}")
+
+        # ── PRIORITY 4: Raydium CPMM ──────────────────────────────
+        l("Falling back to Raydium CPMM...")
+        raydium_ok, raydium_msg = _execute_raydium_solana_buy(token_addr, amount_native, addr)
+        if raydium_ok:
+            l(f"Solana buy via Raydium successful: {raydium_msg}")
+            return True
+        l(f"Raydium fallback failed: {raydium_msg}")
+
+        l("All Solana venues exhausted; buy failed")
+        return False
     return False
 
 
@@ -992,7 +1382,32 @@ def execute_sell(
         if not ensure_allowance_base(w, token_addr, ROUTER_ADDR["base"], amount_small):
             l("Base token approve failed for sell")
             return False
-        return swap_t2w(w, token_addr, amount_small, fee)
+        if not swap_t2w(w, token_addr, amount_small, fee):
+            return False
+        # Unwrap all WETH → ETH after sell (wallet should hold only native ETH + token positions)
+        weth_contract = w.eth.contract(
+            address=WETH_ADDR["base"],
+            abi=[{"inputs": [{"name": "amount", "type": "uint256"}], "name": "withdraw", "outputs": [], "stateMutability": "nonpayable", "type": "function"}],
+        )
+        weth_bal = weth_contract.functions.balanceOf(account.address).call()
+        if weth_bal > 1000000000000:  # > 0.001 WETH threshold
+            tx = weth_contract.functions.withdraw(weth_bal).build_transaction(
+                {
+                    "from": account.address,
+                    "nonce": w.eth.get_transaction_count(account.address, "pending"),
+                    "gas": 120000,
+                    "maxFeePerGas": get_gas_price(w),
+                    "maxPriorityFeePerGas": get_gas_price(w),
+                }
+            )
+            signed = account.sign_transaction(tx)
+            tx_hash = w.eth.send_raw_transaction(signed.raw_transaction)
+            rc = w.eth.wait_for_transaction_receipt(tx_hash, timeout=180)
+            if rc and rc.status == 1:
+                l(f"Unwrapped {weth_bal/1e18:.6f} WETH → ETH post-sell")
+            else:
+                l(f"WETH unwrap FAILED after sell: {tx_hash.hex()}")
+        return True
     elif chain == "ethereum":
         w = gw_eth()
         if not w:
@@ -1016,26 +1431,129 @@ def execute_sell(
             l(f"Gateway sell error: {resp['error']}")
             return False
         l("Ethereum sell via Gateway successful")
+        # Unwrap all WETH → ETH after sell
+        w_eth = gw_eth()
+        if w_eth:
+            weth_contract = w_eth.eth.contract(
+                address=WETH_ADDR["ethereum"],
+                abi=[{"inputs": [{"name": "amount", "type": "uint256"}], "name": "withdraw", "outputs": [], "stateMutability": "nonpayable", "type": "function"}],
+            )
+            weth_bal = weth_contract.functions.balanceOf(account.address).call()
+            if weth_bal > 1000000000000:
+                tx = weth_contract.functions.withdraw(weth_bal).build_transaction(
+                    {
+                        "from": account.address,
+                        "nonce": w_eth.eth.get_transaction_count(account.address, "pending"),
+                        "gas": 120000,
+                        "maxFeePerGas": get_gas_price(w_eth),
+                        "maxPriorityFeePerGas": get_gas_price(w_eth),
+                    }
+                )
+                signed = account.sign_transaction(tx)
+                tx_hash = w_eth.eth.send_raw_transaction(signed.raw_transaction)
+                rc = w_eth.eth.wait_for_transaction_receipt(tx_hash, timeout=180)
+                if rc and rc.status == 1:
+                    l(f"Unwrapped {weth_bal/1e18:.6f} WETH → ETH post-sell (Ethereum)")
+                else:
+                    l(f"WETH unwrap FAILED after sell: {tx_hash.hex()}")
         return True
     elif chain == "solana":
         addr = solana_wallet_address
         if not addr:
             l("Solana wallet address missing")
             return False
-        resp = gw_client.jupiter_execute_swap(
-            address=addr,
-            base=token_addr,
-            quote=SOLANA_WSOL,
-            amount=str(amount_small),
+
+        # ── PRIORITY 1: Pump.fun / PumpSwap ────────────────────────
+        pump_info = _is_pumpfun_token_solana(token_addr)
+        if pump_info:
+            pump_result = _execute_pumpfun_solana_sell(
+                token_addr,
+                symbol=POS.get("sym", "UNKNOWN"),
+                wallet_addr=addr,
+                pump_info=pump_info,
+            )
+            if pump_result.get("success"):
+                l(f"Solana sell via Pump.fun: {pump_result.get('output', '')}")
+                _unwrap_sol()
+                return True
+            l(f"Pump.fun sell failed ({pump_result.get('error', 'unknown')}): falling through to Jupiter")
+
+        # ── PRIORITY 2: Jupiter Direct (API key) ───────────────────
+        l("Trying Jupiter Direct for Solana sell...")
+        direct_resp = jupiter_direct_swap(
+            wallet_address=addr,
+            base_token=token_addr,
+            quote_token=SOLANA_WSOL,
+            amount=float(amount_small),
+            side="SELL",
             slippage_bps=100,
         )
+        if not direct_resp.get("error"):
+            l(f"Solana sell via Jupiter Direct: {direct_resp.get('txid', 'unknown')}")
+            _unwrap_sol()
+            return True
+        l(f"Jupiter Direct sell error: {direct_resp.get('error')}")
+
+
+def _unwrap_sol() -> None:
+    """Close WSOL ATA to convert back to native SOL."""
+    try:
+        from solana_adapter import SolanaProgramAdapter as SolanaAdapter
+        adapter = SolanaAdapter(
+            rpc_url=os.environ.get("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com"),
+            private_key=os.environ.get("WALLET_PRIVATE_KEY_SOLANA", ""),
+        )
+        wsol_mint = "So11111111111111111111111111111111111111112"
+        bal = adapter.get_token_balance(wsol_mint)
+        if bal and bal > 1000:  # > 0.000001 SOL worth
+            l(f"[SOL] Unwrapping {bal/1e9:.6f} WSOL → SOL...")
+            tx = adapter.close_wsol_ata()
+            if tx:
+                l(f"[SOL] Unwrapped: {tx}")
+            else:
+                l("[SOL] Unwrap returned no txid")
+        else:
+            l("[SOL] No WSOL to unwrap")
+    except Exception as e:
+        l(f"[SOL] Unwrap error: {e}")
+
+
+# ==================== RAYDIUM ====================
+
+
+
+        # ── PRIORITY 2: Jupiter via Gateway ───────────────────────
+        resp = gw_client.jupiter_execute_swap(
+            wallet_address=addr,
+            base_token=token_addr,
+            quote_token=SOLANA_WSOL,
+            amount=float(amount_small),
+            side="SELL",
+            slippage_pct=1.0,
+        )
         if resp.get("error"):
-            l(f"Jupiter sell error: {resp['error']}")
-            return False
-        l("Solana sell via Jupiter successful")
-        unwrap_wsol()
-        return True
+            l(f"Jupiter Gateway sell error: {resp['error']}")
+        else:
+            l("Solana sell via Jupiter Gateway successful")
+            _unwrap_sol()
+            return True
+
+        # ── PRIORITY 3: Raydium CPMM ──────────────────────────────
+        l("Falling back to Raydium CPMM for sell...")
+        raydium_ok, raydium_msg = _execute_raydium_solana_sell(token_addr, token_amount, addr, decimals)
+        if raydium_ok:
+            l(f"Solana sell via Raydium: {raydium_msg}")
+            _unwrap_sol()
+            return True
+        l(f"Raydium sell fallback failed: {raydium_msg}")
+
+        l("All Solana sell venues exhausted")
+        return False
     return False
+
+
+def _manage_positions():
+    """Check stop-loss and take-profit on open positions."""
 
 
 # ==================== STATE & SURVIVAL ====================
@@ -1143,7 +1661,24 @@ def main():
             # Fetch signals
             l("Fetching signals...")
             try:
-                sigs = aggregate_signals()
+                # Threading-based timeout: SIGALRM doesn't reliably interrupt
+                # requests calls; use Event.wait() with a watchdog thread instead.
+                import threading
+
+                result_holder = [None]  # nonlocal container
+                done_event = threading.Event()
+
+                def _fetch():
+                    result_holder[0] = aggregate_signals()
+                    done_event.set()
+
+                t = threading.Thread(target=_fetch, daemon=True)
+                t.start()
+                if not done_event.wait(55):
+                    l("SIGNALS: timeout after 55s — continuing without new signals")
+                    sigs = result_holder[0] or []
+                else:
+                    sigs = result_holder[0] or []
                 l(f"Got {len(sigs)} signals")
                 if sigs:
                     top = sigs[0]
