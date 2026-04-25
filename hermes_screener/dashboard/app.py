@@ -54,11 +54,11 @@ def _normalize_token(t: dict[str, Any]) -> dict[str, Any]:
         t["volume_h24"] = dex.get("volume_h24")
     if not t.get("volume_h1"):
         t["volume_h1"] = dex.get("volume_h1")
-    if not t.get("price_change_h1"):
+    if "price_change_h1" not in t:
         t["price_change_h1"] = dex.get("price_change_h1")
-    if not t.get("price_change_h6"):
+    if "price_change_h6" not in t:
         t["price_change_h6"] = dex.get("price_change_h6")
-    if not t.get("price_change_h24"):
+    if "price_change_h24" not in t:
         t["price_change_h24"] = dex.get("price_change_h24")
     if not t.get("price_usd"):
         t["price_usd"] = dex.get("price_usd")
@@ -94,6 +94,24 @@ def _normalize_token(t: dict[str, Any]) -> dict[str, Any]:
     # gmgn_smart_wallets ← gmgn_holder_count
     if not t.get("gmgn_smart_wallets"):
         t["gmgn_smart_wallets"] = t.get("gmgn_holder_count", 0) or 0
+
+    # Brain score: composite from social/momentum fields available in top100
+    # Fields available: social_score, tw_kol_score, tg_viral_score, mentions,
+    #   social_momentum, social_quality, channel_count, mention_velocity
+    social = t.get("social_score") or 0
+    kol = t.get("tw_kol_score") or 0
+    viral = t.get("tg_viral_score") or 0
+    mentions = t.get("mentions") or 0
+    mom_str = str(t.get("social_momentum") or "")
+    momentum_map = {"very_high": 1.0, "high": 0.85, "medium": 0.5, "low": 0.2, "very_low": 0.1, "none": 0.0, "": 0.0}
+    momentum = momentum_map.get(mom_str.lower(), 0.0)
+    ch_count = t.get("channel_count") or 0
+    vel = t.get("mention_velocity") or 0
+    t["brain_score"] = round(
+        social * 0.2 + kol * 0.2 + viral * 0.15 + mentions * 0.1
+        + momentum * 0.15 + ch_count * 0.1 + vel * 0.1,
+        1,
+    )
 
     # Back-fill gmgn fields from flat enricher fields
     if not t.get("gmgn_symbol"):
@@ -154,6 +172,19 @@ def _fmt_pct(v):
     return f"{'+' if v > 0 else ''}{v:.1f}%"
 
 
+
+def _fmt_tags(tags_str: str) -> str:
+    """Render comma-separated wallet tags as colored HTML spans."""
+    if not tags_str:
+        return "—"
+    html = ""
+    for t in tags_str.split(","):
+        t = t.strip()
+        if not t:
+            continue
+        cls = "tag-r" if t in ("sniper", "insider") else "tag-g" if t in ("smart", "kol") else ""
+        html += f'<span class="tag {cls}">{t}</span>'
+    return html or "—"
 def _pct_cls(v):
     if v is None:
         return ""
@@ -397,7 +428,7 @@ async def index():
   <td class="{p1h}">{_fmt_pct(t.get('price_change_h1'))}</td>
   <td class="{p6h}">{_fmt_pct(t.get('price_change_h6'))}</td>
   <td>{t.get('age_hours',0):.1f}h</td>
-  <td>{t.get('gmgn_smart_wallets',0)}</td>
+  <td>{t.get('brain_score', 0)}</td>
   <td>{tags}</td>
 </tr>"""
 
@@ -575,6 +606,51 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
             wallet_boost = min(activity_score / 4.0, 30.0)
             blended_score = token_score + wallet_boost
 
+            # ── Derive brain signal from social/momentum fields in top100 ──
+            # Combine multiple signals into a single composite brain score
+            social_score = t.get("social_score") or 0
+            tw_kol = t.get("tw_kol_score") or 0
+            tg_viral = t.get("tg_viral_score") or 0
+            mentions = t.get("mentions") or 0
+            mom_str = str(t.get("social_momentum") or "")
+            momentum_map = {"very_high": 1.0, "high": 0.85, "medium": 0.5, "low": 0.2, "very_low": 0.1, "none": 0.0, "": 0.0}
+            momentum = momentum_map.get(mom_str.lower(), 0.0)
+            brain = round(social_score * 0.3 + tw_kol * 0.25 + tg_viral * 0.2 + mentions * 0.15 + momentum * 0.1, 1)
+
+            # ── Derive tags/signals from token sentiment fields ──
+            pos_list = t.get("positives") or []
+            neg_list = t.get("negatives") or []
+            signal_tags = []
+            # Tag tokens with momentum / price action
+            if (t.get("price_change_h1") or 0) > 5:
+                signal_tags.append("h1Pump")
+            if (t.get("price_change_h1") or 0) < -10:
+                signal_tags.append("h1Dump")
+            if (t.get("price_change_h6") or 0) > 15:
+                signal_tags.append("h6Pump")
+            if (t.get("price_change_h6") or 0) < -20:
+                signal_tags.append("h6Dump")
+            if momentum >= 0.5:
+                signal_tags.append("viral")
+            if mentions > 20:
+                signal_tags.append("hot")
+            if tg_viral > 5:
+                signal_tags.append("tgAlpha")
+            if tw_kol > 5:
+                signal_tags.append("kolBuzz")
+            # Tag from top positives keywords
+            for p in pos_list[:2]:
+                tag = str(p)[:20]
+                if tag and tag not in signal_tags:
+                    signal_tags.append(tag)
+            # Tag insider/rug flags from derived fields
+            if t.get("derived_possible_rug"):
+                signal_tags.append("rugWarn")
+            if t.get("derived_massive_dump"):
+                signal_tags.append("dumpRisk")
+
+            t["brain_score"] = brain
+            t["signal_tags"] = signal_tags
             t["wallet_count"] = ub
             t["active_wallet_count"] = active_count
             t["holding_wallets"] = list(wallets.keys())[:10]
@@ -598,18 +674,8 @@ def _cross_reference_tokens_by_wallets() -> list[dict]:
 
 
 def _cross_reference_wallets_by_tokens() -> list[dict]:
-    """
-    Discover wallets that bought top100 tokens, ranked by component-weighted quality.
-
-    Scoring methodology:
-    1. Wallet quality: component scores from tracked_wallets (pnl, timing, winrate, insider)
-    2. Token holding quality: average token score weighted by recency
-    3. Activity: buy frequency and volume (log-scaled)
-    4. Breadth vs concentration: super-linear token count bonus
-
-    This surfaces high-quality wallets buying the best tokens at the right time.
-    """
-    import math, time as _time
+    """Discover wallets that bought top100 tokens, ranked by component-weighted quality."""
+    import math, time as _time, json as _json
 
     data = _load_top100()
     tokens = data.get("tokens", [])
@@ -618,6 +684,7 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
         addr = (t.get("contract_address") or "").lower()
         if addr:
             token_map[addr] = t
+
     if not token_map:
         return []
 
@@ -626,13 +693,9 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
         return []
 
     try:
-        import json as _json
-
         now = _time.time()
 
         # Load tracked wallet component scores
-        # NOTE: schema differs across deployments; derive normalized component fields
-        # from the columns that actually exist in wallet_tracker.db.
         tracked_map: dict[str, dict] = {}
         for row in conn.execute(
             "SELECT address, wallet_score, total_profit, entry_timing_score, win_rate, "
@@ -640,125 +703,91 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
             "avg_hold_hours, copy_trade_flag, rug_history_count, wallet_tags, chain "
             "FROM tracked_wallets"
         ).fetchall():
-            (
-                addr,
-                ws,
-                total_profit,
-                entry_timing,
-                win_rate,
-                insider_flag,
-                total_trades,
-                avg_roi,
-                smart_money_tag,
-                zerion_defi_value,
-                avg_hold_hours,
-                copy_trade_flag,
-                rug_history_count,
-                wtags,
-                chain,
-            ) = row
-            # Map available columns -> legacy component names expected by scorer
-            pnl_score = float(total_profit or 0) / 1000.0
-            timing_score = float(entry_timing or 0)
-            winrate_score = float(win_rate or 0) / 10.0
-            insider_score = 10.0 if int(insider_flag or 0) else 0.0
-            trades_score = min(float(total_trades or 0) / 10.0, 20.0)
-            roi_score = float(avg_roi or 0) / 10.0
-            tag_score = 5.0 if (smart_money_tag or "") else 0.0
-            defi_score = min(float(zerion_defi_value or 0) / 10000.0, 10.0)
-            age_score = min(float(avg_hold_hours or 0) / 24.0, 10.0)
-            social_score = 0.0
-            copy_penalty = -5.0 if int(copy_trade_flag or 0) else 0.0
-            rug_penalty = -10.0 * float(rug_history_count or 0)
-            rt_pen = 0.0
-            lw_pen = 0.0
-
+            addr, ws, total_profit, entry_timing, win_rate, insider_flag, total_trades, avg_roi, smart_money_tag, zerion_defi_value, avg_hold_hours, copy_trade_flag, rug_history_count, wtags, chain = row
             tracked_map[addr] = {
                 "wallet_score": ws or 0,
-                "pnl_score": pnl_score,
-                "timing_score": timing_score,
-                "winrate_score": winrate_score,
-                "insider_score": insider_score,
-                "trades_score": trades_score,
-                "roi_score": roi_score,
-                "tag_score": tag_score,
-                "defi_score": defi_score,
-                "age_score": age_score,
-                "social_score": social_score,
-                "copy_penalty": copy_penalty,
-                "rug_penalty": rug_penalty,
-                "round_trip_penalty": rt_pen,
-                "low_win_penalty": lw_pen,
+                "pnl_score": float(total_profit or 0) / 1000.0,
+                "timing_score": float(entry_timing or 0),
+                "winrate_score": float(win_rate or 0) / 10.0,
+                "insider_score": 10.0 if int(insider_flag or 0) else 0.0,
+                "trades_score": min(float(total_trades or 0) / 10.0, 20.0),
+                "roi_score": float(avg_roi or 0) / 10.0,
+                "tag_score": 5.0 if (smart_money_tag or "") else 0.0,
+                "defi_score": min(float(zerion_defi_value or 0) / 10000.0, 10.0),
+                "age_score": min(float(avg_hold_hours or 0) / 24.0, 10.0),
+                "copy_penalty": -5.0 if int(copy_trade_flag or 0) else 0.0,
+                "rug_penalty": -10.0 * float(rug_history_count or 0),
                 "wallet_tags": wtags or "",
                 "chain": chain or "",
             }
 
+        # Pre-fetch smp_tags
+        smp_tags: dict[str, str] = {}
+        addr_list = list(token_map.keys())
+        for i in range(0, len(addr_list), 50):
+            batch = addr_list[i:i+50]
+            ph = ",".join("?" for _ in batch)
+            for waddr, wtags in conn.execute(
+                f"SELECT DISTINCT wallet_address, wallet_tags FROM smart_money_purchases "
+                f"WHERE wallet_address IN ({ph}) AND wallet_tags IS NOT NULL AND wallet_tags != ''",
+                batch,
+            ).fetchall():
+                smp_tags.setdefault(waddr, wtags)
+
         wallet_map: dict[str, dict] = {}
 
-        # Source 1: smart_money_purchases — ALL buys of top100 tokens
-        addr_list = list(token_map.keys())
-        batch_size = 50
-        for i in range(0, len(addr_list), batch_size):
-            batch = addr_list[i : i + batch_size]
-            checks = " OR ".join(f"LOWER(smp.token_address) = ?" for _ in batch)
-            rows = conn.execute(
-                f"SELECT smp.wallet_address, smp.token_address, smp.token_symbol, "
-                f"smp.amount_usd, smp.timestamp, smp.chain "
-                f"FROM smart_money_purchases smp "
-                f"WHERE ({checks}) AND smp.side = 'buy' AND smp.token_address IS NOT NULL",
-                batch,
-            ).fetchall()
-            for row in rows:
-                waddr = row[0]
-                taddr = (row[1] or "").lower()
-                tsym = row[2] or "?"
-                amt = row[3] or 0
-                ts = row[4] or 0
-                chain = row[5] or ""
-                tok = token_map.get(taddr, {})
-                score = tok.get("score", 0) or 0
+        # Source 1: smart_money_purchases grouped by chain
+        by_chain: dict[str, list[str]] = {}
+        for addr in token_map:
+            chain = token_map[addr].get("chain", "") or ""
+            by_chain.setdefault(chain, []).append(addr)
 
-                if waddr not in wallet_map:
-                    wallet_map[waddr] = {
-                        "address": waddr,
-                        "chain": chain,
-                        "tracked": tracked_map.get(waddr, {}),
-                        "token_scores": {},
-                        "token_scores_weighted": 0.0,
-                        "total_buy_usd": 0.0,
-                        "buy_count": 0,
-                        "tokens_set": set(),
-                        "last_active": 0,
-                        "recent_scores": [],
-                    }
-                w = wallet_map[waddr]
-
-                # Recency decay: 6h=1.0, 24h=0.5, 48h=0.25
-                age_hours = (now - ts) / 3600 if ts else 48
-                recency_mult = max(0.1, 1.0 - (age_hours / 12))
-
-                # Conviction weighting: log-scaled buy amount
-                conviction = min(math.log(max(amt, 1) + 1) / 5, 3.0)
-
-                weighted_token_score = score * recency_mult * (1 + conviction * 0.3)
-                w["token_scores_weighted"] += weighted_token_score
-                w["total_buy_usd"] += amt
-                w["buy_count"] += 1
-                if taddr not in w["tokens_set"]:
-                    w["tokens_set"].add(taddr)
-                w["token_scores"][tsym] = max(w["token_scores"].get(tsym, 0), score)
-                if ts > w["last_active"]:
-                    w["last_active"] = ts
-                if not w["chain"] and chain:
-                    w["chain"] = chain
+        for chain, addrs in by_chain.items():
+            for i in range(0, len(addrs), 50):
+                batch = addrs[i:i+50]
+                checks = " OR ".join(f"LOWER(smp.token_address) = ?" for _ in batch)
+                rows = conn.execute(
+                    f"SELECT smp.wallet_address, smp.token_address, smp.token_symbol, "
+                    f"smp.amount_usd, smp.timestamp, smp.chain "
+                    f"FROM smart_money_purchases smp "
+                    f"WHERE ({checks}) AND smp.side = 'buy' "
+                    f"AND smp.token_address IS NOT NULL AND smp.chain = ?",
+                    batch + [chain],
+                ).fetchall()
+                for waddr, taddr, tsym, amt, ts, row_chain in rows:
+                    taddr_low = (taddr or "").lower()
+                    tok = token_map.get(taddr_low, {})
+                    score = tok.get("score", 0) or 0
+                    if waddr not in wallet_map:
+                        tw = tracked_map.get(waddr, {})
+                        wallet_map[waddr] = {
+                            "address": waddr, "chain": row_chain,
+                            "tracked": tw,
+                            "token_scores": {}, "token_scores_weighted": 0.0,
+                            "total_buy_usd": 0.0, "buy_count": 0,
+                            "tokens_set": set(), "last_active": 0,
+                            "wallet_tags": tw.get("wallet_tags", "") or smp_tags.get(waddr, ""),
+                        }
+                    w = wallet_map[waddr]
+                    age_hours = (now - ts) / 3600 if ts else 48
+                    recency_mult = max(0.1, 1.0 - (age_hours / 12))
+                    conviction = min(math.log(max(amt, 1) + 1) / 5, 3.0)
+                    w["token_scores_weighted"] += score * recency_mult * (1 + conviction * 0.3)
+                    w["total_buy_usd"] += amt
+                    w["buy_count"] += 1
+                    w["tokens_set"].add(taddr_low)
+                    w["token_scores"][tsym or "?"] = max(w["token_scores"].get(tsym or "?", 0), score)
+                    if ts > w["last_active"]:
+                        w["last_active"] = ts
+                    if not w["chain"] and row_chain:
+                        w["chain"] = row_chain
 
         # Source 2: smart_money_tokens discovery_wallets
-        smt_rows = conn.execute(
-            "SELECT token_address, symbol, discovery_wallets, chain " "FROM smart_money_tokens"
-        ).fetchall()
-        for taddr, sym, disc_wallets, chain in smt_rows:
-            taddr_lower = (taddr or "").lower()
-            if taddr_lower not in token_map:
+        for taddr, sym, disc_wallets, chain in conn.execute(
+            "SELECT token_address, symbol, discovery_wallets, chain FROM smart_money_tokens"
+        ).fetchall():
+            taddr_low = (taddr or "").lower()
+            if taddr_low not in token_map:
                 continue
             if not disc_wallets:
                 continue
@@ -766,29 +795,26 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
                 dw = _json.loads(disc_wallets) if disc_wallets.startswith("[") else disc_wallets.split(",")
             except Exception:
                 dw = disc_wallets.split(",")
-            tok = token_map.get(taddr_lower, {})
-            score = tok.get("score", 0) or 0
+            score = token_map[taddr_low].get("score", 0) or 0
             for waddr in dw:
                 waddr = waddr.strip()
                 if not waddr:
                     continue
                 if waddr not in wallet_map:
+                    tw = tracked_map.get(waddr, {})
+                    # Derive a tag from the discovering token if no explicit tags exist
+                    derived_tag = f"discovered_by_{sym.strip()}" if sym else "discovered"
                     wallet_map[waddr] = {
-                        "address": waddr,
-                        "chain": chain or "",
-                        "tracked": tracked_map.get(waddr, {}),
-                        "token_scores": {},
-                        "token_scores_weighted": 0.0,
-                        "total_buy_usd": 0.0,
-                        "buy_count": 0,
-                        "tokens_set": set(),
-                        "last_active": 0,
-                        "recent_scores": [],
+                        "address": waddr, "chain": chain or "",
+                        "tracked": tw,
+                        "token_scores": {}, "token_scores_weighted": 0.0,
+                        "total_buy_usd": 0.0, "buy_count": 0,
+                        "tokens_set": set(), "last_active": 0,
+                        "wallet_tags": tw.get("wallet_tags", "") or smp_tags.get(waddr, "") or derived_tag,
                     }
                 w = wallet_map[waddr]
-                w["token_scores_weighted"] += score * 0.5  # discovery gets half weight
-                if taddr_lower not in w["tokens_set"]:
-                    w["tokens_set"].add(taddr_lower)
+                w["token_scores_weighted"] += score * 0.5
+                w["tokens_set"].add(taddr_low)
                 w["token_scores"][sym or "?"] = max(w["token_scores"].get(sym or "?", 0), score)
                 if not w["chain"] and chain:
                     w["chain"] = chain
@@ -800,8 +826,15 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
             if token_count == 0:
                 continue
 
+            # Ensure every wallet has at least one tag
+            tags = w.get("wallet_tags", "") or ""
+            if not tags.strip():
+                # Fallback: use top token as tag, or generic 'smart_money'
+                top_sym = sorted(w["token_scores"].items(), key=lambda x: x[1], reverse=True)[0][0] if w["token_scores"] else ""
+                tags = f"{top_sym}_buyer" if top_sym else "smart_money"
+                w["wallet_tags"] = tags
+
             tracked = w["tracked"]
-            # Component-based wallet quality
             wallet_quality = (
                 (tracked.get("pnl_score", 0) or 0) * 1.0
                 + (tracked.get("timing_score", 0) or 0) * 1.0
@@ -811,27 +844,13 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
                 + (tracked.get("roi_score", 0) or 0) * 0.4
                 + (tracked.get("tag_score", 0) or 0) * 0.3
                 + (tracked.get("defi_score", 0) or 0) * 0.2
-                + (tracked.get("age_score", 0) or 0) * 0.1
-                + (tracked.get("social_score", 0) or 0) * 0.1
                 + (tracked.get("copy_penalty", 0) or 0) * 1.0
                 + (tracked.get("rug_penalty", 0) or 0) * 2.0
-                + (tracked.get("round_trip_penalty", 0) or 0) * 1.0
-                + (tracked.get("low_win_penalty", 0) or 0) * 1.0
             )
-
-            # Holding quality: average weighted token score
             avg_token_score = w["token_scores_weighted"] / max(token_count, 1)
-
-            # Breadth bonus: super-linear for diversification
             breadth_bonus = math.pow(token_count, 1.4) * 2
-
-            # Activity bonus: frequent buying = conviction
             activity_bonus = min(w["buy_count"] * 1.5, 20)
-
-            # Volume bonus: log-scaled to prevent whale domination
             volume_bonus = min(math.log(max(w["total_buy_usd"], 1) + 1) * 2, 15)
-
-            # Combine: wallet quality + holding quality + activity signals
             final_score = (
                 wallet_quality * 0.4
                 + avg_token_score * 0.3
@@ -839,29 +858,26 @@ def _cross_reference_wallets_by_tokens() -> list[dict]:
                 + activity_bonus * 0.1
                 + volume_bonus * 0.05
             )
-
-            # Sort tokens by score desc for display
             sorted_tokens = sorted(w["token_scores"].items(), key=lambda x: x[1], reverse=True)
-            results.append(
-                {
-                    "address": addr,
-                    "chain": w["chain"],
-                    "weighted_score": round(final_score, 1),
-                    "wallet_quality": round(wallet_quality, 1),
-                    "avg_token_score": round(avg_token_score, 1),
-                    "total_buy_usd": round(w["total_buy_usd"], 2),
-                    "token_count": token_count,
-                    "buy_count": w["buy_count"],
-                    "top_tokens": [t[0] for t in sorted_tokens[:10]],
-                    "last_active_at": w["last_active"],
-                }
-            )
+            results.append({
+                "address": addr,
+                "chain": w["chain"],
+                "weighted_score": round(final_score, 1),
+                "wallet_quality": round(wallet_quality, 1),
+                "avg_token_score": round(avg_token_score, 1),
+                "total_buy_usd": round(w["total_buy_usd"], 2),
+                "token_count": token_count,
+                "buy_count": w["buy_count"],
+                "top_tokens": [t[0] for t in sorted_tokens[:10]],
+                "wallet_tags": w.get("wallet_tags", "") or smp_tags.get(addr, ""),
+                "last_active_at": w["last_active"],
+            })
 
         results.sort(key=lambda x: x["weighted_score"], reverse=True)
         return results
 
-    except Exception:
-        return []
+    except Exception as e:
+        return [{"error": str(e)}]
     finally:
         conn.close()
 
@@ -1007,28 +1023,77 @@ def _get_active_wallets(active_tokens: list[dict]) -> list[dict]:
     if not conn:
         return []
 
+    # Pre-fetch tags from smart_money_purchases for wallets that may not be in tracked_wallets
+    smp_tags: dict[str, str] = {}
+    smp_conn = _get_wallet_db()
+    if smp_conn:
+        try:
+            addr_list = list(active_addrs)
+            for i in range(0, len(addr_list), 50):
+                batch = addr_list[i : i + 50]
+                ph = ",".join("?" for _ in batch)
+                rows = smp_conn.execute(
+                    f"SELECT DISTINCT wallet_address, wallet_tags "
+                    f"FROM smart_money_purchases "
+                    f"WHERE wallet_address IN ({ph}) AND wallet_tags IS NOT NULL AND wallet_tags != ''",
+                    batch,
+                ).fetchall()
+                for waddr, wtags in rows:
+                    if waddr not in smp_tags:
+                        smp_tags[waddr] = wtags
+        except Exception:
+            pass
+        finally:
+            smp_conn.close()
+
+    # Build tracked_map for quick wallet_tags lookup from tracked_wallets
+    tracked_map: dict[str, dict] = {}
+    try:
+        rows = conn.execute(
+            "SELECT address, wallet_tags FROM tracked_wallets WHERE wallet_tags IS NOT NULL AND wallet_tags != ''"
+        ).fetchall()
+        for addr, tags in rows:
+            tracked_map[addr] = {"wallet_tags": tags}
+    except Exception:
+        pass
+
     try:
         now = _time.time()
         wallet_map: dict[str, dict] = {}
-        addr_list = list(active_addrs)
+
+        # Build token_chain_map from active_tokens
+        token_chain_map = {}
+        for t in active_tokens:
+            addr = (t.get("token_address") or "").lower()
+            if addr:
+                token_chain_map[addr] = t.get("chain", "") or ""
+
+        # Group active_addrs by chain for chain-matched queries
+        by_chain: dict[str, list[str]] = {}
+        for addr in active_addrs:
+            chain = token_chain_map.get(addr, "") or ""
+            by_chain.setdefault(chain, []).append(addr)
+
         batch_size = 50
-        for i in range(0, len(addr_list), batch_size):
-            batch = addr_list[i : i + batch_size]
-            lower_checks = " OR ".join("LOWER(smp.token_address) = ?" for _ in batch)
-            rows = conn.execute(
-                f"SELECT smp.wallet_address, smp.token_address, smp.token_symbol, "
-                f"smp.chain, smp.amount_usd, smp.timestamp, "
-                f"COALESCE(tw.wallet_score, 0) as ws, tw.wallet_tags, "
-                f"COALESCE(tw.total_profit, 0), COALESCE(tw.entry_timing_score, 0), "
-                f"COALESCE(tw.win_rate, 0), COALESCE(tw.insider_flag, 0), "
-                f"COALESCE(tw.total_trades, 0), COALESCE(tw.avg_roi, 0), "
-                f"COALESCE(tw.smart_money_tag, ''), COALESCE(tw.zerion_defi_value, 0), "
-                f"COALESCE(tw.copy_trade_flag, 0), COALESCE(tw.rug_history_count, 0), 0, 0 "
-                f"FROM smart_money_purchases smp "
-                f"LEFT JOIN tracked_wallets tw ON smp.wallet_address = tw.address "
-                f"WHERE ({lower_checks}) AND smp.side = 'buy'",
-                batch,
-            ).fetchall()
+        for chain, addrs in by_chain.items():
+            for i in range(0, len(addrs), batch_size):
+                batch = addrs[i : i + batch_size]
+                checks = " OR ".join("LOWER(smp.token_address) = ?" for _ in batch)
+                rows = conn.execute(
+                    f"SELECT smp.wallet_address, smp.token_address, smp.token_symbol, "
+                    f"smp.chain, smp.amount_usd, smp.timestamp, "
+                    f"COALESCE(tw.wallet_score, 0) as ws, tw.wallet_tags, "
+                    f"COALESCE(tw.total_profit, 0), COALESCE(tw.entry_timing_score, 0), "
+                    f"COALESCE(tw.win_rate, 0), COALESCE(tw.insider_flag, 0), "
+                    f"COALESCE(tw.total_trades, 0), COALESCE(tw.avg_roi, 0), "
+                    f"COALESCE(tw.smart_money_tag, ''), COALESCE(tw.zerion_defi_value, 0), "
+                    f"COALESCE(tw.copy_trade_flag, 0), COALESCE(tw.rug_history_count, 0), 0, 0 "
+                    f"FROM smart_money_purchases smp "
+                    f"LEFT JOIN tracked_wallets tw ON smp.wallet_address = tw.address "
+                    f"WHERE ({checks}) AND smp.side = 'buy' AND smp.chain = ?",
+                    batch + [chain],
+                ).fetchall()
+
             for row in rows:
                 (
                     waddr,
@@ -1054,11 +1119,12 @@ def _get_active_wallets(active_tokens: list[dict]) -> list[dict]:
                 ) = row
 
                 if waddr not in wallet_map:
+                    tw = tracked_map.get(waddr, {})
                     wallet_map[waddr] = {
                         "address": waddr,
                         "chain": chain or "",
                         "wallet_score": ws or 0,
-                        "wallet_tags": wtags or "",
+                        "wallet_tags": wtags or tw.get("wallet_tags", "") or smp_tags.get(waddr, ""),
                         "tracked_scores": {
                             # Normalize current schema fields to legacy scoring components
                             "pnl_score": float(pnl or 0) / 1000.0,
@@ -1208,6 +1274,30 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
             pass
         conn.close()
 
+    # ── Bulk-fetch tags from smart_money_purchases for wallets missing tags ──
+    # new_wallet_map wallets may not be in tracked_wallets, so their tags are empty.
+    # Pull what we can from smart_money_purchases.wallet_tags.
+    smp_tags: dict[str, str] = {}
+    if conn2 := _get_wallet_db():
+        try:
+            addr_batch = list(new_wallet_map.keys())
+            for i in range(0, len(addr_batch), 50):
+                batch = addr_batch[i : i + 50]
+                ph = ",".join("?" for _ in batch)
+                rows = conn2.execute(
+                    f"SELECT DISTINCT wallet_address, wallet_tags "
+                    f"FROM smart_money_purchases "
+                    f"WHERE wallet_address IN ({ph}) AND wallet_tags IS NOT NULL AND wallet_tags != ''",
+                    batch,
+                ).fetchall()
+                for waddr, wtags in rows:
+                    if waddr not in smp_tags:
+                        smp_tags[waddr] = wtags
+        except Exception:
+            pass
+        finally:
+            conn2.close()
+
     # Merge: old wallets + new wallets not in old
     merged: dict[str, dict] = {}
     for w in old_wallets:
@@ -1220,7 +1310,7 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
             "avg_roi": w.get("avg_roi"),
             "win_rate": w.get("win_rate"),
             "total_trades": w.get("total_trades", 0),
-            "wallet_tags": w.get("wallet_tags", ""),
+            "wallet_tags": w.get("wallet_tags", "") or smp_tags.get(addr, ""),
             "insider_flag": w.get("insider_flag"),
             "last_active_at": w.get("last_active_at"),
             "source": "tracked",
@@ -1246,6 +1336,7 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
 
     for addr, nw in new_wallet_map.items():
         if addr not in merged:
+            tags_from_smp = smp_tags.get(addr, "")
             merged[addr] = {
                 "address": addr,
                 "chain": nw.get("chain", ""),
@@ -1254,7 +1345,7 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
                 "avg_roi": None,
                 "win_rate": None,
                 "total_trades": 0,
-                "wallet_tags": "",
+                "wallet_tags": tags_from_smp,
                 "insider_flag": None,
                 "last_active_at": nw.get("last_active_at"),
                 "source": "new",
@@ -1286,6 +1377,8 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
         comp = w.get("component_score", 0) or 0
         combined = comp * 0.6 + ws * 0.4
         sc_cls = _score_cls(combined)
+        roi = w.get("avg_roi")
+        win = w.get("win_rate")
         profit = w.get("total_profit")
         profit_cls = "pos" if profit and profit > 0 else "neg" if profit and profit < 0 else ""
         tags_html = ""
@@ -1308,8 +1401,8 @@ async def wallets(min_score: float = Query(0), chain: str = Query("")):
   <td>{score:.0f}</td>
   <td>{ws:.1f}</td>
   <td class="{profit_cls}">{_fmt_usd(profit)}</td>
-  <td class="{_pct_cls(w.get('avg_roi'))}">{_fmt_pct(w.get('avg_roi'))}</td>
-  <td>{(w.get('win_rate',0) or 0)*100:.0f}%</td>
+  <td>{_fmt_pct(roi)}</td>
+  <td>{_fmt_pct(win * 100 if win is not None else None)}</td>
   <td>{w.get('total_trades',0)}</td>
   <td>{w.get('active_token_count',0)}</td>
   <td>{tags_html}</td>
@@ -1841,7 +1934,7 @@ async def cross_tokens():
         wc_cls = "sc-h" if wc >= 10 else "sc-m" if wc >= 5 else "sc-l"
         p1h = _pct_cls(t.get("price_change_h1"))
         p6h = _pct_cls(t.get("price_change_h6"))
-        tags = "".join(f'<span class="tag tag-g">{p}</span>' for p in (t.get("positives") or [])[:2])
+        tags = "".join(f'<span class="tag tag-g">{p}</span>' for p in (t.get("signal_tags") or [])[:3])
         addr = t.get("contract_address", "")
         holding_wallets = t.get("holding_wallets", [])
         wallet_links = ", ".join(
@@ -1864,7 +1957,7 @@ async def cross_tokens():
   <td class="{p1h}">{_fmt_pct(t.get('price_change_h1'))}</td>
   <td class="{p6h}">{_fmt_pct(t.get('price_change_h6'))}</td>
   <td>{t.get('age_hours',0):.1f}h</td>
-  <td>{t.get('gmgn_smart_wallets',0)}</td>
+  <td>{t.get('brain_score', 0)}</td>
   <td>{tags}</td>
   <td class="mono" style="font-size:.65rem;max-width:150px;overflow:hidden;text-overflow:ellipsis">{wallet_links}</td>
 </tr>"""
@@ -1876,7 +1969,7 @@ async def cross_tokens():
 <h1>Tokens Ranked by Smart-Money Activity</h1>
 <div class="sub">Top tokens sorted by blended score (token quality + wallet activity) &middot; {len(tokens)} tokens analyzed</div>
 <div class="tbl"><table>
-<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>Activity</th><th>🧬</th><th>Ch</th><th>FDV</th><th>Vol24h</th><th>Vol1h</th><th>1h</th><th>6h</th><th>Age</th><th>🧠</th><th>Signals</th><th>Holders</th></tr></thead>
+<thead><tr><th>#</th><th>Token</th><th>Chain</th><th>Address</th><th>Score</th><th>Activity</th><th>🧬</th><th>Ch</th><th>FDV</th><th>Vol24h</th><th>Vol1h</th><th>1h</th><th>6h</th><th>Age</th><th>🧠</th><th>Signals</th><th>Top Wallets</th></tr></thead>
 <tbody>{rows}</tbody>
 </table></div>""",
     )
@@ -1902,6 +1995,7 @@ async def cross_wallets():
   <td>{w.get('token_count', 0)}</td>
   <td>{_fmt_usd(w.get('total_buy_usd'))}</td>
   <td>{_time_ago(w.get('last_active_at'))}</td>
+  <td>{_fmt_tags(w.get('wallet_tags', ''))}</td>
   <td>{token_badges}</td>
 </tr>"""
 
@@ -1912,7 +2006,7 @@ async def cross_wallets():
 <h1>Wallets Ranked by Token Weight</h1>
 <div class="sub">Smart money wallets that bought top-100 tokens, ranked by weighted token score &middot; {len(wallets)} wallets discovered</div>
 <div class="tbl"><table>
-<thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Weighted Score</th><th>Tokens</th><th>Total Bought</th><th>Active</th><th>Top Tokens</th></tr></thead>
+<thead><tr><th>#</th><th>Wallet</th><th>Chain</th><th>Weighted Score</th><th>Tokens</th><th>Total Bought</th><th>Active</th><th>Tags</th><th>Top Tokens</th></tr></thead>
 <tbody>{rows}</tbody>
 </table></div>""",
     )
@@ -1928,3 +2022,20 @@ async def api_cross_tokens():
 async def api_cross_wallets():
     """API: Wallets ranked by top token count."""
     return _cross_reference_wallets_by_tokens()
+
+
+@app.get("/api/debug_wallets")
+async def api_debug_wallets():
+    """Debug endpoint: call _cross_reference_wallets_by_tokens and return count or error."""
+    import traceback as _tb
+    try:
+        from hermes_screener.config import settings
+        result = _cross_reference_wallets_by_tokens()
+        return {
+            "count": len(result),
+            "sample": result[0] if result else None,
+            "hermes_home": str(settings.hermes_home),
+            "wallets_db": str(settings.wallets_db_path),
+        }
+    except Exception as e:
+        return {"error": str(e), "trace": _tb.format_exc()}
