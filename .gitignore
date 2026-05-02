@@ -12,12 +12,7 @@ venv/
 .venv/
 
 # Data (generated at runtime)
-data/*.db
-data/*.db-wal
-data/*.db-shm
-*.jsonl
-*.log
-dashboard_data.json
+data/
 
 
 # IDE
